@@ -5,9 +5,10 @@ import './ProductCard.css';
 interface ProductCardProps {
   product: Product;
   onDelete: (id: string) => void;
+  onEdit: (product: Product) => void;
 }
 
-export const ProductCard = ({ product, onDelete }: ProductCardProps) => {
+export const ProductCard = ({ product, onDelete, onEdit }: ProductCardProps) => {
   const daysUntil = getDaysUntilExpiration(product.expirationDate);
   const expired = isExpired(product.expirationDate);
   const expiringSoon = isExpiringSoon(product.expirationDate);
@@ -19,22 +20,33 @@ export const ProductCard = ({ product, onDelete }: ProductCardProps) => {
   };
 
   const getStatusText = () => {
-    if (expired) return 'Expiré';
-    if (expiringSoon) return `Expire dans ${daysUntil} jour${daysUntil > 1 ? 's' : ''}`;
-    return `Expire dans ${daysUntil} jour${daysUntil > 1 ? 's' : ''}`;
+    if (expired) return 'Expired';
+    if (expiringSoon) return `Expires in ${daysUntil} day${daysUntil > 1 ? 's' : ''}`;
+    return `Expires in ${daysUntil} day${daysUntil > 1 ? 's' : ''}`;
   };
 
   return (
     <div className={`product-card ${getStatusClass()}`}>
       <div className="product-header">
         <h3>{product.name}</h3>
-        <button 
-          className="delete-btn" 
-          onClick={() => onDelete(product.id)}
-          aria-label="Supprimer"
-        >
-          ×
-        </button>
+        <div className="product-actions">
+          <button 
+            className="edit-btn" 
+            onClick={() => onEdit(product)}
+            aria-label="Edit"
+            title="Edit"
+          >
+            ✏️
+          </button>
+          <button 
+            className="delete-btn" 
+            onClick={() => onDelete(product.id)}
+            aria-label="Delete"
+            title="Delete"
+          >
+            ×
+          </button>
+        </div>
       </div>
       <div className="product-info">
         <span className="category">{product.category}</span>
@@ -44,12 +56,12 @@ export const ProductCard = ({ product, onDelete }: ProductCardProps) => {
       </div>
       <div className="product-dates">
         <div className="date-info">
-          <span className="label">Ajouté le:</span>
-          <span>{new Date(product.addedDate).toLocaleDateString('fr-FR')}</span>
+          <span className="label">Added:</span>
+          <span>{new Date(product.addedDate).toLocaleDateString('en-US')}</span>
         </div>
         <div className="date-info">
-          <span className="label">Expire le:</span>
-          <span>{new Date(product.expirationDate).toLocaleDateString('fr-FR')}</span>
+          <span className="label">Expires:</span>
+          <span>{new Date(product.expirationDate).toLocaleDateString('en-US')}</span>
         </div>
       </div>
       <div className={`status-badge ${getStatusClass()}`}>
