@@ -22,18 +22,24 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
   const [name, setName] = useState('');
   const [category, setCategory] = useState<ProductCategory>('Autre');
   const [expirationDate, setExpirationDate] = useState('');
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState<string>('1');
   const [unit, setUnit] = useState('unité');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !expirationDate) return;
 
+    const quantityNum = Number(quantity);
+    if (isNaN(quantityNum) || quantityNum < 1) {
+      alert('La quantité doit être un nombre supérieur ou égal à 1');
+      return;
+    }
+
     onAdd({
       name: name.trim(),
       category,
       expirationDate,
-      quantity,
+      quantity: quantityNum,
       unit
     });
 
@@ -41,7 +47,7 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
     setName('');
     setCategory('Autre');
     setExpirationDate('');
-    setQuantity(1);
+    setQuantity('1');
     setUnit('unité');
     setIsOpen(false);
   };
@@ -93,7 +99,13 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
             type="number"
             min="1"
             value={quantity}
-            onChange={(e) => setQuantity(Number(e.target.value))}
+            onChange={(e) => setQuantity(e.target.value)}
+            onBlur={(e) => {
+              const value = e.target.value;
+              if (value === '' || Number(value) < 1) {
+                setQuantity('1');
+              }
+            }}
             required
           />
         </div>
