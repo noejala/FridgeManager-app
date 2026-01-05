@@ -1,0 +1,119 @@
+.product-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  border-left: 4px solid #4a90e2;
+}
+
+.product-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.product-card.status-expiring {
+  border-left-color: #f39c12;
+}
+
+.product-card.status-expired {
+  border-left-color: #e74c3c;
+}
+
+.product-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.product-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #2c3e50;
+  flex: 1;
+}
+
+.delete-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: background 0.2s;
+}
+
+.delete-btn:hover {
+  background: #c0392b;
+}
+
+.product-info {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.category {
+  background: #ecf0f1;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  color: #34495e;
+}
+
+.quantity {
+  color: #7f8c8d;
+  font-size: 0.875rem;
+}
+
+.product-dates {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.date-info {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.date-info .label {
+  color: #7f8c8d;
+  font-weight: 500;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.375rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+.status-badge.status-ok {
+  background: #d5f4e6;
+  color: #27ae60;
+}
+
+.status-badge.status-expiring {
+  background: #fef5e7;
+  color: #f39c12;
+}
+
+.status-badge.status-expired {
+  background: #fadbd8;
+  color: #e74c3c;
+}
+
