@@ -40,8 +40,8 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
     if (!name || !expirationDate) return;
 
     const quantityNum = Number(quantity);
-    if (isNaN(quantityNum) || quantityNum < 1) {
-      alert('Quantity must be a number greater than or equal to 1');
+    if (isNaN(quantityNum) || quantityNum <= 0) {
+      alert('Quantity must be a number greater than 0');
       return;
     }
 
@@ -92,12 +92,13 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
           <input
             id="edit-quantity"
             type="number"
-            min="1"
+            min="0.01"
+            step="0.01"
             value={quantity}
             onChange={(e) => setQuantity(e.target.value)}
             onBlur={(e) => {
               const value = e.target.value;
-              if (value === '' || Number(value) < 1) {
+              if (value === '' || Number(value) <= 0) {
                 setQuantity('1');
               }
             }}

@@ -1,7 +1,7 @@
 {
   "name": "fridge-manager-app",
   "version": "1.0.0",
-  "description": "Application de gestion de frigo avec suivi des dates d'expiration",
+  "description": "A fridge management app with expiration date tracking, recipes recommendations and seasonal product tips",
   "type": "module",
   "scripts": {
     "dev": "vite",
