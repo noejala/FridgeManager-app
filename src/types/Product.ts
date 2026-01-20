@@ -10,11 +10,11 @@ export interface Product {
 
 export type ProductCategory = 
   | 'Fruits'
-  | 'Légumes'
-  | 'Viande'
-  | 'Poisson'
-  | 'Produits laitiers'
-  | 'Boissons'
-  | 'Surgelés'
-  | 'Autre';
+  | 'Vegetables'
+  | 'Meat'
+  | 'Fish'
+  | 'Dairy'
+  | 'Beverages'
+  | 'Frozen'
+  | 'Other';
 

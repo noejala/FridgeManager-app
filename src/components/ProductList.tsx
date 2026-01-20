@@ -6,15 +6,16 @@ import './ProductList.css';
 interface ProductListProps {
   products: Product[];
   onDelete: (id: string) => void;
+  onEdit: (product: Product) => void;
 }
 
-export const ProductList = ({ products, onDelete }: ProductListProps) => {
+export const ProductList = ({ products, onDelete, onEdit }: ProductListProps) => {
   if (products.length === 0) {
     return (
       <div className="empty-state">
         <div className="empty-icon">🧊</div>
-        <h3>Votre frigo est vide</h3>
-        <p>Ajoutez vos premiers produits pour commencer à les gérer !</p>
+        <h3>Your fridge is empty</h3>
+        <p>Add your first products to start managing them!</p>
       </div>
     );
   }
@@ -43,12 +44,12 @@ export const ProductList = ({ products, onDelete }: ProductListProps) => {
         <div className="alerts-summary">
           {expiredCount > 0 && (
             <div className="alert alert-expired">
-              ⚠️ {expiredCount} produit{expiredCount > 1 ? 's' : ''} expiré{expiredCount > 1 ? 's' : ''}
+              ⚠️ {expiredCount} expired product{expiredCount > 1 ? 's' : ''}
             </div>
           )}
           {expiringSoonCount > 0 && (
             <div className="alert alert-expiring">
-              ⏰ {expiringSoonCount} produit{expiringSoonCount > 1 ? 's' : ''} expire{expiringSoonCount > 1 ? 'nt' : ''} bientôt
+              ⏰ {expiringSoonCount} product{expiringSoonCount > 1 ? 's' : ''} expiring soon
             </div>
           )}
         </div>
@@ -60,6 +61,7 @@ export const ProductList = ({ products, onDelete }: ProductListProps) => {
             key={product.id}
             product={product}
             onDelete={onDelete}
+            onEdit={onEdit}
           />
         ))}
       </div>

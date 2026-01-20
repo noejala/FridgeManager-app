@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Product, ProductCategory } from '../types/Product';
 import './AddProductForm.css';
 
-interface AddProductFormProps {
-  onAdd: (product: Omit<Product, 'id' | 'addedDate'>) => void;
+interface EditProductFormProps {
+  product: Product;
+  onSave: (product: Product) => void;
+  onCancel: () => void;
 }
 
 const CATEGORIES: ProductCategory[] = [
@@ -17,13 +19,21 @@ const CATEGORIES: ProductCategory[] = [
   'Other'
 ];
 
-export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [name, setName] = useState('');
-  const [category, setCategory] = useState<ProductCategory>('Other');
-  const [expirationDate, setExpirationDate] = useState('');
-  const [quantity, setQuantity] = useState<string>('1');
-  const [unit, setUnit] = useState('unit');
+export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormProps) => {
+  const [name, setName] = useState(product.name);
+  const [category, setCategory] = useState<ProductCategory>(product.category as ProductCategory);
+  const [expirationDate, setExpirationDate] = useState(product.expirationDate);
+  const [quantity, setQuantity] = useState<string>(product.quantity.toString());
+  const [unit, setUnit] = useState(product.unit);
+
+  useEffect(() => {
+    // Réinitialiser le formulaire si le produit change
+    setName(product.name);
+    setCategory(product.category as ProductCategory);
+    setExpirationDate(product.expirationDate);
+    setQuantity(product.quantity.toString());
+    setUnit(product.unit);
+  }, [product]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,41 +45,26 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
       return;
     }
 
-    onAdd({
+    onSave({
+      ...product,
       name: name.trim(),
       category,
       expirationDate,
       quantity: quantityNum,
       unit
     });
-
-    // Reset form
-    setName('');
-    setCategory('Other');
-    setExpirationDate('');
-    setQuantity('1');
-    setUnit('unit');
-    setIsOpen(false);
   };
 
   const minDate = new Date().toISOString().split('T')[0];
 
-  if (!isOpen) {
-    return (
-      <button className="add-product-btn" onClick={() => setIsOpen(true)}>
-        + Add a product
-      </button>
-    );
-  }
-
   return (
     <form className="add-product-form" onSubmit={handleSubmit}>
-      <h2>Add a product</h2>
+      <h2>Edit product</h2>
       
       <div className="form-group">
-        <label htmlFor="name">Product name *</label>
+        <label htmlFor="edit-name">Product name *</label>
         <input
-          id="name"
+          id="edit-name"
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -80,9 +75,9 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
 
       <div className="form-row">
         <div className="form-group">
-          <label htmlFor="category">Category</label>
+          <label htmlFor="edit-category">Category</label>
           <select
-            id="category"
+            id="edit-category"
             value={category}
             onChange={(e) => setCategory(e.target.value as ProductCategory)}
           >
@@ -93,9 +88,9 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="quantity">Quantity</label>
+          <label htmlFor="edit-quantity">Quantity</label>
           <input
-            id="quantity"
+            id="edit-quantity"
             type="number"
             min="0.01"
             step="0.01"
@@ -112,9 +107,9 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="unit">Unit</label>
+          <label htmlFor="edit-unit">Unit</label>
           <select
-            id="unit"
+            id="edit-unit"
             value={unit}
             onChange={(e) => setUnit(e.target.value)}
           >
@@ -129,9 +124,9 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="expirationDate">Expiration date *</label>
+        <label htmlFor="edit-expirationDate">Expiration date *</label>
         <input
-          id="expirationDate"
+          id="edit-expirationDate"
           type="date"
           value={expirationDate}
           onChange={(e) => setExpirationDate(e.target.value)}
@@ -141,11 +136,11 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
       </div>
 
       <div className="form-actions">
-        <button type="button" className="cancel-btn" onClick={() => setIsOpen(false)}>
+        <button type="button" className="cancel-btn" onClick={onCancel}>
           Cancel
         </button>
         <button type="submit" className="submit-btn">
-          Add
+          Save
         </button>
       </div>
     </form>
