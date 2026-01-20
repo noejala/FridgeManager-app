@@ -86,7 +86,7 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>🧊 Fridge Manager</h1>
+        <h1>👩‍🍳 Fridge Manager 🧑‍🍳</h1>
         <p>Manage your products and never waste food again!</p>
       </header>
       
