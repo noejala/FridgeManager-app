@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Product, ProductCategory } from '../types/Product';
+import { guessCategory } from '../utils/categoryMapping';
 import './AddProductForm.css';
 
 interface AddProductFormProps {
@@ -72,7 +73,11 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
           id="name"
           type="text"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => {
+            const newName = e.target.value;
+            setName(newName);
+            setCategory(guessCategory(newName));
+          }}
           required
           placeholder="Ex: Milk, Apples, Chicken..."
         />

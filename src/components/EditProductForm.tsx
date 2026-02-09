@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Product, ProductCategory } from '../types/Product';
+import { guessCategory } from '../utils/categoryMapping';
 import './AddProductForm.css';
 
 interface EditProductFormProps {
@@ -67,7 +68,11 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
           id="edit-name"
           type="text"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => {
+            const newName = e.target.value;
+            setName(newName);
+            setCategory(guessCategory(newName));
+          }}
           required
           placeholder="Ex: Milk, Apples, Chicken..."
         />
