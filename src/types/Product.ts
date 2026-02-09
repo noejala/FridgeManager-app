@@ -6,6 +6,7 @@ export interface Product {
   quantity: number;
   unit: string; // 'unité', 'kg', 'L', etc.
   addedDate: string; // Format: YYYY-MM-DD
+  isEstimatedExpiration?: boolean;
 }
 
 export type ProductCategory = 

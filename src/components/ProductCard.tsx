@@ -61,7 +61,11 @@ export const ProductCard = ({ product, onDelete, onEdit }: ProductCardProps) => 
         </div>
         <div className="date-info">
           <span className="label">Expires:</span>
-          <span>{new Date(product.expirationDate).toLocaleDateString('en-US')}</span>
+          <span>
+            {product.isEstimatedExpiration ? '~' : ''}
+            {new Date(product.expirationDate).toLocaleDateString('en-US')}
+            {product.isEstimatedExpiration ? ' (estimated)' : ''}
+          </span>
         </div>
       </div>
       <div className={`status-badge ${getStatusClass()}`}>

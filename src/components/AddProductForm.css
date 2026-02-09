@@ -108,3 +108,18 @@
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  color: #34495e;
+  font-size: 0.9rem;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: auto;
+  accent-color: #667eea;
+}
+

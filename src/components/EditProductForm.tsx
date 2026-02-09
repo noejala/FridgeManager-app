@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Product, ProductCategory } from '../types/Product';
 import { guessCategory } from '../utils/categoryMapping';
+import { estimateExpirationDate } from '../utils/shelfLife';
 import './AddProductForm.css';
 
 interface EditProductFormProps {
@@ -26,19 +27,23 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
   const [expirationDate, setExpirationDate] = useState(product.expirationDate);
   const [quantity, setQuantity] = useState<string>(product.quantity.toString());
   const [unit, setUnit] = useState(product.unit);
+  const [unknownExpiration, setUnknownExpiration] = useState(product.isEstimatedExpiration ?? false);
 
   useEffect(() => {
-    // Réinitialiser le formulaire si le produit change
     setName(product.name);
     setCategory(product.category as ProductCategory);
     setExpirationDate(product.expirationDate);
     setQuantity(product.quantity.toString());
     setUnit(product.unit);
+    setUnknownExpiration(product.isEstimatedExpiration ?? false);
   }, [product]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !expirationDate) return;
+    const finalExpirationDate = unknownExpiration
+      ? estimateExpirationDate(name, category)
+      : expirationDate;
+    if (!name || !finalExpirationDate) return;
 
     const quantityNum = Number(quantity);
     if (isNaN(quantityNum) || quantityNum <= 0) {
@@ -50,9 +55,10 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
       ...product,
       name: name.trim(),
       category,
-      expirationDate,
+      expirationDate: finalExpirationDate,
       quantity: quantityNum,
-      unit
+      unit,
+      isEstimatedExpiration: unknownExpiration,
     });
   };
 
@@ -129,16 +135,29 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
       </div>
 
       <div className="form-group">
-        <label htmlFor="edit-expirationDate">Expiration date *</label>
-        <input
-          id="edit-expirationDate"
-          type="date"
-          value={expirationDate}
-          onChange={(e) => setExpirationDate(e.target.value)}
-          min={minDate}
-          required
-        />
+        <label className="checkbox-label">
+          <input
+            type="checkbox"
+            checked={unknownExpiration}
+            onChange={(e) => setUnknownExpiration(e.target.checked)}
+          />
+          I don't know the expiration date
+        </label>
       </div>
+
+      {!unknownExpiration && (
+        <div className="form-group">
+          <label htmlFor="edit-expirationDate">Expiration date *</label>
+          <input
+            id="edit-expirationDate"
+            type="date"
+            value={expirationDate}
+            onChange={(e) => setExpirationDate(e.target.value)}
+            min={minDate}
+            required
+          />
+        </div>
+      )}
 
       <div className="form-actions">
         <button type="button" className="cancel-btn" onClick={onCancel}>
