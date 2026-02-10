@@ -1,96 +1,179 @@
+import { useState, useEffect, useCallback } from 'react';
 import { Product } from '../types/Product';
+import { searchByIngredient, getMealDetails, MealSummary, MealDetails } from '../utils/mealApi';
 import './WhatToCook.css';
 
 interface WhatToCookProps {
   products: Product[];
 }
 
+interface MealWithMatch extends MealSummary {
+  matchedIngredient: string;
+}
+
 export const WhatToCook = ({ products }: WhatToCookProps) => {
-  // Simple suggestions based on available products
-  const getSuggestions = () => {
+  const [meals, setMeals] = useState<MealWithMatch[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedMeal, setSelectedMeal] = useState<MealDetails | null>(null);
+  const [loadingDetails, setLoadingDetails] = useState(false);
+
+  const fetchRecipes = useCallback(async () => {
     if (products.length === 0) {
-      return {
-        message: "Add some products to your fridge to get cooking suggestions!",
-        recipes: []
-      };
+      setMeals([]);
+      return;
     }
 
-    const categories = products.map(p => p.category);
-    const uniqueCategories = [...new Set(categories)];
+    setLoading(true);
+    setError(null);
 
-    const suggestions = [];
+    try {
+      const ingredientNames = products.slice(0, 5).map((p) => p.name);
+      const results = await Promise.all(
+        ingredientNames.map(async (name) => {
+          const summaries = await searchByIngredient(name);
+          return summaries.map((s) => ({ ...s, matchedIngredient: name }));
+        })
+      );
 
-    if (uniqueCategories.includes('Meat') || uniqueCategories.includes('Fish')) {
-      suggestions.push({
-        title: "Grilled Protein",
-        description: "You have meat or fish! Perfect for grilling or pan-searing.",
-        ingredients: products.filter(p => p.category === 'Meat' || p.category === 'Fish').slice(0, 2)
-      });
+      const allMeals = results.flat();
+      const seen = new Set<string>();
+      const deduplicated: MealWithMatch[] = [];
+      for (const meal of allMeals) {
+        if (!seen.has(meal.id)) {
+          seen.add(meal.id);
+          deduplicated.push(meal);
+        }
+      }
+
+      setMeals(deduplicated);
+    } catch {
+      setError('Failed to fetch recipes. Please try again later.');
+    } finally {
+      setLoading(false);
     }
+  }, [products]);
 
-    if (uniqueCategories.includes('Fruits') || uniqueCategories.includes('Vegetables')) {
-      suggestions.push({
-        title: "Fresh Salad",
-        description: "Mix your fresh fruits and vegetables for a healthy salad.",
-        ingredients: products.filter(p => p.category === 'Fruits' || p.category === 'Vegetables').slice(0, 3)
-      });
+  useEffect(() => {
+    fetchRecipes();
+  }, [fetchRecipes]);
+
+  const handleMealClick = async (mealId: string) => {
+    setLoadingDetails(true);
+    try {
+      const details = await getMealDetails(mealId);
+      setSelectedMeal(details);
+    } catch {
+      setError('Failed to load recipe details.');
+    } finally {
+      setLoadingDetails(false);
     }
-
-    if (uniqueCategories.includes('Dairy')) {
-      suggestions.push({
-        title: "Creamy Dish",
-        description: "Use your dairy products to create a creamy sauce or dessert.",
-        ingredients: products.filter(p => p.category === 'Dairy').slice(0, 2)
-      });
-    }
-
-    return {
-      message: `Based on your ${products.length} product${products.length > 1 ? 's' : ''}, here are some suggestions:`,
-      recipes: suggestions.length > 0 ? suggestions : [{
-        title: "Simple Meal",
-        description: "Use what you have to create a simple, delicious meal!",
-        ingredients: products.slice(0, 3)
-      }]
-    };
   };
 
-  const { message, recipes } = getSuggestions();
+  const closeDetails = () => setSelectedMeal(null);
+
+  if (products.length === 0) {
+    return (
+      <div className="what-to-cook">
+        <div className="cook-header">
+          <h2>🍳 What to cook</h2>
+        </div>
+        <div className="empty-suggestions">
+          <div className="empty-icon">🍽️</div>
+          <p>Add products to get recipe suggestions</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="what-to-cook">
       <div className="cook-header">
         <h2>🍳 What to cook</h2>
-        <p className="cook-subtitle">{message}</p>
+        <p className="cook-subtitle">
+          Recipes based on your {products.length} product{products.length > 1 ? 's' : ''}
+        </p>
       </div>
 
-      {recipes.length === 0 ? (
-        <div className="empty-suggestions">
-          <div className="empty-icon">🍽️</div>
-          <p>Add products to your fridge to get personalized cooking suggestions!</p>
+      {loading && (
+        <div className="loading-state">
+          <div className="spinner" />
+          <p>Searching for recipes...</p>
         </div>
-      ) : (
-        <div className="suggestions-grid">
-          {recipes.map((recipe, index) => (
-            <div key={index} className="suggestion-card">
-              <h3>{recipe.title}</h3>
-              <p>{recipe.description}</p>
-              {recipe.ingredients.length > 0 && (
-                <div className="ingredients-list">
-                  <strong>You can use:</strong>
-                  <ul>
-                    {recipe.ingredients.map((ing, i) => (
+      )}
+
+      {error && (
+        <div className="error-state">
+          <p>{error}</p>
+          <button onClick={fetchRecipes}>Retry</button>
+        </div>
+      )}
+
+      {!loading && !error && meals.length === 0 && (
+        <div className="empty-suggestions">
+          <div className="empty-icon">🔍</div>
+          <p>No recipes found for your current products. Try adding more ingredients!</p>
+        </div>
+      )}
+
+      {!loading && meals.length > 0 && (
+        <div className="recipes-grid">
+          {meals.map((meal) => (
+            <div
+              key={meal.id}
+              className="recipe-card"
+              onClick={() => handleMealClick(meal.id)}
+            >
+              <img src={meal.thumbnail} alt={meal.name} className="recipe-thumbnail" />
+              <div className="recipe-info">
+                <h3>{meal.name}</h3>
+                <span className="matched-ingredient">🥄 {meal.matchedIngredient}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {(selectedMeal || loadingDetails) && (
+        <div className="modal-overlay" onClick={closeDetails}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            {loadingDetails ? (
+              <div className="loading-state">
+                <div className="spinner" />
+                <p>Loading recipe...</p>
+              </div>
+            ) : selectedMeal && (
+              <>
+                <button className="modal-close" onClick={closeDetails}>✕</button>
+                <img
+                  src={selectedMeal.thumbnail}
+                  alt={selectedMeal.name}
+                  className="modal-image"
+                />
+                <h2>{selectedMeal.name}</h2>
+                <div className="modal-tags">
+                  {selectedMeal.category && <span className="tag">{selectedMeal.category}</span>}
+                  {selectedMeal.area && <span className="tag">{selectedMeal.area}</span>}
+                </div>
+                <div className="modal-section">
+                  <h3>Ingredients</h3>
+                  <ul className="modal-ingredients">
+                    {selectedMeal.ingredients.map((ing, i) => (
                       <li key={i}>
-                        {ing.name} ({ing.quantity} {ing.unit})
+                        <span className="ingredient-measure">{ing.measure}</span> {ing.name}
                       </li>
                     ))}
                   </ul>
                 </div>
-              )}
-            </div>
-          ))}
+                <div className="modal-section">
+                  <h3>Instructions</h3>
+                  <p className="modal-instructions">{selectedMeal.instructions}</p>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       )}
     </div>
   );
 };
-
