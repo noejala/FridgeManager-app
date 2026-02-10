@@ -1,26 +1,68 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Product } from '../types/Product';
-import { searchByIngredient, getMealDetails, MealSummary, MealDetails } from '../utils/mealApi';
+import { searchByIngredient, getMealDetails, MealDetails, singularize } from '../utils/mealApi';
 import './WhatToCook.css';
 
 interface WhatToCookProps {
   products: Product[];
 }
 
-interface MealWithMatch extends MealSummary {
-  matchedIngredient: string;
+const MAX_MISSING = 4;
+
+// Common pantry staples that most people have at home — don't count as "to buy"
+const PANTRY_STAPLES = new Set([
+  'salt', 'pepper', 'oil', 'olive oil', 'vegetable oil', 'sunflower oil', 'cooking oil',
+  'butter', 'flour', 'plain flour', 'sugar', 'water', 'garlic', 'garlic clove',
+  'black pepper', 'white pepper', 'vinegar', 'soy sauce', 'cornstarch',
+  'baking powder', 'baking soda', 'egg', 'eggs', 'milk',
+  'dried oregano', 'oregano', 'basil', 'thyme', 'bay leaf', 'parsley',
+  'paprika', 'cumin', 'cinnamon', 'nutmeg', 'chilli powder', 'turmeric powder',
+  'ginger', 'ginger paste', 'mustard', 'mustard powder', 'honey',
+  'lemon', 'lime', 'lemon juice', 'lime juice',
+]);
+
+interface RecipeMatch {
+  meal: MealDetails;
+  available: { name: string; measure: string }[];
+  missing: { name: string; measure: string }[];
+  pantry: { name: string; measure: string }[];
+}
+
+function matchIngredients(
+  meal: MealDetails,
+  fridgeNames: string[]
+): { available: { name: string; measure: string }[]; missing: { name: string; measure: string }[]; pantry: { name: string; measure: string }[] } {
+  const fridgeSingular = fridgeNames.map((n) => singularize(n));
+  const available: { name: string; measure: string }[] = [];
+  const missing: { name: string; measure: string }[] = [];
+  const pantry: { name: string; measure: string }[] = [];
+
+  for (const ing of meal.ingredients) {
+    const ingSingular = singularize(ing.name);
+    const inFridge = fridgeSingular.some(
+      (f) => ingSingular.includes(f) || f.includes(ingSingular)
+    );
+    if (inFridge) {
+      available.push(ing);
+    } else if (PANTRY_STAPLES.has(ingSingular) || PANTRY_STAPLES.has(ing.name.toLowerCase())) {
+      pantry.push(ing);
+    } else {
+      missing.push(ing);
+    }
+  }
+
+  return { available, missing, pantry };
 }
 
 export const WhatToCook = ({ products }: WhatToCookProps) => {
-  const [meals, setMeals] = useState<MealWithMatch[]>([]);
+  const [recipes, setRecipes] = useState<RecipeMatch[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedMeal, setSelectedMeal] = useState<MealDetails | null>(null);
-  const [loadingDetails, setLoadingDetails] = useState(false);
+  const [selectedRecipe, setSelectedRecipe] = useState<RecipeMatch | null>(null);
 
   const fetchRecipes = useCallback(async () => {
     if (products.length === 0) {
-      setMeals([]);
+      setRecipes([]);
       return;
     }
 
@@ -28,25 +70,46 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
     setError(null);
 
     try {
-      const ingredientNames = products.slice(0, 5).map((p) => p.name);
-      const results = await Promise.all(
-        ingredientNames.map(async (name) => {
-          const summaries = await searchByIngredient(name);
-          return summaries.map((s) => ({ ...s, matchedIngredient: name }));
-        })
+      const fridgeNames = products.map((p) => p.name);
+      const ingredientNames = fridgeNames.slice(0, 5);
+
+      // Search meals by each fridge ingredient
+      const searchResults = await Promise.all(
+        ingredientNames.map((name) => searchByIngredient(name))
       );
 
-      const allMeals = results.flat();
-      const seen = new Set<string>();
-      const deduplicated: MealWithMatch[] = [];
-      for (const meal of allMeals) {
-        if (!seen.has(meal.id)) {
-          seen.add(meal.id);
-          deduplicated.push(meal);
+      // Count how many fridge ingredients match each meal
+      const mealHits = new Map<string, number>();
+      for (const meals of searchResults) {
+        for (const meal of meals) {
+          mealHits.set(meal.id, (mealHits.get(meal.id) || 0) + 1);
         }
       }
 
-      setMeals(deduplicated);
+      // Sort by most hits first — meals matching more fridge ingredients are more likely feasible
+      const sortedIds = [...mealHits.entries()]
+        .sort((a, b) => b[1] - a[1])
+        .map(([id]) => id);
+
+      // Fetch details for top 30 candidates
+      const detailsResults = await Promise.all(
+        sortedIds.slice(0, 30).map((id) => getMealDetails(id))
+      );
+
+      // Filter: keep only recipes with <= MAX_MISSING missing ingredients
+      const matched: RecipeMatch[] = [];
+      for (const meal of detailsResults) {
+        if (!meal) continue;
+        const { available, missing, pantry } = matchIngredients(meal, fridgeNames);
+        if (missing.length <= MAX_MISSING) {
+          matched.push({ meal, available, missing, pantry });
+        }
+      }
+
+      // Sort: fewest missing first
+      matched.sort((a, b) => a.missing.length - b.missing.length);
+
+      setRecipes(matched);
     } catch {
       setError('Failed to fetch recipes. Please try again later.');
     } finally {
@@ -58,19 +121,7 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
     fetchRecipes();
   }, [fetchRecipes]);
 
-  const handleMealClick = async (mealId: string) => {
-    setLoadingDetails(true);
-    try {
-      const details = await getMealDetails(mealId);
-      setSelectedMeal(details);
-    } catch {
-      setError('Failed to load recipe details.');
-    } finally {
-      setLoadingDetails(false);
-    }
-  };
-
-  const closeDetails = () => setSelectedMeal(null);
+  const closeDetails = () => setSelectedRecipe(null);
 
   if (products.length === 0) {
     return (
@@ -109,68 +160,97 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
         </div>
       )}
 
-      {!loading && !error && meals.length === 0 && (
+      {!loading && !error && recipes.length === 0 && (
         <div className="empty-suggestions">
           <div className="empty-icon">🔍</div>
           <p>No recipes found for your current products. Try adding more ingredients!</p>
         </div>
       )}
 
-      {!loading && meals.length > 0 && (
+      {!loading && recipes.length > 0 && (
         <div className="recipes-grid">
-          {meals.map((meal) => (
+          {recipes.map((recipe) => (
             <div
-              key={meal.id}
+              key={recipe.meal.id}
               className="recipe-card"
-              onClick={() => handleMealClick(meal.id)}
+              onClick={() => setSelectedRecipe(recipe)}
             >
-              <img src={meal.thumbnail} alt={meal.name} className="recipe-thumbnail" />
+              <img src={recipe.meal.thumbnail} alt={recipe.meal.name} className="recipe-thumbnail" />
               <div className="recipe-info">
-                <h3>{meal.name}</h3>
-                <span className="matched-ingredient">🥄 {meal.matchedIngredient}</span>
+                <h3>{recipe.meal.name}</h3>
+                <div className="recipe-match-info">
+                  {recipe.missing.length === 0 ? (
+                    <span className="match-badge ready">Ready to cook</span>
+                  ) : (
+                    <span className="match-badge to-buy">
+                      {recipe.missing.length} to buy
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {(selectedMeal || loadingDetails) && (
+      {selectedRecipe && (
         <div className="modal-overlay" onClick={closeDetails}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            {loadingDetails ? (
-              <div className="loading-state">
-                <div className="spinner" />
-                <p>Loading recipe...</p>
+            <button className="modal-close" onClick={closeDetails}>✕</button>
+            <img
+              src={selectedRecipe.meal.thumbnail}
+              alt={selectedRecipe.meal.name}
+              className="modal-image"
+            />
+            <h2>{selectedRecipe.meal.name}</h2>
+            <div className="modal-tags">
+              {selectedRecipe.meal.category && <span className="tag">{selectedRecipe.meal.category}</span>}
+              {selectedRecipe.meal.area && <span className="tag">{selectedRecipe.meal.area}</span>}
+            </div>
+
+            {selectedRecipe.available.length > 0 && (
+              <div className="modal-section">
+                <h3>In your fridge</h3>
+                <ul className="modal-ingredients">
+                  {selectedRecipe.available.map((ing, i) => (
+                    <li key={i} className="ingredient-available">
+                      <span className="ingredient-measure">{ing.measure}</span> {ing.name}
+                    </li>
+                  ))}
+                </ul>
               </div>
-            ) : selectedMeal && (
-              <>
-                <button className="modal-close" onClick={closeDetails}>✕</button>
-                <img
-                  src={selectedMeal.thumbnail}
-                  alt={selectedMeal.name}
-                  className="modal-image"
-                />
-                <h2>{selectedMeal.name}</h2>
-                <div className="modal-tags">
-                  {selectedMeal.category && <span className="tag">{selectedMeal.category}</span>}
-                  {selectedMeal.area && <span className="tag">{selectedMeal.area}</span>}
-                </div>
-                <div className="modal-section">
-                  <h3>Ingredients</h3>
-                  <ul className="modal-ingredients">
-                    {selectedMeal.ingredients.map((ing, i) => (
-                      <li key={i}>
-                        <span className="ingredient-measure">{ing.measure}</span> {ing.name}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="modal-section">
-                  <h3>Instructions</h3>
-                  <p className="modal-instructions">{selectedMeal.instructions}</p>
-                </div>
-              </>
             )}
+
+            {selectedRecipe.pantry.length > 0 && (
+              <div className="modal-section">
+                <h3>Pantry staples</h3>
+                <ul className="modal-ingredients">
+                  {selectedRecipe.pantry.map((ing, i) => (
+                    <li key={i} className="ingredient-pantry">
+                      <span className="ingredient-measure">{ing.measure}</span> {ing.name}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {selectedRecipe.missing.length > 0 && (
+              <div className="modal-section">
+                <h3>To buy</h3>
+                <ul className="modal-ingredients">
+                  {selectedRecipe.missing.map((ing, i) => (
+                    <li key={i} className="ingredient-missing">
+                      <span className="ingredient-measure">{ing.measure}</span> {ing.name}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <div className="modal-section">
+              <h3>Instructions</h3>
+              <p className="modal-instructions">{selectedRecipe.meal.instructions}</p>
+            </div>
           </div>
         </div>
       )}

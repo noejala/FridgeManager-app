@@ -115,9 +115,25 @@
   line-height: 1.3;
 }
 
-.matched-ingredient {
-  font-size: 0.8rem;
-  color: #7f8c8d;
+.recipe-match-info {
+  margin-top: 0.25rem;
+}
+
+.match-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+}
+
+.match-badge.ready {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.match-badge.to-buy {
+  background: #fff3e0;
+  color: #e65100;
 }
 
 /* Modal */
@@ -208,8 +224,19 @@
 
 .modal-ingredients li {
   font-size: 0.9rem;
-  color: #34495e;
   padding: 0.25rem 0;
+}
+
+.ingredient-available {
+  color: #2e7d32;
+}
+
+.ingredient-pantry {
+  color: #7f8c8d;
+}
+
+.ingredient-missing {
+  color: #e65100;
 }
 
 .ingredient-measure {

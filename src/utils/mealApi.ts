@@ -1,5 +1,16 @@
 const BASE_URL = 'https://www.themealdb.com/api/json/v1/1';
 
+export function singularize(word: string): string {
+  const w = word.toLowerCase().trim();
+  if (w.endsWith('ies')) return w.slice(0, -3) + 'y';
+  if (w.endsWith('ves')) return w.slice(0, -3) + 'f';
+  if (w.endsWith('oes')) return w.slice(0, -2);
+  if (w.endsWith('ses') || w.endsWith('shes') || w.endsWith('ches') || w.endsWith('xes') || w.endsWith('zes'))
+    return w.slice(0, -2);
+  if (w.endsWith('s') && !w.endsWith('ss')) return w.slice(0, -1);
+  return w;
+}
+
 export interface MealSummary {
   id: string;
   name: string;
@@ -30,7 +41,8 @@ interface ApiMealDetails extends ApiMealSummary {
 }
 
 export async function searchByIngredient(ingredient: string): Promise<MealSummary[]> {
-  const res = await fetch(`${BASE_URL}/filter.php?i=${encodeURIComponent(ingredient)}`);
+  const normalized = singularize(ingredient);
+  const res = await fetch(`${BASE_URL}/filter.php?i=${encodeURIComponent(normalized)}`);
   if (!res.ok) return [];
   const data = await res.json();
   if (!data.meals) return [];
