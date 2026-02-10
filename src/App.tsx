@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Product } from './types/Product';
 import { saveProducts, loadProducts } from './utils/storage';
+import { getFridgeZone } from './utils/fridgePlacement';
 import { Tabs } from './components/Tabs';
 import { AddProductForm } from './components/AddProductForm';
 import { EditProductForm } from './components/EditProductForm';
@@ -13,6 +14,7 @@ function App() {
   const [products, setProducts] = useState<Product[]>([]);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [activeTab, setActiveTab] = useState('fridge');
+  const [notification, setNotification] = useState<string | null>(null);
 
   useEffect(() => {
     const loadedProducts = loadProducts();
@@ -26,12 +28,16 @@ function App() {
   }, [products]);
 
   const handleAddProduct = (productData: Omit<Product, 'id' | 'addedDate'>) => {
+    const fridgeZone = getFridgeZone(productData.name, productData.category);
     const newProduct: Product = {
       ...productData,
       id: crypto.randomUUID(),
-      addedDate: new Date().toISOString().split('T')[0]
+      addedDate: new Date().toISOString().split('T')[0],
+      fridgeZone
     };
     setProducts(prev => [...prev, newProduct]);
+    setNotification(`Place ${productData.name} in: ${fridgeZone}`);
+    setTimeout(() => setNotification(null), 4000);
   };
 
   const handleDeleteProduct = (id: string) => {
@@ -95,6 +101,9 @@ function App() {
           {renderTabContent()}
         </Tabs>
       </main>
+      {notification && (
+        <div className="toast-notification">{notification}</div>
+      )}
     </div>
   );
 }

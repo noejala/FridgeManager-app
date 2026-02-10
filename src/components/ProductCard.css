@@ -141,3 +141,33 @@
   color: #e74c3c;
 }
 
+.fridge-zone-badge {
+  background: #dfe6fd;
+  color: #4a5dc7;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: help;
+  position: relative;
+}
+
+.fridge-zone-badge:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #2c3e50;
+  color: white;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 400;
+  width: 240px;
+  line-height: 1.4;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+}
+

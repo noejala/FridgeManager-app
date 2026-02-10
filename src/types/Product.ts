@@ -7,6 +7,7 @@ export interface Product {
   unit: string; // 'unité', 'kg', 'L', etc.
   addedDate: string; // Format: YYYY-MM-DD
   isEstimatedExpiration?: boolean;
+  fridgeZone?: string;
 }
 
 export type ProductCategory = 
