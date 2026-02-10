@@ -28,6 +28,7 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
   const [quantity, setQuantity] = useState<string>(product.quantity.toString());
   const [unit, setUnit] = useState(product.unit);
   const [unknownExpiration, setUnknownExpiration] = useState(product.isEstimatedExpiration ?? false);
+  const [purchaseDate, setPurchaseDate] = useState('');
 
   useEffect(() => {
     setName(product.name);
@@ -41,7 +42,7 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const finalExpirationDate = unknownExpiration
-      ? estimateExpirationDate(name, category)
+      ? estimateExpirationDate(name, category, purchaseDate || undefined)
       : expirationDate;
     if (!name || !finalExpirationDate) return;
 
@@ -145,7 +146,27 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
         </label>
       </div>
 
-      {!unknownExpiration && (
+      {unknownExpiration ? (
+        <div className="form-group">
+          <label htmlFor="edit-purchaseDate">When did you buy it?</label>
+          <div className="purchase-date-row">
+            <input
+              id="edit-purchaseDate"
+              type="date"
+              value={purchaseDate}
+              onChange={(e) => setPurchaseDate(e.target.value)}
+              max={minDate}
+            />
+            <button
+              type="button"
+              className="today-btn"
+              onClick={() => setPurchaseDate(new Date().toISOString().split('T')[0])}
+            >
+              Today
+            </button>
+          </div>
+        </div>
+      ) : (
         <div className="form-group">
           <label htmlFor="edit-expirationDate">Expiration date *</label>
           <input

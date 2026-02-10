@@ -33,7 +33,7 @@ const PRODUCT_SHELF_LIFE: Record<string, number> = {
   strawberry: 3,
 };
 
-export function estimateExpirationDate(name: string, category: ProductCategory): string {
+export function estimateExpirationDate(name: string, category: ProductCategory, purchaseDate?: string): string {
   const lowerName = name.toLowerCase().trim();
 
   let days: number | undefined;
@@ -48,7 +48,7 @@ export function estimateExpirationDate(name: string, category: ProductCategory):
     days = CATEGORY_SHELF_LIFE[category];
   }
 
-  const date = new Date();
+  const date = purchaseDate ? new Date(purchaseDate) : new Date();
   date.setDate(date.getDate() + days);
   return date.toISOString().split('T')[0];
 }
