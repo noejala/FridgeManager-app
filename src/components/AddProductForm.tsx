@@ -166,7 +166,7 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
             />
             <button
               type="button"
-              className="today-btn"
+              className={`today-btn${purchaseDate === new Date().toISOString().split('T')[0] ? ' today-btn-active' : ''}`}
               onClick={() => setPurchaseDate(new Date().toISOString().split('T')[0])}
             >
               Today

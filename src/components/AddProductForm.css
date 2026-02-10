@@ -136,6 +136,11 @@
   color: white;
 }
 
+.today-btn-active {
+  background: #667eea;
+  color: white;
+}
+
 .checkbox-label {
   display: flex;
   align-items: center;
