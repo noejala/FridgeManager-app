@@ -56,6 +56,16 @@ TheMealDB (no auth required):
 - `GET /filter.php?i={ingredient}` — recipes by ingredient
 - `GET /lookup.php?i={id}` — full recipe details
 
-## CSS Conventions
+## CSS & Design System
 
-Each component has a paired `.css` file. CSS Grid/Flexbox for layout. BEM-like class naming.
+Each component has a paired `.css` file. CSS Grid/Flexbox for layout.
+
+**Design system** — all tokens are CSS custom properties defined in `App.css` under `:root`:
+- `--font-display` (Cormorant Garamond) for headings, `--font-body` (DM Sans) for everything else
+- `--bg`, `--bg-card`, `--bg-surface`, `--bg-input` — dark warm background hierarchy
+- `--accent` (terracotta) for primary actions and highlights
+- `--green` / `--amber` / `--red` (+ `*-bg` variants) for product status
+- `--border` / `--border-hover` for subtle borders
+- Global keyframes (`card-in`, `fade-in`, `modal-in`, `toast-fade`) defined in `App.css` and used across component CSS files
+
+**Key pattern:** browser autofill on dark inputs requires `-webkit-box-shadow: 0 0 0px 1000px var(--bg-input) inset` — already applied in `AddProductForm.css`.
