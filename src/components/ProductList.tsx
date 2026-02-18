@@ -13,9 +13,16 @@ export const ProductList = ({ products, onDelete, onEdit }: ProductListProps) =>
   if (products.length === 0) {
     return (
       <div className="empty-state">
-        <div className="empty-icon">🧊</div>
-        <h3>Your fridge is empty</h3>
-        <p>Add your first products to start managing them!</p>
+        <svg className="empty-fridge-icon" width="56" height="76" viewBox="0 0 56 76" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="3" width="50" height="70" rx="5" />
+          <line x1="3" y1="22" x2="53" y2="22" />
+          <line x1="19" y1="13" x2="37" y2="13" strokeWidth="2" />
+          <line x1="19" y1="42" x2="37" y2="42" strokeWidth="2" />
+          <line x1="19" y1="55" x2="30" y2="55" strokeDasharray="2 3" />
+          <line x1="19" y1="62" x2="26" y2="62" strokeDasharray="2 3" />
+        </svg>
+        <h3>Nothing here yet</h3>
+        <p>Start by adding what's in your fridge</p>
       </div>
     );
   }
