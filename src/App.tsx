@@ -92,8 +92,9 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>👩‍🍳 Fridge Manager 🧑‍🍳</h1>
-        <p>Manage your products and never waste food again!</p>
+        <h1>Fridge <span>Manager</span></h1>
+        <div className="app-header-rule" />
+        <p>Manage your products and never waste food again</p>
       </header>
       
       <main className="app-main">
