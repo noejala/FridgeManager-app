@@ -69,9 +69,9 @@
 }
 
 .season-badge-autumn {
-  color: var(--accent);
-  border-color: rgba(207, 122, 82, 0.25);
-  background: rgba(207, 122, 82, 0.08);
+  color: #c9a800;
+  border-color: rgba(201, 168, 0, 0.28);
+  background: rgba(201, 168, 0, 0.08);
 }
 
 .seasonal-info p {

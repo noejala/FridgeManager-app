@@ -176,7 +176,7 @@
 }
 
 .today-btn-active {
-  background: rgba(207, 122, 82, 0.12);
+  background: var(--accent-bg);
   border-color: var(--accent);
   color: var(--accent);
 }

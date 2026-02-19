@@ -1,27 +1,28 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Figtree:wght@300;400;500;600&display=swap');
 
 :root {
-  --bg: #15110d;
-  --bg-card: #1e1912;
-  --bg-surface: #252019;
-  --bg-input: #1a1510;
-  --text: #ede4d5;
-  --text-secondary: #a8957d;
-  --text-muted: #6b5c48;
-  --accent: #cf7a52;
-  --accent-light: #e0956e;
-  --green: #6fa864;
-  --green-bg: rgba(111, 168, 100, 0.12);
-  --amber: #c9993a;
-  --amber-bg: rgba(201, 153, 58, 0.12);
-  --red: #c45548;
-  --red-bg: rgba(196, 85, 72, 0.12);
-  --border: rgba(237, 228, 213, 0.07);
-  --border-hover: rgba(237, 228, 213, 0.14);
-  --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --bg: #f0f5fb;
+  --bg-card: #ffffff;
+  --bg-surface: #e4eef8;
+  --bg-input: #f5f8fd;
+  --text: #0d1f3c;
+  --text-secondary: #3b5880;
+  --text-muted: #7b95b8;
+  --accent: #2c6fe0;
+  --accent-light: #4d88f2;
+  --accent-bg: rgba(44, 111, 224, 0.08);
+  --green: #16a34a;
+  --green-bg: rgba(22, 163, 74, 0.08);
+  --amber: #c9a800;
+  --amber-bg: rgba(201, 168, 0, 0.09);
+  --red: #dc2626;
+  --red-bg: rgba(220, 38, 38, 0.08);
+  --border: rgba(44, 111, 224, 0.1);
+  --border-hover: rgba(44, 111, 224, 0.22);
+  --shadow: 0 4px 20px rgba(44, 111, 224, 0.08);
   --radius: 12px;
   --font-display: 'Cormorant Garamond', Georgia, serif;
-  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-body: 'Figtree', system-ui, sans-serif;
 }
 
 * {
@@ -34,8 +35,8 @@ body {
   font-family: var(--font-body);
   background-color: var(--bg);
   background-image:
-    radial-gradient(ellipse at 15% 10%, rgba(207, 122, 82, 0.07) 0%, transparent 55%),
-    radial-gradient(ellipse at 85% 88%, rgba(111, 168, 100, 0.04) 0%, transparent 50%);
+    radial-gradient(ellipse at 15% 10%, rgba(44, 111, 224, 0.07) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 88%, rgba(22, 163, 74, 0.04) 0%, transparent 50%);
   color: var(--text);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
@@ -47,7 +48,7 @@ body::after {
   position: fixed;
   inset: 0;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity: 0.028;
+  opacity: 0.012;
   pointer-events: none;
   z-index: 9999;
 }
