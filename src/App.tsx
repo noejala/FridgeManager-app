@@ -15,6 +15,14 @@ function App() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [activeTab, setActiveTab] = useState('fridge');
   const [notification, setNotification] = useState<string | null>(null);
+  const [darkMode, setDarkMode] = useState<boolean>(() => {
+    return localStorage.getItem('theme') === 'dark';
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+    localStorage.setItem('theme', darkMode ? 'dark' : 'light');
+  }, [darkMode]);
 
   useEffect(() => {
     const loadedProducts = loadProducts();
@@ -92,6 +100,13 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
+        <button
+          className="theme-toggle"
+          onClick={() => setDarkMode(prev => !prev)}
+          title={darkMode ? 'Mode jour' : 'Mode nuit'}
+        >
+          {darkMode ? '☀' : '☾'}
+        </button>
         <h1>Fridge <span>Manager</span></h1>
         <div className="app-header-rule" />
         <p>Manage your products and never waste food again</p>

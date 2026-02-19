@@ -25,6 +25,38 @@
   --font-body: 'Figtree', system-ui, sans-serif;
 }
 
+[data-theme="dark"] {
+  --bg: #0e1520;
+  --bg-card: #151f30;
+  --bg-surface: #1a2640;
+  --bg-input: #111929;
+  --text: #e8f0fc;
+  --text-secondary: #8aafd4;
+  --text-muted: #4d6d96;
+  --accent: #4d88f2;
+  --accent-light: #6fa0ff;
+  --accent-bg: rgba(77, 136, 242, 0.12);
+  --green: #4ade80;
+  --green-bg: rgba(74, 222, 128, 0.1);
+  --amber: #fbbf24;
+  --amber-bg: rgba(251, 191, 36, 0.1);
+  --red: #f87171;
+  --red-bg: rgba(248, 113, 113, 0.1);
+  --border: rgba(255, 255, 255, 0.07);
+  --border-hover: rgba(255, 255, 255, 0.14);
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] body {
+  background-image:
+    radial-gradient(ellipse at 15% 10%, rgba(77, 136, 242, 0.1) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 88%, rgba(74, 222, 128, 0.05) 0%, transparent 50%);
+}
+
+[data-theme="dark"] body::after {
+  opacity: 0.025;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -89,6 +121,32 @@ body::after {
 .app-header {
   text-align: center;
   margin-bottom: 3.5rem;
+  position: relative;
+}
+
+.theme-toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-hover);
+  color: var(--text-secondary);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  line-height: 1;
+}
+
+.theme-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-bg);
 }
 
 .app-header h1 {
