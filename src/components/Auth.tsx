@@ -6,6 +6,7 @@ export function Auth() {
   const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
@@ -21,6 +22,11 @@ export function Auth() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       } else {
+        if (password !== confirmPassword) {
+          setError('Passwords do not match');
+          setLoading(false);
+          return;
+        }
         const { error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
         setSuccessMsg('Account created! Check your email to confirm, then log in.');
@@ -68,6 +74,22 @@ export function Auth() {
             />
           </div>
 
+          {mode === 'signup' && (
+            <div className="auth-field">
+              <label htmlFor="auth-confirm-password">Confirm password</label>
+              <input
+                id="auth-confirm-password"
+                type="password"
+                value={confirmPassword}
+                onChange={e => setConfirmPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+                autoComplete="new-password"
+                minLength={6}
+              />
+            </div>
+          )}
+
           {error && <p className="auth-error">{error}</p>}
           {successMsg && <p className="auth-success">{successMsg}</p>}
 
@@ -81,7 +103,7 @@ export function Auth() {
           {' '}
           <button
             type="button"
-            onClick={() => { setMode(mode === 'login' ? 'signup' : 'login'); setError(null); setSuccessMsg(null); }}
+            onClick={() => { setMode(mode === 'login' ? 'signup' : 'login'); setError(null); setSuccessMsg(null); setConfirmPassword(''); }}
           >
             {mode === 'login' ? 'Sign up' : 'Sign in'}
           </button>
