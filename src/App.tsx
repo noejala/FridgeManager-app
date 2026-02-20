@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { User } from '@supabase/supabase-js';
 import { Product } from './types/Product';
-import { saveProducts, loadProducts } from './utils/storage';
+import { supabase } from './lib/supabase';
+import { fetchProducts, insertProduct, updateProduct, deleteProduct } from './utils/productService';
 import { getFridgeZone } from './utils/fridgePlacement';
 import { Tabs } from './components/Tabs';
 import { AddProductForm } from './components/AddProductForm';
@@ -8,9 +10,12 @@ import { EditProductForm } from './components/EditProductForm';
 import { ProductList } from './components/ProductList';
 import { WhatToCook } from './components/WhatToCook';
 import { SeasonalProducts } from './components/SeasonalProducts';
+import { Auth } from './components/Auth';
 import './App.css';
 
 function App() {
+  const [user, setUser] = useState<User | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [products, setProducts] = useState<Product[]>([]);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [activeTab, setActiveTab] = useState('fridge');
@@ -24,33 +29,61 @@ function App() {
     localStorage.setItem('theme', darkMode ? 'dark' : 'light');
   }, [darkMode]);
 
-  useEffect(() => {
-    const loadedProducts = loadProducts();
-    setProducts(loadedProducts);
+  const loadUserProducts = useCallback(async () => {
+    try {
+      const data = await fetchProducts();
+      setProducts(data);
+    } catch (err) {
+      console.error('Failed to load products:', err);
+    }
   }, []);
 
   useEffect(() => {
-    if (products.length > 0 || loadProducts().length > 0) {
-      saveProducts(products);
-    }
-  }, [products]);
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      setAuthLoading(false);
+    });
 
-  const handleAddProduct = (productData: Omit<Product, 'id' | 'addedDate'>) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      loadUserProducts();
+    } else {
+      setProducts([]);
+    }
+  }, [user, loadUserProducts]);
+
+  const handleAddProduct = async (productData: Omit<Product, 'id' | 'addedDate'>) => {
+    if (!user) return;
     const fridgeZone = getFridgeZone(productData.name, productData.category);
-    const newProduct: Product = {
+    const productWithMeta = {
       ...productData,
-      id: crypto.randomUUID(),
       addedDate: new Date().toISOString().split('T')[0],
-      fridgeZone
+      fridgeZone,
     };
-    setProducts(prev => [...prev, newProduct]);
-    setNotification(`Place ${productData.name} in: ${fridgeZone}`);
-    setTimeout(() => setNotification(null), 4000);
+    try {
+      const saved = await insertProduct(productWithMeta, user.id);
+      setProducts(prev => [saved, ...prev]);
+      setNotification(`Place ${productData.name} in: ${fridgeZone}`);
+      setTimeout(() => setNotification(null), 4000);
+    } catch (err) {
+      console.error('Failed to add product:', err);
+    }
   };
 
-  const handleDeleteProduct = (id: string) => {
-    if (confirm('Are you sure you want to delete this product?')) {
+  const handleDeleteProduct = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this product?')) return;
+    try {
+      await deleteProduct(id);
       setProducts(prev => prev.filter(p => p.id !== id));
+    } catch (err) {
+      console.error('Failed to delete product:', err);
     }
   };
 
@@ -58,13 +91,22 @@ function App() {
     setEditingProduct(product);
   };
 
-  const handleUpdateProduct = (updatedProduct: Product) => {
-    setProducts(prev => prev.map(p => p.id === updatedProduct.id ? updatedProduct : p));
-    setEditingProduct(null);
+  const handleUpdateProduct = async (updatedProduct: Product) => {
+    try {
+      await updateProduct(updatedProduct);
+      setProducts(prev => prev.map(p => p.id === updatedProduct.id ? updatedProduct : p));
+      setEditingProduct(null);
+    } catch (err) {
+      console.error('Failed to update product:', err);
+    }
   };
 
   const handleCancelEdit = () => {
     setEditingProduct(null);
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
   };
 
   const renderTabContent = () => {
@@ -73,7 +115,7 @@ function App() {
         return (
           <>
             {editingProduct ? (
-              <EditProductForm 
+              <EditProductForm
                 product={editingProduct}
                 onSave={handleUpdateProduct}
                 onCancel={handleCancelEdit}
@@ -81,8 +123,8 @@ function App() {
             ) : (
               <AddProductForm onAdd={handleAddProduct} />
             )}
-            <ProductList 
-              products={products} 
+            <ProductList
+              products={products}
               onDelete={handleDeleteProduct}
               onEdit={handleEditProduct}
             />
@@ -97,21 +139,34 @@ function App() {
     }
   };
 
+  if (authLoading) return null;
+
+  if (!user) return <Auth />;
+
   return (
     <div className="app">
       <header className="app-header">
-        <button
-          className="theme-toggle"
-          onClick={() => setDarkMode(prev => !prev)}
-          title={darkMode ? 'Mode jour' : 'Mode nuit'}
-        >
-          {darkMode ? '☀' : '☾'}
-        </button>
+        <div className="app-header-controls">
+          <button
+            className="theme-toggle"
+            onClick={() => setDarkMode(prev => !prev)}
+            title={darkMode ? 'Mode jour' : 'Mode nuit'}
+          >
+            {darkMode ? '☀' : '☾'}
+          </button>
+          <button
+            className="logout-btn"
+            onClick={handleLogout}
+            title="Sign out"
+          >
+            Sign out
+          </button>
+        </div>
         <h1>Fridge <span>Manager</span></h1>
         <div className="app-header-rule" />
         <p>Manage your products and never waste food again</p>
       </header>
-      
+
       <main className="app-main">
         <Tabs activeTab={activeTab} onTabChange={setActiveTab}>
           {renderTabContent()}
@@ -125,4 +180,3 @@ function App() {
 }
 
 export default App;
-

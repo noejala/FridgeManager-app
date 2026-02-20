@@ -1,25 +1,3 @@
-import { Product } from '../types/Product';
-
-const STORAGE_KEY = 'fridge-products';
-
-export const saveProducts = (products: Product[]): void => {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
-  } catch (error) {
-    console.error('Erreur lors de la sauvegarde:', error);
-  }
-};
-
-export const loadProducts = (): Product[] => {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : [];
-  } catch (error) {
-    console.error('Erreur lors du chargement:', error);
-    return [];
-  }
-};
-
 export const getDaysUntilExpiration = (expirationDate: string): number => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -37,4 +15,3 @@ export const isExpiringSoon = (expirationDate: string, days: number = 3): boolea
   const daysUntil = getDaysUntilExpiration(expirationDate);
   return daysUntil >= 0 && daysUntil <= days;
 };
-

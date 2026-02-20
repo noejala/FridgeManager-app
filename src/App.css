@@ -124,10 +124,16 @@ body::after {
   position: relative;
 }
 
-.theme-toggle {
+.app-header-controls {
   position: absolute;
   top: 0;
   right: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.theme-toggle {
   background: var(--bg-card);
   border: 1px solid var(--border-hover);
   color: var(--text-secondary);
@@ -147,6 +153,27 @@ body::after {
   border-color: var(--accent);
   color: var(--accent);
   background: var(--accent-bg);
+}
+
+.logout-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border-hover);
+  color: var(--text-secondary);
+  height: 36px;
+  padding: 0 0.75rem;
+  border-radius: 18px;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  white-space: nowrap;
+}
+
+.logout-btn:hover {
+  border-color: var(--red);
+  color: var(--red);
+  background: var(--red-bg);
 }
 
 .app-header h1 {
