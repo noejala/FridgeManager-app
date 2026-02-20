@@ -109,35 +109,32 @@ function App() {
     await supabase.auth.signOut();
   };
 
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case 'fridge':
-        return (
-          <>
-            {editingProduct ? (
-              <EditProductForm
-                product={editingProduct}
-                onSave={handleUpdateProduct}
-                onCancel={handleCancelEdit}
-              />
-            ) : (
-              <AddProductForm onAdd={handleAddProduct} />
-            )}
-            <ProductList
-              products={products}
-              onDelete={handleDeleteProduct}
-              onEdit={handleEditProduct}
-            />
-          </>
-        );
-      case 'cook':
-        return <WhatToCook products={products} />;
-      case 'seasonal':
-        return <SeasonalProducts />;
-      default:
-        return null;
-    }
-  };
+  const renderTabContent = () => (
+    <>
+      <div hidden={activeTab !== 'fridge'}>
+        {editingProduct ? (
+          <EditProductForm
+            product={editingProduct}
+            onSave={handleUpdateProduct}
+            onCancel={handleCancelEdit}
+          />
+        ) : (
+          <AddProductForm onAdd={handleAddProduct} />
+        )}
+        <ProductList
+          products={products}
+          onDelete={handleDeleteProduct}
+          onEdit={handleEditProduct}
+        />
+      </div>
+      <div hidden={activeTab !== 'cook'}>
+        <WhatToCook products={products} />
+      </div>
+      <div hidden={activeTab !== 'seasonal'}>
+        <SeasonalProducts />
+      </div>
+    </>
+  );
 
   if (authLoading) return null;
 
