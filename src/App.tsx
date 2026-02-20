@@ -54,6 +54,7 @@ function App() {
   useEffect(() => {
     if (user) {
       loadUserProducts();
+      setActiveTab('fridge');
     } else {
       setProducts([]);
     }
