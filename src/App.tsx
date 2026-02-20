@@ -138,7 +138,7 @@ function App() {
 
   if (authLoading) return null;
 
-  if (!user) return <Auth />;
+  if (!user) return <Auth darkMode={darkMode} onToggleDarkMode={() => setDarkMode(prev => !prev)} />;
 
   return (
     <div className="app">

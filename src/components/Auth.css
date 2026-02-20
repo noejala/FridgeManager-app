@@ -7,6 +7,7 @@
 }
 
 .auth-card {
+  position: relative;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -15,6 +16,31 @@
   width: 100%;
   max-width: 400px;
   animation: card-in 0.3s ease;
+}
+
+.auth-theme-toggle {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-hover);
+  color: var(--text-secondary);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  line-height: 1;
+}
+
+.auth-theme-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-bg);
 }
 
 .auth-title {
@@ -68,12 +94,14 @@
   transition: border-color 0.15s, box-shadow 0.15s;
   outline: none;
   -webkit-box-shadow: 0 0 0px 1000px var(--bg-input) inset;
+  -webkit-text-fill-color: var(--text);
 }
 
 .auth-field input:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-bg);
   -webkit-box-shadow: 0 0 0px 1000px var(--bg-input) inset, 0 0 0 3px var(--accent-bg);
+  -webkit-text-fill-color: var(--text);
 }
 
 .auth-error {

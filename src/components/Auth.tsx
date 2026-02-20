@@ -2,7 +2,12 @@ import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import './Auth.css';
 
-export function Auth() {
+interface AuthProps {
+  darkMode: boolean;
+  onToggleDarkMode: () => void;
+}
+
+export function Auth({ darkMode, onToggleDarkMode }: AuthProps) {
   const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -41,6 +46,13 @@ export function Auth() {
   return (
     <div className="auth-container">
       <div className="auth-card">
+        <button
+          className="auth-theme-toggle"
+          onClick={onToggleDarkMode}
+          title={darkMode ? 'Mode jour' : 'Mode nuit'}
+        >
+          {darkMode ? '☀' : '☾'}
+        </button>
         <h1 className="auth-title">Fridge <span>Manager</span></h1>
         <p className="auth-subtitle">
           {mode === 'login' ? 'Sign in to your account' : 'Create a new account'}
