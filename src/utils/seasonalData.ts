@@ -11,19 +11,20 @@ export const REGIONS: { id: RegionId; name: string; flag: string }[] = [
 ];
 
 export const seasonalDataByRegion: Record<RegionId, Record<number, SeasonalEntry>> = {
+  // Source: Greenpeace France seasonal calendar (greenpeace.fr/guetteur/calendrier)
   france: {
-    1:  { season: 'Winter', products: ['Citrus fruits', 'Cabbage', 'Carrots', 'Potatoes', 'Apples', 'Endives'] },
-    2:  { season: 'Winter', products: ['Citrus fruits', 'Leeks', 'Endives', 'Potatoes', 'Apples', 'Carrots'] },
-    3:  { season: 'Spring', products: ['Asparagus', 'Spinach', 'Radishes', 'Leeks', 'Carrots', 'Lettuce'] },
-    4:  { season: 'Spring', products: ['Asparagus', 'Peas', 'Lettuce', 'Radishes', 'Strawberries', 'Artichokes'] },
-    5:  { season: 'Spring', products: ['Strawberries', 'Cherries', 'Asparagus', 'Peas', 'Spinach', 'Radishes'] },
-    6:  { season: 'Summer', products: ['Strawberries', 'Cherries', 'Tomatoes', 'Zucchini', 'Cucumbers', 'Peaches'] },
-    7:  { season: 'Summer', products: ['Tomatoes', 'Zucchini', 'Peppers', 'Peaches', 'Plums', 'Blueberries'] },
-    8:  { season: 'Summer', products: ['Tomatoes', 'Corn', 'Peppers', 'Melons', 'Figs', 'Peaches'] },
-    9:  { season: 'Autumn', products: ['Grapes', 'Apples', 'Pears', 'Mushrooms', 'Pumpkins', 'Figs'] },
-    10: { season: 'Autumn', products: ['Apples', 'Pears', 'Grapes', 'Chestnuts', 'Mushrooms', 'Pumpkins'] },
-    11: { season: 'Autumn', products: ['Cabbage', 'Carrots', 'Potatoes', 'Brussels sprouts', 'Mushrooms', 'Leeks'] },
-    12: { season: 'Winter', products: ['Citrus fruits', 'Cabbage', 'Carrots', 'Potatoes', 'Pears', 'Endives'] },
+    1:  { season: 'Winter', products: ['Carrots', 'Leeks', 'Endives', 'Cabbage', 'Spinach', 'Apples', 'Pears', 'Clementines'] },
+    2:  { season: 'Winter', products: ['Carrots', 'Leeks', 'Endives', 'Spinach', 'Radishes', 'Apples', 'Pears', 'Oranges'] },
+    3:  { season: 'Spring', products: ['Asparagus', 'Leeks', 'Carrots', 'Spinach', 'Radishes', 'Apples', 'Pears', 'Oranges'] },
+    4:  { season: 'Spring', products: ['Asparagus', 'Artichokes', 'Peas', 'Lettuce', 'Cauliflower', 'Radishes', 'Apples', 'Pears'] },
+    5:  { season: 'Spring', products: ['Asparagus', 'Artichokes', 'Peas', 'Zucchini', 'Radishes', 'Strawberries', 'Cherries', 'Rhubarb'] },
+    6:  { season: 'Summer', products: ['Artichokes', 'Zucchini', 'Cucumbers', 'Green beans', 'Fennel', 'Strawberries', 'Cherries', 'Apricots'] },
+    7:  { season: 'Summer', products: ['Tomatoes', 'Zucchini', 'Eggplant', 'Peppers', 'Fennel', 'Raspberries', 'Peaches', 'Figs'] },
+    8:  { season: 'Summer', products: ['Tomatoes', 'Peppers', 'Eggplant', 'Zucchini', 'Fennel', 'Peaches', 'Figs', 'Grapes'] },
+    9:  { season: 'Autumn', products: ['Leeks', 'Fennel', 'Squash', 'Artichokes', 'Spinach', 'Apples', 'Pears', 'Grapes'] },
+    10: { season: 'Autumn', products: ['Carrots', 'Leeks', 'Celeriac', 'Cabbage', 'Pumpkins', 'Chestnuts', 'Apples', 'Pears'] },
+    11: { season: 'Autumn', products: ['Carrots', 'Leeks', 'Celeriac', 'Cabbage', 'Broccoli', 'Endives', 'Clementines', 'Apples'] },
+    12: { season: 'Winter', products: ['Carrots', 'Leeks', 'Endives', 'Cabbage', 'Spinach', 'Clementines', 'Oranges', 'Pears'] },
   },
   mediterranean: {
     1:  { season: 'Winter', products: ['Citrus fruits', 'Artichokes', 'Broccoli', 'Fennel', 'Cauliflower', 'Olives'] },
@@ -137,4 +138,9 @@ export const productEmojiMap: Record<string, string> = {
   'New potatoes': '🥔',
   'Sweet potatoes': '🍠',
   'Cranberries': '🍒',
+  'Clementines': '🍊',
+  'Oranges': '🍊',
+  'Green beans': '🫘',
+  'Rhubarb': '🌿',
+  'Quince': '🍐',
 };
