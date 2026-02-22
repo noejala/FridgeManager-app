@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Product, ProductCategory } from '../types/Product';
 import { guessCategory } from '../utils/categoryMapping';
 import { estimateExpirationDate } from '../utils/shelfLife';
@@ -20,6 +21,7 @@ const CATEGORIES: ProductCategory[] = [
 ];
 
 export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState('');
   const [category, setCategory] = useState<ProductCategory>('Other');
@@ -38,7 +40,7 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
 
     const quantityNum = Number(quantity);
     if (isNaN(quantityNum) || quantityNum <= 0) {
-      alert('Quantity must be a number greater than 0');
+      alert(t('form.quantityError'));
       return;
     }
 
@@ -51,7 +53,6 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
       isEstimatedExpiration: unknownExpiration,
     });
 
-    // Reset form
     setName('');
     setCategory('Other');
     setExpirationDate('');
@@ -67,17 +68,17 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
   if (!isOpen) {
     return (
       <button className="add-product-btn" onClick={() => setIsOpen(true)}>
-        + Add a product
+        + {t('form.addProduct')}
       </button>
     );
   }
 
   return (
     <form className="add-product-form" onSubmit={handleSubmit}>
-      <h2>Add a product</h2>
-      
+      <h2>{t('form.addProduct')}</h2>
+
       <div className="form-group">
-        <label htmlFor="name">Product name *</label>
+        <label htmlFor="name">{t('form.productName')}</label>
         <input
           id="name"
           type="text"
@@ -88,13 +89,13 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
             setCategory(guessCategory(newName));
           }}
           required
-          placeholder="Ex: Milk, Apples, Chicken..."
+          placeholder={t('form.productPlaceholder')}
         />
       </div>
 
       <div className="form-row">
         <div className="form-group">
-          <label htmlFor="category">Category</label>
+          <label htmlFor="category">{t('form.category')}</label>
           <select
             id="category"
             value={category}
@@ -107,7 +108,7 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="quantity">Quantity</label>
+          <label htmlFor="quantity">{t('form.quantity')}</label>
           <input
             id="quantity"
             type="number"
@@ -126,7 +127,7 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="unit">Unit</label>
+          <label htmlFor="unit">{t('form.unit')}</label>
           <select
             id="unit"
             value={unit}
@@ -149,13 +150,13 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
             checked={unknownExpiration}
             onChange={(e) => setUnknownExpiration(e.target.checked)}
           />
-          I don't know the expiration date
+          {t('form.unknownExpiration')}
         </label>
       </div>
 
       {unknownExpiration ? (
         <div className="form-group">
-          <label htmlFor="purchaseDate">When did you buy it?</label>
+          <label htmlFor="purchaseDate">{t('form.whenDidYouBuy')}</label>
           <div className="purchase-date-row">
             <input
               id="purchaseDate"
@@ -169,13 +170,13 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
               className={`today-btn${purchaseDate === new Date().toISOString().split('T')[0] ? ' today-btn-active' : ''}`}
               onClick={() => setPurchaseDate(new Date().toISOString().split('T')[0])}
             >
-              Today
+              {t('form.today')}
             </button>
           </div>
         </div>
       ) : (
         <div className="form-group">
-          <label htmlFor="expirationDate">Expiration date *</label>
+          <label htmlFor="expirationDate">{t('form.expirationDate')}</label>
           <input
             id="expirationDate"
             type="date"
@@ -189,13 +190,12 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
 
       <div className="form-actions">
         <button type="button" className="cancel-btn" onClick={() => setIsOpen(false)}>
-          Cancel
+          {t('form.cancel')}
         </button>
         <button type="submit" className="submit-btn">
-          Add
+          {t('form.add')}
         </button>
       </div>
     </form>
   );
 };
-

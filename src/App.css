@@ -155,6 +155,27 @@ body::after {
   background: var(--accent-bg);
 }
 
+.lang-toggle {
+  background: var(--bg-card);
+  border: 1px solid var(--border-hover);
+  color: var(--text-secondary);
+  height: 36px;
+  padding: 0 10px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+.lang-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-bg);
+}
+
 .logout-btn {
   background: var(--bg-card);
   border: 1px solid var(--border-hover);

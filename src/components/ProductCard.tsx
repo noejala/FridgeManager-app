@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Product } from '../types/Product';
 import { getDaysUntilExpiration, isExpired, isExpiringSoon } from '../utils/storage';
 import { getZoneExplanation } from '../utils/fridgePlacement';
@@ -10,6 +11,7 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ product, onDelete, onEdit }: ProductCardProps) => {
+  const { t, i18n } = useTranslation();
   const daysUntil = getDaysUntilExpiration(product.expirationDate);
   const expired = isExpired(product.expirationDate);
   const expiringSoon = isExpiringSoon(product.expirationDate);
@@ -21,29 +23,30 @@ export const ProductCard = ({ product, onDelete, onEdit }: ProductCardProps) => 
   };
 
   const getStatusText = () => {
-    if (expired) return 'Expired';
-    if (expiringSoon) return `Expires in ${daysUntil} day${daysUntil > 1 ? 's' : ''}`;
-    return `Expires in ${daysUntil} day${daysUntil > 1 ? 's' : ''}`;
+    if (expired) return t('productCard.expired');
+    return t('productCard.expiresIn', { count: daysUntil });
   };
+
+  const locale = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
 
   return (
     <div className={`product-card ${getStatusClass()}`}>
       <div className="product-header">
         <h3>{product.name}</h3>
         <div className="product-actions">
-          <button 
-            className="edit-btn" 
+          <button
+            className="edit-btn"
             onClick={() => onEdit(product)}
-            aria-label="Edit"
-            title="Edit"
+            aria-label={t('productCard.edit')}
+            title={t('productCard.edit')}
           >
             ✏️
           </button>
-          <button 
-            className="delete-btn" 
+          <button
+            className="delete-btn"
             onClick={() => onDelete(product.id)}
-            aria-label="Delete"
-            title="Delete"
+            aria-label={t('productCard.delete')}
+            title={t('productCard.delete')}
           >
             ×
           </button>
@@ -60,15 +63,15 @@ export const ProductCard = ({ product, onDelete, onEdit }: ProductCardProps) => 
       </div>
       <div className="product-dates">
         <div className="date-info">
-          <span className="label">Added:</span>
-          <span>{new Date(product.addedDate).toLocaleDateString('en-US')}</span>
+          <span className="label">{t('productCard.added')}</span>
+          <span>{new Date(product.addedDate).toLocaleDateString(locale)}</span>
         </div>
         <div className="date-info">
-          <span className="label">Expires:</span>
+          <span className="label">{t('productCard.expires')}</span>
           <span>
             {product.isEstimatedExpiration ? '~' : ''}
-            {new Date(product.expirationDate).toLocaleDateString('en-US')}
-            {product.isEstimatedExpiration ? ' (estimated)' : ''}
+            {new Date(product.expirationDate).toLocaleDateString(locale)}
+            {product.isEstimatedExpiration ? ` ${t('productCard.estimated')}` : ''}
           </span>
         </div>
       </div>
@@ -78,4 +81,3 @@ export const ProductCard = ({ product, onDelete, onEdit }: ProductCardProps) => 
     </div>
   );
 };
-

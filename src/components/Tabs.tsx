@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import './Tabs.css';
 
 interface TabsProps {
@@ -8,10 +9,12 @@ interface TabsProps {
 }
 
 export const Tabs = ({ activeTab, onTabChange, children }: TabsProps) => {
+  const { t } = useTranslation();
+
   const tabs = [
-    { id: 'fridge', label: 'In my fridge' },
-    { id: 'cook', label: 'What to cook' },
-    { id: 'seasonal', label: 'Seasonal products' }
+    { id: 'fridge', label: t('tabs.fridge') },
+    { id: 'cook', label: t('tabs.cook') },
+    { id: 'seasonal', label: t('tabs.seasonal') },
   ];
 
   return (
@@ -33,5 +36,3 @@ export const Tabs = ({ activeTab, onTabChange, children }: TabsProps) => {
     </div>
   );
 };
-
-

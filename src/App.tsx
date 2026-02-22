@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { User } from '@supabase/supabase-js';
 import { Product } from './types/Product';
 import { supabase } from './lib/supabase';
@@ -14,6 +15,7 @@ import { Auth } from './components/Auth';
 import './App.css';
 
 function App() {
+  const { t, i18n } = useTranslation();
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [products, setProducts] = useState<Product[]>([]);
@@ -71,7 +73,7 @@ function App() {
     try {
       const saved = await insertProduct(productWithMeta, user.id);
       setProducts(prev => [saved, ...prev]);
-      setNotification(`Place ${productData.name} in: ${fridgeZone}`);
+      setNotification(t('app.placeIn', { name: productData.name, zone: fridgeZone }));
       setTimeout(() => setNotification(null), 4000);
     } catch (err) {
       console.error('Failed to add product:', err);
@@ -79,7 +81,7 @@ function App() {
   };
 
   const handleDeleteProduct = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this product?')) return;
+    if (!confirm(t('app.deleteConfirm'))) return;
     try {
       await deleteProduct(id);
       setProducts(prev => prev.filter(p => p.id !== id));
@@ -148,21 +150,28 @@ function App() {
           <button
             className="theme-toggle"
             onClick={() => setDarkMode(prev => !prev)}
-            title={darkMode ? 'Mode jour' : 'Mode nuit'}
+            title={darkMode ? t('app.lightMode') : t('app.darkMode')}
           >
             {darkMode ? '☀' : '☾'}
           </button>
           <button
+            className="lang-toggle"
+            onClick={() => i18n.changeLanguage(i18n.language === 'en' ? 'fr' : 'en')}
+            title="Switch language"
+          >
+            {i18n.language === 'en' ? 'FR' : 'EN'}
+          </button>
+          <button
             className="logout-btn"
             onClick={handleLogout}
-            title="Sign out"
+            title={t('app.signOut')}
           >
-            Sign out
+            {t('app.signOut')}
           </button>
         </div>
         <h1>Fridge <span>Manager</span></h1>
         <div className="app-header-rule" />
-        <p>Manage your products and never waste food again</p>
+        <p>{t('app.subtitle')}</p>
       </header>
 
       <main className="app-main">

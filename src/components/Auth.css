@@ -18,10 +18,15 @@
   animation: card-in 0.3s ease;
 }
 
-.auth-theme-toggle {
+.auth-controls {
   position: absolute;
   top: 1rem;
   right: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.auth-theme-toggle {
   background: var(--bg-surface);
   border: 1px solid var(--border-hover);
   color: var(--text-secondary);

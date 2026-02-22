@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Product } from '../types/Product';
 import { searchByIngredient, getMealDetails, MealDetails, singularize } from '../utils/mealApi';
 import './WhatToCook.css';
@@ -55,6 +56,7 @@ function matchIngredients(
 }
 
 export const WhatToCook = ({ products }: WhatToCookProps) => {
+  const { t } = useTranslation();
   const [recipes, setRecipes] = useState<RecipeMatch[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -73,12 +75,10 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
       const fridgeNames = products.map((p) => p.name);
       const ingredientNames = fridgeNames.slice(0, 5);
 
-      // Search meals by each fridge ingredient
       const searchResults = await Promise.all(
         ingredientNames.map((name) => searchByIngredient(name))
       );
 
-      // Count how many fridge ingredients match each meal
       const mealHits = new Map<string, number>();
       for (const meals of searchResults) {
         for (const meal of meals) {
@@ -86,17 +86,14 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
         }
       }
 
-      // Sort by most hits first — meals matching more fridge ingredients are more likely feasible
       const sortedIds = [...mealHits.entries()]
         .sort((a, b) => b[1] - a[1])
         .map(([id]) => id);
 
-      // Fetch details for top 30 candidates
       const detailsResults = await Promise.all(
         sortedIds.slice(0, 30).map((id) => getMealDetails(id))
       );
 
-      // Filter: keep only recipes with <= MAX_MISSING missing ingredients
       const matched: RecipeMatch[] = [];
       for (const meal of detailsResults) {
         if (!meal) continue;
@@ -106,16 +103,15 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
         }
       }
 
-      // Sort: fewest missing first
       matched.sort((a, b) => a.missing.length - b.missing.length);
 
       setRecipes(matched);
     } catch {
-      setError('Failed to fetch recipes. Please try again later.');
+      setError(t('cook.failedFetch'));
     } finally {
       setLoading(false);
     }
-  }, [products]);
+  }, [products, t]);
 
   useEffect(() => {
     fetchRecipes();
@@ -127,11 +123,11 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
     return (
       <div className="what-to-cook">
         <div className="cook-header">
-          <h2>🍳 What to cook</h2>
+          <h2>{t('cook.title')}</h2>
         </div>
         <div className="empty-suggestions">
           <div className="empty-icon">🍽️</div>
-          <p>Add products to get recipe suggestions</p>
+          <p>{t('cook.addProductsForSuggestions')}</p>
         </div>
       </div>
     );
@@ -140,30 +136,30 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
   return (
     <div className="what-to-cook">
       <div className="cook-header">
-        <h2>🍳 What to cook</h2>
+        <h2>{t('cook.title')}</h2>
         <p className="cook-subtitle">
-          Recipes based on your {products.length} product{products.length > 1 ? 's' : ''}
+          {t('cook.recipesBasedOn', { count: products.length })}
         </p>
       </div>
 
       {loading && (
         <div className="loading-state">
           <div className="spinner" />
-          <p>Searching for recipes...</p>
+          <p>{t('cook.searching')}</p>
         </div>
       )}
 
       {error && (
         <div className="error-state">
           <p>{error}</p>
-          <button onClick={fetchRecipes}>Retry</button>
+          <button onClick={fetchRecipes}>{t('cook.retry')}</button>
         </div>
       )}
 
       {!loading && !error && recipes.length === 0 && (
         <div className="empty-suggestions">
           <div className="empty-icon">🔍</div>
-          <p>No recipes found for your current products. Try adding more ingredients!</p>
+          <p>{t('cook.noRecipes')}</p>
         </div>
       )}
 
@@ -180,10 +176,10 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
                 <h3>{recipe.meal.name}</h3>
                 <div className="recipe-match-info">
                   {recipe.missing.length === 0 ? (
-                    <span className="match-badge ready">Ready to cook</span>
+                    <span className="match-badge ready">{t('cook.readyToCook')}</span>
                   ) : (
                     <span className="match-badge to-buy">
-                      {recipe.missing.length} to buy
+                      {t('cook.toBuy', { count: recipe.missing.length })}
                     </span>
                   )}
                 </div>
@@ -210,7 +206,7 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
 
             {selectedRecipe.available.length > 0 && (
               <div className="modal-section">
-                <h3>In your fridge</h3>
+                <h3>{t('cook.inYourFridge')}</h3>
                 <ul className="modal-ingredients">
                   {selectedRecipe.available.map((ing, i) => (
                     <li key={i} className="ingredient-available">
@@ -223,7 +219,7 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
 
             {selectedRecipe.pantry.length > 0 && (
               <div className="modal-section">
-                <h3>Pantry staples</h3>
+                <h3>{t('cook.pantryStaples')}</h3>
                 <ul className="modal-ingredients">
                   {selectedRecipe.pantry.map((ing, i) => (
                     <li key={i} className="ingredient-pantry">
@@ -236,7 +232,7 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
 
             {selectedRecipe.missing.length > 0 && (
               <div className="modal-section">
-                <h3>To buy</h3>
+                <h3>{t('cook.toBuy', { count: selectedRecipe.missing.length })}</h3>
                 <ul className="modal-ingredients">
                   {selectedRecipe.missing.map((ing, i) => (
                     <li key={i} className="ingredient-missing">
@@ -248,7 +244,7 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
             )}
 
             <div className="modal-section">
-              <h3>Instructions</h3>
+              <h3>{t('cook.instructions')}</h3>
               <p className="modal-instructions">{selectedRecipe.meal.instructions}</p>
             </div>
           </div>

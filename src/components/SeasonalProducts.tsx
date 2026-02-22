@@ -1,13 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { REGIONS, seasonalDataByRegion, productEmojiMap, type RegionId } from '../utils/seasonalData';
 import './SeasonalProducts.css';
 
-const monthNames = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-];
-
 export const SeasonalProducts = () => {
+  const { t } = useTranslation();
   const currentMonth = new Date().getMonth() + 1;
 
   const [selectedRegion, setSelectedRegion] = useState<RegionId>(() => {
@@ -19,13 +16,15 @@ export const SeasonalProducts = () => {
   }, [selectedRegion]);
 
   const currentSeason = seasonalDataByRegion[selectedRegion][currentMonth];
+  const monthName = t(`seasonal.months.${currentMonth}`);
+  const seasonName = t(`seasonal.season.${currentSeason.season.toLowerCase()}`);
 
   return (
     <div className="seasonal-products">
       <div className="seasonal-header">
-        <h2>🌱 Seasonal products</h2>
+        <h2>{t('seasonal.title')}</h2>
         <p className="seasonal-subtitle">
-          Recommended products for {monthNames[currentMonth - 1]} ({currentSeason.season})
+          {t('seasonal.recommendedFor', { month: monthName, season: seasonName })}
         </p>
       </div>
 
@@ -45,12 +44,9 @@ export const SeasonalProducts = () => {
       <div className="seasonal-content">
         <div className="seasonal-info">
           <div className={`season-badge season-badge-${currentSeason.season.toLowerCase()}`}>
-            {currentSeason.season}
+            {seasonName}
           </div>
-          <p>
-            These products are in season right now, meaning they're fresher,
-            more flavorful, and often more affordable!
-          </p>
+          <p>{t('seasonal.description')}</p>
         </div>
 
         <div className="products-grid">

@@ -1,0 +1,97 @@
+{
+  "app": {
+    "darkMode": "Dark mode",
+    "lightMode": "Light mode",
+    "signOut": "Sign out",
+    "subtitle": "Manage your products and never waste food again",
+    "placeIn": "Place {{name}} in: {{zone}}",
+    "deleteConfirm": "Are you sure you want to delete this product?"
+  },
+  "auth": {
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "signInToAccount": "Sign in to your account",
+    "createNewAccount": "Create a new account",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "passwordsNoMatch": "Passwords do not match",
+    "accountCreated": "Account created! Check your email to confirm, then log in.",
+    "pleaseWait": "Please wait…",
+    "createAccount": "Create account",
+    "noAccount": "Don't have an account?",
+    "alreadyAccount": "Already have an account?",
+    "anErrorOccurred": "An error occurred"
+  },
+  "tabs": {
+    "fridge": "In my fridge",
+    "cook": "What to cook",
+    "seasonal": "Seasonal products"
+  },
+  "productList": {
+    "nothingHereYet": "Nothing here yet",
+    "startAdding": "Start by adding what's in your fridge",
+    "expiredProduct_one": "⚠️ {{count}} expired product",
+    "expiredProduct_other": "⚠️ {{count}} expired products",
+    "expiringSoon_one": "⏰ {{count}} product expiring soon",
+    "expiringSoon_other": "⏰ {{count}} products expiring soon"
+  },
+  "form": {
+    "addProduct": "Add a product",
+    "editProduct": "Edit product",
+    "productName": "Product name *",
+    "category": "Category",
+    "quantity": "Quantity",
+    "unit": "Unit",
+    "unknownExpiration": "I don't know the expiration date",
+    "whenDidYouBuy": "When did you buy it?",
+    "today": "Today",
+    "expirationDate": "Expiration date *",
+    "cancel": "Cancel",
+    "add": "Add",
+    "save": "Save",
+    "quantityError": "Quantity must be a number greater than 0",
+    "productPlaceholder": "Ex: Milk, Apples, Chicken..."
+  },
+  "productCard": {
+    "expired": "Expired",
+    "expiresIn_one": "Expires in {{count}} day",
+    "expiresIn_other": "Expires in {{count}} days",
+    "added": "Added:",
+    "expires": "Expires:",
+    "estimated": "(estimated)",
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "cook": {
+    "title": "🍳 What to cook",
+    "addProductsForSuggestions": "Add products to get recipe suggestions",
+    "recipesBasedOn_one": "Recipes based on your {{count}} product",
+    "recipesBasedOn_other": "Recipes based on your {{count}} products",
+    "searching": "Searching for recipes...",
+    "retry": "Retry",
+    "noRecipes": "No recipes found for your current products. Try adding more ingredients!",
+    "readyToCook": "Ready to cook",
+    "toBuy": "{{count}} to buy",
+    "inYourFridge": "In your fridge",
+    "pantryStaples": "Pantry staples",
+    "instructions": "Instructions",
+    "failedFetch": "Failed to fetch recipes. Please try again later."
+  },
+  "seasonal": {
+    "title": "🌱 Seasonal products",
+    "recommendedFor": "Recommended products for {{month}} ({{season}})",
+    "description": "These products are in season right now, meaning they're fresher, more flavorful, and often more affordable!",
+    "season": {
+      "winter": "Winter",
+      "spring": "Spring",
+      "summer": "Summer",
+      "autumn": "Autumn"
+    },
+    "months": {
+      "1": "January", "2": "February", "3": "March", "4": "April",
+      "5": "May", "6": "June", "7": "July", "8": "August",
+      "9": "September", "10": "October", "11": "November", "12": "December"
+    }
+  }
+}

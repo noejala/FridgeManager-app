@@ -1,0 +1,97 @@
+{
+  "app": {
+    "darkMode": "Mode nuit",
+    "lightMode": "Mode jour",
+    "signOut": "Déconnexion",
+    "subtitle": "Gérez vos produits et ne gaspillez plus jamais de nourriture",
+    "placeIn": "Placez {{name}} dans : {{zone}}",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce produit ?"
+  },
+  "auth": {
+    "signIn": "Se connecter",
+    "signUp": "S'inscrire",
+    "signInToAccount": "Connectez-vous à votre compte",
+    "createNewAccount": "Créer un nouveau compte",
+    "email": "Email",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "passwordsNoMatch": "Les mots de passe ne correspondent pas",
+    "accountCreated": "Compte créé ! Vérifiez votre email pour confirmer, puis connectez-vous.",
+    "pleaseWait": "Veuillez patienter…",
+    "createAccount": "Créer un compte",
+    "noAccount": "Pas encore de compte ?",
+    "alreadyAccount": "Déjà un compte ?",
+    "anErrorOccurred": "Une erreur est survenue"
+  },
+  "tabs": {
+    "fridge": "Mon frigo",
+    "cook": "Que cuisiner",
+    "seasonal": "Produits de saison"
+  },
+  "productList": {
+    "nothingHereYet": "Rien ici pour le moment",
+    "startAdding": "Commencez par ajouter ce qui est dans votre frigo",
+    "expiredProduct_one": "⚠️ {{count}} produit expiré",
+    "expiredProduct_other": "⚠️ {{count}} produits expirés",
+    "expiringSoon_one": "⏰ {{count}} produit expire bientôt",
+    "expiringSoon_other": "⏰ {{count}} produits expirent bientôt"
+  },
+  "form": {
+    "addProduct": "Ajouter un produit",
+    "editProduct": "Modifier le produit",
+    "productName": "Nom du produit *",
+    "category": "Catégorie",
+    "quantity": "Quantité",
+    "unit": "Unité",
+    "unknownExpiration": "Je ne connais pas la date d'expiration",
+    "whenDidYouBuy": "Quand l'avez-vous acheté ?",
+    "today": "Aujourd'hui",
+    "expirationDate": "Date d'expiration *",
+    "cancel": "Annuler",
+    "add": "Ajouter",
+    "save": "Enregistrer",
+    "quantityError": "La quantité doit être un nombre supérieur à 0",
+    "productPlaceholder": "Ex : Lait, Pommes, Poulet..."
+  },
+  "productCard": {
+    "expired": "Expiré",
+    "expiresIn_one": "Expire dans {{count}} jour",
+    "expiresIn_other": "Expire dans {{count}} jours",
+    "added": "Ajouté :",
+    "expires": "Expire :",
+    "estimated": "(estimé)",
+    "edit": "Modifier",
+    "delete": "Supprimer"
+  },
+  "cook": {
+    "title": "🍳 Que cuisiner",
+    "addProductsForSuggestions": "Ajoutez des produits pour obtenir des suggestions de recettes",
+    "recipesBasedOn_one": "Recettes basées sur votre {{count}} produit",
+    "recipesBasedOn_other": "Recettes basées sur vos {{count}} produits",
+    "searching": "Recherche de recettes...",
+    "retry": "Réessayer",
+    "noRecipes": "Aucune recette trouvée pour vos produits actuels. Essayez d'ajouter plus d'ingrédients !",
+    "readyToCook": "Prêt à cuisiner",
+    "toBuy": "{{count}} à acheter",
+    "inYourFridge": "Dans votre frigo",
+    "pantryStaples": "Produits de base",
+    "instructions": "Instructions",
+    "failedFetch": "Échec de la récupération des recettes. Veuillez réessayer plus tard."
+  },
+  "seasonal": {
+    "title": "🌱 Produits de saison",
+    "recommendedFor": "Produits recommandés pour {{month}} ({{season}})",
+    "description": "Ces produits sont de saison en ce moment, ce qui signifie qu'ils sont plus frais, plus savoureux et souvent moins chers !",
+    "season": {
+      "winter": "Hiver",
+      "spring": "Printemps",
+      "summer": "Été",
+      "autumn": "Automne"
+    },
+    "months": {
+      "1": "Janvier", "2": "Février", "3": "Mars", "4": "Avril",
+      "5": "Mai", "6": "Juin", "7": "Juillet", "8": "Août",
+      "9": "Septembre", "10": "Octobre", "11": "Novembre", "12": "Décembre"
+    }
+  }
+}

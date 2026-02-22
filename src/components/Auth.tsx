@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import './Auth.css';
 
@@ -8,6 +9,7 @@ interface AuthProps {
 }
 
 export function Auth({ darkMode, onToggleDarkMode }: AuthProps) {
+  const { t, i18n } = useTranslation();
   const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -28,16 +30,16 @@ export function Auth({ darkMode, onToggleDarkMode }: AuthProps) {
         if (error) throw error;
       } else {
         if (password !== confirmPassword) {
-          setError('Passwords do not match');
+          setError(t('auth.passwordsNoMatch'));
           setLoading(false);
           return;
         }
         const { error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
-        setSuccessMsg('Account created! Check your email to confirm, then log in.');
+        setSuccessMsg(t('auth.accountCreated'));
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : t('auth.anErrorOccurred'));
     } finally {
       setLoading(false);
     }
@@ -46,21 +48,30 @@ export function Auth({ darkMode, onToggleDarkMode }: AuthProps) {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <button
-          className="auth-theme-toggle"
-          onClick={onToggleDarkMode}
-          title={darkMode ? 'Mode jour' : 'Mode nuit'}
-        >
-          {darkMode ? '☀' : '☾'}
-        </button>
+        <div className="auth-controls">
+          <button
+            className="auth-theme-toggle"
+            onClick={onToggleDarkMode}
+            title={darkMode ? t('app.lightMode') : t('app.darkMode')}
+          >
+            {darkMode ? '☀' : '☾'}
+          </button>
+          <button
+            className="auth-theme-toggle"
+            onClick={() => i18n.changeLanguage(i18n.language === 'en' ? 'fr' : 'en')}
+            title="Switch language"
+          >
+            {i18n.language === 'en' ? 'FR' : 'EN'}
+          </button>
+        </div>
         <h1 className="auth-title">Fridge <span>Manager</span></h1>
         <p className="auth-subtitle">
-          {mode === 'login' ? 'Sign in to your account' : 'Create a new account'}
+          {mode === 'login' ? t('auth.signInToAccount') : t('auth.createNewAccount')}
         </p>
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="auth-field">
-            <label htmlFor="auth-email">Email</label>
+            <label htmlFor="auth-email">{t('auth.email')}</label>
             <input
               id="auth-email"
               type="email"
@@ -73,7 +84,7 @@ export function Auth({ darkMode, onToggleDarkMode }: AuthProps) {
           </div>
 
           <div className="auth-field">
-            <label htmlFor="auth-password">Password</label>
+            <label htmlFor="auth-password">{t('auth.password')}</label>
             <input
               id="auth-password"
               type="password"
@@ -88,7 +99,7 @@ export function Auth({ darkMode, onToggleDarkMode }: AuthProps) {
 
           {mode === 'signup' && (
             <div className="auth-field">
-              <label htmlFor="auth-confirm-password">Confirm password</label>
+              <label htmlFor="auth-confirm-password">{t('auth.confirmPassword')}</label>
               <input
                 id="auth-confirm-password"
                 type="password"
@@ -106,18 +117,18 @@ export function Auth({ darkMode, onToggleDarkMode }: AuthProps) {
           {successMsg && <p className="auth-success">{successMsg}</p>}
 
           <button type="submit" className="auth-submit" disabled={loading}>
-            {loading ? 'Please wait…' : mode === 'login' ? 'Sign in' : 'Create account'}
+            {loading ? t('auth.pleaseWait') : mode === 'login' ? t('auth.signIn') : t('auth.createAccount')}
           </button>
         </form>
 
         <p className="auth-toggle">
-          {mode === 'login' ? "Don't have an account?" : 'Already have an account?'}
+          {mode === 'login' ? t('auth.noAccount') : t('auth.alreadyAccount')}
           {' '}
           <button
             type="button"
             onClick={() => { setMode(mode === 'login' ? 'signup' : 'login'); setError(null); setSuccessMsg(null); setConfirmPassword(''); }}
           >
-            {mode === 'login' ? 'Sign up' : 'Sign in'}
+            {mode === 'login' ? t('auth.signUp') : t('auth.signIn')}
           </button>
         </p>
       </div>

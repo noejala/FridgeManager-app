@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Product } from '../types/Product';
 import { ProductCard } from './ProductCard';
 import { isExpired, isExpiringSoon } from '../utils/storage';
@@ -10,6 +11,8 @@ interface ProductListProps {
 }
 
 export const ProductList = ({ products, onDelete, onEdit }: ProductListProps) => {
+  const { t } = useTranslation();
+
   if (products.length === 0) {
     return (
       <div className="empty-state">
@@ -21,13 +24,12 @@ export const ProductList = ({ products, onDelete, onEdit }: ProductListProps) =>
           <line x1="19" y1="55" x2="30" y2="55" strokeDasharray="2 3" />
           <line x1="19" y1="62" x2="26" y2="62" strokeDasharray="2 3" />
         </svg>
-        <h3>Nothing here yet</h3>
-        <p>Start by adding what's in your fridge</p>
+        <h3>{t('productList.nothingHereYet')}</h3>
+        <p>{t('productList.startAdding')}</p>
       </div>
     );
   }
 
-  // Trier les produits : expirés d'abord, puis ceux qui expirent bientôt
   const sortedProducts = [...products].sort((a, b) => {
     const aExpired = isExpired(a.expirationDate);
     const bExpired = isExpired(b.expirationDate);
@@ -38,7 +40,7 @@ export const ProductList = ({ products, onDelete, onEdit }: ProductListProps) =>
     if (!aExpired && bExpired) return 1;
     if (aExpiringSoon && !bExpiringSoon && !aExpired) return -1;
     if (!aExpiringSoon && bExpiringSoon && !bExpired) return 1;
-    
+
     return new Date(a.expirationDate).getTime() - new Date(b.expirationDate).getTime();
   });
 
@@ -51,17 +53,17 @@ export const ProductList = ({ products, onDelete, onEdit }: ProductListProps) =>
         <div className="alerts-summary">
           {expiredCount > 0 && (
             <div className="alert alert-expired">
-              ⚠️ {expiredCount} expired product{expiredCount > 1 ? 's' : ''}
+              {t('productList.expiredProduct', { count: expiredCount })}
             </div>
           )}
           {expiringSoonCount > 0 && (
             <div className="alert alert-expiring">
-              ⏰ {expiringSoonCount} product{expiringSoonCount > 1 ? 's' : ''} expiring soon
+              {t('productList.expiringSoon', { count: expiringSoonCount })}
             </div>
           )}
         </div>
       )}
-      
+
       <div className="product-grid">
         {sortedProducts.map(product => (
           <ProductCard
@@ -75,4 +77,3 @@ export const ProductList = ({ products, onDelete, onEdit }: ProductListProps) =>
     </div>
   );
 };
-

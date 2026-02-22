@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Product, ProductCategory } from '../types/Product';
 import { guessCategory } from '../utils/categoryMapping';
 import { estimateExpirationDate } from '../utils/shelfLife';
@@ -22,6 +23,7 @@ const CATEGORIES: ProductCategory[] = [
 ];
 
 export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormProps) => {
+  const { t } = useTranslation();
   const [name, setName] = useState(product.name);
   const [category, setCategory] = useState<ProductCategory>(product.category as ProductCategory);
   const [expirationDate, setExpirationDate] = useState(product.expirationDate);
@@ -48,7 +50,7 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
 
     const quantityNum = Number(quantity);
     if (isNaN(quantityNum) || quantityNum <= 0) {
-      alert('Quantity must be a number greater than 0');
+      alert(t('form.quantityError'));
       return;
     }
 
@@ -67,10 +69,10 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
 
   return (
     <form className="add-product-form" onSubmit={handleSubmit}>
-      <h2>Edit product</h2>
-      
+      <h2>{t('form.editProduct')}</h2>
+
       <div className="form-group">
-        <label htmlFor="edit-name">Product name *</label>
+        <label htmlFor="edit-name">{t('form.productName')}</label>
         <input
           id="edit-name"
           type="text"
@@ -81,13 +83,13 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
             setCategory(guessCategory(newName));
           }}
           required
-          placeholder="Ex: Milk, Apples, Chicken..."
+          placeholder={t('form.productPlaceholder')}
         />
       </div>
 
       <div className="form-row">
         <div className="form-group">
-          <label htmlFor="edit-category">Category</label>
+          <label htmlFor="edit-category">{t('form.category')}</label>
           <select
             id="edit-category"
             value={category}
@@ -100,7 +102,7 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
         </div>
 
         <div className="form-group">
-          <label htmlFor="edit-quantity">Quantity</label>
+          <label htmlFor="edit-quantity">{t('form.quantity')}</label>
           <input
             id="edit-quantity"
             type="number"
@@ -119,7 +121,7 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
         </div>
 
         <div className="form-group">
-          <label htmlFor="edit-unit">Unit</label>
+          <label htmlFor="edit-unit">{t('form.unit')}</label>
           <select
             id="edit-unit"
             value={unit}
@@ -142,13 +144,13 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
             checked={unknownExpiration}
             onChange={(e) => setUnknownExpiration(e.target.checked)}
           />
-          I don't know the expiration date
+          {t('form.unknownExpiration')}
         </label>
       </div>
 
       {unknownExpiration ? (
         <div className="form-group">
-          <label htmlFor="edit-purchaseDate">When did you buy it?</label>
+          <label htmlFor="edit-purchaseDate">{t('form.whenDidYouBuy')}</label>
           <div className="purchase-date-row">
             <input
               id="edit-purchaseDate"
@@ -162,13 +164,13 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
               className="today-btn"
               onClick={() => setPurchaseDate(new Date().toISOString().split('T')[0])}
             >
-              Today
+              {t('form.today')}
             </button>
           </div>
         </div>
       ) : (
         <div className="form-group">
-          <label htmlFor="edit-expirationDate">Expiration date *</label>
+          <label htmlFor="edit-expirationDate">{t('form.expirationDate')}</label>
           <input
             id="edit-expirationDate"
             type="date"
@@ -182,13 +184,12 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
 
       <div className="form-actions">
         <button type="button" className="cancel-btn" onClick={onCancel}>
-          Cancel
+          {t('form.cancel')}
         </button>
         <button type="submit" className="submit-btn">
-          Save
+          {t('form.save')}
         </button>
       </div>
     </form>
   );
 };
-
