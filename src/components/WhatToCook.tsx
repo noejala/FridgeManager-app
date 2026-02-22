@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Product } from '../types/Product';
 import { searchByIngredient, getMealDetails, MealDetails, singularize } from '../utils/mealApi';
+import { toEnglishIngredient } from '../utils/ingredientTranslation';
 import './WhatToCook.css';
 
 interface WhatToCookProps {
@@ -72,7 +73,7 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
     setError(null);
 
     try {
-      const fridgeNames = products.map((p) => p.name);
+      const fridgeNames = products.map((p) => toEnglishIngredient(p.name));
       const ingredientNames = fridgeNames.slice(0, 5);
 
       const searchResults = await Promise.all(
