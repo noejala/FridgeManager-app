@@ -78,6 +78,30 @@
     "instructions": "Instructions",
     "failedFetch": "Échec de la récupération des recettes. Veuillez réessayer plus tard."
   },
+  "categories": {
+    "Fruits": "Fruits",
+    "Vegetables": "Légumes",
+    "Meat": "Viandes",
+    "Fish": "Poissons",
+    "Dairy": "Produits laitiers",
+    "Beverages": "Boissons",
+    "Frozen": "Surgelés",
+    "Other": "Autre"
+  },
+  "zones": {
+    "Top of fridge": "Haut du frigo",
+    "Middle of fridge": "Milieu du frigo",
+    "Bottom of fridge": "Bas du frigo",
+    "Fridge door": "Porte du frigo",
+    "Crisper drawer": "Bac à légumes"
+  },
+  "zoneExplanations": {
+    "Top of fridge": "Le haut du frigo a une température douce et stable — idéal pour les produits laitiers, les restes et les aliments prêts à consommer.",
+    "Middle of fridge": "Les étagères du milieu ont une température constante et modérée — parfait pour la charcuterie, les plats cuisinés et les aliments préparés.",
+    "Bottom of fridge": "Le bas du frigo est la zone la plus froide — indispensable pour la viande et le poisson crus afin de prévenir la prolifération bactérienne.",
+    "Fridge door": "La porte est la partie la plus chaude du frigo — adaptée aux condiments, boissons, beurre et œufs qui tolèrent les légères variations de température.",
+    "Crisper drawer": "Le bac à légumes maintient une humidité plus élevée — conçu pour garder fruits et légumes frais et les empêcher de se dessécher."
+  },
   "seasonal": {
     "title": "🌱 Produits de saison",
     "recommendedFor": "Produits recommandés pour {{month}} ({{season}})",

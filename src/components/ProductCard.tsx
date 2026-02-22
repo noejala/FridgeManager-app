@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Product } from '../types/Product';
 import { getDaysUntilExpiration, isExpired, isExpiringSoon } from '../utils/storage';
-import { getZoneExplanation } from '../utils/fridgePlacement';
 import './ProductCard.css';
 
 interface ProductCardProps {
@@ -53,9 +52,9 @@ export const ProductCard = ({ product, onDelete, onEdit }: ProductCardProps) => 
         </div>
       </div>
       <div className="product-info">
-        <span className="category">{product.category}</span>
+        <span className="category">{t(`categories.${product.category}`)}</span>
         {product.fridgeZone && (
-          <span className="fridge-zone-badge" data-tooltip={getZoneExplanation(product.fridgeZone)}>{product.fridgeZone}</span>
+          <span className="fridge-zone-badge" data-tooltip={t(`zoneExplanations.${product.fridgeZone}`)}>{t(`zones.${product.fridgeZone}`)}</span>
         )}
         <span className="quantity">
           {product.quantity} {product.unit}

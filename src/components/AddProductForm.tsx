@@ -102,7 +102,7 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
             onChange={(e) => setCategory(e.target.value as ProductCategory)}
           >
             {CATEGORIES.map(cat => (
-              <option key={cat} value={cat}>{cat}</option>
+              <option key={cat} value={cat}>{t(`categories.${cat}`)}</option>
             ))}
           </select>
         </div>

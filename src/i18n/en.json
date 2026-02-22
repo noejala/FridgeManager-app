@@ -78,6 +78,30 @@
     "instructions": "Instructions",
     "failedFetch": "Failed to fetch recipes. Please try again later."
   },
+  "categories": {
+    "Fruits": "Fruits",
+    "Vegetables": "Vegetables",
+    "Meat": "Meat",
+    "Fish": "Fish",
+    "Dairy": "Dairy",
+    "Beverages": "Beverages",
+    "Frozen": "Frozen",
+    "Other": "Other"
+  },
+  "zones": {
+    "Top of fridge": "Top of fridge",
+    "Middle of fridge": "Middle of fridge",
+    "Bottom of fridge": "Bottom of fridge",
+    "Fridge door": "Fridge door",
+    "Crisper drawer": "Crisper drawer"
+  },
+  "zoneExplanations": {
+    "Top of fridge": "The top of the fridge has a mild, stable temperature — ideal for dairy products, leftovers, and ready-to-eat items that don't need intense cold.",
+    "Middle of fridge": "The middle shelves have a consistent, moderate temperature — perfect for deli meats, cooked dishes, and prepared foods.",
+    "Bottom of fridge": "The bottom of the fridge is the coldest zone — essential for raw meat and fish to prevent bacterial growth and keep them fresh longer.",
+    "Fridge door": "The door is the warmest part of the fridge — suitable for condiments, drinks, butter, and eggs which tolerate slight temperature changes.",
+    "Crisper drawer": "The crisper drawer maintains higher humidity — designed to keep fruits and vegetables fresh and prevent them from drying out."
+  },
   "seasonal": {
     "title": "🌱 Seasonal products",
     "recommendedFor": "Recommended products for {{month}} ({{season}})",
