@@ -59,7 +59,7 @@ interface Product {
 | `src/utils/storage.ts` | Date helpers only: `getDaysUntilExpiration`, `isExpired`, `isExpiringSoon` |
 | `src/utils/categoryMapping.ts` | `guessCategory(name)` — keyword-based auto-detection |
 | `src/utils/shelfLife.ts` | `estimateExpirationDate(name, category, purchaseDate)` — shelf life table |
-| `src/utils/fridgePlacement.ts` | `getFridgeZone` / `getZoneExplanation` — recommends one of 5 fridge zones |
+| `src/utils/fridgePlacement.ts` | `getFridgeZone` — recommends one of 5 fridge zones (explanations via i18n `zoneExplanations`) |
 | `src/utils/mealApi.ts` | TheMealDB API: `searchByIngredient`, `getMealDetails`, `singularize` |
 | `src/components/Auth.tsx` | Login/signup form with dark mode toggle |
 
