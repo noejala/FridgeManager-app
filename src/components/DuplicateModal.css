@@ -15,7 +15,7 @@
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 1.75rem;
-  width: min(460px, 92vw);
+  width: min(480px, 92vw);
   animation: modal-in 0.2s ease;
 }
 
@@ -50,7 +50,7 @@
   border: 1px solid var(--border);
   border-radius: calc(var(--radius) - 2px);
   padding: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .dup-product {
@@ -74,9 +74,17 @@
   color: var(--text);
 }
 
+.dup-qty--mismatch {
+  color: var(--amber);
+}
+
 .dup-date {
   font-size: 0.76rem;
   color: var(--text-secondary);
+}
+
+.dup-date--mismatch {
+  color: var(--amber);
 }
 
 .dup-product--new .dup-label {
@@ -90,40 +98,37 @@
   flex-shrink: 0;
 }
 
+/* Unit mismatch warning */
+.dup-unit-warning {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  color: var(--amber);
+  background: var(--amber-bg);
+  border: 1px solid rgba(201, 168, 0, 0.2);
+  border-radius: calc(var(--radius) - 2px);
+  padding: 0.55rem 0.875rem;
+  margin-bottom: 1rem;
+}
+
 /* Actions */
 .dup-actions {
   display: flex;
   gap: 0.6rem;
   align-items: stretch;
-}
-
-.dup-cancel {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text-muted);
-  font-family: var(--font-body);
-  font-size: 0.82rem;
-  font-weight: 500;
-  padding: 0.6rem 0.9rem;
-  border-radius: var(--radius);
-  cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
-  flex-shrink: 0;
-}
-
-.dup-cancel:hover {
-  border-color: var(--border-hover);
-  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
 }
 
 .dup-group,
-.dup-replace {
+.dup-replace,
+.dup-separate {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.2rem;
-  padding: 0.65rem 0.75rem;
+  padding: 0.65rem 0.5rem;
   border-radius: var(--radius);
   cursor: pointer;
   font-family: var(--font-body);
@@ -131,8 +136,9 @@
   border: 1px solid transparent;
 }
 
-.dup-group:hover,
-.dup-replace:hover {
+.dup-group:not(:disabled):hover,
+.dup-replace:hover,
+.dup-separate:hover {
   opacity: 0.9;
   transform: translateY(-1px);
 }
@@ -142,10 +148,34 @@
   color: #fff;
 }
 
+.dup-group:disabled {
+  background: var(--bg-surface);
+  border-color: var(--border);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
 .dup-replace {
   background: var(--bg-surface);
   border-color: var(--border-hover);
   color: var(--text);
+}
+
+.dup-separate {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text-secondary);
+}
+
+.dup-separate--prominent {
+  background: var(--accent);
+  border-color: transparent;
+  color: #fff;
+}
+
+.dup-separate--prominent:hover {
+  opacity: 0.9;
 }
 
 .dup-action-label {
@@ -155,22 +185,38 @@
 }
 
 .dup-action-desc {
-  font-size: 0.7rem;
-  opacity: 0.75;
+  font-size: 0.68rem;
+  opacity: 0.72;
   letter-spacing: 0.01em;
+  text-align: center;
 }
 
-.dup-replace .dup-action-desc {
+/* Cancel link */
+.dup-cancel {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  cursor: pointer;
+  text-align: center;
+  padding: 0.3rem;
+  transition: color 0.15s;
+}
+
+.dup-cancel:hover {
   color: var(--text-secondary);
 }
 
-@media (max-width: 420px) {
+@media (max-width: 400px) {
   .dup-actions {
     flex-wrap: wrap;
   }
-  .dup-cancel {
-    width: 100%;
-    text-align: center;
-    order: 3;
+  .dup-group,
+  .dup-replace,
+  .dup-separate {
+    flex: 1 1 calc(50% - 0.3rem);
   }
 }

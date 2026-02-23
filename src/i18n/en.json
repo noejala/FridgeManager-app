@@ -112,7 +112,12 @@
     "new": "New entry",
     "expires": "Exp.",
     "group": "Group",
-    "replace": "Replace"
+    "replace": "Replace",
+    "addSeparately": "Add separately",
+    "addSeparatelyDesc": "Keep both entries",
+    "dateMismatch": "Different expiration dates — grouping will use the latest ({{date}})",
+    "unitMismatch": "Units don't match ({{a}} ≠ {{b}})",
+    "groupDisabled": "Can't group products with different units"
   },
   "seasonal": {
     "title": "🌱 Seasonal products",

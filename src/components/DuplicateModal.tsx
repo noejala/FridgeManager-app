@@ -8,13 +8,16 @@ interface DuplicateModalProps {
   onCancel: () => void;
   onGroup: () => Promise<void>;
   onReplace: () => Promise<void>;
+  onAddSeparately: () => Promise<void>;
 }
 
-export const DuplicateModal = ({ existing, incoming, onCancel, onGroup, onReplace }: DuplicateModalProps) => {
+export const DuplicateModal = ({ existing, incoming, onCancel, onGroup, onReplace, onAddSeparately }: DuplicateModalProps) => {
   const { t, i18n } = useTranslation();
   const locale = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
 
   const formatDate = (d: string) => new Date(d).toLocaleDateString(locale);
+  const unitMismatch = existing.unit !== incoming.unit;
+  const dateMismatch = existing.expirationDate !== incoming.expirationDate;
   const laterDate = existing.expirationDate >= incoming.expirationDate
     ? existing.expirationDate
     : incoming.expirationDate;
@@ -39,24 +42,48 @@ export const DuplicateModal = ({ existing, incoming, onCancel, onGroup, onReplac
           <div className="dup-product">
             <span className="dup-label">{t('duplicate.existing')}</span>
             <span className="dup-qty">{existing.quantity} {existing.unit}</span>
-            <span className="dup-date">{t('duplicate.expires')} {formatDate(existing.expirationDate)}</span>
+            <span className={`dup-date${dateMismatch ? ' dup-date--mismatch' : ''}`}>{t('duplicate.expires')} {formatDate(existing.expirationDate)}</span>
           </div>
           <div className="dup-separator">+</div>
           <div className="dup-product dup-product--new">
             <span className="dup-label">{t('duplicate.new')}</span>
-            <span className="dup-qty">{incoming.quantity} {incoming.unit}</span>
-            <span className="dup-date">{t('duplicate.expires')} {formatDate(incoming.expirationDate)}</span>
+            <span className={`dup-qty${unitMismatch ? ' dup-qty--mismatch' : ''}`}>
+              {incoming.quantity} {incoming.unit}
+            </span>
+            <span className={`dup-date${dateMismatch ? ' dup-date--mismatch' : ''}`}>{t('duplicate.expires')} {formatDate(incoming.expirationDate)}</span>
           </div>
         </div>
 
+        {dateMismatch && !unitMismatch && (
+          <div className="dup-unit-warning">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+            {t('duplicate.dateMismatch', { date: formatDate(laterDate) })}
+          </div>
+        )}
+
+        {unitMismatch && (
+          <div className="dup-unit-warning">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+            {t('duplicate.unitMismatch', { a: existing.unit, b: incoming.unit })}
+          </div>
+        )}
+
         <div className="dup-actions">
-          <button className="dup-cancel" onClick={onCancel}>
-            {t('form.cancel')}
-          </button>
-          <button className="dup-group" onClick={onGroup}>
+          <button
+            className="dup-group"
+            onClick={onGroup}
+            disabled={unitMismatch}
+            title={unitMismatch ? t('duplicate.groupDisabled') : undefined}
+          >
             <span className="dup-action-label">{t('duplicate.group')}</span>
             <span className="dup-action-desc">
-              {existing.quantity + incoming.quantity} {existing.unit} · {formatDate(laterDate)}
+              {unitMismatch ? '—' : `${existing.quantity + incoming.quantity} ${existing.unit} · ${formatDate(laterDate)}`}
             </span>
           </button>
           <button className="dup-replace" onClick={onReplace}>
@@ -65,7 +92,15 @@ export const DuplicateModal = ({ existing, incoming, onCancel, onGroup, onReplac
               {incoming.quantity} {incoming.unit} · {formatDate(incoming.expirationDate)}
             </span>
           </button>
+          <button className={`dup-separate${unitMismatch ? ' dup-separate--prominent' : ''}`} onClick={onAddSeparately}>
+            <span className="dup-action-label">{t('duplicate.addSeparately')}</span>
+            <span className="dup-action-desc">{t('duplicate.addSeparatelyDesc')}</span>
+          </button>
         </div>
+
+        <button className="dup-cancel" onClick={onCancel}>
+          {t('form.cancel')}
+        </button>
       </div>
     </div>
   );
