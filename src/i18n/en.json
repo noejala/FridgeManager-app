@@ -4,8 +4,7 @@
     "lightMode": "Light mode",
     "signOut": "Sign out",
     "subtitle": "Manage your products and never waste food again",
-    "placeIn": "Place {{name}} in: {{zone}}",
-    "deleteConfirm": "Are you sure you want to delete this product?"
+    "placeIn": "Place {{name}} in: {{zone}}"
   },
   "auth": {
     "signIn": "Sign in",

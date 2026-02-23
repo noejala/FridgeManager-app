@@ -81,7 +81,6 @@ function App() {
   };
 
   const handleDeleteProduct = async (id: string) => {
-    if (!confirm(t('app.deleteConfirm'))) return;
     try {
       await deleteProduct(id);
       setProducts(prev => prev.filter(p => p.id !== id));

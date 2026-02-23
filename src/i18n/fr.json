@@ -4,8 +4,7 @@
     "lightMode": "Mode jour",
     "signOut": "Déconnexion",
     "subtitle": "Gérez vos produits et ne gaspillez plus jamais de nourriture",
-    "placeIn": "Placez {{name}} dans : {{zone}}",
-    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce produit ?"
+    "placeIn": "Placez {{name}} dans : {{zone}}"
   },
   "auth": {
     "signIn": "Se connecter",

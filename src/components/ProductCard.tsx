@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Product } from '../types/Product';
 import { getDaysUntilExpiration, isExpired, isExpiringSoon } from '../utils/storage';
@@ -11,6 +12,7 @@ interface ProductCardProps {
 
 export const ProductCard = ({ product, onDelete, onEdit }: ProductCardProps) => {
   const { t, i18n } = useTranslation();
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
   const daysUntil = getDaysUntilExpiration(product.expirationDate);
   const expired = isExpired(product.expirationDate);
   const expiringSoon = isExpiringSoon(product.expirationDate);
@@ -29,26 +31,45 @@ export const ProductCard = ({ product, onDelete, onEdit }: ProductCardProps) => 
   const locale = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
 
   return (
-    <div className={`product-card ${getStatusClass()}`}>
+    <div className={`product-card ${getStatusClass()}${confirmingDelete ? ' confirming-delete' : ''}`}>
       <div className="product-header">
         <h3>{product.name}</h3>
         <div className="product-actions">
-          <button
-            className="edit-btn"
-            onClick={() => onEdit(product)}
-            aria-label={t('productCard.edit')}
-            title={t('productCard.edit')}
-          >
-            ✏️
-          </button>
-          <button
-            className="delete-btn"
-            onClick={() => onDelete(product.id)}
-            aria-label={t('productCard.delete')}
-            title={t('productCard.delete')}
-          >
-            ×
-          </button>
+          {confirmingDelete ? (
+            <>
+              <button
+                className="delete-cancel-btn"
+                onClick={() => setConfirmingDelete(false)}
+              >
+                {t('form.cancel')}
+              </button>
+              <button
+                className="delete-confirm-btn"
+                onClick={() => onDelete(product.id)}
+              >
+                {t('productCard.delete')}
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                className="edit-btn"
+                onClick={() => onEdit(product)}
+                aria-label={t('productCard.edit')}
+                title={t('productCard.edit')}
+              >
+                ✏️
+              </button>
+              <button
+                className="delete-btn"
+                onClick={() => setConfirmingDelete(true)}
+                aria-label={t('productCard.delete')}
+                title={t('productCard.delete')}
+              >
+                ×
+              </button>
+            </>
+          )}
         </div>
       </div>
       <div className="product-info">
