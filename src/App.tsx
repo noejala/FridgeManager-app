@@ -9,6 +9,7 @@ import { Tabs } from './components/Tabs';
 import { AddProductForm } from './components/AddProductForm';
 import { EditProductForm } from './components/EditProductForm';
 import { ProductList } from './components/ProductList';
+import { DuplicateModal } from './components/DuplicateModal';
 import { WhatToCook } from './components/WhatToCook';
 import { SeasonalProducts } from './components/SeasonalProducts';
 import { Auth } from './components/Auth';
@@ -22,6 +23,7 @@ function App() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [activeTab, setActiveTab] = useState('fridge');
   const [notification, setNotification] = useState<string | null>(null);
+  const [pendingProduct, setPendingProduct] = useState<Omit<Product, 'id' | 'addedDate'> | null>(null);
   const [darkMode, setDarkMode] = useState<boolean>(() => {
     return localStorage.getItem('theme') === 'dark';
   });
@@ -62,7 +64,7 @@ function App() {
     }
   }, [user, loadUserProducts]);
 
-  const handleAddProduct = async (productData: Omit<Product, 'id' | 'addedDate'>) => {
+  const doInsertProduct = async (productData: Omit<Product, 'id' | 'addedDate'>) => {
     if (!user) return;
     const fridgeZone = getFridgeZone(productData.name, productData.category);
     const productWithMeta = {
@@ -70,13 +72,64 @@ function App() {
       addedDate: new Date().toISOString().split('T')[0],
       fridgeZone,
     };
+    const saved = await insertProduct(productWithMeta, user.id);
+    setProducts(prev => [saved, ...prev]);
+    setNotification(t('app.placeIn', { name: productData.name, zone: fridgeZone }));
+    setTimeout(() => setNotification(null), 4000);
+  };
+
+  const handleAddProduct = async (productData: Omit<Product, 'id' | 'addedDate'>) => {
+    if (!user) return;
+    const duplicate = products.find(
+      p => p.name.trim().toLowerCase() === productData.name.trim().toLowerCase()
+    );
+    if (duplicate) {
+      setPendingProduct(productData);
+      return;
+    }
     try {
-      const saved = await insertProduct(productWithMeta, user.id);
-      setProducts(prev => [saved, ...prev]);
-      setNotification(t('app.placeIn', { name: productData.name, zone: fridgeZone }));
-      setTimeout(() => setNotification(null), 4000);
+      await doInsertProduct(productData);
     } catch (err) {
       console.error('Failed to add product:', err);
+    }
+  };
+
+  const handleGroupProducts = async () => {
+    if (!pendingProduct || !user) return;
+    const existing = products.find(
+      p => p.name.trim().toLowerCase() === pendingProduct.name.trim().toLowerCase()
+    );
+    if (!existing) return;
+    const merged: Product = {
+      ...existing,
+      quantity: existing.quantity + pendingProduct.quantity,
+      expirationDate: existing.expirationDate >= pendingProduct.expirationDate
+        ? existing.expirationDate
+        : pendingProduct.expirationDate,
+      isEstimatedExpiration: pendingProduct.isEstimatedExpiration ?? existing.isEstimatedExpiration,
+    };
+    try {
+      await updateProduct(merged);
+      setProducts(prev => prev.map(p => p.id === merged.id ? merged : p));
+      setPendingProduct(null);
+    } catch (err) {
+      console.error('Failed to group products:', err);
+    }
+  };
+
+  const handleReplaceProduct = async () => {
+    if (!pendingProduct || !user) return;
+    const existing = products.find(
+      p => p.name.trim().toLowerCase() === pendingProduct.name.trim().toLowerCase()
+    );
+    if (!existing) return;
+    try {
+      await deleteProduct(existing.id);
+      setProducts(prev => prev.filter(p => p.id !== existing.id));
+      await doInsertProduct(pendingProduct);
+      setPendingProduct(null);
+    } catch (err) {
+      console.error('Failed to replace product:', err);
     }
   };
 
@@ -190,6 +243,17 @@ function App() {
       </main>
       {notification && (
         <div className="toast-notification">{notification}</div>
+      )}
+      {pendingProduct && (
+        <DuplicateModal
+          existing={products.find(
+            p => p.name.trim().toLowerCase() === pendingProduct.name.trim().toLowerCase()
+          )!}
+          incoming={pendingProduct}
+          onCancel={() => setPendingProduct(null)}
+          onGroup={handleGroupProducts}
+          onReplace={handleReplaceProduct}
+        />
       )}
     </div>
   );

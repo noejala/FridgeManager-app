@@ -106,6 +106,14 @@
     "Fridge door": "The door is the warmest part of the fridge — suitable for condiments, drinks, butter, and eggs which tolerate slight temperature changes.",
     "Crisper drawer": "The crisper drawer maintains higher humidity — designed to keep fruits and vegetables fresh and prevent them from drying out."
   },
+  "duplicate": {
+    "title": "{{name}} is already in your fridge",
+    "existing": "In your fridge",
+    "new": "New entry",
+    "expires": "Exp.",
+    "group": "Group",
+    "replace": "Replace"
+  },
   "seasonal": {
     "title": "🌱 Seasonal products",
     "recommendedFor": "Recommended products for {{month}} ({{season}})",

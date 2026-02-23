@@ -106,6 +106,14 @@
     "Fridge door": "La porte est la partie la plus chaude du frigo — adaptée aux condiments, boissons, beurre et œufs qui tolèrent les légères variations de température.",
     "Crisper drawer": "Le bac à légumes maintient une humidité plus élevée — conçu pour garder fruits et légumes frais et les empêcher de se dessécher."
   },
+  "duplicate": {
+    "title": "{{name}} est déjà dans votre frigo",
+    "existing": "Dans votre frigo",
+    "new": "Nouvel ajout",
+    "expires": "Exp.",
+    "group": "Grouper",
+    "replace": "Remplacer"
+  },
   "seasonal": {
     "title": "🌱 Produits de saison",
     "recommendedFor": "Produits recommandés pour {{month}} ({{season}})",
