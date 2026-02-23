@@ -133,6 +133,16 @@ function App() {
     }
   };
 
+  const handleAddSeparately = async () => {
+    if (!pendingProduct) return;
+    try {
+      await doInsertProduct(pendingProduct);
+      setPendingProduct(null);
+    } catch (err) {
+      console.error('Failed to add product separately:', err);
+    }
+  };
+
   const handleDeleteProduct = async (id: string) => {
     try {
       await deleteProduct(id);
@@ -253,6 +263,7 @@ function App() {
           onCancel={() => setPendingProduct(null)}
           onGroup={handleGroupProducts}
           onReplace={handleReplaceProduct}
+          onAddSeparately={handleAddSeparately}
         />
       )}
     </div>
