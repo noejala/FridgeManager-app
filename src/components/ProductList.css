@@ -72,3 +72,123 @@
   color: var(--text-muted);
   letter-spacing: 0.05em;
 }
+
+/* Clear fridge button */
+.clear-fridge-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.clear-fridge-btn {
+  background: none;
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  color: var(--red);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.clear-fridge-btn:hover {
+  opacity: 1;
+  border-color: rgba(220, 38, 38, 0.5);
+  background: var(--red-bg);
+}
+
+/* Clear confirmation modal */
+.clear-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: fade-in 0.15s ease;
+}
+
+.clear-modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 2rem;
+  width: min(420px, 90vw);
+  text-align: center;
+  animation: modal-in 0.2s ease;
+}
+
+.clear-modal-icon {
+  color: var(--red);
+  opacity: 0.85;
+  margin-bottom: 1rem;
+}
+
+.clear-modal-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--text);
+  margin-bottom: 0.75rem;
+}
+
+.clear-modal-message {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1.75rem;
+}
+
+.clear-modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.clear-modal-cancel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.6rem 1.4rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.clear-modal-cancel:hover:not(:disabled) {
+  border-color: var(--border-hover);
+  color: var(--text);
+}
+
+.clear-modal-confirm {
+  background: var(--red);
+  border: 1px solid transparent;
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.6rem 1.4rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.clear-modal-confirm:hover:not(:disabled) {
+  opacity: 0.88;
+}
+
+.clear-modal-cancel:disabled,
+.clear-modal-confirm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

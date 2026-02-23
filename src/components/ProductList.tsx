@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Product } from '../types/Product';
 import { ProductCard } from './ProductCard';
@@ -8,10 +9,20 @@ interface ProductListProps {
   products: Product[];
   onDelete: (id: string) => void;
   onEdit: (product: Product) => void;
+  onClearAll: () => Promise<void>;
 }
 
-export const ProductList = ({ products, onDelete, onEdit }: ProductListProps) => {
+export const ProductList = ({ products, onDelete, onEdit, onClearAll }: ProductListProps) => {
   const { t } = useTranslation();
+  const [showClearModal, setShowClearModal] = useState(false);
+  const [clearing, setClearing] = useState(false);
+
+  const handleConfirmClear = async () => {
+    setClearing(true);
+    await onClearAll();
+    setClearing(false);
+    setShowClearModal(false);
+  };
 
   if (products.length === 0) {
     return (
@@ -74,6 +85,47 @@ export const ProductList = ({ products, onDelete, onEdit }: ProductListProps) =>
           />
         ))}
       </div>
+
+      <div className="clear-fridge-row">
+        <button className="clear-fridge-btn" onClick={() => setShowClearModal(true)}>
+          {t('productList.clearFridge')}
+        </button>
+      </div>
+
+      {showClearModal && (
+        <div className="clear-modal-overlay" onClick={() => !clearing && setShowClearModal(false)}>
+          <div className="clear-modal" onClick={e => e.stopPropagation()}>
+            <div className="clear-modal-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                <path d="M10 11v6M14 11v6" />
+                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+              </svg>
+            </div>
+            <h3 className="clear-modal-title">{t('productList.clearConfirmTitle')}</h3>
+            <p className="clear-modal-message">
+              {t('productList.clearConfirmMessage', { count: products.length })}
+            </p>
+            <div className="clear-modal-actions">
+              <button
+                className="clear-modal-cancel"
+                onClick={() => setShowClearModal(false)}
+                disabled={clearing}
+              >
+                {t('form.cancel')}
+              </button>
+              <button
+                className="clear-modal-confirm"
+                onClick={handleConfirmClear}
+                disabled={clearing}
+              >
+                {clearing ? '…' : t('productList.clearConfirm')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -34,7 +34,12 @@
     "expiredProduct_one": "⚠️ {{count}} expired product",
     "expiredProduct_other": "⚠️ {{count}} expired products",
     "expiringSoon_one": "⏰ {{count}} product expiring soon",
-    "expiringSoon_other": "⏰ {{count}} products expiring soon"
+    "expiringSoon_other": "⏰ {{count}} products expiring soon",
+    "clearFridge": "Clear my fridge",
+    "clearConfirmTitle": "Clear my fridge?",
+    "clearConfirmMessage_one": "This will permanently delete {{count}} product from your fridge. This cannot be undone.",
+    "clearConfirmMessage_other": "This will permanently delete all {{count}} products from your fridge. This cannot be undone.",
+    "clearConfirm": "Clear everything"
   },
   "form": {
     "addProduct": "Add a product",

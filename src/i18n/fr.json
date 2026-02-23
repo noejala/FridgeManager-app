@@ -34,7 +34,12 @@
     "expiredProduct_one": "⚠️ {{count}} produit expiré",
     "expiredProduct_other": "⚠️ {{count}} produits expirés",
     "expiringSoon_one": "⏰ {{count}} produit expire bientôt",
-    "expiringSoon_other": "⏰ {{count}} produits expirent bientôt"
+    "expiringSoon_other": "⏰ {{count}} produits expirent bientôt",
+    "clearFridge": "Vider mon frigo",
+    "clearConfirmTitle": "Vider mon frigo ?",
+    "clearConfirmMessage_one": "Cela supprimera définitivement {{count}} produit de votre frigo. Cette action est irréversible.",
+    "clearConfirmMessage_other": "Cela supprimera définitivement les {{count}} produits de votre frigo. Cette action est irréversible.",
+    "clearConfirm": "Tout supprimer"
   },
   "form": {
     "addProduct": "Ajouter un produit",

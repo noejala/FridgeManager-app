@@ -93,3 +93,14 @@ export async function deleteProduct(id: string): Promise<void> {
 
   if (error) throw error;
 }
+
+export async function deleteAllProducts(): Promise<void> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+  const { error } = await supabase
+    .from('products')
+    .delete()
+    .eq('user_id', user.id);
+
+  if (error) throw error;
+}

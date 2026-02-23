@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { User } from '@supabase/supabase-js';
 import { Product } from './types/Product';
 import { supabase } from './lib/supabase';
-import { fetchProducts, insertProduct, updateProduct, deleteProduct } from './utils/productService';
+import { fetchProducts, insertProduct, updateProduct, deleteProduct, deleteAllProducts } from './utils/productService';
 import { getFridgeZone } from './utils/fridgePlacement';
 import { Tabs } from './components/Tabs';
 import { AddProductForm } from './components/AddProductForm';
@@ -108,6 +108,15 @@ function App() {
     setEditingProduct(null);
   };
 
+  const handleClearFridge = async () => {
+    try {
+      await deleteAllProducts();
+      setProducts([]);
+    } catch (err) {
+      console.error('Failed to clear fridge:', err);
+    }
+  };
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
   };
@@ -128,6 +137,7 @@ function App() {
           products={products}
           onDelete={handleDeleteProduct}
           onEdit={handleEditProduct}
+          onClearAll={handleClearFridge}
         />
       </div>
       <div hidden={activeTab !== 'cook'}>
