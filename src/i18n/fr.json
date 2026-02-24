@@ -119,6 +119,14 @@
     "unitMismatch": "Les unités ne correspondent pas ({{a}} ≠ {{b}})",
     "groupDisabled": "Impossible de grouper des produits avec des unités différentes"
   },
+  "notifications": {
+    "enable": "Activer les notifications",
+    "expiredTitle_one": "⚠️ {{count}} produit a expiré",
+    "expiredTitle_other": "⚠️ {{count}} produits ont expiré",
+    "expiringSoonTitle_one": "⏰ {{count}} produit expire bientôt",
+    "expiringSoonTitle_other": "⏰ {{count}} produits expirent bientôt",
+    "today": "aujourd'hui"
+  },
   "seasonal": {
     "title": "🌱 Produits de saison",
     "recommendedFor": "Produits recommandés pour {{month}} ({{season}})",

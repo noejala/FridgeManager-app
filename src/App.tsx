@@ -10,6 +10,7 @@ import { AddProductForm } from './components/AddProductForm';
 import { EditProductForm } from './components/EditProductForm';
 import { ProductList } from './components/ProductList';
 import { DuplicateModal } from './components/DuplicateModal';
+import { useProductNotifications } from './hooks/useProductNotifications';
 import { WhatToCook } from './components/WhatToCook';
 import { SeasonalProducts } from './components/SeasonalProducts';
 import { Auth } from './components/Auth';
@@ -17,6 +18,7 @@ import './App.css';
 
 function App() {
   const { t, i18n } = useTranslation();
+  const { permission, requestPermission, checkAndNotify } = useProductNotifications();
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [products, setProducts] = useState<Product[]>([]);
@@ -37,10 +39,11 @@ function App() {
     try {
       const data = await fetchProducts();
       setProducts(data);
+      checkAndNotify(data, t);
     } catch (err) {
       console.error('Failed to load products:', err);
     }
-  }, []);
+  }, [checkAndNotify, t]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -219,6 +222,15 @@ function App() {
     <div className="app">
       <header className="app-header">
         <div className="app-header-controls">
+          {permission === 'default' && (
+            <button
+              className="notif-btn"
+              onClick={requestPermission}
+              title={t('notifications.enable')}
+            >
+              🔔
+            </button>
+          )}
           <button
             className="theme-toggle"
             onClick={() => setDarkMode(prev => !prev)}

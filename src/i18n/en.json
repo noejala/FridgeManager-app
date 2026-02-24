@@ -119,6 +119,14 @@
     "unitMismatch": "Units don't match ({{a}} ≠ {{b}})",
     "groupDisabled": "Can't group products with different units"
   },
+  "notifications": {
+    "enable": "Enable notifications",
+    "expiredTitle_one": "⚠️ {{count}} product has expired",
+    "expiredTitle_other": "⚠️ {{count}} products have expired",
+    "expiringSoonTitle_one": "⏰ {{count}} product expiring soon",
+    "expiringSoonTitle_other": "⏰ {{count}} products expiring soon",
+    "today": "today"
+  },
   "seasonal": {
     "title": "🌱 Seasonal products",
     "recommendedFor": "Recommended products for {{month}} ({{season}})",
