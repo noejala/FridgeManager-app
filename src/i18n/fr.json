@@ -54,6 +54,8 @@
     "cancel": "Annuler",
     "add": "Ajouter",
     "save": "Enregistrer",
+    "adding": "Ajout…",
+    "saving": "Enregistrement…",
     "quantityError": "La quantité doit être un nombre supérieur à 0",
     "productPlaceholder": "Ex : Lait, Pommes, Poulet..."
   },

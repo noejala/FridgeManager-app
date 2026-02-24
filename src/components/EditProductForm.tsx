@@ -7,7 +7,7 @@ import './AddProductForm.css';
 
 interface EditProductFormProps {
   product: Product;
-  onSave: (product: Product) => void;
+  onSave: (product: Product) => Promise<void>;
   onCancel: () => void;
 }
 
@@ -24,6 +24,7 @@ const CATEGORIES: ProductCategory[] = [
 
 export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormProps) => {
   const { t } = useTranslation();
+  const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState(product.name);
   const [category, setCategory] = useState<ProductCategory>(product.category as ProductCategory);
   const [expirationDate, setExpirationDate] = useState(product.expirationDate);
@@ -41,7 +42,7 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
     setUnknownExpiration(product.isEstimatedExpiration ?? false);
   }, [product]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const finalExpirationDate = unknownExpiration
       ? estimateExpirationDate(name, category, purchaseDate || undefined)
@@ -54,7 +55,8 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
       return;
     }
 
-    onSave({
+    setIsLoading(true);
+    await onSave({
       ...product,
       name: name.trim(),
       category,
@@ -63,6 +65,7 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
       unit,
       isEstimatedExpiration: unknownExpiration,
     });
+    setIsLoading(false);
   };
 
   const minDate = new Date().toISOString().split('T')[0];
@@ -183,11 +186,11 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
       )}
 
       <div className="form-actions">
-        <button type="button" className="cancel-btn" onClick={onCancel}>
+        <button type="button" className="cancel-btn" onClick={onCancel} disabled={isLoading}>
           {t('form.cancel')}
         </button>
-        <button type="submit" className="submit-btn">
-          {t('form.save')}
+        <button type="submit" className="submit-btn" disabled={isLoading}>
+          {isLoading ? t('form.saving') : t('form.save')}
         </button>
       </div>
     </form>

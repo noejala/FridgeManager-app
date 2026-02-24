@@ -6,7 +6,7 @@ import { estimateExpirationDate } from '../utils/shelfLife';
 import './AddProductForm.css';
 
 interface AddProductFormProps {
-  onAdd: (product: Omit<Product, 'id' | 'addedDate'>) => void;
+  onAdd: (product: Omit<Product, 'id' | 'addedDate'>) => Promise<void>;
 }
 
 const CATEGORIES: ProductCategory[] = [
@@ -23,6 +23,7 @@ const CATEGORIES: ProductCategory[] = [
 export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState('');
   const [category, setCategory] = useState<ProductCategory>('Other');
   const [expirationDate, setExpirationDate] = useState('');
@@ -31,7 +32,7 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
   const [unknownExpiration, setUnknownExpiration] = useState(false);
   const [purchaseDate, setPurchaseDate] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const finalExpirationDate = unknownExpiration
       ? estimateExpirationDate(name, category, purchaseDate || undefined)
@@ -44,7 +45,8 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
       return;
     }
 
-    onAdd({
+    setIsLoading(true);
+    await onAdd({
       name: name.trim(),
       category,
       expirationDate: finalExpirationDate,
@@ -52,6 +54,7 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
       unit,
       isEstimatedExpiration: unknownExpiration,
     });
+    setIsLoading(false);
 
     setName('');
     setCategory('Other');
@@ -189,11 +192,11 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
       )}
 
       <div className="form-actions">
-        <button type="button" className="cancel-btn" onClick={() => setIsOpen(false)}>
+        <button type="button" className="cancel-btn" onClick={() => setIsOpen(false)} disabled={isLoading}>
           {t('form.cancel')}
         </button>
-        <button type="submit" className="submit-btn">
-          {t('form.add')}
+        <button type="submit" className="submit-btn" disabled={isLoading}>
+          {isLoading ? t('form.adding') : t('form.add')}
         </button>
       </div>
     </form>

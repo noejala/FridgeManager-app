@@ -150,6 +150,13 @@
   border-color: var(--accent-light);
 }
 
+.submit-btn:disabled,
+.cancel-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .purchase-date-row {
   display: flex;
   gap: 0.75rem;
