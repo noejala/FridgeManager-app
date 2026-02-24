@@ -14,7 +14,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding: 1.75rem;
+  padding: 2rem;
   width: min(480px, 92vw);
   animation: modal-in 0.2s ease;
 }

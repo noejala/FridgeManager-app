@@ -183,7 +183,7 @@
   max-height: 85vh;
   overflow-y: auto;
   position: relative;
-  padding: 0 1.5rem 2rem;
+  padding: 2rem;
   animation: modal-in 0.25s ease;
 }
 
