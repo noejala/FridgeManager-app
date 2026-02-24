@@ -16,6 +16,21 @@ import { SeasonalProducts } from './components/SeasonalProducts';
 import { Auth } from './components/Auth';
 import './App.css';
 
+const TAB_STORAGE_KEY = 'lastActiveTab';
+const TAB_EXPIRY_MS = 30 * 60 * 1000; // 30 minutes
+
+function getSavedTab(): string {
+  try {
+    const raw = localStorage.getItem(TAB_STORAGE_KEY);
+    if (!raw) return 'fridge';
+    const { tab, timestamp } = JSON.parse(raw);
+    if (Date.now() - timestamp < TAB_EXPIRY_MS) return tab;
+  } catch {
+    // ignore
+  }
+  return 'fridge';
+}
+
 function App() {
   const { t, i18n } = useTranslation();
   const { permission, requestPermission, checkAndNotify } = useProductNotifications();
@@ -61,11 +76,17 @@ function App() {
   useEffect(() => {
     if (user) {
       loadUserProducts();
-      setActiveTab('fridge');
+      setActiveTab(getSavedTab());
     } else {
       setProducts([]);
     }
   }, [user, loadUserProducts]);
+
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem(TAB_STORAGE_KEY, JSON.stringify({ tab: activeTab, timestamp: Date.now() }));
+    }
+  }, [activeTab, user]);
 
   const doInsertProduct = async (productData: Omit<Product, 'id' | 'addedDate'>) => {
     if (!user) return;
