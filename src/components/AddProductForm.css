@@ -76,6 +76,10 @@
   color: var(--text-muted);
 }
 
+[data-theme="dark"] .form-group input[type="date"] {
+  color-scheme: dark;
+}
+
 .form-group input:-webkit-autofill,
 .form-group input:-webkit-autofill:hover,
 .form-group input:-webkit-autofill:focus {
