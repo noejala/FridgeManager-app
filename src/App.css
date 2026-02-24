@@ -273,6 +273,15 @@ body::after {
   .app {
     padding: 2rem 1rem 3rem;
   }
+  .app-header {
+    display: flex;
+    flex-direction: column;
+  }
+  .app-header-controls {
+    position: static;
+    align-self: flex-end;
+    margin-bottom: 1rem;
+  }
   .app-header h1 {
     font-size: 3rem;
   }
