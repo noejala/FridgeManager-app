@@ -76,12 +76,13 @@ export const ProductList = ({ products, onDelete, onEdit, onClearAll }: ProductL
       )}
 
       <div className="product-grid">
-        {sortedProducts.map(product => (
+        {sortedProducts.map((product, index) => (
           <ProductCard
             key={product.id}
             product={product}
             onDelete={onDelete}
             onEdit={onEdit}
+            index={index}
           />
         ))}
       </div>

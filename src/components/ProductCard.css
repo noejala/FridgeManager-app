@@ -22,13 +22,10 @@
   border-left-color: var(--red);
 }
 
-/* Stagger */
-.product-grid .product-card:nth-child(1) { animation-delay: 0ms; }
-.product-grid .product-card:nth-child(2) { animation-delay: 60ms; }
-.product-grid .product-card:nth-child(3) { animation-delay: 120ms; }
-.product-grid .product-card:nth-child(4) { animation-delay: 180ms; }
-.product-grid .product-card:nth-child(5) { animation-delay: 240ms; }
-.product-grid .product-card:nth-child(6) { animation-delay: 300ms; }
+/* Stagger — driven by --index CSS custom property set inline */
+.product-grid .product-card {
+  animation-delay: calc(var(--index, 0) * 60ms);
+}
 
 .product-header {
   display: flex;

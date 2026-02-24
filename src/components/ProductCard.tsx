@@ -8,9 +8,10 @@ interface ProductCardProps {
   product: Product;
   onDelete: (id: string) => void;
   onEdit: (product: Product) => void;
+  index?: number;
 }
 
-export const ProductCard = ({ product, onDelete, onEdit }: ProductCardProps) => {
+export const ProductCard = ({ product, onDelete, onEdit, index = 0 }: ProductCardProps) => {
   const { t, i18n } = useTranslation();
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const daysUntil = getDaysUntilExpiration(product.expirationDate);
@@ -31,7 +32,7 @@ export const ProductCard = ({ product, onDelete, onEdit }: ProductCardProps) => 
   const locale = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
 
   return (
-    <div className={`product-card ${getStatusClass()}${confirmingDelete ? ' confirming-delete' : ''}`}>
+    <div className={`product-card ${getStatusClass()}${confirmingDelete ? ' confirming-delete' : ''}`} style={{ '--index': index } as React.CSSProperties}>
       <div className="product-header">
         <h3>{product.name}</h3>
         <div className="product-actions">

@@ -140,12 +140,9 @@
   animation: card-in 0.35s ease both;
 }
 
-.seasonal-product-card:nth-child(1) { animation-delay: 0ms; }
-.seasonal-product-card:nth-child(2) { animation-delay: 40ms; }
-.seasonal-product-card:nth-child(3) { animation-delay: 80ms; }
-.seasonal-product-card:nth-child(4) { animation-delay: 120ms; }
-.seasonal-product-card:nth-child(5) { animation-delay: 160ms; }
-.seasonal-product-card:nth-child(6) { animation-delay: 200ms; }
+.seasonal-product-card {
+  animation-delay: calc(var(--index, 0) * 40ms);
+}
 
 .seasonal-product-card:hover {
   border-color: var(--border-hover);

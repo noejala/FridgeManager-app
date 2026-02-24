@@ -51,7 +51,7 @@ export const SeasonalProducts = () => {
 
         <div className="products-grid">
           {currentSeason.products.map((product, index) => (
-            <div key={index} className="seasonal-product-card">
+            <div key={index} className="seasonal-product-card" style={{ '--index': index } as React.CSSProperties}>
               <div className="product-emoji">
                 {productEmojiMap[product] || '🥬'}
               </div>

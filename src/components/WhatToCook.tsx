@@ -166,11 +166,12 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
 
       {!loading && recipes.length > 0 && (
         <div className="recipes-grid">
-          {recipes.map((recipe) => (
+          {recipes.map((recipe, index) => (
             <div
               key={recipe.meal.id}
               className="recipe-card"
               onClick={() => setSelectedRecipe(recipe)}
+              style={{ '--index': index } as React.CSSProperties}
             >
               <img src={recipe.meal.thumbnail} alt={recipe.meal.name} className="recipe-thumbnail" />
               <div className="recipe-info">
