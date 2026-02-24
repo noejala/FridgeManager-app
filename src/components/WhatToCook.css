@@ -108,7 +108,7 @@
 .recipe-card:hover {
   border-color: var(--border-hover);
   transform: translateY(-3px);
-  box-shadow: 0 12px 32px rgba(44, 111, 224, 0.15);
+  box-shadow: var(--shadow);
 }
 
 .recipe-thumbnail {
