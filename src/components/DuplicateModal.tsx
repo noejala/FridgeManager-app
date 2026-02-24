@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Product } from '../types/Product';
 import './DuplicateModal.css';
@@ -13,6 +14,17 @@ interface DuplicateModalProps {
 
 export const DuplicateModal = ({ existing, incoming, onCancel, onGroup, onReplace, onAddSeparately }: DuplicateModalProps) => {
   const { t, i18n } = useTranslation();
+  const [loadingAction, setLoadingAction] = useState<'group' | 'replace' | 'separate' | null>(null);
+  const isLoading = loadingAction !== null;
+
+  const handleAction = async (action: 'group' | 'replace' | 'separate', fn: () => Promise<void>) => {
+    setLoadingAction(action);
+    try {
+      await fn();
+    } finally {
+      setLoadingAction(null);
+    }
+  };
   const locale = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
 
   const formatDate = (d: string) => new Date(d).toLocaleDateString(locale);
@@ -23,7 +35,7 @@ export const DuplicateModal = ({ existing, incoming, onCancel, onGroup, onReplac
     : incoming.expirationDate;
 
   return (
-    <div className="dup-overlay" onClick={onCancel}>
+    <div className="dup-overlay" onClick={isLoading ? undefined : onCancel}>
       <div className="dup-modal" onClick={e => e.stopPropagation()}>
         <div className="dup-header">
           <div className="dup-icon">
@@ -77,28 +89,42 @@ export const DuplicateModal = ({ existing, incoming, onCancel, onGroup, onReplac
         <div className="dup-actions">
           <button
             className="dup-group"
-            onClick={onGroup}
-            disabled={unitMismatch}
+            onClick={() => handleAction('group', onGroup)}
+            disabled={unitMismatch || isLoading}
             title={unitMismatch ? t('duplicate.groupDisabled') : undefined}
           >
-            <span className="dup-action-label">{t('duplicate.group')}</span>
+            <span className="dup-action-label">
+              {loadingAction === 'group' ? '…' : t('duplicate.group')}
+            </span>
             <span className="dup-action-desc">
               {unitMismatch ? '—' : `${existing.quantity + incoming.quantity} ${existing.unit} · ${formatDate(laterDate)}`}
             </span>
           </button>
-          <button className="dup-replace" onClick={onReplace}>
-            <span className="dup-action-label">{t('duplicate.replace')}</span>
+          <button
+            className="dup-replace"
+            onClick={() => handleAction('replace', onReplace)}
+            disabled={isLoading}
+          >
+            <span className="dup-action-label">
+              {loadingAction === 'replace' ? '…' : t('duplicate.replace')}
+            </span>
             <span className="dup-action-desc">
               {incoming.quantity} {incoming.unit} · {formatDate(incoming.expirationDate)}
             </span>
           </button>
-          <button className={`dup-separate${unitMismatch ? ' dup-separate--prominent' : ''}`} onClick={onAddSeparately}>
-            <span className="dup-action-label">{t('duplicate.addSeparately')}</span>
+          <button
+            className={`dup-separate${unitMismatch ? ' dup-separate--prominent' : ''}`}
+            onClick={() => handleAction('separate', onAddSeparately)}
+            disabled={isLoading}
+          >
+            <span className="dup-action-label">
+              {loadingAction === 'separate' ? '…' : t('duplicate.addSeparately')}
+            </span>
             <span className="dup-action-desc">{t('duplicate.addSeparatelyDesc')}</span>
           </button>
         </div>
 
-        <button className="dup-cancel" onClick={onCancel}>
+        <button className="dup-cancel" onClick={onCancel} disabled={isLoading}>
           {t('form.cancel')}
         </button>
       </div>

@@ -148,12 +148,17 @@
   color: #fff;
 }
 
+.dup-group:disabled,
+.dup-replace:disabled,
+.dup-separate:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
 .dup-group:disabled {
   background: var(--bg-surface);
   border-color: var(--border);
   color: var(--text-muted);
-  cursor: not-allowed;
-  opacity: 0.5;
 }
 
 .dup-replace {
