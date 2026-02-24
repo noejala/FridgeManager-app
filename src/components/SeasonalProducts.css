@@ -92,9 +92,9 @@
 }
 
 .season-badge-winter {
-  color: #89b4d4;
-  border-color: rgba(137, 180, 212, 0.25);
-  background: rgba(137, 180, 212, 0.08);
+  color: var(--accent-light);
+  border-color: var(--accent-bg);
+  background: var(--accent-bg);
 }
 
 .season-badge-spring {
@@ -110,9 +110,9 @@
 }
 
 .season-badge-autumn {
-  color: #c9a800;
+  color: var(--amber);
   border-color: rgba(201, 168, 0, 0.28);
-  background: rgba(201, 168, 0, 0.08);
+  background: var(--amber-bg);
 }
 
 .seasonal-info p {
