@@ -38,7 +38,12 @@
     "clearConfirmTitle": "Clear my fridge?",
     "clearConfirmMessage_one": "This will permanently delete {{count}} product from your fridge. This cannot be undone.",
     "clearConfirmMessage_other": "This will permanently delete all {{count}} products from your fridge. This cannot be undone.",
-    "clearConfirm": "Clear everything"
+    "clearConfirm": "Clear everything",
+    "recentlyConsumed": "Recently consumed",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "daysAgo_one": "{{count}} day ago",
+    "daysAgo_other": "{{count}} days ago"
   },
   "form": {
     "addProduct": "Add a product",
@@ -66,6 +71,8 @@
     "added": "Added:",
     "expires": "Expires:",
     "estimated": "(estimated)",
+    "consume": "Mark as consumed",
+    "consumed": "Consumed ✓",
     "edit": "Edit",
     "delete": "Delete"
   },

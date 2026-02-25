@@ -38,7 +38,12 @@
     "clearConfirmTitle": "Vider mon frigo ?",
     "clearConfirmMessage_one": "Cela supprimera définitivement {{count}} produit de votre frigo. Cette action est irréversible.",
     "clearConfirmMessage_other": "Cela supprimera définitivement les {{count}} produits de votre frigo. Cette action est irréversible.",
-    "clearConfirm": "Tout supprimer"
+    "clearConfirm": "Tout supprimer",
+    "recentlyConsumed": "Récemment consommé",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "daysAgo_one": "Il y a {{count}} jour",
+    "daysAgo_other": "Il y a {{count}} jours"
   },
   "form": {
     "addProduct": "Ajouter un produit",
@@ -66,6 +71,8 @@
     "added": "Ajouté :",
     "expires": "Expire :",
     "estimated": "(estimé)",
+    "consume": "Consommé",
+    "consumed": "Consommé ✓",
     "edit": "Modifier",
     "delete": "Supprimer"
   },

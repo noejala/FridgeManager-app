@@ -8,6 +8,7 @@ export interface Product {
   addedDate: string; // Format: YYYY-MM-DD
   isEstimatedExpiration?: boolean;
   fridgeZone?: string;
+  consumedAt?: string; // ISO timestamp, set when product is marked as consumed
 }
 
 export type ProductCategory = 

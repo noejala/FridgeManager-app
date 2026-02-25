@@ -7,13 +7,15 @@ import './ProductCard.css';
 interface ProductCardProps {
   product: Product;
   onDelete: (id: string) => void;
+  onConsume: (id: string) => void;
   onEdit: (product: Product) => void;
   index?: number;
 }
 
-export const ProductCard = ({ product, onDelete, onEdit, index = 0 }: ProductCardProps) => {
+export const ProductCard = ({ product, onDelete, onConsume, onEdit, index = 0 }: ProductCardProps) => {
   const { t, i18n } = useTranslation();
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [confirmingConsume, setConfirmingConsume] = useState(false);
   const daysUntil = getDaysUntilExpiration(product.expirationDate);
   const expired = isExpired(product.expirationDate);
   const expiringSoon = isExpiringSoon(product.expirationDate);
@@ -31,8 +33,15 @@ export const ProductCard = ({ product, onDelete, onEdit, index = 0 }: ProductCar
 
   const locale = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
 
+  const cardClass = [
+    'product-card',
+    getStatusClass(),
+    confirmingDelete ? 'confirming-delete' : '',
+    confirmingConsume ? 'confirming-consume' : '',
+  ].filter(Boolean).join(' ');
+
   return (
-    <div className={`product-card ${getStatusClass()}${confirmingDelete ? ' confirming-delete' : ''}`} style={{ '--index': index } as React.CSSProperties}>
+    <div className={cardClass} style={{ '--index': index } as React.CSSProperties}>
       <div className="product-header">
         <h3>{product.name}</h3>
         <div className="product-actions">
@@ -51,8 +60,31 @@ export const ProductCard = ({ product, onDelete, onEdit, index = 0 }: ProductCar
                 {t('productCard.delete')}
               </button>
             </>
+          ) : confirmingConsume ? (
+            <>
+              <button
+                className="consume-cancel-btn"
+                onClick={() => setConfirmingConsume(false)}
+              >
+                {t('form.cancel')}
+              </button>
+              <button
+                className="consume-confirm-btn"
+                onClick={() => onConsume(product.id)}
+              >
+                {t('productCard.consumed')}
+              </button>
+            </>
           ) : (
             <>
+              <button
+                className="consume-btn"
+                onClick={() => setConfirmingConsume(true)}
+                aria-label={t('productCard.consume')}
+                title={t('productCard.consume')}
+              >
+                ✓
+              </button>
               <button
                 className="edit-btn"
                 onClick={() => onEdit(product)}

@@ -7,15 +7,27 @@ import './ProductList.css';
 
 interface ProductListProps {
   products: Product[];
+  consumedProducts: Product[];
   onDelete: (id: string) => void;
+  onConsume: (id: string) => void;
   onEdit: (product: Product) => void;
   onClearAll: () => Promise<void>;
 }
 
-export const ProductList = ({ products, onDelete, onEdit, onClearAll }: ProductListProps) => {
+function getRelativeDay(isoTimestamp: string, t: (key: string, opts?: Record<string, unknown>) => string): string {
+  const consumed = new Date(isoTimestamp);
+  const now = new Date();
+  const diffDays = Math.floor((now.getTime() - consumed.getTime()) / (1000 * 60 * 60 * 24));
+  if (diffDays === 0) return t('productList.today');
+  if (diffDays === 1) return t('productList.yesterday');
+  return t('productList.daysAgo', { count: diffDays });
+}
+
+export const ProductList = ({ products, consumedProducts, onDelete, onConsume, onEdit, onClearAll }: ProductListProps) => {
   const { t } = useTranslation();
   const [showClearModal, setShowClearModal] = useState(false);
   const [clearing, setClearing] = useState(false);
+  const [consumedExpanded, setConsumedExpanded] = useState(true);
 
   const handleConfirmClear = async () => {
     setClearing(true);
@@ -81,11 +93,36 @@ export const ProductList = ({ products, onDelete, onEdit, onClearAll }: ProductL
             key={product.id}
             product={product}
             onDelete={onDelete}
+            onConsume={onConsume}
             onEdit={onEdit}
             index={index}
           />
         ))}
       </div>
+
+      {consumedProducts.length > 0 && (
+        <div className="consumed-section">
+          <button
+            className="consumed-section-header"
+            onClick={() => setConsumedExpanded(prev => !prev)}
+          >
+            <span className="consumed-section-title">{t('productList.recentlyConsumed')}</span>
+            <span className="consumed-section-count">{consumedProducts.length}</span>
+            <span className={`consumed-chevron${consumedExpanded ? ' expanded' : ''}`}>›</span>
+          </button>
+          {consumedExpanded && (
+            <ul className="consumed-list">
+              {consumedProducts.map(p => (
+                <li key={p.id} className="consumed-item">
+                  <span className="consumed-name">{p.name}</span>
+                  <span className="consumed-qty">{p.quantity} {p.unit}</span>
+                  <span className="consumed-when">{p.consumedAt ? getRelativeDay(p.consumedAt, t) : ''}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
 
       <div className="clear-fridge-row">
         <button className="clear-fridge-btn" onClick={() => setShowClearModal(true)}>

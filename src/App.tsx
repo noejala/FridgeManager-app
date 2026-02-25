@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { User } from '@supabase/supabase-js';
 import { Product } from './types/Product';
 import { supabase } from './lib/supabase';
-import { fetchProducts, insertProduct, updateProduct, deleteProduct, deleteAllProducts } from './utils/productService';
+import { fetchProducts, fetchRecentlyConsumed, insertProduct, updateProduct, deleteProduct, deleteAllProducts, consumeProduct } from './utils/productService';
 import { getFridgeZone } from './utils/fridgePlacement';
 import { Tabs } from './components/Tabs';
 import { AddProductForm } from './components/AddProductForm';
@@ -37,6 +37,7 @@ function App() {
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [products, setProducts] = useState<Product[]>([]);
+  const [consumedProducts, setConsumedProducts] = useState<Product[]>([]);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [activeTab, setActiveTab] = useState('fridge');
   const [notification, setNotification] = useState<string | null>(null);
@@ -52,8 +53,9 @@ function App() {
 
   const loadUserProducts = useCallback(async () => {
     try {
-      const data = await fetchProducts();
+      const [data, consumed] = await Promise.all([fetchProducts(), fetchRecentlyConsumed()]);
       setProducts(data);
+      setConsumedProducts(consumed);
       checkAndNotify(data, t);
     } catch (err) {
       console.error('Failed to load products:', err);
@@ -176,6 +178,19 @@ function App() {
     }
   };
 
+  const handleConsumeProduct = async (id: string) => {
+    try {
+      await consumeProduct(id);
+      const consumed = products.find(p => p.id === id);
+      setProducts(prev => prev.filter(p => p.id !== id));
+      if (consumed) {
+        setConsumedProducts(prev => [{ ...consumed, consumedAt: new Date().toISOString() }, ...prev]);
+      }
+    } catch (err) {
+      console.error('Failed to consume product:', err);
+    }
+  };
+
   const handleEditProduct = (product: Product) => {
     setEditingProduct(product);
   };
@@ -221,7 +236,9 @@ function App() {
         )}
         <ProductList
           products={products}
+          consumedProducts={consumedProducts}
           onDelete={handleDeleteProduct}
+          onConsume={handleConsumeProduct}
           onEdit={handleEditProduct}
           onClearAll={handleClearFridge}
         />

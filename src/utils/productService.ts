@@ -13,6 +13,7 @@ interface ProductRow {
   is_estimated_expiration: boolean | null;
   fridge_zone: string | null;
   created_at: string;
+  consumed_at: string | null;
 }
 
 function rowToProduct(row: ProductRow): Product {
@@ -26,6 +27,7 @@ function rowToProduct(row: ProductRow): Product {
     addedDate: row.added_date,
     isEstimatedExpiration: row.is_estimated_expiration ?? undefined,
     fridgeZone: row.fridge_zone ?? undefined,
+    consumedAt: row.consumed_at ?? undefined,
   };
 }
 
@@ -47,10 +49,33 @@ export async function fetchProducts(): Promise<Product[]> {
   const { data, error } = await supabase
     .from('products')
     .select('*')
+    .is('consumed_at', null)
     .order('created_at', { ascending: false });
 
   if (error) throw error;
   return (data as ProductRow[]).map(rowToProduct);
+}
+
+export async function fetchRecentlyConsumed(): Promise<Product[]> {
+  const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .not('consumed_at', 'is', null)
+    .gte('consumed_at', since)
+    .order('consumed_at', { ascending: false });
+
+  if (error) throw error;
+  return (data as ProductRow[]).map(rowToProduct);
+}
+
+export async function consumeProduct(id: string): Promise<void> {
+  const { error } = await supabase
+    .from('products')
+    .update({ consumed_at: new Date().toISOString() })
+    .eq('id', id);
+
+  if (error) throw error;
 }
 
 export async function insertProduct(

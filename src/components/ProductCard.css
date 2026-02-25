@@ -51,6 +51,7 @@
   flex-shrink: 0;
 }
 
+.consume-btn,
 .edit-btn,
 .delete-btn {
   border: 1px solid var(--border);
@@ -64,6 +65,17 @@
   justify-content: center;
   transition: all 0.15s;
   background: transparent;
+}
+
+.consume-btn {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.consume-btn:hover {
+  border-color: var(--green);
+  color: var(--green);
+  background: var(--green-bg);
 }
 
 .edit-btn {
@@ -88,7 +100,9 @@
 }
 
 .delete-cancel-btn,
-.delete-confirm-btn {
+.delete-confirm-btn,
+.consume-cancel-btn,
+.consume-confirm-btn {
   border-radius: 8px;
   height: 30px;
   font-size: 0.72rem;
@@ -101,13 +115,15 @@
   letter-spacing: 0.02em;
 }
 
-.delete-cancel-btn {
+.delete-cancel-btn,
+.consume-cancel-btn {
   background: transparent;
   border: 1px solid var(--border);
   color: var(--text-muted);
 }
 
-.delete-cancel-btn:hover {
+.delete-cancel-btn:hover,
+.consume-cancel-btn:hover {
   border-color: var(--border-hover);
   color: var(--text-secondary);
 }
@@ -122,9 +138,24 @@
   opacity: 0.88;
 }
 
+.consume-confirm-btn {
+  background: var(--green);
+  border: 1px solid transparent;
+  color: #fff;
+}
+
+.consume-confirm-btn:hover {
+  opacity: 0.88;
+}
+
 .product-card.confirming-delete {
   border-left-color: var(--red);
   border-color: rgba(220, 38, 38, 0.3);
+}
+
+.product-card.confirming-consume {
+  border-left-color: var(--green);
+  border-color: rgba(34, 197, 94, 0.25);
 }
 
 .product-info {
