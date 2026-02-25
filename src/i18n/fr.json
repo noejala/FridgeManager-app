@@ -40,6 +40,7 @@
     "clearConfirmMessage_other": "Cela supprimera définitivement les {{count}} produits de votre frigo. Cette action est irréversible.",
     "clearConfirm": "Tout supprimer",
     "recentlyConsumed": "Récemment consommé",
+    "restore": "Remettre dans le frigo",
     "today": "Aujourd'hui",
     "yesterday": "Hier",
     "daysAgo_one": "Il y a {{count}} jour",

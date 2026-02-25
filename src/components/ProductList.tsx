@@ -10,6 +10,7 @@ interface ProductListProps {
   consumedProducts: Product[];
   onDelete: (id: string) => void;
   onConsume: (id: string) => void;
+  onRestore: (id: string) => void;
   onEdit: (product: Product) => void;
   onClearAll: () => Promise<void>;
 }
@@ -23,7 +24,7 @@ function getRelativeDay(isoTimestamp: string, t: (key: string, opts?: Record<str
   return t('productList.daysAgo', { count: diffDays });
 }
 
-export const ProductList = ({ products, consumedProducts, onDelete, onConsume, onEdit, onClearAll }: ProductListProps) => {
+export const ProductList = ({ products, consumedProducts, onDelete, onConsume, onRestore, onEdit, onClearAll }: ProductListProps) => {
   const { t } = useTranslation();
   const [showClearModal, setShowClearModal] = useState(false);
   const [clearing, setClearing] = useState(false);
@@ -117,6 +118,13 @@ export const ProductList = ({ products, consumedProducts, onDelete, onConsume, o
                   <span className="consumed-name">{p.name}</span>
                   <span className="consumed-qty">{p.quantity} {p.unit}</span>
                   <span className="consumed-when">{p.consumedAt ? getRelativeDay(p.consumedAt, t) : ''}</span>
+                  <button
+                    className="restore-btn"
+                    onClick={() => onRestore(p.id)}
+                    title={t('productList.restore')}
+                  >
+                    ↩
+                  </button>
                 </li>
               ))}
             </ul>

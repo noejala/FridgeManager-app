@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { User } from '@supabase/supabase-js';
 import { Product } from './types/Product';
 import { supabase } from './lib/supabase';
-import { fetchProducts, fetchRecentlyConsumed, insertProduct, updateProduct, deleteProduct, deleteAllProducts, consumeProduct } from './utils/productService';
+import { fetchProducts, fetchRecentlyConsumed, insertProduct, updateProduct, deleteProduct, deleteAllProducts, consumeProduct, restoreProduct } from './utils/productService';
 import { getFridgeZone } from './utils/fridgePlacement';
 import { Tabs } from './components/Tabs';
 import { AddProductForm } from './components/AddProductForm';
@@ -191,6 +191,20 @@ function App() {
     }
   };
 
+  const handleRestoreProduct = async (id: string) => {
+    try {
+      await restoreProduct(id);
+      const restored = consumedProducts.find(p => p.id === id);
+      setConsumedProducts(prev => prev.filter(p => p.id !== id));
+      if (restored) {
+        const { consumedAt: _, ...restoredProduct } = restored;
+        setProducts(prev => [restoredProduct, ...prev]);
+      }
+    } catch (err) {
+      console.error('Failed to restore product:', err);
+    }
+  };
+
   const handleEditProduct = (product: Product) => {
     setEditingProduct(product);
   };
@@ -239,6 +253,7 @@ function App() {
           consumedProducts={consumedProducts}
           onDelete={handleDeleteProduct}
           onConsume={handleConsumeProduct}
+          onRestore={handleRestoreProduct}
           onEdit={handleEditProduct}
           onClearAll={handleClearFridge}
         />

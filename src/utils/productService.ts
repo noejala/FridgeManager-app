@@ -78,6 +78,15 @@ export async function consumeProduct(id: string): Promise<void> {
   if (error) throw error;
 }
 
+export async function restoreProduct(id: string): Promise<void> {
+  const { error } = await supabase
+    .from('products')
+    .update({ consumed_at: null })
+    .eq('id', id);
+
+  if (error) throw error;
+}
+
 export async function insertProduct(
   product: Omit<Product, 'id'>,
   userId: string

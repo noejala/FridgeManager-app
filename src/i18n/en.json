@@ -40,6 +40,7 @@
     "clearConfirmMessage_other": "This will permanently delete all {{count}} products from your fridge. This cannot be undone.",
     "clearConfirm": "Clear everything",
     "recentlyConsumed": "Recently consumed",
+    "restore": "Put back in fridge",
     "today": "Today",
     "yesterday": "Yesterday",
     "daysAgo_one": "{{count}} day ago",
