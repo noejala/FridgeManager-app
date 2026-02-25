@@ -11,6 +11,7 @@ interface ProductListProps {
   onDelete: (id: string) => void;
   onConsume: (id: string) => void;
   onRestore: (id: string) => void;
+  onDeleteConsumed: (id: string) => void;
   onEdit: (product: Product) => void;
   onClearAll: () => Promise<void>;
 }
@@ -24,7 +25,7 @@ function getRelativeDay(isoTimestamp: string, t: (key: string, opts?: Record<str
   return t('productList.daysAgo', { count: diffDays });
 }
 
-export const ProductList = ({ products, consumedProducts, onDelete, onConsume, onRestore, onEdit, onClearAll }: ProductListProps) => {
+export const ProductList = ({ products, consumedProducts, onDelete, onConsume, onRestore, onDeleteConsumed, onEdit, onClearAll }: ProductListProps) => {
   const { t } = useTranslation();
   const [showClearModal, setShowClearModal] = useState(false);
   const [clearing, setClearing] = useState(false);
@@ -36,23 +37,6 @@ export const ProductList = ({ products, consumedProducts, onDelete, onConsume, o
     setClearing(false);
     setShowClearModal(false);
   };
-
-  if (products.length === 0) {
-    return (
-      <div className="empty-state">
-        <svg className="empty-fridge-icon" width="56" height="76" viewBox="0 0 56 76" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="3" y="3" width="50" height="70" rx="5" />
-          <line x1="3" y1="22" x2="53" y2="22" />
-          <line x1="19" y1="13" x2="37" y2="13" strokeWidth="2" />
-          <line x1="19" y1="42" x2="37" y2="42" strokeWidth="2" />
-          <line x1="19" y1="55" x2="30" y2="55" strokeDasharray="2 3" />
-          <line x1="19" y1="62" x2="26" y2="62" strokeDasharray="2 3" />
-        </svg>
-        <h3>{t('productList.nothingHereYet')}</h3>
-        <p>{t('productList.startAdding')}</p>
-      </div>
-    );
-  }
 
   const sortedProducts = [...products].sort((a, b) => {
     const aExpired = isExpired(a.expirationDate);
@@ -73,33 +57,50 @@ export const ProductList = ({ products, consumedProducts, onDelete, onConsume, o
 
   return (
     <div className="product-list-container">
-      {(expiredCount > 0 || expiringSoonCount > 0) && (
-        <div className="alerts-summary">
-          {expiredCount > 0 && (
-            <div className="alert alert-expired">
-              {t('productList.expiredProduct', { count: expiredCount })}
-            </div>
-          )}
-          {expiringSoonCount > 0 && (
-            <div className="alert alert-expiring">
-              {t('productList.expiringSoon', { count: expiringSoonCount })}
-            </div>
-          )}
+      {products.length === 0 ? (
+        <div className="empty-state">
+          <svg className="empty-fridge-icon" width="56" height="76" viewBox="0 0 56 76" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="3" width="50" height="70" rx="5" />
+            <line x1="3" y1="22" x2="53" y2="22" />
+            <line x1="19" y1="13" x2="37" y2="13" strokeWidth="2" />
+            <line x1="19" y1="42" x2="37" y2="42" strokeWidth="2" />
+            <line x1="19" y1="55" x2="30" y2="55" strokeDasharray="2 3" />
+            <line x1="19" y1="62" x2="26" y2="62" strokeDasharray="2 3" />
+          </svg>
+          <h3>{t('productList.nothingHereYet')}</h3>
+          <p>{t('productList.startAdding')}</p>
         </div>
-      )}
+      ) : (
+        <>
+          {(expiredCount > 0 || expiringSoonCount > 0) && (
+            <div className="alerts-summary">
+              {expiredCount > 0 && (
+                <div className="alert alert-expired">
+                  {t('productList.expiredProduct', { count: expiredCount })}
+                </div>
+              )}
+              {expiringSoonCount > 0 && (
+                <div className="alert alert-expiring">
+                  {t('productList.expiringSoon', { count: expiringSoonCount })}
+                </div>
+              )}
+            </div>
+          )}
 
-      <div className="product-grid">
-        {sortedProducts.map((product, index) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            onDelete={onDelete}
-            onConsume={onConsume}
-            onEdit={onEdit}
-            index={index}
-          />
-        ))}
-      </div>
+          <div className="product-grid">
+            {sortedProducts.map((product, index) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onDelete={onDelete}
+                onConsume={onConsume}
+                onEdit={onEdit}
+                index={index}
+              />
+            ))}
+          </div>
+        </>
+      )}
 
       {consumedProducts.length > 0 && (
         <div className="consumed-section">
@@ -125,6 +126,13 @@ export const ProductList = ({ products, consumedProducts, onDelete, onConsume, o
                   >
                     ↩
                   </button>
+                  <button
+                    className="consumed-delete-btn"
+                    onClick={() => onDeleteConsumed(p.id)}
+                    title={t('productCard.delete')}
+                  >
+                    ×
+                  </button>
                 </li>
               ))}
             </ul>
@@ -132,11 +140,13 @@ export const ProductList = ({ products, consumedProducts, onDelete, onConsume, o
         </div>
       )}
 
-      <div className="clear-fridge-row">
-        <button className="clear-fridge-btn" onClick={() => setShowClearModal(true)}>
-          {t('productList.clearFridge')}
-        </button>
-      </div>
+      {products.length > 0 && (
+        <div className="clear-fridge-row">
+          <button className="clear-fridge-btn" onClick={() => setShowClearModal(true)}>
+            {t('productList.clearFridge')}
+          </button>
+        </div>
+      )}
 
       {showClearModal && (
         <div className="clear-modal-overlay" onClick={() => !clearing && setShowClearModal(false)}>

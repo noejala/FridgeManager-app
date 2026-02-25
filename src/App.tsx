@@ -191,6 +191,15 @@ function App() {
     }
   };
 
+  const handleDeleteConsumed = async (id: string) => {
+    try {
+      await deleteProduct(id);
+      setConsumedProducts(prev => prev.filter(p => p.id !== id));
+    } catch (err) {
+      console.error('Failed to delete consumed product:', err);
+    }
+  };
+
   const handleRestoreProduct = async (id: string) => {
     try {
       await restoreProduct(id);
@@ -254,6 +263,7 @@ function App() {
           onDelete={handleDeleteProduct}
           onConsume={handleConsumeProduct}
           onRestore={handleRestoreProduct}
+          onDeleteConsumed={handleDeleteConsumed}
           onEdit={handleEditProduct}
           onClearAll={handleClearFridge}
         />
