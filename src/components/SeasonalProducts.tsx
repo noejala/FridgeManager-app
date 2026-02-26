@@ -55,7 +55,7 @@ export const SeasonalProducts = () => {
               <div className="product-emoji">
                 {productEmojiMap[product] || '🥬'}
               </div>
-              <h3>{product}</h3>
+              <h3>{t(`seasonal.products.${product}`, { defaultValue: product })}</h3>
             </div>
           ))}
         </div>
