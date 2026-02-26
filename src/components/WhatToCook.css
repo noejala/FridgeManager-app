@@ -6,6 +6,81 @@
   margin-bottom: 2rem;
 }
 
+.cook-header-top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.servings-control {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.servings-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.servings-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 40px;
+  overflow: hidden;
+}
+
+.stepper-btn {
+  background: transparent;
+  border: none;
+  width: 2rem;
+  height: 2rem;
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+  font-family: var(--font-body);
+  line-height: 1;
+}
+
+.stepper-btn:hover:not(:disabled) {
+  background: var(--bg-surface);
+  color: var(--text);
+}
+
+.stepper-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.servings-value {
+  min-width: 2rem;
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  line-height: 2rem;
+}
+
+.tag-servings {
+  background: var(--accent-bg);
+  border-color: transparent;
+  color: var(--accent);
+}
+
 .cook-header h2 {
   font-family: var(--font-display);
   font-size: 2.25rem;

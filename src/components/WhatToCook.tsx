@@ -25,6 +25,29 @@ const PANTRY_STAPLES = new Set([
 
 type CourseFilter = 'all' | 'starter' | 'main' | 'dessert';
 
+const DEFAULT_SERVINGS = 4;
+
+function scaleMeasure(measure: string, ratio: number): string {
+  if (ratio === 1 || !measure.trim()) return measure;
+  const match = measure.trim().match(/^(\d+\/\d+|\d+\.?\d*)\s*(.*)/);
+  if (!match) return measure;
+  const [, numStr, unit] = match;
+  let num: number;
+  if (numStr.includes('/')) {
+    const [n, d] = numStr.split('/').map(Number);
+    num = n / d;
+  } else {
+    num = parseFloat(numStr);
+  }
+  const scaled = num * ratio;
+  const fmt = scaled % 1 === 0
+    ? scaled.toString()
+    : (Math.round(scaled * 4) / 4 % 1 === 0
+        ? (Math.round(scaled * 4) / 4).toString()
+        : scaled.toFixed(1));
+  return `${fmt} ${unit}`.trim();
+}
+
 function getCourse(category: string): 'starter' | 'main' | 'dessert' {
   const c = category.toLowerCase();
   if (c === 'dessert') return 'dessert';
@@ -72,6 +95,7 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
   const [error, setError] = useState<string | null>(null);
   const [selectedRecipe, setSelectedRecipe] = useState<RecipeMatch | null>(null);
   const [courseFilter, setCourseFilter] = useState<CourseFilter>('all');
+  const [servings, setServings] = useState(DEFAULT_SERVINGS);
 
   const fetchRecipes = useCallback(async () => {
     if (products.length === 0) {
@@ -150,10 +174,30 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
   return (
     <div className="what-to-cook">
       <div className="cook-header">
-        <h2>{t('cook.title')}</h2>
-        <p className="cook-subtitle">
-          {t('cook.recipesBasedOn', { count: products.length })}
-        </p>
+        <div className="cook-header-top">
+          <div>
+            <h2>{t('cook.title')}</h2>
+            <p className="cook-subtitle">
+              {t('cook.recipesBasedOn', { count: products.length })}
+            </p>
+          </div>
+          <div className="servings-control">
+            <span className="servings-label">{t('cook.servings')}</span>
+            <div className="servings-stepper">
+              <button
+                className="stepper-btn"
+                onClick={() => setServings(s => Math.max(1, s - 1))}
+                disabled={servings <= 1}
+              >−</button>
+              <span className="servings-value">{servings}</span>
+              <button
+                className="stepper-btn"
+                onClick={() => setServings(s => Math.min(20, s + 1))}
+                disabled={servings >= 20}
+              >+</button>
+            </div>
+          </div>
+        </div>
       </div>
 
       {loading && (
@@ -257,6 +301,9 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
             <div className="modal-tags">
               {selectedRecipe.meal.category && <span className="tag">{selectedRecipe.meal.category}</span>}
               {selectedRecipe.meal.area && <span className="tag">{selectedRecipe.meal.area}</span>}
+              <span className="tag tag-servings">
+                {t('cook.servingsCount', { count: servings })}
+              </span>
             </div>
 
             {selectedRecipe.available.length > 0 && (
@@ -265,7 +312,7 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
                 <ul className="modal-ingredients">
                   {selectedRecipe.available.map((ing, i) => (
                     <li key={i} className="ingredient-available">
-                      <span className="ingredient-measure">{ing.measure}</span> {ing.name}
+                      <span className="ingredient-measure">{scaleMeasure(ing.measure, servings / DEFAULT_SERVINGS)}</span> {ing.name}
                     </li>
                   ))}
                 </ul>
@@ -278,7 +325,7 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
                 <ul className="modal-ingredients">
                   {selectedRecipe.pantry.map((ing, i) => (
                     <li key={i} className="ingredient-pantry">
-                      <span className="ingredient-measure">{ing.measure}</span> {ing.name}
+                      <span className="ingredient-measure">{scaleMeasure(ing.measure, servings / DEFAULT_SERVINGS)}</span> {ing.name}
                     </li>
                   ))}
                 </ul>
@@ -291,7 +338,7 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
                 <ul className="modal-ingredients">
                   {selectedRecipe.missing.map((ing, i) => (
                     <li key={i} className="ingredient-missing">
-                      <span className="ingredient-measure">{ing.measure}</span> {ing.name}
+                      <span className="ingredient-measure">{scaleMeasure(ing.measure, servings / DEFAULT_SERVINGS)}</span> {ing.name}
                     </li>
                   ))}
                 </ul>
