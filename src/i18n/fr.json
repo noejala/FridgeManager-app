@@ -90,7 +90,12 @@
     "inYourFridge": "Dans votre frigo",
     "pantryStaples": "Produits de base",
     "instructions": "Instructions",
-    "failedFetch": "Échec de la récupération des recettes. Veuillez réessayer plus tard."
+    "failedFetch": "Échec de la récupération des recettes. Veuillez réessayer plus tard.",
+    "filterAll": "Tous",
+    "filterStarter": "Entrées",
+    "filterMain": "Plats",
+    "filterDessert": "Desserts",
+    "noRecipesInCategory": "Aucune recette dans cette catégorie pour vos produits actuels."
   },
   "categories": {
     "Fruits": "Fruits",

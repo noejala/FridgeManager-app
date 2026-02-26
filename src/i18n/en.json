@@ -90,7 +90,12 @@
     "inYourFridge": "In your fridge",
     "pantryStaples": "Pantry staples",
     "instructions": "Instructions",
-    "failedFetch": "Failed to fetch recipes. Please try again later."
+    "failedFetch": "Failed to fetch recipes. Please try again later.",
+    "filterAll": "All",
+    "filterStarter": "Starters",
+    "filterMain": "Mains",
+    "filterDessert": "Desserts",
+    "noRecipesInCategory": "No recipes in this category for your current products."
   },
   "categories": {
     "Fruits": "Fruits",

@@ -85,6 +85,61 @@
   background: var(--red-bg);
 }
 
+.course-filters {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.course-filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 40px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+
+.course-filter-btn:hover {
+  border-color: var(--border-hover);
+  color: var(--text);
+}
+
+.course-filter-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.course-filter-btn.active .course-count {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+
+.course-filter-btn.empty {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.course-count {
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.05rem 0.45rem;
+  border-radius: 40px;
+  min-width: 1.4rem;
+  text-align: center;
+}
+
 .recipes-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));

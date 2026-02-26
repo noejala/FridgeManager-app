@@ -23,6 +23,15 @@ const PANTRY_STAPLES = new Set([
   'lemon', 'lime', 'lemon juice', 'lime juice',
 ]);
 
+type CourseFilter = 'all' | 'starter' | 'main' | 'dessert';
+
+function getCourse(category: string): 'starter' | 'main' | 'dessert' {
+  const c = category.toLowerCase();
+  if (c === 'dessert') return 'dessert';
+  if (c === 'starter') return 'starter';
+  return 'main';
+}
+
 interface RecipeMatch {
   meal: MealDetails;
   available: { name: string; measure: string }[];
@@ -62,6 +71,7 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedRecipe, setSelectedRecipe] = useState<RecipeMatch | null>(null);
+  const [courseFilter, setCourseFilter] = useState<CourseFilter>('all');
 
   const fetchRecipes = useCallback(async () => {
     if (products.length === 0) {
@@ -104,7 +114,10 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
         }
       }
 
-      matched.sort((a, b) => a.missing.length - b.missing.length);
+      matched.sort((a, b) => {
+        if (a.missing.length !== b.missing.length) return a.missing.length - b.missing.length;
+        return a.meal.name.localeCompare(b.meal.name);
+      });
 
       setRecipes(matched);
     } catch {
@@ -164,9 +177,46 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
         </div>
       )}
 
-      {!loading && recipes.length > 0 && (
-        <div className="recipes-grid">
-          {recipes.map((recipe, index) => (
+      {!loading && recipes.length > 0 && (() => {
+        const counts = {
+          all: recipes.length,
+          starter: recipes.filter(r => getCourse(r.meal.category) === 'starter').length,
+          main: recipes.filter(r => getCourse(r.meal.category) === 'main').length,
+          dessert: recipes.filter(r => getCourse(r.meal.category) === 'dessert').length,
+        };
+        const filters: { key: CourseFilter; label: string }[] = [
+          { key: 'all', label: t('cook.filterAll') },
+          { key: 'starter', label: t('cook.filterStarter') },
+          { key: 'main', label: t('cook.filterMain') },
+          { key: 'dessert', label: t('cook.filterDessert') },
+        ];
+        const filteredRecipes = courseFilter === 'all'
+          ? recipes
+          : recipes.filter(r => getCourse(r.meal.category) === courseFilter);
+
+        return (
+          <>
+            <div className="course-filters">
+              {filters.map(f => (
+                <button
+                  key={f.key}
+                  className={`course-filter-btn${courseFilter === f.key ? ' active' : ''}${counts[f.key] === 0 ? ' empty' : ''}`}
+                  onClick={() => setCourseFilter(f.key)}
+                >
+                  {f.label}
+                  <span className="course-count">{counts[f.key]}</span>
+                </button>
+              ))}
+            </div>
+
+            {filteredRecipes.length === 0 ? (
+              <div className="empty-suggestions">
+                <div className="empty-icon">🔍</div>
+                <p>{t('cook.noRecipesInCategory')}</p>
+              </div>
+            ) : (
+              <div className="recipes-grid">
+                {filteredRecipes.map((recipe, index) => (
             <div
               key={recipe.meal.id}
               className="recipe-card"
@@ -187,9 +237,12 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
                 </div>
               </div>
             </div>
-          ))}
-        </div>
-      )}
+                ))}
+              </div>
+            )}
+          </>
+        );
+      })()}
 
       {selectedRecipe && (
         <div className="modal-overlay" onClick={closeDetails}>
