@@ -54,6 +54,7 @@
     "quantity": "Quantity",
     "unit": "Unit",
     "unknownExpiration": "I don't know the expiration date",
+    "unknownProductWarning": "Product not recognized — please enter the date manually *",
     "whenDidYouBuy": "When did you buy it?",
     "today": "Today",
     "expirationDate": "Expiration date *",

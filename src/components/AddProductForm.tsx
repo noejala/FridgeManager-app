@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Product, ProductCategory } from '../types/Product';
 import { guessCategory } from '../utils/categoryMapping';
-import { estimateExpirationDate } from '../utils/shelfLife';
+import { estimateExpirationDate, isProductRecognized } from '../utils/shelfLife';
 import './AddProductForm.css';
 
 interface AddProductFormProps {
@@ -32,10 +32,12 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
   const [unknownExpiration, setUnknownExpiration] = useState(false);
   const [purchaseDate, setPurchaseDate] = useState('');
 
+  const recognized = isProductRecognized(name);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const finalExpirationDate = unknownExpiration
-      ? estimateExpirationDate(name, category, purchaseDate || undefined)
+    const finalExpirationDate = (unknownExpiration && recognized)
+      ? estimateExpirationDate(name, purchaseDate || undefined)
       : expirationDate;
     if (!name || !finalExpirationDate) return;
 
@@ -52,7 +54,7 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
       expirationDate: finalExpirationDate,
       quantity: quantityNum,
       unit,
-      isEstimatedExpiration: unknownExpiration,
+      isEstimatedExpiration: unknownExpiration && recognized,
     });
     setIsLoading(false);
 
@@ -157,7 +159,7 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
         </label>
       </div>
 
-      {unknownExpiration ? (
+      {unknownExpiration && recognized ? (
         <div className="form-group">
           <label htmlFor="purchaseDate">{t('form.whenDidYouBuy')}</label>
           <div className="purchase-date-row">
@@ -176,6 +178,19 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
               {t('form.today')}
             </button>
           </div>
+        </div>
+      ) : unknownExpiration && !recognized ? (
+        <div className="form-group">
+          <p className="unknown-product-warning">{t('form.unknownProductWarning')}</p>
+          <label htmlFor="expirationDate">{t('form.expirationDate')}</label>
+          <input
+            id="expirationDate"
+            type="date"
+            value={expirationDate}
+            onChange={(e) => setExpirationDate(e.target.value)}
+            min={minDate}
+            required
+          />
         </div>
       ) : (
         <div className="form-group">

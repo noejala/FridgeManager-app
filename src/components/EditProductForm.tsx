@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Product, ProductCategory } from '../types/Product';
 import { guessCategory } from '../utils/categoryMapping';
-import { estimateExpirationDate } from '../utils/shelfLife';
+import { estimateExpirationDate, isProductRecognized } from '../utils/shelfLife';
 import './AddProductForm.css';
 
 interface EditProductFormProps {
@@ -42,10 +42,12 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
     setUnknownExpiration(product.isEstimatedExpiration ?? false);
   }, [product]);
 
+  const recognized = isProductRecognized(name);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const finalExpirationDate = unknownExpiration
-      ? estimateExpirationDate(name, category, purchaseDate || undefined)
+    const finalExpirationDate = (unknownExpiration && recognized)
+      ? estimateExpirationDate(name, purchaseDate || undefined)
       : expirationDate;
     if (!name || !finalExpirationDate) return;
 
@@ -63,7 +65,7 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
       expirationDate: finalExpirationDate,
       quantity: quantityNum,
       unit,
-      isEstimatedExpiration: unknownExpiration,
+      isEstimatedExpiration: unknownExpiration && recognized,
     });
     setIsLoading(false);
   };
@@ -151,7 +153,7 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
         </label>
       </div>
 
-      {unknownExpiration ? (
+      {unknownExpiration && recognized ? (
         <div className="form-group">
           <label htmlFor="edit-purchaseDate">{t('form.whenDidYouBuy')}</label>
           <div className="purchase-date-row">
@@ -170,6 +172,19 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
               {t('form.today')}
             </button>
           </div>
+        </div>
+      ) : unknownExpiration && !recognized ? (
+        <div className="form-group">
+          <p className="unknown-product-warning">{t('form.unknownProductWarning')}</p>
+          <label htmlFor="edit-expirationDate">{t('form.expirationDate')}</label>
+          <input
+            id="edit-expirationDate"
+            type="date"
+            value={expirationDate}
+            onChange={(e) => setExpirationDate(e.target.value)}
+            min={minDate}
+            required
+          />
         </div>
       ) : (
         <div className="form-group">

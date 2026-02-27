@@ -1,16 +1,3 @@
-import { ProductCategory } from '../types/Product';
-
-const CATEGORY_SHELF_LIFE: Record<ProductCategory, number> = {
-  Fruits: 7,
-  Vegetables: 10,
-  Meat: 3,
-  Fish: 2,
-  Dairy: 14,
-  Beverages: 30,
-  Frozen: 90,
-  Other: 7,
-};
-
 const PRODUCT_SHELF_LIFE: Record<string, number> = {
   banana: 5,
   apple: 21,
@@ -33,7 +20,12 @@ const PRODUCT_SHELF_LIFE: Record<string, number> = {
   strawberry: 3,
 };
 
-export function estimateExpirationDate(name: string, category: ProductCategory, purchaseDate?: string): string {
+export function isProductRecognized(name: string): boolean {
+  const lower = name.toLowerCase().trim();
+  return Object.keys(PRODUCT_SHELF_LIFE).some(k => lower.includes(k));
+}
+
+export function estimateExpirationDate(name: string, purchaseDate?: string): string | null {
   const lowerName = name.toLowerCase().trim();
 
   let days: number | undefined;
@@ -44,9 +36,7 @@ export function estimateExpirationDate(name: string, category: ProductCategory, 
     }
   }
 
-  if (days === undefined) {
-    days = CATEGORY_SHELF_LIFE[category];
-  }
+  if (days === undefined) return null;
 
   const date = purchaseDate ? new Date(purchaseDate) : new Date();
   date.setDate(date.getDate() + days);

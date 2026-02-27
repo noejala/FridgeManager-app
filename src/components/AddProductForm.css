@@ -168,6 +168,16 @@
   flex: 1;
 }
 
+.unknown-product-warning {
+  font-size: 0.78rem;
+  color: var(--amber);
+  background: var(--amber-bg);
+  border: 1px solid var(--amber);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
 .today-btn {
   padding: 0.7rem 1rem;
   border: 1px solid var(--border-hover);
