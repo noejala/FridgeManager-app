@@ -28,9 +28,10 @@ interface TabsProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
   children: ReactNode;
+  urgentCount?: number;
 }
 
-export const Tabs = ({ activeTab, onTabChange, children }: TabsProps) => {
+export const Tabs = ({ activeTab, onTabChange, children, urgentCount = 0 }: TabsProps) => {
   const { t } = useTranslation();
 
   const tabs = [
@@ -48,8 +49,13 @@ export const Tabs = ({ activeTab, onTabChange, children }: TabsProps) => {
             className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
             onClick={() => onTabChange(tab.id)}
           >
-            <span className="tab-icon">{tab.icon}</span>
+            <span className="tab-icon-wrapper">
+              <span className="tab-icon">{tab.icon}</span>
+            </span>
             <span className="tab-label">{tab.label}</span>
+            {tab.id === 'fridge' && urgentCount > 0 && (
+              <span className="tab-badge">{urgentCount > 99 ? '99+' : urgentCount}</span>
+            )}
           </button>
         ))}
       </div>

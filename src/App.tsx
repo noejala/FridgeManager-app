@@ -4,6 +4,7 @@ import { User } from '@supabase/supabase-js';
 import { Product } from './types/Product';
 import { supabase } from './lib/supabase';
 import { fetchProducts, fetchRecentlyConsumed, insertProduct, updateProduct, deleteProduct, deleteAllProducts, consumeProduct, restoreProduct } from './utils/productService';
+import { isExpired, isExpiringSoon } from './utils/storage';
 import { getFridgeZone } from './utils/fridgePlacement';
 import { Tabs } from './components/Tabs';
 import { AddProductForm } from './components/AddProductForm';
@@ -327,7 +328,11 @@ function App() {
       </header>
 
       <main className="app-main">
-        <Tabs activeTab={activeTab} onTabChange={setActiveTab}>
+        <Tabs
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          urgentCount={products.filter(p => isExpired(p.expirationDate) || isExpiringSoon(p.expirationDate)).length}
+        >
           {renderTabContent()}
         </Tabs>
       </main>
