@@ -11,12 +11,6 @@ export function singularize(word: string): string {
   return w;
 }
 
-interface MealSummary {
-  id: string;
-  name: string;
-  thumbnail: string;
-}
-
 export interface MealDetails {
   id: string;
   name: string;
