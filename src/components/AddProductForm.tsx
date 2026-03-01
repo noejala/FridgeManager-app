@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { Product, ProductCategory } from '../types/Product';
 import { guessCategory } from '../utils/categoryMapping';
 import { estimateExpirationDate, isProductRecognized } from '../utils/shelfLife';
+import { lookupBarcode } from '../utils/foodFactsApi';
+import { BarcodeScanner } from './BarcodeScanner';
 import './AddProductForm.css';
 
 interface AddProductFormProps {
@@ -24,6 +26,9 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isScanning, setIsScanning] = useState(false);
+  const [isLookingUp, setIsLookingUp] = useState(false);
+  const [lookupError, setLookupError] = useState<string | null>(null);
   const [name, setName] = useState('');
   const [category, setCategory] = useState<ProductCategory>('Other');
   const [expirationDate, setExpirationDate] = useState('');
@@ -33,6 +38,26 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
   const [purchaseDate, setPurchaseDate] = useState('');
 
   const recognized = isProductRecognized(name);
+
+  const handleBarcodeDetected = async (barcode: string) => {
+    setIsScanning(false);
+    setIsOpen(true);
+    setIsLookingUp(true);
+    setLookupError(null);
+
+    const result = await lookupBarcode(barcode);
+
+    if (result) {
+      setName(result.name);
+      setCategory(result.category === 'Other' ? guessCategory(result.name) : result.category);
+      setQuantity(String(result.quantity));
+      setUnit(result.unit);
+    } else {
+      setLookupError('Produit non trouvé. Remplissez le formulaire manuellement.');
+    }
+
+    setIsLookingUp(false);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,31 +97,92 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
 
   if (!isOpen) {
     return (
-      <button className="add-product-btn" onClick={() => setIsOpen(true)}>
-        + {t('form.addProduct')}
-      </button>
+      <>
+        {isScanning && (
+          <BarcodeScanner
+            onDetected={handleBarcodeDetected}
+            onClose={() => setIsScanning(false)}
+          />
+        )}
+        <div className="add-product-actions">
+          <button className="add-product-btn" onClick={() => setIsOpen(true)}>
+            + {t('form.addProduct')}
+          </button>
+          <button
+            className="scan-product-btn"
+            onClick={() => setIsScanning(true)}
+            title="Scanner un code-barres"
+          >
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="5" height="5" rx="1"/>
+              <rect x="16" y="3" width="5" height="5" rx="1"/>
+              <rect x="3" y="16" width="5" height="5" rx="1"/>
+              <path d="M16 16h2v2h-2zM18 18h2v2h-2zM16 20h2"/>
+              <path d="M20 16v2"/>
+            </svg>
+            Scanner
+          </button>
+        </div>
+      </>
     );
   }
 
   return (
-    <form className="add-product-form" onSubmit={handleSubmit}>
-      <h2>{t('form.addProduct')}</h2>
-
-      <div className="form-group">
-        <label htmlFor="name">{t('form.productName')}</label>
-        <input
-          id="name"
-          type="text"
-          value={name}
-          onChange={(e) => {
-            const newName = e.target.value;
-            setName(newName);
-            setCategory(guessCategory(newName));
-          }}
-          required
-          placeholder={t('form.productPlaceholder')}
+    <>
+      {isScanning && (
+        <BarcodeScanner
+          onDetected={handleBarcodeDetected}
+          onClose={() => setIsScanning(false)}
         />
-      </div>
+      )}
+      <form className="add-product-form" onSubmit={handleSubmit}>
+        <div className="form-title-row">
+          <h2>{t('form.addProduct')}</h2>
+          <button
+            type="button"
+            className="scan-inline-btn"
+            onClick={() => setIsScanning(true)}
+            disabled={isLookingUp || isLoading}
+            title="Scanner un code-barres"
+          >
+            {isLookingUp ? (
+              <span className="scan-inline-spinner" />
+            ) : (
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="5" height="5" rx="1"/>
+                <rect x="16" y="3" width="5" height="5" rx="1"/>
+                <rect x="3" y="16" width="5" height="5" rx="1"/>
+                <path d="M16 16h2v2h-2zM18 18h2v2h-2zM16 20h2"/>
+                <path d="M20 16v2"/>
+              </svg>
+            )}
+            {isLookingUp ? 'Recherche…' : 'Scanner'}
+          </button>
+        </div>
+
+        {lookupError && (
+          <div className="lookup-error">
+            {lookupError}
+          </div>
+        )}
+
+        <div className="form-group">
+          <label htmlFor="name">{t('form.productName')}</label>
+          <input
+            id="name"
+            type="text"
+            value={name}
+            onChange={(e) => {
+              const newName = e.target.value;
+              setName(newName);
+              setCategory(guessCategory(newName));
+              if (lookupError) setLookupError(null);
+            }}
+            required
+            disabled={isLookingUp}
+            placeholder={isLookingUp ? 'Recherche en cours…' : t('form.productPlaceholder')}
+          />
+        </div>
 
       <div className="form-row">
         <div className="form-group">
@@ -207,13 +293,14 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
       )}
 
       <div className="form-actions">
-        <button type="button" className="cancel-btn" onClick={() => setIsOpen(false)} disabled={isLoading}>
+        <button type="button" className="cancel-btn" onClick={() => setIsOpen(false)} disabled={isLoading || isLookingUp}>
           {t('form.cancel')}
         </button>
-        <button type="submit" className="submit-btn" disabled={isLoading}>
+        <button type="submit" className="submit-btn" disabled={isLoading || isLookingUp}>
           {isLoading ? t('form.adding') : t('form.add')}
         </button>
       </div>
     </form>
+    </>
   );
 };

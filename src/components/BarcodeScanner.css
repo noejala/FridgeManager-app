@@ -1,0 +1,245 @@
+/* ── Overlay ──────────────────────────────────────────── */
+.scanner-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: fade-in 0.15s ease;
+}
+
+/* ── Modal ────────────────────────────────────────────── */
+.scanner-modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  width: min(420px, 95vw);
+  overflow: hidden;
+  animation: modal-in 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Header ───────────────────────────────────────────── */
+.scanner-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.25rem 1rem;
+}
+
+.scanner-title {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--text);
+}
+
+.scanner-close {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.scanner-close:hover {
+  color: var(--text);
+  background: var(--bg-surface);
+}
+
+/* ── Camera viewport ──────────────────────────────────── */
+.scanner-viewport {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #000;
+  overflow: hidden;
+}
+
+.scanner-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── Viewfinder ───────────────────────────────────────── */
+.scanner-viewfinder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 78%;
+  aspect-ratio: 2.5 / 1;
+  /* Dark overlay outside the viewfinder */
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+  border-radius: 3px;
+  z-index: 1;
+}
+
+/* Corner brackets */
+.scanner-corner {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-color: #fff;
+  border-style: solid;
+}
+
+.scanner-corner--tl { top: -2px; left: -2px;   border-width: 3px 0 0 3px; border-radius: 3px 0 0 0; }
+.scanner-corner--tr { top: -2px; right: -2px;  border-width: 3px 3px 0 0; border-radius: 0 3px 0 0; }
+.scanner-corner--bl { bottom: -2px; left: -2px;  border-width: 0 0 3px 3px; border-radius: 0 0 0 3px; }
+.scanner-corner--br { bottom: -2px; right: -2px; border-width: 0 3px 3px 0; border-radius: 0 0 3px 0; }
+
+/* Scanning line */
+.scanner-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent);
+  box-shadow: 0 0 6px 1px var(--accent-light);
+  border-radius: 1px;
+  animation: scan-line 2s ease-in-out infinite;
+}
+
+@keyframes scan-line {
+  0%   { top: 8%; }
+  50%  { top: 82%; }
+  100% { top: 8%; }
+}
+
+/* ── Requesting placeholder ───────────────────────────── */
+.scanner-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.85rem;
+}
+
+.scanner-spinner {
+  width: 28px;
+  height: 28px;
+  border: 2.5px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Hint ─────────────────────────────────────────────── */
+.scanner-hint {
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  padding: 0.75rem 1.25rem 0;
+}
+
+/* ── Fallback (unsupported / denied / error) ──────────── */
+.scanner-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 1.5rem 1.5rem 0.5rem;
+  text-align: center;
+}
+
+.scanner-fallback-icon {
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+}
+
+.scanner-fallback-msg {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.scanner-fallback-sub {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.scanner-manual-form {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+  margin-top: 0.25rem;
+}
+
+.scanner-manual-input {
+  flex: 1;
+  padding: 0.6rem 0.875rem;
+  border: 1px solid var(--border-hover);
+  border-radius: calc(var(--radius) - 2px);
+  background: var(--bg-input);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.scanner-manual-input:focus {
+  border-color: var(--accent);
+}
+
+.scanner-manual-submit {
+  padding: 0.6rem 1rem;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: calc(var(--radius) - 2px);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+}
+
+.scanner-manual-submit:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.scanner-manual-submit:not(:disabled):hover {
+  opacity: 0.88;
+}
+
+/* ── Cancel ───────────────────────────────────────────── */
+.scanner-cancel {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  cursor: pointer;
+  text-align: center;
+  padding: 0.9rem;
+  transition: color 0.15s;
+}
+
+.scanner-cancel:hover {
+  color: var(--text-secondary);
+}

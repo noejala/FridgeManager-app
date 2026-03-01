@@ -34,7 +34,7 @@ interface ApiMealDetails extends ApiMealSummary {
   [key: string]: string | null;
 }
 
-export async function searchByIngredient(ingredient: string): Promise<MealSummary[]> {
+export async function searchByIngredient(ingredient: string): Promise<Pick<MealDetails, 'id' | 'name' | 'thumbnail'>[]> {
   const normalized = singularize(ingredient);
   const res = await fetch(`${BASE_URL}/filter.php?i=${encodeURIComponent(normalized)}`);
   if (!res.ok) return [];

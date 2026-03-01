@@ -1,3 +1,10 @@
+.add-product-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-bottom: 2rem;
+}
+
 .add-product-btn {
   background: var(--accent);
   color: #fff;
@@ -11,13 +18,97 @@
   text-transform: uppercase;
   cursor: pointer;
   transition: background 0.2s, transform 0.15s;
-  margin-bottom: 2rem;
   display: inline-block;
 }
 
 .add-product-btn:hover {
   background: var(--accent-light);
   transform: translateY(-1px);
+}
+
+.scan-product-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.7rem 1.25rem;
+  border-radius: 40px;
+  border: 1px solid var(--border-hover);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, transform 0.15s;
+}
+
+.scan-product-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+
+/* ── In-form scan button (header row) ──────────────────── */
+.form-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.form-title-row h2 {
+  margin-bottom: 0;
+}
+
+.scan-inline-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.875rem;
+  border-radius: 20px;
+  border: 1px solid var(--border-hover);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.scan-inline-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.scan-inline-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.scan-inline-spinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--border-hover);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+/* ── Lookup error banner ────────────────────────────────── */
+.lookup-error {
+  font-size: 0.8rem;
+  color: var(--amber);
+  background: var(--amber-bg);
+  border: 1px solid rgba(201, 168, 0, 0.25);
+  border-radius: 8px;
+  padding: 0.55rem 0.875rem;
+  margin-bottom: 1.25rem;
 }
 
 .add-product-form {
@@ -34,7 +125,6 @@
   font-size: 1.75rem;
   font-weight: 400;
   color: var(--text);
-  margin-bottom: 1.5rem;
   letter-spacing: 0.01em;
 }
 
