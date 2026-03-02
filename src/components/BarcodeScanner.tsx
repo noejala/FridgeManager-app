@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { BrowserMultiFormatReader } from '@zxing/browser';
+import { DecodeHintType, BarcodeFormat } from '@zxing/library';
 import './BarcodeScanner.css';
 
 interface Props {
@@ -6,65 +8,56 @@ interface Props {
   onClose: () => void;
 }
 
-type Status = 'requesting' | 'scanning' | 'unsupported' | 'denied' | 'error';
+type Status = 'requesting' | 'scanning' | 'denied' | 'error';
 
-type BarcodeDetectorInstance = {
-  detect(source: HTMLVideoElement): Promise<{ rawValue: string }[]>;
-};
-
-function createBarcodeDetector(): BarcodeDetectorInstance | null {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const BD = (window as any).BarcodeDetector;
-  if (!BD) return null;
-  try {
-    return new BD({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'qr_code'] });
-  } catch {
-    return null;
-  }
-}
+const HINTS = new Map<DecodeHintType, unknown>([
+  [DecodeHintType.POSSIBLE_FORMATS, [
+    BarcodeFormat.EAN_13,
+    BarcodeFormat.EAN_8,
+    BarcodeFormat.UPC_A,
+    BarcodeFormat.UPC_E,
+    BarcodeFormat.CODE_128,
+  ]],
+]);
 
 export const BarcodeScanner = ({ onDetected, onClose }: Props) => {
   const [status, setStatus] = useState<Status>('requesting');
   const [manualCode, setManualCode] = useState('');
   const videoRef = useRef<HTMLVideoElement>(null);
-  const streamRef = useRef<MediaStream | null>(null);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const controlsRef = useRef<any>(null);
   const detectedRef = useRef(false);
 
   useEffect(() => {
-    const detector = createBarcodeDetector();
-    if (!detector) {
-      setStatus('unsupported');
-      return;
-    }
-
+    if (!videoRef.current) return;
     let active = true;
 
-    navigator.mediaDevices
-      .getUserMedia({ video: { facingMode: 'environment' } })
-      .then((stream) => {
-        if (!active) { stream.getTracks().forEach(t => t.stop()); return; }
-        streamRef.current = stream;
-        if (videoRef.current) videoRef.current.srcObject = stream;
-        setStatus('scanning');
+    const reader = new BrowserMultiFormatReader(HINTS);
 
-        intervalRef.current = setInterval(async () => {
-          if (detectedRef.current || !videoRef.current) return;
-          if (videoRef.current.readyState < 2) return;
-          try {
-            const results = await detector.detect(videoRef.current);
-            if (results.length > 0 && !detectedRef.current) {
-              detectedRef.current = true;
-              onDetected(results[0].rawValue);
-            }
-          } catch {
-            // detect() peut échouer sur certaines frames, on ignore
+    reader
+      .decodeFromConstraints(
+        { video: { facingMode: 'environment' } },
+        videoRef.current,
+        (result) => {
+          if (!active || detectedRef.current) return;
+          if (result) {
+            detectedRef.current = true;
+            onDetected(result.getText());
           }
-        }, 400);
+        }
+      )
+      .then((controls) => {
+        if (!active) {
+          controls.stop();
+          return;
+        }
+        controlsRef.current = controls;
+        setStatus('scanning');
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         if (!active) return;
-        if (err instanceof Error && err.name === 'NotAllowedError') {
+        const name = err instanceof Error ? err.name : '';
+        if (name === 'NotAllowedError') {
           setStatus('denied');
         } else {
           setStatus('error');
@@ -73,8 +66,8 @@ export const BarcodeScanner = ({ onDetected, onClose }: Props) => {
 
     return () => {
       active = false;
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      streamRef.current?.getTracks().forEach(t => t.stop());
+      controlsRef.current?.stop();
+      controlsRef.current = null;
     };
   }, [onDetected]);
 
@@ -84,7 +77,7 @@ export const BarcodeScanner = ({ onDetected, onClose }: Props) => {
     if (code) onDetected(code);
   };
 
-  const showFallback = status === 'unsupported' || status === 'denied' || status === 'error';
+  const showFallback = status === 'denied' || status === 'error';
 
   return (
     <div className="scanner-overlay" onClick={onClose}>
@@ -136,7 +129,6 @@ export const BarcodeScanner = ({ onDetected, onClose }: Props) => {
             </div>
             <p className="scanner-fallback-msg">
               {status === 'denied' && 'Accès à la caméra refusé.'}
-              {status === 'unsupported' && 'Scan non supporté sur ce navigateur.'}
               {status === 'error' && "Impossible d'accéder à la caméra."}
             </p>
             <p className="scanner-fallback-sub">Saisissez le code-barres manuellement :</p>
