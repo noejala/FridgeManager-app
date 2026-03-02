@@ -76,8 +76,7 @@ function parseQuantity(raw: string): { quantity: number; unit: string } | null {
     const unit = UNIT_MAP[rawUnit] ?? rawUnit;
     // Return total quantity (e.g. 6×50 cl = 300 mL)
     const totalAmount = count * amount;
-    const normalized = unit === 'mL' ? totalAmount : totalAmount;
-    return { quantity: normalized, unit };
+    return { quantity: totalAmount, unit };
   }
 
   const match = raw.match(/([\d.,]+)\s*([a-zA-Z]+)/);
