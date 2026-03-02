@@ -120,7 +120,8 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
               <path d="M16 16h2v2h-2zM18 18h2v2h-2zM16 20h2"/>
               <path d="M20 16v2"/>
             </svg>
-            Scanner
+            <span className="scan-btn-label-short">Scanner</span>
+            <span className="scan-btn-label-long">Scanner un produit</span>
           </button>
         </div>
       </>
