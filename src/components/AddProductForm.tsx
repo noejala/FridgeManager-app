@@ -11,6 +11,11 @@ interface AddProductFormProps {
   onAdd: (product: Omit<Product, 'id' | 'addedDate'>) => Promise<void>;
 }
 
+const MONTHS_FR = [
+  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
+];
+
 const CATEGORIES: ProductCategory[] = [
   'Fruits',
   'Vegetables',
@@ -36,6 +41,56 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
   const [unit, setUnit] = useState('unit');
   const [unknownExpiration, setUnknownExpiration] = useState(false);
   const [purchaseDate, setPurchaseDate] = useState('');
+  const [expDay, setExpDay] = useState('');
+  const [expMonth, setExpMonth] = useState('');
+  const [expYear, setExpYear] = useState('');
+  const [activePreset, setActivePreset] = useState<string | null>(null);
+
+  const currentYear = new Date().getFullYear();
+  const YEARS = Array.from({ length: 6 }, (_, i) => currentYear + i);
+  const daysInSelectedMonth = expYear && expMonth
+    ? new Date(parseInt(expYear), parseInt(expMonth), 0).getDate()
+    : 31;
+
+  const DATE_PRESETS = [
+    { label: '3j',    days: 3 },
+    { label: '1 sem', days: 7 },
+    { label: '2 sem', days: 14 },
+    { label: '1 mois', months: 1 },
+    { label: '3 mois', months: 3 },
+    { label: '6 mois', months: 6 },
+    { label: '1 an',  months: 12 },
+  ] as const;
+
+  const applyPreset = (preset: typeof DATE_PRESETS[number]) => {
+    const d = new Date();
+    if ('months' in preset) {
+      d.setMonth(d.getMonth() + preset.months);
+    } else {
+      d.setDate(d.getDate() + preset.days);
+    }
+    const [y, m, day] = d.toISOString().split('T')[0].split('-');
+    setExpYear(y);
+    setExpMonth(m);
+    setExpDay(day);
+    setExpirationDate(`${y}-${m}-${day}`);
+    setActivePreset(preset.label);
+  };
+
+  const handleDatePart = (part: 'day' | 'month' | 'year', val: string) => {
+    const newDay   = part === 'day'   ? val : expDay;
+    const newMonth = part === 'month' ? val : expMonth;
+    const newYear  = part === 'year'  ? val : expYear;
+    if (part === 'day')   setExpDay(val);
+    if (part === 'month') setExpMonth(val);
+    if (part === 'year')  setExpYear(val);
+    setActivePreset(null);
+    if (newDay && newMonth && newYear) {
+      setExpirationDate(`${newYear}-${newMonth.padStart(2, '0')}-${newDay.padStart(2, '0')}`);
+    } else {
+      setExpirationDate('');
+    }
+  };
 
   const recognized = isProductRecognized(name);
 
@@ -90,6 +145,10 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
     setUnit('unit');
     setUnknownExpiration(false);
     setPurchaseDate('');
+    setExpDay('');
+    setExpMonth('');
+    setExpYear('');
+    setActivePreset(null);
     setIsOpen(false);
   };
 
@@ -281,15 +340,67 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
         </div>
       ) : (
         <div className="form-group">
-          <label htmlFor="expirationDate">{t('form.expirationDate')}</label>
+          <label>{t('form.expirationDate')}</label>
+          <div className="date-presets">
+            {DATE_PRESETS.map((preset) => (
+              <button
+                key={preset.label}
+                type="button"
+                className={`date-preset-btn${activePreset === preset.label ? ' date-preset-btn--active' : ''}`}
+                onClick={() => applyPreset(preset)}
+              >
+                {preset.label}
+              </button>
+            ))}
+          </div>
+          {/* Desktop : date picker natif */}
           <input
-            id="expirationDate"
+            className="date-input-desktop"
             type="date"
             value={expirationDate}
-            onChange={(e) => setExpirationDate(e.target.value)}
+            onChange={(e) => {
+              const val = e.target.value;
+              setExpirationDate(val);
+              setActivePreset(null);
+              if (val) {
+                const [y, m, d] = val.split('-');
+                setExpYear(y); setExpMonth(m); setExpDay(d);
+              } else {
+                setExpYear(''); setExpMonth(''); setExpDay('');
+              }
+            }}
             min={minDate}
-            required
           />
+          {/* Mobile : 3 selects */}
+          <div className="date-selects">
+            <select
+              value={expDay}
+              onChange={(e) => handleDatePart('day', e.target.value)}
+            >
+              <option value="">Jour</option>
+              {Array.from({ length: daysInSelectedMonth }, (_, i) => i + 1).map(d => (
+                <option key={d} value={String(d)}>{d}</option>
+              ))}
+            </select>
+            <select
+              value={expMonth}
+              onChange={(e) => handleDatePart('month', e.target.value)}
+            >
+              <option value="">Mois</option>
+              {MONTHS_FR.map((name, i) => (
+                <option key={i} value={String(i + 1)}>{name}</option>
+              ))}
+            </select>
+            <select
+              value={expYear}
+              onChange={(e) => handleDatePart('year', e.target.value)}
+            >
+              <option value="">Année</option>
+              {YEARS.map(y => (
+                <option key={y} value={String(y)}>{y}</option>
+              ))}
+            </select>
+          </div>
         </div>
       )}
 
