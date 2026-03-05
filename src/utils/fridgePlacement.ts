@@ -71,6 +71,7 @@ const CATEGORY_TO_ZONE: Record<string, FridgeZone> = {
   Fruits: 'Crisper drawer',
   Vegetables: 'Crisper drawer',
   Beverages: 'Fridge door',
+  Sauces: 'Fridge door',
 };
 
 export function getFridgeZone(name: string, category: string): FridgeZone {

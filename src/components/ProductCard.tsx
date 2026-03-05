@@ -9,13 +9,17 @@ interface ProductCardProps {
   onDelete: (id: string) => void;
   onConsume: (id: string) => void;
   onEdit: (product: Product) => void;
+  onOpenSauce?: (id: string, openedDate: string) => void;
   index?: number;
 }
 
-export const ProductCard = ({ product, onDelete, onConsume, onEdit, index = 0 }: ProductCardProps) => {
+export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce, index = 0 }: ProductCardProps) => {
   const { t, i18n } = useTranslation();
+  const today = new Date().toISOString().split('T')[0];
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [confirmingConsume, setConfirmingConsume] = useState(false);
+  const [confirmingOpen, setConfirmingOpen] = useState(false);
+  const [openDateInput, setOpenDateInput] = useState(today);
   const daysUntil = getDaysUntilExpiration(product.expirationDate);
   const expired = isExpired(product.expirationDate);
   const expiringSoon = isExpiringSoon(product.expirationDate);
@@ -47,36 +51,53 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, index = 0 }:
         <div className="product-actions">
           {confirmingDelete ? (
             <>
-              <button
-                className="delete-cancel-btn"
-                onClick={() => setConfirmingDelete(false)}
-              >
+              <button className="delete-cancel-btn" onClick={() => setConfirmingDelete(false)}>
                 {t('form.cancel')}
               </button>
-              <button
-                className="delete-confirm-btn"
-                onClick={() => onDelete(product.id)}
-              >
+              <button className="delete-confirm-btn" onClick={() => onDelete(product.id)}>
                 {t('productCard.delete')}
               </button>
             </>
           ) : confirmingConsume ? (
             <>
-              <button
-                className="consume-cancel-btn"
-                onClick={() => setConfirmingConsume(false)}
-              >
+              <button className="consume-cancel-btn" onClick={() => setConfirmingConsume(false)}>
+                {t('form.cancel')}
+              </button>
+              <button className="consume-confirm-btn" onClick={() => onConsume(product.id)}>
+                {t('productCard.consumed')}
+              </button>
+            </>
+          ) : confirmingOpen ? (
+            <>
+              <input
+                className="open-date-input"
+                type="date"
+                value={openDateInput}
+                max={today}
+                onChange={(e) => setOpenDateInput(e.target.value)}
+              />
+              <button className="consume-cancel-btn" onClick={() => setConfirmingOpen(false)}>
                 {t('form.cancel')}
               </button>
               <button
                 className="consume-confirm-btn"
-                onClick={() => onConsume(product.id)}
+                onClick={() => { onOpenSauce?.(product.id, openDateInput); setConfirmingOpen(false); }}
               >
-                {t('productCard.consumed')}
+                {t('productCard.confirmOpen')}
               </button>
             </>
           ) : (
             <>
+              {product.category === 'Sauces' && !product.openedDate && (
+                <button
+                  className="open-sauce-btn"
+                  onClick={() => setConfirmingOpen(true)}
+                  aria-label={t('productCard.markOpened')}
+                  title={t('productCard.markOpened')}
+                >
+                  🔓
+                </button>
+              )}
               <button
                 className="consume-btn"
                 onClick={() => setConfirmingConsume(true)}
@@ -119,6 +140,12 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, index = 0 }:
           <span className="label">{t('productCard.added')}</span>
           <span>{new Date(product.addedDate).toLocaleDateString(locale)}</span>
         </div>
+        {product.openedDate && (
+          <div className="date-info">
+            <span className="label">{t('productCard.opened')}</span>
+            <span>{new Date(product.openedDate).toLocaleDateString(locale)}</span>
+          </div>
+        )}
         <div className="date-info">
           <span className="label">{t('productCard.expires')}</span>
           <span>

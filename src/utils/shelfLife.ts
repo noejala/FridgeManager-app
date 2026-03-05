@@ -1,3 +1,37 @@
+// Days a sauce/condiment lasts after opening
+const SAUCE_SHELF_LIFE_AFTER_OPENING: Record<string, number> = {
+  mayo: 30, mayonnaise: 30,
+  ketchup: 30,
+  moutarde: 60, mustard: 60,
+  soja: 90, soy: 90, worcestershire: 180,
+  pesto: 7,
+  bolognaise: 4, bolognese: 4,
+  tomate: 5, 'tomato sauce': 5, 'sauce tomate': 5,
+  vinaigrette: 21,
+  sriracha: 180, tabasco: 180, harissa: 30,
+  houmous: 7, hummus: 7,
+  salsa: 10,
+  tahini: 60,
+  tapenade: 14,
+  confiture: 30, jam: 30,
+  miel: 365, honey: 365,
+  sirop: 365, syrup: 365,
+};
+
+export function estimateExpirationFromOpenDate(name: string, openedDate: string): string {
+  const lowerName = name.toLowerCase().trim();
+  let days = 14; // default for unknown sauces
+  for (const [keyword, d] of Object.entries(SAUCE_SHELF_LIFE_AFTER_OPENING)) {
+    if (lowerName.includes(keyword)) {
+      days = d;
+      break;
+    }
+  }
+  const date = new Date(openedDate);
+  date.setDate(date.getDate() + days);
+  return date.toISOString().split('T')[0];
+}
+
 const PRODUCT_SHELF_LIFE: Record<string, number> = {
   banana: 5,
   apple: 21,

@@ -13,6 +13,7 @@ interface ProductListProps {
   onRestore: (id: string) => void;
   onDeleteConsumed: (id: string) => void;
   onEdit: (product: Product) => void;
+  onOpenSauce: (id: string, openedDate: string) => void;
   onClearAll: () => Promise<void>;
 }
 
@@ -25,7 +26,7 @@ function getRelativeDay(isoTimestamp: string, t: (key: string, opts?: Record<str
   return t('productList.daysAgo', { count: diffDays });
 }
 
-export const ProductList = ({ products, consumedProducts, onDelete, onConsume, onRestore, onDeleteConsumed, onEdit, onClearAll }: ProductListProps) => {
+export const ProductList = ({ products, consumedProducts, onDelete, onConsume, onRestore, onDeleteConsumed, onEdit, onOpenSauce, onClearAll }: ProductListProps) => {
   const { t } = useTranslation();
   const [showClearModal, setShowClearModal] = useState(false);
   const [clearing, setClearing] = useState(false);
@@ -95,6 +96,7 @@ export const ProductList = ({ products, consumedProducts, onDelete, onConsume, o
                 onDelete={onDelete}
                 onConsume={onConsume}
                 onEdit={onEdit}
+                onOpenSauce={onOpenSauce}
                 index={index}
               />
             ))}

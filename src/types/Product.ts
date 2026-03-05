@@ -9,9 +9,10 @@ export interface Product {
   isEstimatedExpiration?: boolean;
   fridgeZone?: string;
   consumedAt?: string; // ISO timestamp, set when product is marked as consumed
+  openedDate?: string; // YYYY-MM-DD, set when a sauce/condiment is opened
 }
 
-export type ProductCategory = 
+export type ProductCategory =
   | 'Fruits'
   | 'Vegetables'
   | 'Meat'
@@ -19,5 +20,6 @@ export type ProductCategory =
   | 'Dairy'
   | 'Beverages'
   | 'Frozen'
+  | 'Sauces'
   | 'Other';
 

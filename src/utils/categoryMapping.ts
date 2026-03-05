@@ -1,6 +1,19 @@
 import { ProductCategory } from '../types/Product';
 
 const CATEGORY_KEYWORDS: Record<Exclude<ProductCategory, 'Other'>, string[]> = {
+  Sauces: [
+    // English
+    'ketchup', 'mayonnaise', 'mayo', 'mustard', 'hot sauce', 'soy sauce',
+    'worcestershire', 'sriracha', 'tabasco', 'pesto', 'salsa', 'hummus', 'houmous',
+    'vinaigrette', 'dressing', 'tahini', 'tapenade', 'jam', 'jelly', 'honey',
+    'syrup', 'aioli', 'tzatziki', 'guacamole', 'bbq sauce', 'teriyaki',
+    'bolognese', 'tomato sauce', 'béchamel', 'bechamel',
+    // French
+    'moutarde', 'sauce tomate', 'sauce soja', 'sauce piquante', 'harissa',
+    'bolognaise', 'vinaigrette', 'confiture', 'miel', 'sirop', 'aïoli',
+    'tapenade', 'houmous', 'crème de', 'sauce barbecue', 'sauce curry',
+    'sauce', 'ketchup', 'mayo',
+  ],
   Fruits: [
     // English
     'apple', 'banana', 'orange', 'strawberry', 'grape', 'mango', 'pear',

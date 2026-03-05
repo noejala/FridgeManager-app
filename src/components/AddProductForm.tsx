@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Product, ProductCategory } from '../types/Product';
 import { guessCategory } from '../utils/categoryMapping';
-import { estimateExpirationDate, isProductRecognized } from '../utils/shelfLife';
+import { estimateExpirationDate, estimateExpirationFromOpenDate, isProductRecognized } from '../utils/shelfLife';
 import { lookupBarcode } from '../utils/foodFactsApi';
 import { BarcodeScanner } from './BarcodeScanner';
 import './AddProductForm.css';
@@ -24,6 +24,7 @@ const CATEGORIES: ProductCategory[] = [
   'Dairy',
   'Beverages',
   'Frozen',
+  'Sauces',
   'Other'
 ];
 
@@ -41,6 +42,8 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
   const [unit, setUnit] = useState('unit');
   const [unknownExpiration, setUnknownExpiration] = useState(false);
   const [purchaseDate, setPurchaseDate] = useState('');
+  const [isOpened, setIsOpened] = useState(false);
+  const [sauceOpenedDate, setSauceOpenedDate] = useState(new Date().toISOString().split('T')[0]);
   const [expDay, setExpDay] = useState('');
   const [expMonth, setExpMonth] = useState('');
   const [expYear, setExpYear] = useState('');
@@ -116,9 +119,12 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const finalExpirationDate = (unknownExpiration && recognized)
-      ? estimateExpirationDate(name, purchaseDate || undefined)
-      : expirationDate;
+    const isSauceOpened = category === 'Sauces' && isOpened;
+    const finalExpirationDate = isSauceOpened
+      ? estimateExpirationFromOpenDate(name, sauceOpenedDate)
+      : (unknownExpiration && recognized)
+        ? estimateExpirationDate(name, purchaseDate || undefined)
+        : expirationDate;
     if (!name || !finalExpirationDate) return;
 
     const quantityNum = Number(quantity);
@@ -134,7 +140,8 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
       expirationDate: finalExpirationDate,
       quantity: quantityNum,
       unit,
-      isEstimatedExpiration: unknownExpiration && recognized,
+      isEstimatedExpiration: isSauceOpened || (unknownExpiration && recognized),
+      openedDate: isSauceOpened ? sauceOpenedDate : undefined,
     });
     setIsLoading(false);
 
@@ -145,6 +152,8 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
     setUnit('unit');
     setUnknownExpiration(false);
     setPurchaseDate('');
+    setIsOpened(false);
+    setSauceOpenedDate(new Date().toISOString().split('T')[0]);
     setExpDay('');
     setExpMonth('');
     setExpYear('');
@@ -294,18 +303,102 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
         </div>
       </div>
 
-      <div className="form-group">
-        <label className="checkbox-label">
-          <input
-            type="checkbox"
-            checked={unknownExpiration}
-            onChange={(e) => setUnknownExpiration(e.target.checked)}
-          />
-          {t('form.unknownExpiration')}
-        </label>
-      </div>
+      {category === 'Sauces' ? (
+        <div className="form-group sauce-opened-group">
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={isOpened}
+              onChange={(e) => setIsOpened(e.target.checked)}
+            />
+            {t('form.sauceAlreadyOpened')}
+          </label>
+          {isOpened && (
+            <div className="purchase-date-row" style={{ marginTop: '0.5rem' }}>
+              <input
+                type="date"
+                value={sauceOpenedDate}
+                onChange={(e) => setSauceOpenedDate(e.target.value)}
+                max={minDate}
+              />
+              <button
+                type="button"
+                className={`today-btn${sauceOpenedDate === minDate ? ' today-btn-active' : ''}`}
+                onClick={() => setSauceOpenedDate(minDate)}
+              >
+                {t('form.today')}
+              </button>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="form-group">
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={unknownExpiration}
+              onChange={(e) => setUnknownExpiration(e.target.checked)}
+            />
+            {t('form.unknownExpiration')}
+          </label>
+        </div>
+      )}
 
-      {unknownExpiration && recognized ? (
+      {category === 'Sauces' && !isOpened && unknownExpiration === false ? (
+        // Sauce fermée → champ date d'expiration normale
+        <div className="form-group">
+          <label>{t('form.expirationDate')}</label>
+          <div className="date-presets">
+            {DATE_PRESETS.map((preset) => (
+              <button
+                key={preset.label}
+                type="button"
+                className={`date-preset-btn${activePreset === preset.label ? ' date-preset-btn--active' : ''}`}
+                onClick={() => applyPreset(preset)}
+              >
+                {preset.label}
+              </button>
+            ))}
+          </div>
+          <input
+            className="date-input-desktop"
+            type="date"
+            value={expirationDate}
+            onChange={(e) => {
+              const val = e.target.value;
+              setExpirationDate(val);
+              setActivePreset(null);
+              if (val) {
+                const [y, m, d] = val.split('-');
+                setExpYear(y); setExpMonth(m); setExpDay(d);
+              } else {
+                setExpYear(''); setExpMonth(''); setExpDay('');
+              }
+            }}
+            min={minDate}
+          />
+          <div className="date-selects">
+            <select value={expDay} onChange={(e) => handleDatePart('day', e.target.value)}>
+              <option value="">Jour</option>
+              {Array.from({ length: daysInSelectedMonth }, (_, i) => i + 1).map(d => (
+                <option key={d} value={String(d)}>{d}</option>
+              ))}
+            </select>
+            <select value={expMonth} onChange={(e) => handleDatePart('month', e.target.value)}>
+              <option value="">Mois</option>
+              {MONTHS_FR.map((name, i) => (
+                <option key={i} value={String(i + 1)}>{name}</option>
+              ))}
+            </select>
+            <select value={expYear} onChange={(e) => handleDatePart('year', e.target.value)}>
+              <option value="">Année</option>
+              {YEARS.map(y => (
+                <option key={y} value={String(y)}>{y}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+      ) : category === 'Sauces' && isOpened ? null : unknownExpiration && recognized ? (
         <div className="form-group">
           <label htmlFor="purchaseDate">{t('form.whenDidYouBuy')}</label>
           <div className="purchase-date-row">

@@ -6,6 +6,7 @@ import { supabase } from './lib/supabase';
 import { fetchProducts, fetchRecentlyConsumed, insertProduct, updateProduct, deleteProduct, deleteAllProducts, consumeProduct, restoreProduct } from './utils/productService';
 import { isExpired, isExpiringSoon } from './utils/storage';
 import { getFridgeZone } from './utils/fridgePlacement';
+import { estimateExpirationFromOpenDate } from './utils/shelfLife';
 import { Tabs } from './components/Tabs';
 import { AddProductForm } from './components/AddProductForm';
 import { EditProductForm } from './components/EditProductForm';
@@ -233,6 +234,18 @@ function App() {
     setEditingProduct(null);
   };
 
+  const handleOpenSauce = async (id: string, openedDate: string) => {
+    const product = products.find(p => p.id === id);
+    if (!product) return;
+    const updatedProduct: Product = {
+      ...product,
+      openedDate,
+      expirationDate: estimateExpirationFromOpenDate(product.name, openedDate),
+      isEstimatedExpiration: true,
+    };
+    await handleUpdateProduct(updatedProduct);
+  };
+
   const handleClearFridge = async () => {
     try {
       await deleteAllProducts();
@@ -266,6 +279,7 @@ function App() {
           onRestore={handleRestoreProduct}
           onDeleteConsumed={handleDeleteConsumed}
           onEdit={handleEditProduct}
+          onOpenSauce={handleOpenSauce}
           onClearAll={handleClearFridge}
         />
       </div>

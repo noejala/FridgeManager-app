@@ -14,6 +14,7 @@ interface ProductRow {
   fridge_zone: string | null;
   created_at: string;
   consumed_at: string | null;
+  opened_date: string | null;
 }
 
 function rowToProduct(row: ProductRow): Product {
@@ -28,6 +29,7 @@ function rowToProduct(row: ProductRow): Product {
     isEstimatedExpiration: row.is_estimated_expiration ?? undefined,
     fridgeZone: row.fridge_zone ?? undefined,
     consumedAt: row.consumed_at ?? undefined,
+    openedDate: row.opened_date ?? undefined,
   };
 }
 
@@ -42,6 +44,7 @@ function productToInsert(product: Omit<Product, 'id'>, userId: string) {
     added_date: product.addedDate,
     is_estimated_expiration: product.isEstimatedExpiration ?? null,
     fridge_zone: product.fridgeZone ?? null,
+    opened_date: product.openedDate ?? null,
   };
 }
 
@@ -113,6 +116,7 @@ export async function updateProduct(product: Product): Promise<void> {
       added_date: product.addedDate,
       is_estimated_expiration: product.isEstimatedExpiration ?? null,
       fridge_zone: product.fridgeZone ?? null,
+      opened_date: product.openedDate ?? null,
     })
     .eq('id', product.id);
 

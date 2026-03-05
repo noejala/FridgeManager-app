@@ -158,6 +158,35 @@
   border-color: rgba(34, 197, 94, 0.25);
 }
 
+.open-sauce-btn {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  height: 30px;
+  padding: 0 0.5rem;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.open-sauce-btn:hover {
+  border-color: var(--amber);
+  color: var(--amber);
+}
+
+.open-date-input {
+  height: 30px;
+  padding: 0 0.4rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-input);
+  color: var(--text);
+  font-size: 0.72rem;
+  flex: 1;
+  min-width: 0;
+}
+
 .product-info {
   display: flex;
   gap: 0.5rem;

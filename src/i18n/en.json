@@ -56,6 +56,8 @@
     "unknownExpiration": "I don't know the expiration date",
     "unknownProductWarning": "Product not recognized — please enter the date manually *",
     "whenDidYouBuy": "When did you buy it?",
+    "sauceAlreadyOpened": "It's already opened",
+    "sauceOpenedSince": "Opened since:",
     "today": "Today",
     "expirationDate": "Expiration date *",
     "cancel": "Cancel",
@@ -71,12 +73,15 @@
     "expiresIn_one": "Expires in {{count}} day",
     "expiresIn_other": "Expires in {{count}} days",
     "added": "Added:",
+    "opened": "Opened:",
     "expires": "Expires:",
     "estimated": "(estimated)",
     "consume": "Mark as consumed",
     "consumed": "Consumed ✓",
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "markOpened": "Mark as opened",
+    "confirmOpen": "Confirm"
   },
   "cook": {
     "title": "🍳 What to cook",
@@ -109,6 +114,7 @@
     "Dairy": "Dairy",
     "Beverages": "Beverages",
     "Frozen": "Frozen",
+    "Sauces": "Sauces & condiments",
     "Other": "Other"
   },
   "zones": {

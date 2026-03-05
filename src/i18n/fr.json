@@ -56,6 +56,8 @@
     "unknownExpiration": "Je ne connais pas la date d'expiration",
     "unknownProductWarning": "Produit non reconnu — saisissez la date manuellement *",
     "whenDidYouBuy": "Quand l'avez-vous acheté ?",
+    "sauceAlreadyOpened": "Elle est déjà ouverte",
+    "sauceOpenedSince": "Ouverte depuis :",
     "today": "Aujourd'hui",
     "expirationDate": "Date d'expiration *",
     "cancel": "Annuler",
@@ -71,12 +73,15 @@
     "expiresIn_one": "Expire dans {{count}} jour",
     "expiresIn_other": "Expire dans {{count}} jours",
     "added": "Ajouté :",
+    "opened": "Ouverte :",
     "expires": "Expire :",
     "estimated": "(estimé)",
     "consume": "Consommé",
     "consumed": "Consommé ✓",
     "edit": "Modifier",
-    "delete": "Supprimer"
+    "delete": "Supprimer",
+    "markOpened": "Marquer comme ouverte",
+    "confirmOpen": "Confirmer"
   },
   "cook": {
     "title": "🍳 Que cuisiner",
@@ -109,6 +114,7 @@
     "Dairy": "Produits laitiers",
     "Beverages": "Boissons",
     "Frozen": "Surgelés",
+    "Sauces": "Sauces & condiments",
     "Other": "Autre"
   },
   "zones": {
