@@ -16,6 +16,7 @@ import { useProductNotifications } from './hooks/useProductNotifications';
 import { WhatToCook } from './components/WhatToCook';
 import { SeasonalProducts } from './components/SeasonalProducts';
 import { Auth } from './components/Auth';
+import { InstallBanner } from './components/InstallBanner';
 import './App.css';
 
 const TAB_STORAGE_KEY = 'lastActiveTab';
@@ -353,6 +354,7 @@ function App() {
       {notification && (
         <div className="toast-notification">{notification}</div>
       )}
+      <InstallBanner />
       {pendingProduct && (
         <DuplicateModal
           existing={products.find(
