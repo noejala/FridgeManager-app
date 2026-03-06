@@ -96,13 +96,27 @@
   margin-bottom: 1rem;
 }
 
+.install-footer {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
 .install-later {
   background: none;
   border: none;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-size: 0.85rem;
   cursor: pointer;
   text-decoration: underline;
+}
+
+.install-never {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  cursor: pointer;
 }
 
 /* Persistent bottom banner */

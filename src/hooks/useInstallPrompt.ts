@@ -35,10 +35,10 @@ export function useInstallPrompt() {
     const count = parseInt(localStorage.getItem(VISIT_COUNT_KEY) ?? '0') + 1;
     localStorage.setItem(VISIT_COUNT_KEY, String(count));
 
-    const modalDismissed = localStorage.getItem(MODAL_DISMISSED_KEY) === 'true';
+    const modalPermanentlyDismissed = localStorage.getItem(MODAL_DISMISSED_KEY) === 'true';
     const bannerDismissed = localStorage.getItem(BANNER_DISMISSED_KEY) === 'true';
 
-    if (!modalDismissed && count === 1) {
+    if (!modalPermanentlyDismissed) {
       setShowModal(true);
     } else if (!bannerDismissed && count >= 3) {
       setShowBanner(true);
@@ -55,6 +55,10 @@ export function useInstallPrompt() {
   }, []);
 
   const dismissModal = () => {
+    setShowModal(false);
+  };
+
+  const neverShowModal = () => {
     localStorage.setItem(MODAL_DISMISSED_KEY, 'true');
     setShowModal(false);
   };
@@ -75,5 +79,5 @@ export function useInstallPrompt() {
     }
   };
 
-  return { ios, deferredPrompt, showModal, showBanner, dismissModal, dismissBanner, triggerInstall };
+  return { ios, deferredPrompt, showModal, showBanner, dismissModal, neverShowModal, dismissBanner, triggerInstall };
 }

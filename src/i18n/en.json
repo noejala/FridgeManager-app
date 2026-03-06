@@ -154,6 +154,7 @@
     "androidStep2": "Then tap \"Add to Home Screen\"",
     "installBtn": "Install the app",
     "later": "Maybe later",
+    "never": "Don't show again",
     "bannerIos": "💡 Add the app: ... → Share → Add to Home Screen",
     "bannerAndroid": "💡 Install the app for quick access from your home screen",
     "bannerAndroidManual": "💡 Add the app to your home screen via your browser menu"

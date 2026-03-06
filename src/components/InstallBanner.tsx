@@ -4,7 +4,7 @@ import './InstallBanner.css';
 
 export function InstallBanner() {
   const { t } = useTranslation();
-  const { ios, deferredPrompt, showModal, showBanner, dismissModal, dismissBanner, triggerInstall } = useInstallPrompt();
+  const { ios, deferredPrompt, showModal, showBanner, dismissModal, neverShowModal, dismissBanner, triggerInstall } = useInstallPrompt();
 
   if (showModal) {
     return (
@@ -47,7 +47,10 @@ export function InstallBanner() {
             </div>
           )}
 
-          <button className="install-later" onClick={dismissModal}>{t('install.later')}</button>
+          <div className="install-footer">
+            <button className="install-later" onClick={dismissModal}>{t('install.later')}</button>
+            <button className="install-never" onClick={neverShowModal}>{t('install.never')}</button>
+          </div>
         </div>
       </div>
     );
