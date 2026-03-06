@@ -23,7 +23,11 @@ export function InstallBanner() {
               </div>
               <div className="install-step">
                 <span className="install-step-num">2</span>
-                <span>{t('install.iosStep2')}</span>
+                <span dangerouslySetInnerHTML={{ __html: t('install.iosStep2') }} />
+              </div>
+              <div className="install-step">
+                <span className="install-step-num">3</span>
+                <span>{t('install.iosStep3')}</span>
               </div>
             </div>
           ) : deferredPrompt ? (

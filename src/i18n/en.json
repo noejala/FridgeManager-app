@@ -147,13 +147,14 @@
   "install": {
     "modalTitle": "Better experience on mobile",
     "modalDesc": "Add FridgeManager to your home screen for quick access, even offline.",
-    "iosStep1": "Tap the <strong>Share</strong> button (⎙) at the bottom of Safari",
-    "iosStep2": "Then tap \"Add to Home Screen\"",
+    "iosStep1": "Tap <strong>...</strong> at the bottom of Safari",
+    "iosStep2": "Then tap <strong>Share</strong>",
+    "iosStep3": "Then tap \"Add to Home Screen\"",
     "androidStep1": "Open the browser menu (⋮)",
     "androidStep2": "Then tap \"Add to Home Screen\"",
     "installBtn": "Install the app",
     "later": "Maybe later",
-    "bannerIos": "💡 Add the app to your home screen via Share (⎙) → Add to Home Screen",
+    "bannerIos": "💡 Add the app: ... → Share → Add to Home Screen",
     "bannerAndroid": "💡 Install the app for quick access from your home screen",
     "bannerAndroidManual": "💡 Add the app to your home screen via your browser menu"
   },

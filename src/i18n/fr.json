@@ -147,13 +147,14 @@
   "install": {
     "modalTitle": "Meilleure expérience sur mobile",
     "modalDesc": "Ajoutez FridgeManager à votre écran d'accueil pour un accès rapide, même sans connexion.",
-    "iosStep1": "Appuyez sur le bouton <strong>Partager</strong> (⎙) en bas de Safari",
-    "iosStep2": "Puis « Sur l'écran d'accueil »",
+    "iosStep1": "Appuyez sur <strong>...</strong> en bas de Safari",
+    "iosStep2": "Puis <strong>Partager</strong>",
+    "iosStep3": "Puis « Sur l'écran d'accueil »",
     "androidStep1": "Ouvrez le menu du navigateur (⋮)",
     "androidStep2": "Puis « Ajouter à l'écran d'accueil »",
     "installBtn": "Installer l'app",
     "later": "Plus tard",
-    "bannerIos": "💡 Ajoutez l'app à votre écran d'accueil via Partager (⎙) → Sur l'écran d'accueil",
+    "bannerIos": "💡 Ajoutez l'app : ... → Partager → Sur l'écran d'accueil",
     "bannerAndroid": "💡 Installez l'app pour un accès rapide depuis votre écran d'accueil",
     "bannerAndroidManual": "💡 Ajoutez l'app à votre écran d'accueil via le menu de votre navigateur"
   },
