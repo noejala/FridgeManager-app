@@ -10,10 +10,10 @@ export default defineConfig({
       includeAssets: ['favicon.ico', 'icon.svg', 'apple-touch-icon-180x180.png'],
       manifest: {
         name: 'Fridge Manager',
-        short_name: 'Frigo',
+        short_name: 'FridgeManager',
         description: 'Gestionnaire de frigo intelligent',
         theme_color: '#2c6fe0',
-        background_color: '#ffffff',
+        background_color: '#2c6fe0',
         display: 'standalone',
         orientation: 'portrait',
         lang: 'fr',
