@@ -93,7 +93,7 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
                   className="open-sauce-btn"
                   onClick={() => setConfirmingOpen(true)}
                   aria-label={t('productCard.markOpened')}
-                  title={t('productCard.markOpened')}
+                  data-tooltip={t('productCard.sauceUnopened')}
                 >
                   🔓
                 </button>

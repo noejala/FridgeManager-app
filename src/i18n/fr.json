@@ -81,6 +81,7 @@
     "edit": "Modifier",
     "delete": "Supprimer",
     "markOpened": "Marquer comme ouverte",
+    "sauceUnopened": "Non ouverte — cliquer pour enregistrer l'ouverture",
     "confirmOpen": "Confirmer"
   },
   "cook": {

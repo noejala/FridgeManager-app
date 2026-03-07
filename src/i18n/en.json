@@ -81,6 +81,7 @@
     "edit": "Edit",
     "delete": "Delete",
     "markOpened": "Mark as opened",
+    "sauceUnopened": "Not yet opened — click to record the opening date",
     "confirmOpen": "Confirm"
   },
   "cook": {
