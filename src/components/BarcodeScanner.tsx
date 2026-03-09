@@ -23,10 +23,17 @@ const HINTS = new Map<DecodeHintType, unknown>([
 export const BarcodeScanner = ({ onDetected, onClose }: Props) => {
   const [status, setStatus] = useState<Status>('requesting');
   const [manualCode, setManualCode] = useState('');
+  const [retryCount, setRetryCount] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const controlsRef = useRef<any>(null);
   const detectedRef = useRef(false);
+
+  const handleRetry = () => {
+    detectedRef.current = false;
+    setStatus('requesting');
+    setRetryCount(c => c + 1);
+  };
 
   useEffect(() => {
     if (!videoRef.current) return;
@@ -69,7 +76,7 @@ export const BarcodeScanner = ({ onDetected, onClose }: Props) => {
       controlsRef.current?.stop();
       controlsRef.current = null;
     };
-  }, [onDetected]);
+  }, [onDetected, retryCount]);
 
   const handleManualSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -131,7 +138,10 @@ export const BarcodeScanner = ({ onDetected, onClose }: Props) => {
               {status === 'denied' && 'Accès à la caméra refusé.'}
               {status === 'error' && "Impossible d'accéder à la caméra."}
             </p>
-            <p className="scanner-fallback-sub">Saisissez le code-barres manuellement :</p>
+            <button className="scanner-retry" onClick={handleRetry}>
+              Réessayer
+            </button>
+            <p className="scanner-fallback-sub">Ou saisissez le code-barres manuellement :</p>
             <form onSubmit={handleManualSubmit} className="scanner-manual-form">
               <input
                 type="text"

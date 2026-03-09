@@ -173,9 +173,28 @@
   color: var(--text-secondary);
 }
 
+.scanner-retry {
+  padding: 0.55rem 1.25rem;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: calc(var(--radius) - 2px);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 0.25rem;
+  transition: opacity 0.15s;
+}
+
+.scanner-retry:hover {
+  opacity: 0.88;
+}
+
 .scanner-fallback-sub {
   font-size: 0.8rem;
   color: var(--text-muted);
+  margin-top: 0.5rem;
 }
 
 .scanner-manual-form {
