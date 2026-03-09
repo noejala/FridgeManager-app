@@ -17,6 +17,7 @@ import { WhatToCook } from './components/WhatToCook';
 import { SeasonalProducts } from './components/SeasonalProducts';
 import { Auth } from './components/Auth';
 import { InstallBanner } from './components/InstallBanner';
+import { NotifPermissionModal } from './components/NotifPermissionModal';
 import './App.css';
 
 const TAB_STORAGE_KEY = 'lastActiveTab';
@@ -354,6 +355,7 @@ function App() {
       {notification && (
         <div className="toast-notification">{notification}</div>
       )}
+      <NotifPermissionModal permission={permission} onRequest={requestPermission} />
       <InstallBanner />
       {pendingProduct && (
         <DuplicateModal

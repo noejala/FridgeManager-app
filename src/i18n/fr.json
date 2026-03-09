@@ -166,7 +166,12 @@
     "expiredTitle_other": "⚠️ {{count}} produits ont expiré",
     "expiringSoonTitle_one": "⏰ {{count}} produit expire bientôt",
     "expiringSoonTitle_other": "⏰ {{count}} produits expirent bientôt",
-    "today": "aujourd'hui"
+    "today": "aujourd'hui",
+    "permModalTitle": "Restez informé",
+    "permModalDesc": "Pour savoir quand vos produits expirent, autorisez les notifications.",
+    "permAllow": "Autoriser les notifications",
+    "permLater": "Plus tard",
+    "permNever": "Ne plus demander"
   },
   "seasonal": {
     "title": "🌱 Produits de saison",
