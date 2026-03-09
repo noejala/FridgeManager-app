@@ -43,7 +43,15 @@ export const BarcodeScanner = ({ onDetected, onClose }: Props) => {
 
     reader
       .decodeFromConstraints(
-        { video: { facingMode: 'environment' } },
+        {
+          video: {
+            facingMode: 'environment',
+            width: { ideal: 1920 },
+            height: { ideal: 1080 },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            advanced: [{ focusMode: 'continuous' }] as any,
+          },
+        },
         videoRef.current,
         (result) => {
           if (!active || detectedRef.current) return;
