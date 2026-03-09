@@ -23,6 +23,25 @@
   flex-direction: column;
 }
 
+@media (max-width: 600px) {
+  .scanner-overlay {
+    align-items: stretch;
+    padding: 0;
+  }
+
+  .scanner-modal {
+    width: 100%;
+    height: 100dvh;
+    border-radius: 0;
+    border: none;
+  }
+
+  .scanner-viewport {
+    flex: 1;
+    aspect-ratio: unset;
+  }
+}
+
 /* ── Header ───────────────────────────────────────────── */
 .scanner-header {
   display: flex;
