@@ -20,7 +20,10 @@
     "createAccount": "Créer un compte",
     "noAccount": "Pas encore de compte ?",
     "alreadyAccount": "Déjà un compte ?",
-    "anErrorOccurred": "Une erreur est survenue"
+    "anErrorOccurred": "Une erreur est survenue",
+    "orContinueWith": "Ou continuer avec",
+    "continueWithGoogle": "Continuer avec Google",
+    "continueWithApple": "Continuer avec Apple"
   },
   "tabs": {
     "fridge": "Mon frigo",
