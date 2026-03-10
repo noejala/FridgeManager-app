@@ -1,12 +1,44 @@
 import { useState, useCallback } from 'react';
 import { Product } from '../types/Product';
 import { getDaysUntilExpiration } from '../utils/storage';
+import { supabase } from '../lib/supabase';
 
 const LAST_CHECKED_KEY = 'notificationsLastChecked';
 
 type TFunction = (key: string, options?: Record<string, unknown>) => string;
 
 const isSupported = 'Notification' in window;
+
+function urlBase64ToUint8Array(base64String: string): Uint8Array {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = atob(base64);
+  return new Uint8Array([...rawData].map((c) => c.charCodeAt(0)));
+}
+
+async function savePushSubscription(subscription: PushSubscription) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  await supabase.from('push_subscriptions').upsert(
+    { user_id: user.id, subscription: JSON.stringify(subscription) },
+    { onConflict: 'user_id' }
+  );
+}
+
+async function subscribeToPush(): Promise<void> {
+  const vapidKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+  if (!vapidKey || !('serviceWorker' in navigator) || !('PushManager' in window)) return;
+
+  const registration = await navigator.serviceWorker.ready;
+  let subscription = await registration.pushManager.getSubscription();
+  if (!subscription) {
+    subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(vapidKey) as unknown as ArrayBuffer,
+    });
+  }
+  await savePushSubscription(subscription);
+}
 
 export function useProductNotifications() {
   const [permission, setPermission] = useState<NotificationPermission>(
@@ -17,6 +49,9 @@ export function useProductNotifications() {
     if (!isSupported) return 'denied' as NotificationPermission;
     const result = await Notification.requestPermission();
     setPermission(result);
+    if (result === 'granted') {
+      subscribeToPush().catch(console.error);
+    }
     return result;
   }, []);
 
