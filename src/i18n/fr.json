@@ -27,7 +27,8 @@
   "tabs": {
     "fridge": "Mon frigo",
     "cook": "Que cuisiner",
-    "seasonal": "Produits de saison"
+    "seasonal": "De saison",
+    "settings": "Réglages"
   },
   "productList": {
     "nothingHereYet": "Rien ici pour le moment",
@@ -174,6 +175,35 @@
     "permAllow": "Autoriser les notifications",
     "permLater": "Plus tard",
     "permNever": "Ne plus demander"
+  },
+  "settings": {
+    "profile": "Mon profil",
+    "country": "Pays",
+    "countryPlaceholder": "Ex : France, Belgique…",
+    "gender": "Genre",
+    "age": "Âge",
+    "dietaryPreferences": "Régime alimentaire",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "saved": "Enregistré",
+    "appSettings": "Préférences",
+    "darkMode": "Mode nuit",
+    "language": "Langue",
+    "genders": {
+      "male": "Homme",
+      "female": "Femme",
+      "other": "Autre",
+      "prefer_not_to_say": "Je préfère ne pas préciser"
+    },
+    "dietary": {
+      "vegetarian": "Végétarien",
+      "vegan": "Vegan",
+      "gluten_free": "Sans gluten",
+      "lactose_free": "Sans lactose",
+      "halal": "Halal",
+      "kosher": "Casher",
+      "pescatarian": "Pescétarien"
+    }
   },
   "seasonal": {
     "title": "🌱 Produits de saison",

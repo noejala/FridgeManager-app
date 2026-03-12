@@ -15,6 +15,7 @@ import { DuplicateModal } from './components/DuplicateModal';
 import { useProductNotifications } from './hooks/useProductNotifications';
 import { WhatToCook } from './components/WhatToCook';
 import { SeasonalProducts } from './components/SeasonalProducts';
+import { UserSettings } from './components/UserSettings';
 import { Auth } from './components/Auth';
 import { InstallBanner } from './components/InstallBanner';
 import { NotifPermissionModal } from './components/NotifPermissionModal';
@@ -36,7 +37,7 @@ function getSavedTab(): string {
 }
 
 function App() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { permission, requestPermission, checkAndNotify } = useProductNotifications();
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
@@ -291,6 +292,13 @@ function App() {
       <div hidden={activeTab !== 'seasonal'}>
         <SeasonalProducts />
       </div>
+      <div hidden={activeTab !== 'settings'}>
+        <UserSettings
+          darkMode={darkMode}
+          onToggleDarkMode={() => setDarkMode(prev => !prev)}
+          onLogout={handleLogout}
+        />
+      </div>
     </>
   );
 
@@ -311,32 +319,6 @@ function App() {
               🔔
             </button>
           )}
-          <button
-            className="theme-toggle"
-            onClick={() => setDarkMode(prev => !prev)}
-            title={darkMode ? t('app.lightMode') : t('app.darkMode')}
-          >
-            {darkMode ? '☀' : '☾'}
-          </button>
-          <button
-            className="lang-toggle"
-            onClick={() => i18n.changeLanguage(i18n.language === 'en' ? 'fr' : 'en')}
-            title="Switch language"
-          >
-            {i18n.language === 'en' ? 'FR' : 'EN'}
-          </button>
-          <button
-            className="logout-btn"
-            onClick={handleLogout}
-            title={t('app.signOut')}
-          >
-            <svg className="logout-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-              <polyline points="16 17 21 12 16 7"/>
-              <line x1="21" y1="12" x2="9" y2="12"/>
-            </svg>
-            <span className="logout-label">{t('app.signOut')}</span>
-          </button>
         </div>
         <h1>Fridge <span>Manager</span></h1>
         <div className="app-header-rule" />

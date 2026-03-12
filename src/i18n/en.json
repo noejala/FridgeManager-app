@@ -27,7 +27,8 @@
   "tabs": {
     "fridge": "In my fridge",
     "cook": "What to cook",
-    "seasonal": "Seasonal products"
+    "seasonal": "Seasonal",
+    "settings": "Settings"
   },
   "productList": {
     "nothingHereYet": "Nothing here yet",
@@ -174,6 +175,35 @@
     "permAllow": "Allow notifications",
     "permLater": "Maybe later",
     "permNever": "Don't ask again"
+  },
+  "settings": {
+    "profile": "My profile",
+    "country": "Country",
+    "countryPlaceholder": "E.g. France, Canada…",
+    "gender": "Gender",
+    "age": "Age",
+    "dietaryPreferences": "Dietary preferences",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "appSettings": "Preferences",
+    "darkMode": "Dark mode",
+    "language": "Language",
+    "genders": {
+      "male": "Male",
+      "female": "Female",
+      "other": "Other",
+      "prefer_not_to_say": "Prefer not to say"
+    },
+    "dietary": {
+      "vegetarian": "Vegetarian",
+      "vegan": "Vegan",
+      "gluten_free": "Gluten-free",
+      "lactose_free": "Lactose-free",
+      "halal": "Halal",
+      "kosher": "Kosher",
+      "pescatarian": "Pescatarian"
+    }
   },
   "seasonal": {
     "title": "🌱 Seasonal products",
