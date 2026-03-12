@@ -14,6 +14,13 @@ const DIETARY_OPTIONS: DietaryPreference[] = [
   'pescatarian',
 ];
 
+const EMPTY_PROFILE: UserProfile = {
+  country: null,
+  gender: null,
+  age: null,
+  dietaryPreferences: [],
+};
+
 interface Props {
   darkMode: boolean;
   onToggleDarkMode: () => void;
@@ -23,33 +30,40 @@ interface Props {
 export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout }: Props) => {
   const { t, i18n } = useTranslation();
 
-  const [profile, setProfile] = useState<UserProfile>({
-    country: null,
-    gender: null,
-    age: null,
-    dietaryPreferences: [],
-  });
+  const [saved, setSaved] = useState<UserProfile>(EMPTY_PROFILE);
+  const [draft, setDraft] = useState<UserProfile>(EMPTY_PROFILE);
   const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
+
+  const hasData = (p: UserProfile) =>
+    p.country || p.gender || p.age || p.dietaryPreferences.length > 0;
 
   useEffect(() => {
     fetchUserProfile().then(data => {
-      if (data) setProfile(data);
+      const profile = data ?? EMPTY_PROFILE;
+      setSaved(profile);
+      setDraft(profile);
+      setEditing(!hasData(profile));
       setLoading(false);
     });
   }, []);
 
   const handleSave = async () => {
     setSaving(true);
-    await saveUserProfile(profile);
+    await saveUserProfile(draft);
+    setSaved(draft);
     setSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
+    setEditing(false);
+  };
+
+  const handleCancel = () => {
+    setDraft(saved);
+    setEditing(false);
   };
 
   const toggleDietary = (pref: DietaryPreference) => {
-    setProfile(prev => ({
+    setDraft(prev => ({
       ...prev,
       dietaryPreferences: prev.dietaryPreferences.includes(pref)
         ? prev.dietaryPreferences.filter(p => p !== pref)
@@ -64,81 +78,126 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout }: Props) =>
 
       {/* Profile section */}
       <section className="settings-section">
-        <h2 className="settings-section-title">{t('settings.profile')}</h2>
+        <div className="settings-section-header">
+          <h2 className="settings-section-title">{t('settings.profile')}</h2>
+          {!editing && (
+            <button className="settings-edit-btn" onClick={() => setEditing(true)}>
+              {t('settings.edit')}
+            </button>
+          )}
+        </div>
 
         <div className="settings-card">
-          <div className="settings-field">
-            <label className="settings-label">{t('settings.country')}</label>
-            <input
-              type="text"
-              className="settings-input"
-              placeholder={t('settings.countryPlaceholder')}
-              value={profile.country ?? ''}
-              onChange={e => setProfile(prev => ({ ...prev, country: e.target.value || null }))}
-            />
-          </div>
+          {editing ? (
+            <>
+              <div className="settings-field">
+                <label className="settings-label">{t('settings.country')}</label>
+                <input
+                  type="text"
+                  className="settings-input"
+                  placeholder={t('settings.countryPlaceholder')}
+                  value={draft.country ?? ''}
+                  onChange={e => setDraft(prev => ({ ...prev, country: e.target.value || null }))}
+                />
+              </div>
 
-          <div className="settings-field-row">
-            <div className="settings-field">
-              <label className="settings-label">{t('settings.gender')}</label>
-              <select
-                className="settings-input"
-                value={profile.gender ?? ''}
-                onChange={e => setProfile(prev => ({
-                  ...prev,
-                  gender: (e.target.value || null) as UserProfile['gender'],
-                }))}
-              >
-                <option value="">—</option>
-                <option value="male">{t('settings.genders.male')}</option>
-                <option value="female">{t('settings.genders.female')}</option>
-                <option value="other">{t('settings.genders.other')}</option>
-                <option value="prefer_not_to_say">{t('settings.genders.prefer_not_to_say')}</option>
-              </select>
-            </div>
+              <div className="settings-field-row">
+                <div className="settings-field">
+                  <label className="settings-label">{t('settings.gender')}</label>
+                  <select
+                    className="settings-input"
+                    value={draft.gender ?? ''}
+                    onChange={e => setDraft(prev => ({
+                      ...prev,
+                      gender: (e.target.value || null) as UserProfile['gender'],
+                    }))}
+                  >
+                    <option value="">—</option>
+                    <option value="male">{t('settings.genders.male')}</option>
+                    <option value="female">{t('settings.genders.female')}</option>
+                    <option value="other">{t('settings.genders.other')}</option>
+                    <option value="prefer_not_to_say">{t('settings.genders.prefer_not_to_say')}</option>
+                  </select>
+                </div>
 
-            <div className="settings-field">
-              <label className="settings-label">{t('settings.age')}</label>
-              <input
-                type="number"
-                className="settings-input"
-                placeholder="—"
-                min={1}
-                max={120}
-                value={profile.age ?? ''}
-                onChange={e => setProfile(prev => ({
-                  ...prev,
-                  age: e.target.value ? parseInt(e.target.value, 10) : null,
-                }))}
-              />
-            </div>
-          </div>
+                <div className="settings-field">
+                  <label className="settings-label">{t('settings.age')}</label>
+                  <input
+                    type="number"
+                    className="settings-input"
+                    placeholder="—"
+                    min={1}
+                    max={120}
+                    value={draft.age ?? ''}
+                    onChange={e => setDraft(prev => ({
+                      ...prev,
+                      age: e.target.value ? parseInt(e.target.value, 10) : null,
+                    }))}
+                  />
+                </div>
+              </div>
 
-          <div className="settings-field">
-            <label className="settings-label">{t('settings.dietaryPreferences')}</label>
-            <div className="settings-chips">
-              {DIETARY_OPTIONS.map(pref => (
+              <div className="settings-field">
+                <label className="settings-label">{t('settings.dietaryPreferences')}</label>
+                <div className="settings-chips">
+                  {DIETARY_OPTIONS.map(pref => (
+                    <button
+                      key={pref}
+                      type="button"
+                      className={`settings-chip ${draft.dietaryPreferences.includes(pref) ? 'active' : ''}`}
+                      onClick={() => toggleDietary(pref)}
+                    >
+                      {t(`settings.dietary.${pref}`)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="settings-save-row">
+                {hasData(saved) && (
+                  <button className="settings-cancel-btn" onClick={handleCancel}>
+                    {t('settings.cancel')}
+                  </button>
+                )}
                 <button
-                  key={pref}
-                  type="button"
-                  className={`settings-chip ${profile.dietaryPreferences.includes(pref) ? 'active' : ''}`}
-                  onClick={() => toggleDietary(pref)}
+                  className="settings-save-btn"
+                  onClick={handleSave}
+                  disabled={saving}
                 >
-                  {t(`settings.dietary.${pref}`)}
+                  {saving ? t('settings.saving') : t('settings.save')}
                 </button>
-              ))}
+              </div>
+            </>
+          ) : (
+            <div className="settings-view">
+              <div className="settings-view-row">
+                <span className="settings-view-label">{t('settings.country')}</span>
+                <span className="settings-view-value">{saved.country ?? '—'}</span>
+              </div>
+              <div className="settings-view-row">
+                <span className="settings-view-label">{t('settings.gender')}</span>
+                <span className="settings-view-value">
+                  {saved.gender ? t(`settings.genders.${saved.gender}`) : '—'}
+                </span>
+              </div>
+              <div className="settings-view-row">
+                <span className="settings-view-label">{t('settings.age')}</span>
+                <span className="settings-view-value">{saved.age ?? '—'}</span>
+              </div>
+              {saved.dietaryPreferences.length > 0 && (
+                <div className="settings-view-row settings-view-row--chips">
+                  <span className="settings-view-label">{t('settings.dietaryPreferences')}</span>
+                  <div className="settings-chips settings-chips--readonly">
+                    {saved.dietaryPreferences.map(pref => (
+                      <span key={pref} className="settings-chip active">
+                        {t(`settings.dietary.${pref}`)}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-
-          <div className="settings-save-row">
-            <button
-              className="settings-save-btn"
-              onClick={handleSave}
-              disabled={saving}
-            >
-              {saved ? `✓ ${t('settings.saved')}` : saving ? t('settings.saving') : t('settings.save')}
-            </button>
-          </div>
+          )}
         </div>
       </section>
 

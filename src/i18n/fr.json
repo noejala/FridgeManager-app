@@ -183,6 +183,8 @@
     "gender": "Genre",
     "age": "Âge",
     "dietaryPreferences": "Régime alimentaire",
+    "edit": "Modifier",
+    "cancel": "Annuler",
     "save": "Enregistrer",
     "saving": "Enregistrement…",
     "saved": "Enregistré",

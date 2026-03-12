@@ -9,6 +9,36 @@
   height: 200px;
 }
 
+.settings-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.settings-section-header .settings-section-title {
+  margin-bottom: 0;
+}
+
+.settings-edit-btn {
+  background: transparent;
+  border: 1px solid var(--border-hover);
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  padding: 0.3rem 0.875rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.settings-edit-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .settings-section-title {
   font-family: var(--font-display);
   font-size: 1.1rem;
@@ -107,11 +137,71 @@
   color: var(--accent);
 }
 
-/* Save button */
+/* View mode */
+.settings-view {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.settings-view-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.settings-view-row--chips {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.settings-view-label {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.settings-view-value {
+  font-size: 0.9rem;
+  color: var(--text);
+  text-align: right;
+}
+
+.settings-chips--readonly {
+  pointer-events: none;
+}
+
+/* Save / cancel row */
 .settings-save-row {
   display: flex;
   justify-content: flex-end;
+  gap: 0.625rem;
   padding-top: 0.25rem;
+}
+
+.settings-cancel-btn {
+  background: transparent;
+  border: 1px solid var(--border-hover);
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.65rem 1.25rem;
+  border-radius: 40px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.settings-cancel-btn:hover {
+  border-color: var(--text-muted);
+  color: var(--text-secondary);
 }
 
 .settings-save-btn {

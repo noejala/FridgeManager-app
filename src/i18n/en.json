@@ -183,6 +183,8 @@
     "gender": "Gender",
     "age": "Age",
     "dietaryPreferences": "Dietary preferences",
+    "edit": "Edit",
+    "cancel": "Cancel",
     "save": "Save",
     "saving": "Saving…",
     "saved": "Saved",
