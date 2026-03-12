@@ -22,5 +22,7 @@ export type ProductCategory =
   | 'Frozen'
   | 'Sauces'
   | 'Milk'
+  | 'Juice'
+  | 'Cream'
   | 'Other';
 

@@ -67,13 +67,21 @@ const CATEGORY_KEYWORDS: Record<Exclude<ProductCategory, 'Other'>, string[]> = {
   ],
   Milk: [
     // English
-    'milk', 'oat milk', 'almond milk', 'soy milk', 'rice milk',
-    'coconut milk', 'heavy cream', 'whipping cream', 'liquid cream',
-    'juice', 'orange juice', 'apple juice',
+    'milk', 'oat milk', 'almond milk', 'soy milk', 'rice milk', 'coconut milk',
     // French
-    'lait', "lait d'avoine", "lait d'amande", 'lait de soja', 'lait de riz',
-    'lait de coco', 'crème liquide', 'crème fleurette',
-    'jus', "jus d'orange", 'jus de pomme',
+    'lait', "lait d'avoine", "lait d'amande", 'lait de soja', 'lait de riz', 'lait de coco',
+  ],
+  Juice: [
+    // English
+    'juice', 'orange juice', 'apple juice', 'grape juice',
+    // French
+    'jus', "jus d'orange", 'jus de pomme', 'jus de raisin',
+  ],
+  Cream: [
+    // English
+    'heavy cream', 'whipping cream', 'liquid cream', 'single cream', 'double cream',
+    // French
+    'crème liquide', 'crème fleurette', 'crème entière', 'crème légère',
   ],
   Dairy: [
     // English

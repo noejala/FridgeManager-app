@@ -118,7 +118,9 @@
     "Dairy": "Produits laitiers",
     "Beverages": "Boissons",
     "Frozen": "Surgelés",
-    "Milk": "Lait & boissons",
+    "Milk": "Lait",
+    "Cream": "Crème",
+    "Juice": "Jus",
     "Sauces": "Sauces & condiments",
     "Other": "Autre"
   },

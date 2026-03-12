@@ -23,13 +23,16 @@ const CATEGORIES: ProductCategory[] = [
   'Fish',
   'Dairy',
   'Milk',
+  'Cream',
+  'Juice',
   'Beverages',
   'Frozen',
   'Sauces',
   'Other'
 ];
 
-const isOpenableCategory = (cat: ProductCategory) => cat === 'Sauces' || cat === 'Milk';
+const isOpenableCategory = (cat: ProductCategory) =>
+  ['Sauces', 'Milk', 'Juice', 'Cream'].includes(cat);
 
 export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
   const { t } = useTranslation();

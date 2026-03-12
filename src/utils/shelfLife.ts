@@ -28,7 +28,7 @@ const SHELF_LIFE_AFTER_OPENING: Record<string, number> = {
 const OPENABLE_DAIRY_KEYWORDS = ['lait', 'milk', 'crème liquide', 'heavy cream', 'whipping cream', 'lait de coco', 'coconut milk', 'jus', 'juice'];
 
 export function isOpenableProduct(name: string, category: string): boolean {
-  if (category === 'Sauces' || category === 'Milk') return true;
+  if (['Sauces', 'Milk', 'Juice', 'Cream'].includes(category)) return true;
   const lower = name.toLowerCase().trim();
   return OPENABLE_DAIRY_KEYWORDS.some(k => lower.includes(k));
 }

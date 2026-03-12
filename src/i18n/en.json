@@ -118,7 +118,9 @@
     "Dairy": "Dairy",
     "Beverages": "Beverages",
     "Frozen": "Frozen",
-    "Milk": "Milk & drinks",
+    "Milk": "Milk",
+    "Cream": "Cream",
+    "Juice": "Juice",
     "Sauces": "Sauces & condiments",
     "Other": "Other"
   },
