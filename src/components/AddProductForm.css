@@ -290,6 +290,16 @@
     transform: scale(1.08);
   }
 
+  .fab-container {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  .fab-container.fab-hidden {
+    transform: translateY(24px);
+    opacity: 0;
+    pointer-events: none;
+  }
+
   .fab-main {
     width: 58px;
     height: 58px;

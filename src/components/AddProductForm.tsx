@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Product, ProductCategory } from '../types/Product';
 import { guessCategory } from '../utils/categoryMapping';
@@ -38,6 +38,23 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [fabOpen, setFabOpen] = useState(false);
+  const [fabVisible, setFabVisible] = useState(true);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const current = window.scrollY;
+      if (current > lastScrollY.current && current > 60) {
+        setFabVisible(false);
+        setFabOpen(false);
+      } else {
+        setFabVisible(true);
+      }
+      lastScrollY.current = current;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
   const [isLoading, setIsLoading] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
   const [isLookingUp, setIsLookingUp] = useState(false);
@@ -206,7 +223,7 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
         {fabOpen && (
           <div className="fab-backdrop" onClick={() => setFabOpen(false)} />
         )}
-        <div className={`fab-container${fabOpen ? ' fab-open' : ''}`}>
+        <div className={`fab-container${fabOpen ? ' fab-open' : ''}${!fabVisible ? ' fab-hidden' : ''}`}>
           <div className="fab-actions">
             <div className="fab-action">
               <span className="fab-action-label">Scanner</span>
