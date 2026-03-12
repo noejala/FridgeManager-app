@@ -14,6 +14,24 @@ const CATEGORY_KEYWORDS: Record<Exclude<ProductCategory, 'Other'>, string[]> = {
     'tapenade', 'houmous', 'crème de', 'sauce barbecue', 'sauce curry',
     'sauce', 'ketchup', 'mayo',
   ],
+  Milk: [
+    // English
+    'milk', 'oat milk', 'almond milk', 'soy milk', 'rice milk', 'coconut milk',
+    // French
+    'lait', "lait d'avoine", "lait d'amande", 'lait de soja', 'lait de riz', 'lait de coco',
+  ],
+  Juice: [
+    // English
+    'juice', 'orange juice', 'apple juice', 'grape juice',
+    // French
+    'jus', "jus d'orange", 'jus de pomme', 'jus de raisin',
+  ],
+  Cream: [
+    // English
+    'heavy cream', 'whipping cream', 'liquid cream', 'single cream', 'double cream',
+    // French
+    'crème liquide', 'crème fleurette', 'crème entière', 'crème légère',
+  ],
   Fruits: [
     // English
     'apple', 'banana', 'orange', 'strawberry', 'grape', 'mango', 'pear',
@@ -64,24 +82,6 @@ const CATEGORY_KEYWORDS: Record<Exclude<ProductCategory, 'Other'>, string[]> = {
     'maquereau', 'hareng', 'anchois', 'crabe', 'homard', 'moule', 'huître',
     'calmar', 'poulpe', 'palourde', 'espadon', 'bar', 'aiglefin', 'poisson',
     'lieu', 'dorade', 'daurade', 'sole', 'turbot',
-  ],
-  Milk: [
-    // English
-    'milk', 'oat milk', 'almond milk', 'soy milk', 'rice milk', 'coconut milk',
-    // French
-    'lait', "lait d'avoine", "lait d'amande", 'lait de soja', 'lait de riz', 'lait de coco',
-  ],
-  Juice: [
-    // English
-    'juice', 'orange juice', 'apple juice', 'grape juice',
-    // French
-    'jus', "jus d'orange", 'jus de pomme', 'jus de raisin',
-  ],
-  Cream: [
-    // English
-    'heavy cream', 'whipping cream', 'liquid cream', 'single cream', 'double cream',
-    // French
-    'crème liquide', 'crème fleurette', 'crème entière', 'crème légère',
   ],
   Dairy: [
     // English
