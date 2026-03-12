@@ -204,41 +204,118 @@
 
 @media (max-width: 768px) {
   .add-product-actions {
+    display: none;
+  }
+}
+
+/* ── FAB speed dial (mobile only) ──────────────────────── */
+.fab-container {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .fab-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 149;
+    background: rgba(0, 0, 0, 0.35);
+    animation: fade-in 0.15s ease;
+  }
+
+  .fab-container {
+    display: flex;
     flex-direction: column;
+    align-items: flex-end;
+    gap: 0.875rem;
+    position: fixed;
+    bottom: calc(5.5rem + env(safe-area-inset-bottom));
+    right: 1.25rem;
+    z-index: 150;
+  }
+
+  .fab-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
     gap: 0.75rem;
-    margin-bottom: 1.5rem;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
   }
 
-  .scan-btn-label-short { display: none; }
-  .scan-btn-label-long  { display: inline; }
+  .fab-open .fab-actions {
+    pointer-events: auto;
+    opacity: 1;
+    transform: translateY(0);
+  }
 
-  .scan-product-btn {
-    order: -1;
-    width: 100%;
+  .fab-action {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .fab-action-label {
+    background: var(--bg-card);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    white-space: nowrap;
+    border: 1px solid var(--border);
+  }
+
+  .fab-action-btn {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
     justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+    transition: background 0.15s, transform 0.15s;
+    flex-shrink: 0;
+  }
+
+  .fab-action-btn:hover {
+    background: var(--accent-bg);
+    transform: scale(1.08);
+  }
+
+  .fab-main {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
     background: var(--accent);
+    border: none;
     color: #fff;
-    border-color: var(--accent);
-    padding: 1rem 1.75rem;
-    font-size: 0.875rem;
-    gap: 0.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(44, 111, 224, 0.45);
+    transition: background 0.15s, transform 0.2s;
+    flex-shrink: 0;
   }
 
-  .scan-product-btn svg {
-    width: 22px;
-    height: 22px;
-  }
-
-  .scan-product-btn:hover {
+  .fab-main:hover {
     background: var(--accent-light);
-    border-color: var(--accent-light);
-    color: #fff;
-    transform: none;
   }
 
-  .add-product-btn {
-    width: 100%;
-    text-align: center;
+  .fab-icon {
+    transition: transform 0.25s ease;
+  }
+
+  .fab-open .fab-icon {
+    transform: rotate(45deg);
   }
 }
 

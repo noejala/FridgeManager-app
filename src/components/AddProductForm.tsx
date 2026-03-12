@@ -37,6 +37,7 @@ const isOpenableCategory = (cat: ProductCategory) =>
 export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
+  const [fabOpen, setFabOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
   const [isLookingUp, setIsLookingUp] = useState(false);
@@ -178,6 +179,8 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
             onClose={() => setIsScanning(false)}
           />
         )}
+
+        {/* Desktop buttons */}
         <div className="add-product-actions">
           <button className="add-product-btn" onClick={() => setIsOpen(true)}>
             + {t('form.addProduct')}
@@ -196,6 +199,48 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
             </svg>
             <span className="scan-btn-label-short">Scanner</span>
             <span className="scan-btn-label-long">Scanner un produit</span>
+          </button>
+        </div>
+
+        {/* Mobile FAB speed dial */}
+        {fabOpen && (
+          <div className="fab-backdrop" onClick={() => setFabOpen(false)} />
+        )}
+        <div className={`fab-container${fabOpen ? ' fab-open' : ''}`}>
+          <div className="fab-actions">
+            <div className="fab-action">
+              <span className="fab-action-label">Scanner</span>
+              <button
+                className="fab-action-btn"
+                onClick={() => { setFabOpen(false); setIsScanning(true); }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="5" height="5" rx="1"/>
+                  <rect x="16" y="3" width="5" height="5" rx="1"/>
+                  <rect x="3" y="16" width="5" height="5" rx="1"/>
+                  <path d="M16 16h2v2h-2zM18 18h2v2h-2zM16 20h2"/>
+                  <path d="M20 16v2"/>
+                </svg>
+              </button>
+            </div>
+            <div className="fab-action">
+              <span className="fab-action-label">{t('form.addProduct')}</span>
+              <button
+                className="fab-action-btn"
+                onClick={() => { setFabOpen(false); setIsOpen(true); }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"/>
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <button className="fab-main" onClick={() => setFabOpen(prev => !prev)}>
+            <svg className="fab-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
           </button>
         </div>
       </>
