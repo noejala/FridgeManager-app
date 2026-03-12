@@ -65,23 +65,33 @@ const CATEGORY_KEYWORDS: Record<Exclude<ProductCategory, 'Other'>, string[]> = {
     'calmar', 'poulpe', 'palourde', 'espadon', 'bar', 'aiglefin', 'poisson',
     'lieu', 'dorade', 'daurade', 'sole', 'turbot',
   ],
+  Milk: [
+    // English
+    'milk', 'oat milk', 'almond milk', 'soy milk', 'rice milk',
+    'coconut milk', 'heavy cream', 'whipping cream', 'liquid cream',
+    'juice', 'orange juice', 'apple juice',
+    // French
+    'lait', "lait d'avoine", "lait d'amande", 'lait de soja', 'lait de riz',
+    'lait de coco', 'crème liquide', 'crème fleurette',
+    'jus', "jus d'orange", 'jus de pomme',
+  ],
   Dairy: [
     // English
-    'milk', 'cheese', 'yogurt', 'butter', 'cream', 'egg', 'mozzarella',
+    'cheese', 'yogurt', 'butter', 'cream', 'egg', 'mozzarella',
     'cheddar', 'parmesan', 'brie', 'camembert', 'gouda', 'feta',
     'ricotta', 'cottage cheese', 'sour cream', 'whipped cream',
     'cream cheese', 'mascarpone',
     // French
-    'lait', 'fromage', 'yaourt', 'yogourt', 'beurre', 'crème', 'œuf', 'oeuf',
+    'fromage', 'yaourt', 'yogourt', 'beurre', 'crème', 'œuf', 'oeuf',
     'fromage blanc', 'crème fraîche', 'chantilly',
   ],
   Beverages: [
     // English
-    'water', 'juice', 'soda', 'beer', 'wine', 'coffee', 'tea',
+    'water', 'soda', 'beer', 'wine', 'coffee', 'tea',
     'lemonade', 'smoothie', 'milkshake', 'cola', 'kombucha',
     'energy drink', 'sparkling water', 'cider',
     // French
-    'eau', 'jus', 'bière', 'vin', 'café', 'thé', 'limonade', 'cidre', 'sirop',
+    'eau', 'bière', 'vin', 'café', 'thé', 'limonade', 'cidre',
   ],
   Frozen: [
     // English

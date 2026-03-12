@@ -21,5 +21,6 @@ export type ProductCategory =
   | 'Beverages'
   | 'Frozen'
   | 'Sauces'
+  | 'Milk'
   | 'Other';
 

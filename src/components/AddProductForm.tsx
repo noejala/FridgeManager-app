@@ -22,11 +22,14 @@ const CATEGORIES: ProductCategory[] = [
   'Meat',
   'Fish',
   'Dairy',
+  'Milk',
   'Beverages',
   'Frozen',
   'Sauces',
   'Other'
 ];
+
+const isOpenableCategory = (cat: ProductCategory) => cat === 'Sauces' || cat === 'Milk';
 
 export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
   const { t } = useTranslation();
@@ -119,7 +122,7 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const isSauceOpened = category === 'Sauces' && isOpened;
+    const isSauceOpened = isOpenableCategory(category) && isOpened;
     const finalExpirationDate = isSauceOpened
       ? estimateExpirationFromOpenDate(name, sauceOpenedDate)
       : (unknownExpiration && recognized)
@@ -303,7 +306,7 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
         </div>
       </div>
 
-      {category === 'Sauces' ? (
+      {isOpenableCategory(category) ? (
         <div className="form-group sauce-opened-group">
           <label className="checkbox-label">
             <input
@@ -344,7 +347,7 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
         </div>
       )}
 
-      {category === 'Sauces' && !isOpened && unknownExpiration === false ? (
+      {isOpenableCategory(category) && !isOpened && unknownExpiration === false ? (
         // Sauce fermée → champ date d'expiration normale
         <div className="form-group">
           <label>{t('form.expirationDate')}</label>
@@ -398,7 +401,7 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
             </select>
           </div>
         </div>
-      ) : category === 'Sauces' && isOpened ? null : unknownExpiration && recognized ? (
+      ) : isOpenableCategory(category) && isOpened ? null : unknownExpiration && recognized ? (
         <div className="form-group">
           <label htmlFor="purchaseDate">{t('form.whenDidYouBuy')}</label>
           <div className="purchase-date-row">
