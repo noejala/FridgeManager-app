@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { User } from '@supabase/supabase-js';
 import { Product } from './types/Product';
@@ -50,6 +50,18 @@ function App() {
   const [darkMode, setDarkMode] = useState<boolean>(() => {
     return localStorage.getItem('theme') === 'dark';
   });
+  const [scrolledDown, setScrolledDown] = useState(false);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const current = window.scrollY;
+      setScrolledDown(current > lastScrollY.current && current > 60);
+      lastScrollY.current = current;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
@@ -308,7 +320,7 @@ function App() {
 
   return (
     <div className="app">
-      <header className="app-header">
+      <header className={`app-header${scrolledDown ? ' header-hidden' : ''}`}>
         <div className="app-header-controls">
           {permission === 'default' && (
             <button
@@ -330,6 +342,7 @@ function App() {
           activeTab={activeTab}
           onTabChange={setActiveTab}
           urgentCount={products.filter(p => isExpired(p.expirationDate) || isExpiringSoon(p.expirationDate)).length}
+          scrolledDown={scrolledDown}
         >
           {renderTabContent()}
         </Tabs>

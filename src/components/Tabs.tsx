@@ -36,9 +36,10 @@ interface TabsProps {
   onTabChange: (tab: string) => void;
   children: ReactNode;
   urgentCount?: number;
+  scrolledDown?: boolean;
 }
 
-export const Tabs = ({ activeTab, onTabChange, children, urgentCount = 0 }: TabsProps) => {
+export const Tabs = ({ activeTab, onTabChange, children, urgentCount = 0, scrolledDown = false }: TabsProps) => {
   const { t } = useTranslation();
 
   const tabs = [
@@ -50,7 +51,7 @@ export const Tabs = ({ activeTab, onTabChange, children, urgentCount = 0 }: Tabs
 
   return (
     <div className="tabs-container">
-      <div className="tabs-header">
+      <div className={`tabs-header${scrolledDown ? ' tabs-hidden' : ''}`}>
         {tabs.map(tab => (
           <button
             key={tab.id}

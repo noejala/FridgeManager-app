@@ -303,6 +303,11 @@ body::after {
     text-align: left;
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
+    transition: transform 0.3s ease;
+  }
+
+  .app-header.header-hidden {
+    transform: translateY(-100%);
   }
 
   .app-header-controls {
