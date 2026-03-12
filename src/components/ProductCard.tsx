@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Product } from '../types/Product';
 import { getDaysUntilExpiration, isExpired, isExpiringSoon } from '../utils/storage';
+import { isOpenableProduct } from '../utils/shelfLife';
 import './ProductCard.css';
 
 interface ProductCardProps {
@@ -88,7 +89,7 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
             </>
           ) : (
             <>
-              {product.category === 'Sauces' && !product.openedDate && (
+              {isOpenableProduct(product.name, product.category) && !product.openedDate && (
                 <button
                   className="open-sauce-btn"
                   onClick={() => setConfirmingOpen(true)}

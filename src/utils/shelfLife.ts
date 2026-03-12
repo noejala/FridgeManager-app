@@ -1,5 +1,12 @@
-// Days a sauce/condiment lasts after opening
-const SAUCE_SHELF_LIFE_AFTER_OPENING: Record<string, number> = {
+// Days a product lasts after opening
+const SHELF_LIFE_AFTER_OPENING: Record<string, number> = {
+  // Dairy & drinks
+  lait: 4, milk: 4,
+  'lait végétal': 5, 'oat milk': 5, 'almond milk': 5, 'soy milk': 5,
+  'crème liquide': 3, 'heavy cream': 3, 'whipping cream': 3,
+  'lait de coco': 4, 'coconut milk': 4,
+  jus: 5, juice: 5,
+  // Sauces & condiments
   mayo: 30, mayonnaise: 30,
   ketchup: 30,
   moutarde: 60, mustard: 60,
@@ -18,10 +25,18 @@ const SAUCE_SHELF_LIFE_AFTER_OPENING: Record<string, number> = {
   sirop: 365, syrup: 365,
 };
 
+const OPENABLE_DAIRY_KEYWORDS = ['lait', 'milk', 'crème liquide', 'heavy cream', 'whipping cream', 'lait de coco', 'coconut milk', 'jus', 'juice'];
+
+export function isOpenableProduct(name: string, category: string): boolean {
+  if (category === 'Sauces') return true;
+  const lower = name.toLowerCase().trim();
+  return OPENABLE_DAIRY_KEYWORDS.some(k => lower.includes(k));
+}
+
 export function estimateExpirationFromOpenDate(name: string, openedDate: string): string {
   const lowerName = name.toLowerCase().trim();
-  let days = 14; // default for unknown sauces
-  for (const [keyword, d] of Object.entries(SAUCE_SHELF_LIFE_AFTER_OPENING)) {
+  let days = 14; // default
+  for (const [keyword, d] of Object.entries(SHELF_LIFE_AFTER_OPENING)) {
     if (lowerName.includes(keyword)) {
       days = d;
       break;
