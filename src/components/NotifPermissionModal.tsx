@@ -3,12 +3,20 @@ import { useTranslation } from 'react-i18next';
 import './InstallBanner.css';
 
 const DISMISSED_KEY = 'notif-permission-dismissed';
+const SNOOZED_KEY = 'notif-permission-snoozed-until';
+const SNOOZE_DAYS = 7;
 
 function isStandaloneMode(): boolean {
   return (
     window.matchMedia('(display-mode: standalone)').matches ||
     (navigator as { standalone?: boolean }).standalone === true
   );
+}
+
+function isSnoozed(): boolean {
+  const until = localStorage.getItem(SNOOZED_KEY);
+  if (!until) return false;
+  return Date.now() < parseInt(until, 10);
 }
 
 interface Props {
@@ -19,7 +27,7 @@ interface Props {
 export function NotifPermissionModal({ permission, onRequest }: Props) {
   const { t } = useTranslation();
   const [dismissed, setDismissed] = useState(
-    () => localStorage.getItem(DISMISSED_KEY) === 'true'
+    () => localStorage.getItem(DISMISSED_KEY) === 'true' || isSnoozed()
   );
 
   if (!isStandaloneMode() || permission !== 'default' || dismissed) return null;
@@ -30,6 +38,8 @@ export function NotifPermissionModal({ permission, onRequest }: Props) {
   };
 
   const handleLater = () => {
+    const until = Date.now() + SNOOZE_DAYS * 24 * 60 * 60 * 1000;
+    localStorage.setItem(SNOOZED_KEY, String(until));
     setDismissed(true);
   };
 
