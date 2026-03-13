@@ -9,6 +9,8 @@ import './AddProductForm.css';
 
 interface AddProductFormProps {
   onAdd: (product: Omit<Product, 'id' | 'addedDate'>) => Promise<void>;
+  isFormOpen: boolean;
+  onFormOpenChange: (open: boolean) => void;
 }
 
 const MONTHS_FR = [
@@ -34,9 +36,8 @@ const CATEGORIES: ProductCategory[] = [
 const isOpenableCategory = (cat: ProductCategory) =>
   ['Sauces', 'Milk', 'Juice', 'Cream'].includes(cat);
 
-export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
+export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange }: AddProductFormProps) => {
   const { t } = useTranslation();
-  const [isOpen, setIsOpen] = useState(false);
   const [fabOpen, setFabOpen] = useState(false);
   const [fabVisible, setFabVisible] = useState(true);
   const lastScrollY = useRef(0);
@@ -55,6 +56,29 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+  useEffect(() => {
+    if (isFormOpen) {
+      const scrollY = window.scrollY;
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+    } else {
+      const top = document.body.style.top;
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      window.scrollTo(0, -(parseInt(top || '0')));
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+    };
+  }, [isFormOpen]);
+
   const [isLoading, setIsLoading] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
   const [isLookingUp, setIsLookingUp] = useState(false);
@@ -71,38 +95,11 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
   const [expDay, setExpDay] = useState('');
   const [expMonth, setExpMonth] = useState('');
   const [expYear, setExpYear] = useState('');
-  const [activePreset, setActivePreset] = useState<string | null>(null);
-
   const currentYear = new Date().getFullYear();
   const YEARS = Array.from({ length: 6 }, (_, i) => currentYear + i);
   const daysInSelectedMonth = expYear && expMonth
     ? new Date(parseInt(expYear), parseInt(expMonth), 0).getDate()
     : 31;
-
-  const DATE_PRESETS = [
-    { label: '3j',    days: 3 },
-    { label: '1 sem', days: 7 },
-    { label: '2 sem', days: 14 },
-    { label: '1 mois', months: 1 },
-    { label: '3 mois', months: 3 },
-    { label: '6 mois', months: 6 },
-    { label: '1 an',  months: 12 },
-  ] as const;
-
-  const applyPreset = (preset: typeof DATE_PRESETS[number]) => {
-    const d = new Date();
-    if ('months' in preset) {
-      d.setMonth(d.getMonth() + preset.months);
-    } else {
-      d.setDate(d.getDate() + preset.days);
-    }
-    const [y, m, day] = d.toISOString().split('T')[0].split('-');
-    setExpYear(y);
-    setExpMonth(m);
-    setExpDay(day);
-    setExpirationDate(`${y}-${m}-${day}`);
-    setActivePreset(preset.label);
-  };
 
   const handleDatePart = (part: 'day' | 'month' | 'year', val: string) => {
     const newDay   = part === 'day'   ? val : expDay;
@@ -111,7 +108,6 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
     if (part === 'day')   setExpDay(val);
     if (part === 'month') setExpMonth(val);
     if (part === 'year')  setExpYear(val);
-    setActivePreset(null);
     if (newDay && newMonth && newYear) {
       setExpirationDate(`${newYear}-${newMonth.padStart(2, '0')}-${newDay.padStart(2, '0')}`);
     } else {
@@ -123,7 +119,7 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
 
   const handleBarcodeDetected = async (barcode: string) => {
     setIsScanning(false);
-    setIsOpen(true);
+    onFormOpenChange(true);
     setIsLookingUp(true);
     setLookupError(null);
 
@@ -181,13 +177,12 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
     setExpDay('');
     setExpMonth('');
     setExpYear('');
-    setActivePreset(null);
-    setIsOpen(false);
+    onFormOpenChange(false);
   };
 
   const minDate = new Date().toISOString().split('T')[0];
 
-  if (!isOpen) {
+  if (!isFormOpen) {
     return (
       <>
         {isScanning && (
@@ -199,7 +194,7 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
 
         {/* Desktop buttons */}
         <div className="add-product-actions">
-          <button className="add-product-btn" onClick={() => setIsOpen(true)}>
+          <button className="add-product-btn" onClick={() => onFormOpenChange(true)}>
             + {t('form.addProduct')}
           </button>
           <button
@@ -223,13 +218,14 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
         {fabOpen && (
           <div className="fab-backdrop" onClick={() => setFabOpen(false)} />
         )}
-        <div className={`fab-container${fabOpen ? ' fab-open' : ''}${!fabVisible ? ' fab-hidden' : ''}`}>
+        <div className={`fab-container${fabOpen ? ' fab-open' : ''}${!fabVisible || isScanning ? ' fab-hidden' : ''}`}>
           <div className="fab-actions">
             <div className="fab-action">
               <span className="fab-action-label">Scanner</span>
               <button
                 className="fab-action-btn"
                 onClick={() => { setFabOpen(false); setIsScanning(true); }}
+
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="3" y="3" width="5" height="5" rx="1"/>
@@ -244,7 +240,7 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
               <span className="fab-action-label">{t('form.addProduct')}</span>
               <button
                 className="fab-action-btn"
-                onClick={() => { setFabOpen(false); setIsOpen(true); }}
+                onClick={() => { setFabOpen(false); onFormOpenChange(true); }}
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="12" y1="5" x2="12" y2="19"/>
@@ -273,6 +269,7 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
         />
       )}
       <form className="add-product-form" onSubmit={handleSubmit}>
+        <div className="form-drag-handle" />
         <div className="form-title-row">
           <h2>{t('form.addProduct')}</h2>
           <button
@@ -316,6 +313,7 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
               if (lookupError) setLookupError(null);
             }}
             required
+            autoFocus
             disabled={isLookingUp}
             placeholder={isLookingUp ? 'Recherche en cours…' : t('form.productPlaceholder')}
           />
@@ -416,18 +414,6 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
         // Sauce fermée → champ date d'expiration normale
         <div className="form-group">
           <label>{t('form.expirationDate')}</label>
-          <div className="date-presets">
-            {DATE_PRESETS.map((preset) => (
-              <button
-                key={preset.label}
-                type="button"
-                className={`date-preset-btn${activePreset === preset.label ? ' date-preset-btn--active' : ''}`}
-                onClick={() => applyPreset(preset)}
-              >
-                {preset.label}
-              </button>
-            ))}
-          </div>
           <input
             className="date-input-desktop"
             type="date"
@@ -435,7 +421,6 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
             onChange={(e) => {
               const val = e.target.value;
               setExpirationDate(val);
-              setActivePreset(null);
               if (val) {
                 const [y, m, d] = val.split('-');
                 setExpYear(y); setExpMonth(m); setExpDay(d);
@@ -502,18 +487,6 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
       ) : (
         <div className="form-group">
           <label>{t('form.expirationDate')}</label>
-          <div className="date-presets">
-            {DATE_PRESETS.map((preset) => (
-              <button
-                key={preset.label}
-                type="button"
-                className={`date-preset-btn${activePreset === preset.label ? ' date-preset-btn--active' : ''}`}
-                onClick={() => applyPreset(preset)}
-              >
-                {preset.label}
-              </button>
-            ))}
-          </div>
           {/* Desktop : date picker natif */}
           <input
             className="date-input-desktop"
@@ -522,7 +495,6 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
             onChange={(e) => {
               const val = e.target.value;
               setExpirationDate(val);
-              setActivePreset(null);
               if (val) {
                 const [y, m, d] = val.split('-');
                 setExpYear(y); setExpMonth(m); setExpDay(d);
@@ -566,7 +538,7 @@ export const AddProductForm = ({ onAdd }: AddProductFormProps) => {
       )}
 
       <div className="form-actions">
-        <button type="button" className="cancel-btn" onClick={() => setIsOpen(false)} disabled={isLoading || isLookingUp}>
+        <button type="button" className="cancel-btn" onClick={() => onFormOpenChange(false)} disabled={isLoading || isLookingUp}>
           {t('form.cancel')}
         </button>
         <button type="submit" className="submit-btn" disabled={isLoading || isLookingUp}>

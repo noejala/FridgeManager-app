@@ -45,6 +45,7 @@ function App() {
   const [consumedProducts, setConsumedProducts] = useState<Product[]>([]);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [activeTab, setActiveTab] = useState('fridge');
+  const [addFormOpen, setAddFormOpen] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
   const [pendingProduct, setPendingProduct] = useState<Omit<Product, 'id' | 'addedDate'> | null>(null);
   const [darkMode, setDarkMode] = useState<boolean>(() => {
@@ -284,7 +285,7 @@ function App() {
             onCancel={handleCancelEdit}
           />
         ) : (
-          <AddProductForm onAdd={handleAddProduct} />
+          <AddProductForm onAdd={handleAddProduct} isFormOpen={addFormOpen} onFormOpenChange={setAddFormOpen} />
         )}
         <ProductList
           products={products}
@@ -340,7 +341,7 @@ function App() {
       <main className="app-main">
         <Tabs
           activeTab={activeTab}
-          onTabChange={setActiveTab}
+          onTabChange={(tab) => { setActiveTab(tab); setAddFormOpen(false); }}
           urgentCount={products.filter(p => isExpired(p.expirationDate) || isExpiringSoon(p.expirationDate)).length}
           scrolledDown={scrolledDown}
         >
