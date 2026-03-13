@@ -13,11 +13,6 @@ interface AddProductFormProps {
   onFormOpenChange: (open: boolean) => void;
 }
 
-const MONTHS_FR = [
-  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
-];
-
 const CATEGORIES: ProductCategory[] = [
   'Fruits',
   'Vegetables',
@@ -438,8 +433,8 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange }: AddProdu
             </select>
             <select value={expMonth} onChange={(e) => handleDatePart('month', e.target.value)}>
               <option value="">Mois</option>
-              {MONTHS_FR.map((name, i) => (
-                <option key={i} value={String(i + 1)}>{name}</option>
+              {Array.from({ length: 12 }, (_, i) => (
+                <option key={i} value={String(i + 1)}>{String(i + 1).padStart(2, '0')}</option>
               ))}
             </select>
             <select value={expYear} onChange={(e) => handleDatePart('year', e.target.value)}>
@@ -519,8 +514,8 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange }: AddProdu
               onChange={(e) => handleDatePart('month', e.target.value)}
             >
               <option value="">Mois</option>
-              {MONTHS_FR.map((name, i) => (
-                <option key={i} value={String(i + 1)}>{name}</option>
+              {Array.from({ length: 12 }, (_, i) => (
+                <option key={i} value={String(i + 1)}>{String(i + 1).padStart(2, '0')}</option>
               ))}
             </select>
             <select
