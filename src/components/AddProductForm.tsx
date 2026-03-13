@@ -313,7 +313,6 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange }: AddProdu
               if (lookupError) setLookupError(null);
             }}
             required
-            autoFocus
             disabled={isLookingUp}
             placeholder={isLookingUp ? 'Recherche en cours…' : t('form.productPlaceholder')}
           />
