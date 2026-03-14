@@ -331,7 +331,7 @@ function App() {
 
   return (
     <div className="app">
-      <header className={`app-header${scrolledDown || activeTab === 'add-product' ? ' header-hidden' : ''}`}>
+      <header className={`app-header${scrolledDown ? ' header-hidden' : ''}`}>
         <div className="app-header-controls">
           {permission === 'default' && (
             <button
@@ -353,7 +353,7 @@ function App() {
           activeTab={activeTab}
           onTabChange={(tab) => setActiveTab(tab)}
           urgentCount={products.filter(p => isExpired(p.expirationDate) || isExpiringSoon(p.expirationDate)).length}
-          scrolledDown={scrolledDown || activeTab === 'add-product'}
+          scrolledDown={scrolledDown}
         >
           {renderTabContent()}
         </Tabs>
