@@ -253,7 +253,6 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange }: AddProdu
         />
       )}
       <form className="add-product-form" onSubmit={handleSubmit}>
-        <div className="form-drag-handle" />
         <div className="form-title-row">
           <h2>{t('form.addProduct')}</h2>
           <button
