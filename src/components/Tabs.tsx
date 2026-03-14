@@ -60,11 +60,11 @@ export const Tabs = ({ activeTab, onTabChange, children, urgentCount = 0, scroll
           >
             <span className="tab-icon-wrapper">
               <span className="tab-icon">{tab.icon}</span>
+              {tab.id === 'fridge' && urgentCount > 0 && (
+                <span className="tab-badge">{urgentCount > 99 ? '99+' : urgentCount}</span>
+              )}
             </span>
             <span className="tab-label">{tab.label}</span>
-            {tab.id === 'fridge' && urgentCount > 0 && (
-              <span className="tab-badge">{urgentCount > 99 ? '99+' : urgentCount}</span>
-            )}
           </button>
         ))}
       </div>
