@@ -45,7 +45,6 @@ function App() {
   const [consumedProducts, setConsumedProducts] = useState<Product[]>([]);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [activeTab, setActiveTab] = useState('fridge');
-  const [addFormOpen, setAddFormOpen] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
   const [pendingProduct, setPendingProduct] = useState<Omit<Product, 'id' | 'addedDate'> | null>(null);
   const [darkMode, setDarkMode] = useState<boolean>(() => {
@@ -277,6 +276,13 @@ function App() {
 
   const renderTabContent = () => (
     <>
+      <div hidden={activeTab !== 'add-product'}>
+        <AddProductForm
+          onAdd={async (data) => { await handleAddProduct(data); setActiveTab('fridge'); }}
+          isFormOpen={true}
+          onFormOpenChange={() => setActiveTab('fridge')}
+        />
+      </div>
       <div hidden={activeTab !== 'fridge'}>
         {editingProduct ? (
           <EditProductForm
@@ -285,7 +291,11 @@ function App() {
             onCancel={handleCancelEdit}
           />
         ) : (
-          <AddProductForm onAdd={handleAddProduct} isFormOpen={addFormOpen} onFormOpenChange={setAddFormOpen} />
+          <AddProductForm
+            onAdd={handleAddProduct}
+            isFormOpen={false}
+            onFormOpenChange={(open) => open && setActiveTab('add-product')}
+          />
         )}
         <ProductList
           products={products}
@@ -321,7 +331,7 @@ function App() {
 
   return (
     <div className="app">
-      <header className={`app-header${scrolledDown ? ' header-hidden' : ''}`}>
+      <header className={`app-header${scrolledDown || activeTab === 'add-product' ? ' header-hidden' : ''}`}>
         <div className="app-header-controls">
           {permission === 'default' && (
             <button
@@ -341,9 +351,9 @@ function App() {
       <main className="app-main">
         <Tabs
           activeTab={activeTab}
-          onTabChange={(tab) => { setActiveTab(tab); setAddFormOpen(false); }}
+          onTabChange={(tab) => setActiveTab(tab)}
           urgentCount={products.filter(p => isExpired(p.expirationDate) || isExpiringSoon(p.expirationDate)).length}
-          scrolledDown={scrolledDown}
+          scrolledDown={scrolledDown || activeTab === 'add-product'}
         >
           {renderTabContent()}
         </Tabs>
