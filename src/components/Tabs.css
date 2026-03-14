@@ -65,28 +65,13 @@
 }
 
 @media (max-width: 768px) {
-  .tabs-backdrop {
+  .tabs-header {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    bottom: calc(0.75rem + env(safe-area-inset-bottom));
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 300;
     background: var(--bg-card);
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: center;
-    padding: 0.45rem 1.25rem 0;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-  }
-
-  .tabs-backdrop.tabs-hidden {
-    transform: translateY(100%);
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .tabs-header {
-    background: var(--bg-surface);
     border: 1px solid var(--border);
     border-radius: 50px;
     padding: 0.3rem;
@@ -95,6 +80,13 @@
     align-items: center;
     box-shadow: var(--shadow);
     width: min(calc(100vw - 5rem), 340px);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  .tabs-header.tabs-hidden {
+    transform: translateX(-50%) translateY(calc(100% + 2rem));
+    opacity: 0;
+    pointer-events: none;
   }
 
   .tab-icon {
@@ -150,9 +142,4 @@
   }
 }
 
-@media (max-width: 768px) and (display-mode: standalone) {
-  .tabs-backdrop {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-}
 

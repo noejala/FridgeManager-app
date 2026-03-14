@@ -51,8 +51,7 @@ export const Tabs = ({ activeTab, onTabChange, children, urgentCount = 0, scroll
 
   return (
     <div className="tabs-container">
-      <div className={`tabs-backdrop${scrolledDown ? ' tabs-hidden' : ''}`}>
-      <div className="tabs-header">
+      <div className={`tabs-header${scrolledDown ? ' tabs-hidden' : ''}`}>
         {tabs.map(tab => (
           <button
             key={tab.id}
@@ -68,7 +67,6 @@ export const Tabs = ({ activeTab, onTabChange, children, urgentCount = 0, scroll
             <span className="tab-label">{tab.label}</span>
           </button>
         ))}
-      </div>
       </div>
       <div className="tabs-content">
         {children}
