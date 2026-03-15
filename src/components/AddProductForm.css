@@ -228,7 +228,7 @@
     align-items: flex-end;
     gap: 0.875rem;
     position: fixed;
-    bottom: 4.75rem;
+    bottom: 5rem;
     right: 1.25rem;
     z-index: 350;
   }
@@ -593,6 +593,6 @@
 
 @media (max-width: 768px) {
   .pwa .fab-container {
-    bottom: calc(4.5rem + env(safe-area-inset-bottom));
+    bottom: calc(3.5rem + env(safe-area-inset-bottom));
   }
 }

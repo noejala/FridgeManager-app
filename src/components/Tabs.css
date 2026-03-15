@@ -75,7 +75,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: calc(5rem + env(safe-area-inset-bottom));
+    height: calc(4.5rem + env(safe-area-inset-bottom));
     background: var(--bg);
     z-index: 299;
     transition: transform 0.3s ease, opacity 0.3s ease;
@@ -103,7 +103,7 @@
     grid-template-columns: repeat(4, 1fr);
     align-items: center;
     box-shadow: var(--shadow);
-    width: min(calc(100vw - 5rem), 340px);
+    width: min(calc(100vw - 2rem), 400px);
     transition: transform 0.3s ease, opacity 0.3s ease;
   }
 
