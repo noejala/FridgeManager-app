@@ -228,7 +228,7 @@
     align-items: flex-end;
     gap: 0.875rem;
     position: fixed;
-    bottom: calc(4.75rem + env(safe-area-inset-bottom));
+    bottom: 4.75rem;
     right: 1.25rem;
     z-index: 150;
   }
@@ -589,4 +589,10 @@
   padding: 0;
   margin-right: 0.5rem;
   accent-color: var(--accent);
+}
+
+@media (max-width: 768px) and (display-mode: standalone) {
+  .fab-container {
+    bottom: calc(4.5rem + env(safe-area-inset-bottom));
+  }
 }

@@ -67,7 +67,7 @@
 @media (max-width: 768px) {
   .tabs-header {
     position: fixed;
-    bottom: calc(0.75rem + env(safe-area-inset-bottom));
+    bottom: 0.75rem;
     left: 50%;
     transform: translateX(-50%);
     z-index: 300;
@@ -140,5 +140,11 @@
 
   .tabs-content {
     padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-width: 768px) and (display-mode: standalone) {
+  .tabs-header {
+    bottom: calc(0.5rem + env(safe-area-inset-bottom));
   }
 }

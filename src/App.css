@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Figtree:wght@300;400;500;600&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&family=Figtree:wght@300;400;500;600&display=swap');
 :root {
   --bg: #f0f5fb;
   --bg-card: #ffffff;
@@ -21,7 +20,7 @@
   --border-hover: rgba(44, 111, 224, 0.22);
   --shadow: 0 4px 20px rgba(44, 111, 224, 0.08);
   --radius: 12px;
-  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-display: 'Lora', Georgia, serif;
   --font-body: 'Figtree', system-ui, sans-serif;
 }
 
