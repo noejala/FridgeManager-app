@@ -230,7 +230,7 @@
     position: fixed;
     bottom: 4.75rem;
     right: 1.25rem;
-    z-index: 150;
+    z-index: 350;
   }
 
   .fab-actions {
@@ -591,8 +591,8 @@
   accent-color: var(--accent);
 }
 
-@media (max-width: 768px) and (display-mode: standalone) {
-  .fab-container {
+@media (max-width: 768px) {
+  .pwa .fab-container {
     bottom: calc(4.5rem + env(safe-area-inset-bottom));
   }
 }

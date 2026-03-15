@@ -51,6 +51,7 @@ export const Tabs = ({ activeTab, onTabChange, children, urgentCount = 0, scroll
 
   return (
     <div className="tabs-container">
+      <div className={`tab-bar-backdrop${scrolledDown ? ' tabs-hidden' : ''}`} />
       <div className={`tabs-header${scrolledDown ? ' tabs-hidden' : ''}`}>
         {tabs.map(tab => (
           <button
