@@ -37,7 +37,7 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout }: Props) =>
   const [saving, setSaving] = useState(false);
 
   const hasData = (p: UserProfile) =>
-    p.country || p.gender || p.age || p.dietaryPreferences.length > 0;
+    p.country || p.age || p.dietaryPreferences.length > 0;
 
   useEffect(() => {
     fetchUserProfile().then(data => {
