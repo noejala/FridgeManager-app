@@ -101,40 +101,20 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout }: Props) =>
                 />
               </div>
 
-              <div className="settings-field-row">
-                <div className="settings-field">
-                  <label className="settings-label">{t('settings.gender')}</label>
-                  <select
-                    className="settings-input"
-                    value={draft.gender ?? ''}
-                    onChange={e => setDraft(prev => ({
-                      ...prev,
-                      gender: (e.target.value || null) as UserProfile['gender'],
-                    }))}
-                  >
-                    <option value="">—</option>
-                    <option value="male">{t('settings.genders.male')}</option>
-                    <option value="female">{t('settings.genders.female')}</option>
-                    <option value="other">{t('settings.genders.other')}</option>
-                    <option value="prefer_not_to_say">{t('settings.genders.prefer_not_to_say')}</option>
-                  </select>
-                </div>
-
-                <div className="settings-field">
-                  <label className="settings-label">{t('settings.age')}</label>
-                  <input
-                    type="number"
-                    className="settings-input"
-                    placeholder="—"
-                    min={1}
-                    max={120}
-                    value={draft.age ?? ''}
-                    onChange={e => setDraft(prev => ({
-                      ...prev,
-                      age: e.target.value ? parseInt(e.target.value, 10) : null,
-                    }))}
-                  />
-                </div>
+              <div className="settings-field">
+                <label className="settings-label">{t('settings.age')}</label>
+                <input
+                  type="number"
+                  className="settings-input"
+                  placeholder="—"
+                  min={1}
+                  max={120}
+                  value={draft.age ?? ''}
+                  onChange={e => setDraft(prev => ({
+                    ...prev,
+                    age: e.target.value ? parseInt(e.target.value, 10) : null,
+                  }))}
+                />
               </div>
 
               <div className="settings-field">
@@ -173,12 +153,6 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout }: Props) =>
               <div className="settings-view-row">
                 <span className="settings-view-label">{t('settings.country')}</span>
                 <span className="settings-view-value">{saved.country ?? '—'}</span>
-              </div>
-              <div className="settings-view-row">
-                <span className="settings-view-label">{t('settings.gender')}</span>
-                <span className="settings-view-value">
-                  {saved.gender ? t(`settings.genders.${saved.gender}`) : '—'}
-                </span>
               </div>
               <div className="settings-view-row">
                 <span className="settings-view-label">{t('settings.age')}</span>
