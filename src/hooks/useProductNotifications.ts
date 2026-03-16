@@ -4,6 +4,7 @@ import { getDaysUntilExpiration } from '../utils/storage';
 import { supabase } from '../lib/supabase';
 
 const LAST_CHECKED_KEY = 'notificationsLastChecked';
+const PERMISSION_GRANTED_KEY = 'notificationsGranted';
 
 type TFunction = (key: string, options?: Record<string, unknown>) => string;
 
@@ -41,15 +42,18 @@ async function subscribeToPush(): Promise<void> {
 }
 
 export function useProductNotifications() {
-  const [permission, setPermission] = useState<NotificationPermission>(
-    isSupported ? Notification.permission : 'denied'
-  );
+  const [permission, setPermission] = useState<NotificationPermission>(() => {
+    if (!isSupported) return 'denied';
+    if (localStorage.getItem(PERMISSION_GRANTED_KEY) === 'true') return 'granted';
+    return Notification.permission;
+  });
 
   const requestPermission = useCallback(async () => {
     if (!isSupported) return 'denied' as NotificationPermission;
     const result = await Notification.requestPermission();
     setPermission(result);
     if (result === 'granted') {
+      localStorage.setItem(PERMISSION_GRANTED_KEY, 'true');
       subscribeToPush().catch(console.error);
     }
     return result;

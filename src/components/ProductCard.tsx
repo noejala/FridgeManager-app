@@ -20,7 +20,6 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [confirmingConsume, setConfirmingConsume] = useState(false);
   const [confirmingOpen, setConfirmingOpen] = useState(false);
-  const [openDateInput, setOpenDateInput] = useState(today);
   const daysUntil = getDaysUntilExpiration(product.expirationDate);
   const expired = isExpired(product.expirationDate);
   const expiringSoon = isExpiringSoon(product.expirationDate);
@@ -33,6 +32,8 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
 
   const getStatusText = () => {
     if (expired) return t('productCard.expired');
+    if (daysUntil >= 60) return t('productCard.expiresInMonths', { count: Math.round(daysUntil / 30) });
+    if (daysUntil >= 14) return t('productCard.expiresInWeeks', { count: Math.round(daysUntil / 7) });
     return t('productCard.expiresIn', { count: daysUntil });
   };
 
@@ -70,19 +71,12 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
             </>
           ) : confirmingOpen ? (
             <>
-              <input
-                className="open-date-input"
-                type="date"
-                value={openDateInput}
-                max={today}
-                onChange={(e) => setOpenDateInput(e.target.value)}
-              />
               <button className="consume-cancel-btn" onClick={() => setConfirmingOpen(false)}>
                 {t('form.cancel')}
               </button>
               <button
                 className="consume-confirm-btn"
-                onClick={() => { onOpenSauce?.(product.id, openDateInput); setConfirmingOpen(false); }}
+                onClick={() => { onOpenSauce?.(product.id, today); setConfirmingOpen(false); }}
               >
                 {t('productCard.confirmOpen')}
               </button>

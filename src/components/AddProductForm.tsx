@@ -165,6 +165,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange }: AddProdu
   };
 
   const minDate = new Date().toISOString().split('T')[0];
+  const yesterdayDate = (() => { const d = new Date(); d.setDate(d.getDate() - 1); return d.toISOString().split('T')[0]; })();
 
   if (!isFormOpen) {
     return (
@@ -301,20 +302,20 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange }: AddProdu
           />
         </div>
 
-      <div className="form-row">
-        <div className="form-group">
-          <label htmlFor="category">{t('form.category')}</label>
-          <select
-            id="category"
-            value={category}
-            onChange={(e) => setCategory(e.target.value as ProductCategory)}
-          >
-            {CATEGORIES.map(cat => (
-              <option key={cat} value={cat}>{t(`categories.${cat}`)}</option>
-            ))}
-          </select>
-        </div>
+      <div className="form-group">
+        <label htmlFor="category">{t('form.category')}</label>
+        <select
+          id="category"
+          value={category}
+          onChange={(e) => setCategory(e.target.value as ProductCategory)}
+        >
+          {CATEGORIES.map(cat => (
+            <option key={cat} value={cat}>{t(`categories.${cat}`)}</option>
+          ))}
+        </select>
+      </div>
 
+      <div className="form-row">
         <div className="form-group">
           <label htmlFor="quantity">{t('form.quantity')}</label>
           <input
@@ -369,6 +370,13 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange }: AddProdu
                 onChange={(e) => setSauceOpenedDate(e.target.value)}
                 max={minDate}
               />
+              <button
+                type="button"
+                className={`today-btn${sauceOpenedDate === yesterdayDate ? ' today-btn-active' : ''}`}
+                onClick={() => setSauceOpenedDate(yesterdayDate)}
+              >
+                {t('productList.yesterday')}
+              </button>
               <button
                 type="button"
                 className={`today-btn${sauceOpenedDate === minDate ? ' today-btn-active' : ''}`}

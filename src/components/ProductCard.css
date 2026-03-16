@@ -194,17 +194,6 @@
   pointer-events: none;
 }
 
-.open-date-input {
-  height: 30px;
-  padding: 0 0.4rem;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--bg-input);
-  color: var(--text);
-  font-size: 0.72rem;
-  flex: 1;
-  min-width: 0;
-}
 
 .product-info {
   display: flex;

@@ -192,8 +192,9 @@
 
 .form-row {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 1rem;
+  width: 100%;
 }
 
 @media (max-width: 768px) {
@@ -387,6 +388,7 @@
 
 .purchase-date-row input[type="date"] {
   flex: 1;
+  min-width: 0;
 }
 
 .unknown-product-warning {
@@ -480,7 +482,7 @@
 /* ── Mobile full-screen form ───────────────────────────── */
 @media (max-width: 768px) {
   .add-product-form {
-    border-radius: 0;
+    border-radius: var(--radius);
     border: none;
     margin: 0;
     background: var(--bg);
@@ -518,7 +520,7 @@
   }
 
   .form-row {
-    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 0.625rem;
   }
 
