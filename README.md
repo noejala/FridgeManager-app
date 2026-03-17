@@ -9,7 +9,7 @@ A PWA for tracking what's in your fridge, reducing food waste, and finding recip
 - **Expiration tracking** — add products with expiration dates; items are color-coded (green / amber / red) based on freshness
 - **Smart defaults** — category auto-detection from product name, shelf life estimation, and fridge zone recommendations
 - **Barcode scanner** — scan product barcodes to speed up entry
-- **Recipe suggestions** — "What to Cook" tab fetches recipes from TheMealDB based on your current ingredients
+- **Recipe suggestions** — "What to Cook" tab suggests recipes based on your current ingredients; LLM-powered recommendations and a recipe chatbot are planned
 - **Seasonal products** — browse what's in season right now
 - **Notifications** — opt-in alerts for products nearing expiration
 - **Dark mode** — persisted to `localStorage`
@@ -26,31 +26,7 @@ A PWA for tracking what's in your fridge, reducing food waste, and finding recip
 | Recipe API | TheMealDB (no auth required) |
 | Deployment | Vercel |
 
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+
-- A [Supabase](https://supabase.com) project with the `products` table (see schema below)
-
-### Installation
-
-```bash
-git clone https://github.com/your-username/FridgeManager-app.git
-cd FridgeManager-app
-npm install
-```
-
-### Environment variables
-
-Create a `.env.local` file at the root:
-
-```
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
-
-### Development
+## Commands
 
 ```bash
 npm run dev      # Start dev server at http://localhost:5173
