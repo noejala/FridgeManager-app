@@ -1,6 +1,6 @@
 # FridgeManager
 
-A PWA for tracking what's in your fridge, reducing food waste, and finding recipes based on what you have.
+A web app / PWA for tracking what's in your fridge, managing expiration dates, reducing food waste, and finding recipes based on what you have.
 
 **Live app:** https://fridgemanager.vercel.app
 
