@@ -106,8 +106,13 @@
     "instructions": "Instructions",
     "failedFetch": "Failed to fetch recipes. Please try again later.",
     "servings": "Servings",
+    "servingsUnit": "pers.",
     "servingsCount_one": "{{count}} person",
     "servingsCount_other": "{{count}} people",
+    "sort": {
+      "smart": "Expiring soon",
+      "available": "Ready to cook"
+    },
     "filterAll": "All",
     "filterStarter": "Starters",
     "filterMain": "Mains",

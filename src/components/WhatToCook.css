@@ -6,27 +6,11 @@
   margin-bottom: 2rem;
 }
 
-.cook-header-top {
+.cook-subtitle-row {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.servings-control {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.35rem;
-  flex-shrink: 0;
-}
-
-.servings-label {
-  font-size: 0.7rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-muted);
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
 }
 
 .servings-stepper {
@@ -73,12 +57,152 @@
   border-left: 1px solid var(--border);
   border-right: 1px solid var(--border);
   line-height: 2rem;
+  padding: 0 0.5rem;
+}
+
+.servings-unit {
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: var(--text-muted);
 }
 
 .tag-servings {
   background: var(--accent-bg);
   border-color: transparent;
   color: var(--accent);
+}
+
+.filters-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.course-dropdown {
+  position: relative;
+}
+
+.course-dropdown-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 40px;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.course-dropdown-btn:hover {
+  border-color: var(--border-hover);
+  color: var(--text);
+}
+
+.dropdown-chevron {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  margin-left: 0.1rem;
+}
+
+.dropdown-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+}
+
+.course-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-hover);
+  border-radius: 10px;
+  padding: 0.25rem;
+  z-index: 100;
+  min-width: 160px;
+  box-shadow: var(--shadow);
+  animation: fade-in 0.15s ease;
+}
+
+.course-dropdown-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0.45rem 0.75rem;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s, color 0.12s;
+}
+
+.course-dropdown-item:hover {
+  background: var(--bg-card);
+  color: var(--text);
+}
+
+.course-dropdown-item.active {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.course-dropdown-count {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.filter-divider {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.sort-control {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 40px;
+  overflow: hidden;
+}
+
+.sort-btn {
+  background: transparent;
+  border: none;
+  padding: 0.3rem 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  border-left: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.sort-btn:first-child {
+  border-left: none;
+}
+
+.sort-btn:hover:not(.active) {
+  background: var(--bg-surface);
+  color: var(--text);
+}
+
+.sort-btn.active {
+  background: var(--accent);
+  color: #fff;
 }
 
 .cook-header h2 {
@@ -160,60 +284,6 @@
   background: var(--red-bg);
 }
 
-.course-filters {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-}
-
-.course-filter-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  padding: 0.4rem 1rem;
-  border: 1px solid var(--border);
-  border-radius: 40px;
-  background: transparent;
-  color: var(--text-secondary);
-  font-family: var(--font-body);
-  font-size: 0.8rem;
-  letter-spacing: 0.04em;
-  cursor: pointer;
-  transition: border-color 0.15s, background 0.15s, color 0.15s;
-}
-
-.course-filter-btn:hover {
-  border-color: var(--border-hover);
-  color: var(--text);
-}
-
-.course-filter-btn.active {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
-}
-
-.course-filter-btn.active .course-count {
-  background: rgba(255, 255, 255, 0.25);
-  color: #fff;
-}
-
-.course-filter-btn.empty {
-  opacity: 0.4;
-  cursor: default;
-}
-
-.course-count {
-  background: var(--bg-surface);
-  color: var(--text-muted);
-  font-size: 0.7rem;
-  font-weight: 600;
-  padding: 0.05rem 0.45rem;
-  border-radius: 40px;
-  min-width: 1.4rem;
-  text-align: center;
-}
 
 .recipes-grid {
   display: grid;

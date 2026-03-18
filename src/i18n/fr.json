@@ -106,8 +106,13 @@
     "instructions": "Instructions",
     "failedFetch": "Échec de la récupération des recettes. Veuillez réessayer plus tard.",
     "servings": "Personnes",
+    "servingsUnit": "pers.",
     "servingsCount_one": "{{count}} personne",
     "servingsCount_other": "{{count}} personnes",
+    "sort": {
+      "smart": "Expire bientôt",
+      "available": "Prêt à cuisiner"
+    },
     "filterAll": "Tous",
     "filterStarter": "Entrées",
     "filterMain": "Plats",

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Product } from '../types/Product';
 import { searchByIngredient, getMealDetails, MealDetails, singularize } from '../utils/mealApi';
 import { toEnglishIngredient } from '../utils/ingredientTranslation';
+import { getDaysUntilExpiration } from '../utils/storage';
 import './WhatToCook.css';
 
 interface WhatToCookProps {
@@ -24,6 +25,7 @@ const PANTRY_STAPLES = new Set([
 ]);
 
 type CourseFilter = 'all' | 'starter' | 'main' | 'dessert';
+type SortMode = 'smart' | 'available';
 
 const DEFAULT_SERVINGS = 4;
 
@@ -60,13 +62,16 @@ interface RecipeMatch {
   available: { name: string; measure: string }[];
   missing: { name: string; measure: string }[];
   pantry: { name: string; measure: string }[];
+  urgentAvailableCount: number;
 }
 
 function matchIngredients(
   meal: MealDetails,
-  fridgeNames: string[]
-): { available: { name: string; measure: string }[]; missing: { name: string; measure: string }[]; pantry: { name: string; measure: string }[] } {
+  fridgeNames: string[],
+  urgentFridgeNames: string[]
+): { available: { name: string; measure: string }[]; missing: { name: string; measure: string }[]; pantry: { name: string; measure: string }[]; urgentAvailableCount: number } {
   const fridgeSingular = fridgeNames.map((n) => singularize(n));
+  const urgentSingular = urgentFridgeNames.map((n) => singularize(n));
   const available: { name: string; measure: string }[] = [];
   const missing: { name: string; measure: string }[] = [];
   const pantry: { name: string; measure: string }[] = [];
@@ -85,7 +90,26 @@ function matchIngredients(
     }
   }
 
-  return { available, missing, pantry };
+  const urgentAvailableCount = available.filter((ing) => {
+    const ingSingular = singularize(ing.name);
+    return urgentSingular.some((u) => ingSingular.includes(u) || u.includes(ingSingular));
+  }).length;
+
+  return { available, missing, pantry, urgentAvailableCount };
+}
+
+function scoreRecipe(recipe: RecipeMatch): number {
+  return recipe.available.length * 10 + recipe.urgentAvailableCount * 15 - recipe.missing.length * 2;
+}
+
+function applySort(recipes: RecipeMatch[], mode: SortMode): RecipeMatch[] {
+  return [...recipes].sort((a, b) => {
+    if (mode === 'available') {
+      if (a.missing.length !== b.missing.length) return a.missing.length - b.missing.length;
+      return b.available.length - a.available.length;
+    }
+    return scoreRecipe(b) - scoreRecipe(a);
+  });
 }
 
 export const WhatToCook = ({ products }: WhatToCookProps) => {
@@ -95,6 +119,8 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
   const [error, setError] = useState<string | null>(null);
   const [selectedRecipe, setSelectedRecipe] = useState<RecipeMatch | null>(null);
   const [courseFilter, setCourseFilter] = useState<CourseFilter>('all');
+  const [courseDropdownOpen, setCourseDropdownOpen] = useState(false);
+  const [sortMode, setSortMode] = useState<SortMode>('smart');
   const [servings, setServings] = useState(DEFAULT_SERVINGS);
 
   const fetchRecipes = useCallback(async () => {
@@ -108,6 +134,9 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
 
     try {
       const fridgeNames = products.map((p) => toEnglishIngredient(p.name));
+      const urgentFridgeNames = products
+        .filter((p) => getDaysUntilExpiration(p.expirationDate) <= 3)
+        .map((p) => toEnglishIngredient(p.name));
       const ingredientNames = fridgeNames.slice(0, 5);
 
       const searchResults = await Promise.all(
@@ -132,16 +161,13 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
       const matched: RecipeMatch[] = [];
       for (const meal of detailsResults) {
         if (!meal) continue;
-        const { available, missing, pantry } = matchIngredients(meal, fridgeNames);
+        const { available, missing, pantry, urgentAvailableCount } = matchIngredients(meal, fridgeNames, urgentFridgeNames);
         if (missing.length <= MAX_MISSING) {
-          matched.push({ meal, available, missing, pantry });
+          matched.push({ meal, available, missing, pantry, urgentAvailableCount });
         }
       }
 
-      matched.sort((a, b) => {
-        if (a.missing.length !== b.missing.length) return a.missing.length - b.missing.length;
-        return a.meal.name.localeCompare(b.meal.name);
-      });
+      matched.sort((a, b) => scoreRecipe(b) - scoreRecipe(a));
 
       setRecipes(matched);
     } catch {
@@ -174,28 +200,25 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
   return (
     <div className="what-to-cook">
       <div className="cook-header">
-        <div className="cook-header-top">
-          <div>
-            <h2>{t('cook.title')}</h2>
-            <p className="cook-subtitle">
-              {t('cook.recipesBasedOn', { count: products.length })}
-            </p>
-          </div>
-          <div className="servings-control">
-            <span className="servings-label">{t('cook.servings')}</span>
-            <div className="servings-stepper">
-              <button
-                className="stepper-btn"
-                onClick={() => setServings(s => Math.max(1, s - 1))}
-                disabled={servings <= 1}
-              >−</button>
-              <span className="servings-value">{servings}</span>
-              <button
-                className="stepper-btn"
-                onClick={() => setServings(s => Math.min(20, s + 1))}
-                disabled={servings >= 20}
-              >+</button>
-            </div>
+        <h2>{t('cook.title')}</h2>
+        <div className="cook-subtitle-row">
+          <p className="cook-subtitle">
+            {t('cook.recipesBasedOn', { count: products.length })}
+          </p>
+          <div className="servings-stepper">
+            <button
+              className="stepper-btn"
+              onClick={() => setServings(s => Math.max(1, s - 1))}
+              disabled={servings <= 1}
+            >−</button>
+            <span className="servings-value">
+              {servings} <span className="servings-unit">{t('cook.servingsUnit')}</span>
+            </span>
+            <button
+              className="stepper-btn"
+              onClick={() => setServings(s => Math.min(20, s + 1))}
+              disabled={servings >= 20}
+            >+</button>
           </div>
         </div>
       </div>
@@ -234,23 +257,53 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
           { key: 'main', label: t('cook.filterMain') },
           { key: 'dessert', label: t('cook.filterDessert') },
         ];
-        const filteredRecipes = courseFilter === 'all'
+        const courseFiltered = courseFilter === 'all'
           ? recipes
           : recipes.filter(r => getCourse(r.meal.category) === courseFilter);
+        const filteredRecipes = applySort(courseFiltered, sortMode);
 
         return (
           <>
-            <div className="course-filters">
-              {filters.map(f => (
+            <div className="filters-row">
+            <div className="course-dropdown">
+              <button
+                className="course-dropdown-btn"
+                onClick={() => setCourseDropdownOpen(o => !o)}
+              >
+                {filters.find(f => f.key === courseFilter)?.label}
+                <span className="course-dropdown-count">{counts[courseFilter]}</span>
+                <span className="dropdown-chevron">▾</span>
+              </button>
+              {courseDropdownOpen && (
+                <>
+                  <div className="dropdown-backdrop" onClick={() => setCourseDropdownOpen(false)} />
+                  <div className="course-dropdown-menu">
+                    {filters.map(f => (
+                      <button
+                        key={f.key}
+                        className={`course-dropdown-item${courseFilter === f.key ? ' active' : ''}`}
+                        onClick={() => { setCourseFilter(f.key); setCourseDropdownOpen(false); }}
+                      >
+                        {f.label}
+                        <span className="course-dropdown-count">{counts[f.key]}</span>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="filter-divider" />
+            <div className="sort-control">
+              {(['smart', 'available'] as SortMode[]).map((mode) => (
                 <button
-                  key={f.key}
-                  className={`course-filter-btn${courseFilter === f.key ? ' active' : ''}${counts[f.key] === 0 ? ' empty' : ''}`}
-                  onClick={() => setCourseFilter(f.key)}
+                  key={mode}
+                  className={`sort-btn${sortMode === mode ? ' active' : ''}`}
+                  onClick={() => setSortMode(mode)}
                 >
-                  {f.label}
-                  <span className="course-count">{counts[f.key]}</span>
+                  {t(`cook.sort.${mode}`)}
                 </button>
               ))}
+            </div>
             </div>
 
             {filteredRecipes.length === 0 ? (
