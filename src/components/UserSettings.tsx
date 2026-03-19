@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UserProfile, DietaryPreference } from '../types/UserProfile';
 import { fetchUserProfile, saveUserProfile } from '../utils/userProfileService';
@@ -32,7 +32,6 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [dislikedInput, setDislikedInput] = useState('');
-  const dislikedInputRef = useRef<HTMLInputElement>(null);
 
   const hasProfileData = (p: UserProfile) => p.country || p.age;
 
@@ -202,7 +201,6 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
             <label className="settings-label">{t('settings.dislikedIngredients')}</label>
             <div className="settings-disliked-input-row">
               <input
-                ref={dislikedInputRef}
                 type="text"
                 className="settings-input settings-disliked-input"
                 placeholder={t('settings.dislikedPlaceholder')}
