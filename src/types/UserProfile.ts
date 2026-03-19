@@ -12,4 +12,5 @@ export interface UserProfile {
   gender: 'male' | 'female' | 'other' | 'prefer_not_to_say' | null;
   age: number | null;
   dietaryPreferences: DietaryPreference[];
+  dislikedIngredients: string[];
 }

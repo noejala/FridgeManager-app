@@ -117,7 +117,9 @@
     "filterStarter": "Entrées",
     "filterMain": "Plats",
     "filterDessert": "Desserts",
-    "noRecipesInCategory": "Aucune recette dans cette catégorie pour vos produits actuels."
+    "noRecipesInCategory": "Aucune recette dans cette catégorie pour vos produits actuels.",
+    "dietaryFilterActive": "Filtré : {{prefs}}",
+    "noRecipesDietary": "Aucune recette ne correspond à vos préférences alimentaires. Modifiez-les dans Réglages."
   },
   "categories": {
     "Fruits": "Fruits",
@@ -194,7 +196,11 @@
     "countryPlaceholder": "Ex : France, Belgique…",
     "gender": "Genre",
     "age": "Âge",
-    "dietaryPreferences": "Régime alimentaire",
+    "nutritionalPreferences": "Préférences nutritionnelles",
+    "dietaryRestrictions": "Restrictions alimentaires",
+    "dietaryPreferences": "Préférences alimentaires",
+    "dislikedIngredients": "Ingrédients non aimés",
+    "dislikedPlaceholder": "Ex : coriandre, champignons…",
     "edit": "Modifier",
     "cancel": "Annuler",
     "save": "Enregistrer",

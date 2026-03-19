@@ -117,7 +117,9 @@
     "filterStarter": "Starters",
     "filterMain": "Mains",
     "filterDessert": "Desserts",
-    "noRecipesInCategory": "No recipes in this category for your current products."
+    "noRecipesInCategory": "No recipes in this category for your current products.",
+    "dietaryFilterActive": "Filtered: {{prefs}}",
+    "noRecipesDietary": "No recipes match your dietary preferences. Update them in Settings."
   },
   "categories": {
     "Fruits": "Fruits",
@@ -194,7 +196,11 @@
     "countryPlaceholder": "E.g. France, Canada…",
     "gender": "Gender",
     "age": "Age",
+    "nutritionalPreferences": "Nutritional preferences",
+    "dietaryRestrictions": "Dietary restrictions",
     "dietaryPreferences": "Dietary preferences",
+    "dislikedIngredients": "Disliked ingredients",
+    "dislikedPlaceholder": "E.g. coriander, mushrooms…",
     "edit": "Edit",
     "cancel": "Cancel",
     "save": "Save",

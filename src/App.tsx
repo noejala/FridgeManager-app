@@ -4,6 +4,8 @@ import { User } from '@supabase/supabase-js';
 import { Product } from './types/Product';
 import { supabase } from './lib/supabase';
 import { fetchProducts, fetchRecentlyConsumed, insertProduct, updateProduct, deleteProduct, deleteAllProducts, consumeProduct, restoreProduct } from './utils/productService';
+import { fetchUserProfile } from './utils/userProfileService';
+import { DietaryPreference } from './types/UserProfile';
 import { isExpired, isExpiringSoon } from './utils/storage';
 import { getFridgeZone } from './utils/fridgePlacement';
 import { estimateExpirationFromOpenDate } from './utils/shelfLife';
@@ -50,6 +52,8 @@ function App() {
   const [darkMode, setDarkMode] = useState<boolean>(() => {
     return localStorage.getItem('theme') === 'dark';
   });
+  const [dietaryPreferences, setDietaryPreferences] = useState<DietaryPreference[]>([]);
+  const [dislikedIngredients, setDislikedIngredients] = useState<string[]>([]);
   const [scrolledDown, setScrolledDown] = useState(false);
   const lastScrollY = useRef(0);
 
@@ -70,9 +74,15 @@ function App() {
 
   const loadUserProducts = useCallback(async () => {
     try {
-      const [data, consumed] = await Promise.all([fetchProducts(), fetchRecentlyConsumed()]);
+      const [data, consumed, profile] = await Promise.all([
+        fetchProducts(),
+        fetchRecentlyConsumed(),
+        fetchUserProfile(),
+      ]);
       setProducts(data);
       setConsumedProducts(consumed);
+      setDietaryPreferences(profile?.dietaryPreferences ?? []);
+      setDislikedIngredients(profile?.dislikedIngredients ?? []);
       checkAndNotify(data, t);
     } catch (err) {
       console.error('Failed to load products:', err);
@@ -310,7 +320,7 @@ function App() {
         />
       </div>
       <div hidden={activeTab !== 'cook'}>
-        <WhatToCook products={products} />
+        <WhatToCook products={products} dietaryPreferences={dietaryPreferences} dislikedIngredients={dislikedIngredients} />
       </div>
       <div hidden={activeTab !== 'seasonal'}>
         <SeasonalProducts />
@@ -320,6 +330,8 @@ function App() {
           darkMode={darkMode}
           onToggleDarkMode={() => setDarkMode(prev => !prev)}
           onLogout={handleLogout}
+          onDietaryPreferencesChange={setDietaryPreferences}
+          onDislikedIngredientsChange={setDislikedIngredients}
         />
       </div>
     </>

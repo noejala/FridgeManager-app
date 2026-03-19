@@ -1,50 +1,47 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UserProfile, DietaryPreference } from '../types/UserProfile';
 import { fetchUserProfile, saveUserProfile } from '../utils/userProfileService';
 import './UserSettings.css';
 
-const DIETARY_OPTIONS: DietaryPreference[] = [
-  'vegetarian',
-  'vegan',
-  'gluten_free',
-  'lactose_free',
-  'halal',
-  'kosher',
-  'pescatarian',
-];
+const DIETARY_RESTRICTIONS: DietaryPreference[] = ['gluten_free', 'lactose_free', 'halal', 'kosher'];
+const DIETARY_PREFERENCES: DietaryPreference[] = ['vegetarian', 'vegan', 'pescatarian'];
 
 const EMPTY_PROFILE: UserProfile = {
   country: null,
   gender: null,
   age: null,
   dietaryPreferences: [],
+  dislikedIngredients: [],
 };
 
 interface Props {
   darkMode: boolean;
   onToggleDarkMode: () => void;
   onLogout: () => void;
+  onDietaryPreferencesChange?: (prefs: DietaryPreference[]) => void;
+  onDislikedIngredientsChange?: (items: string[]) => void;
 }
 
-export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout }: Props) => {
+export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPreferencesChange, onDislikedIngredientsChange }: Props) => {
   const { t, i18n } = useTranslation();
 
-  const [saved, setSaved] = useState<UserProfile>(EMPTY_PROFILE);
+  const [profile, setProfile] = useState<UserProfile>(EMPTY_PROFILE);
   const [draft, setDraft] = useState<UserProfile>(EMPTY_PROFILE);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [dislikedInput, setDislikedInput] = useState('');
+  const dislikedInputRef = useRef<HTMLInputElement>(null);
 
-  const hasData = (p: UserProfile) =>
-    p.country || p.age || p.dietaryPreferences.length > 0;
+  const hasProfileData = (p: UserProfile) => p.country || p.age;
 
   useEffect(() => {
     fetchUserProfile().then(data => {
-      const profile = data ?? EMPTY_PROFILE;
-      setSaved(profile);
-      setDraft(profile);
-      setEditing(!hasData(profile));
+      const p = data ?? EMPTY_PROFILE;
+      setProfile(p);
+      setDraft(p);
+      setEditing(!hasProfileData(p));
       setLoading(false);
     });
   }, []);
@@ -52,23 +49,44 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout }: Props) =>
   const handleSave = async () => {
     setSaving(true);
     await saveUserProfile(draft);
-    setSaved(draft);
+    setProfile(draft);
     setSaving(false);
     setEditing(false);
   };
 
   const handleCancel = () => {
-    setDraft(saved);
+    setDraft(profile);
     setEditing(false);
   };
 
-  const toggleDietary = (pref: DietaryPreference) => {
-    setDraft(prev => ({
-      ...prev,
-      dietaryPreferences: prev.dietaryPreferences.includes(pref)
-        ? prev.dietaryPreferences.filter(p => p !== pref)
-        : [...prev.dietaryPreferences, pref],
-    }));
+  const handleAddDisliked = async (value: string) => {
+    const trimmed = value.trim().toLowerCase();
+    if (!trimmed || profile.dislikedIngredients.includes(trimmed)) return;
+    const updated = { ...profile, dislikedIngredients: [...profile.dislikedIngredients, trimmed] };
+    setProfile(updated);
+    setDraft(updated);
+    setDislikedInput('');
+    onDislikedIngredientsChange?.(updated.dislikedIngredients);
+    await saveUserProfile(updated);
+  };
+
+  const handleRemoveDisliked = async (item: string) => {
+    const updated = { ...profile, dislikedIngredients: profile.dislikedIngredients.filter(i => i !== item) };
+    setProfile(updated);
+    setDraft(updated);
+    onDislikedIngredientsChange?.(updated.dislikedIngredients);
+    await saveUserProfile(updated);
+  };
+
+  const handleDietaryToggle = async (pref: DietaryPreference) => {
+    const newPrefs = profile.dietaryPreferences.includes(pref)
+      ? profile.dietaryPreferences.filter(p => p !== pref)
+      : [...profile.dietaryPreferences, pref];
+    const updated = { ...profile, dietaryPreferences: newPrefs };
+    setProfile(updated);
+    setDraft(updated);
+    onDietaryPreferencesChange?.(newPrefs);
+    await saveUserProfile(updated);
   };
 
   if (loading) return <div className="settings-loading" />;
@@ -76,7 +94,7 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout }: Props) =>
   return (
     <div className="settings-page">
 
-      {/* Profile section */}
+      {/* Mon profil */}
       <section className="settings-section">
         <div className="settings-section-header">
           <h2 className="settings-section-title">{t('settings.profile')}</h2>
@@ -117,33 +135,13 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout }: Props) =>
                 />
               </div>
 
-              <div className="settings-field">
-                <label className="settings-label">{t('settings.dietaryPreferences')}</label>
-                <div className="settings-chips">
-                  {DIETARY_OPTIONS.map(pref => (
-                    <button
-                      key={pref}
-                      type="button"
-                      className={`settings-chip ${draft.dietaryPreferences.includes(pref) ? 'active' : ''}`}
-                      onClick={() => toggleDietary(pref)}
-                    >
-                      {t(`settings.dietary.${pref}`)}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               <div className="settings-save-row">
-                {hasData(saved) && (
+                {hasProfileData(profile) && (
                   <button className="settings-cancel-btn" onClick={handleCancel}>
                     {t('settings.cancel')}
                   </button>
                 )}
-                <button
-                  className="settings-save-btn"
-                  onClick={handleSave}
-                  disabled={saving}
-                >
+                <button className="settings-save-btn" onClick={handleSave} disabled={saving}>
                   {saving ? t('settings.saving') : t('settings.save')}
                 </button>
               </div>
@@ -152,30 +150,92 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout }: Props) =>
             <div className="settings-view">
               <div className="settings-view-row">
                 <span className="settings-view-label">{t('settings.country')}</span>
-                <span className="settings-view-value">{saved.country ?? '—'}</span>
+                <span className="settings-view-value">{profile.country ?? '—'}</span>
               </div>
               <div className="settings-view-row">
                 <span className="settings-view-label">{t('settings.age')}</span>
-                <span className="settings-view-value">{saved.age ?? '—'}</span>
+                <span className="settings-view-value">{profile.age ?? '—'}</span>
               </div>
-              {saved.dietaryPreferences.length > 0 && (
-                <div className="settings-view-row settings-view-row--chips">
-                  <span className="settings-view-label">{t('settings.dietaryPreferences')}</span>
-                  <div className="settings-chips settings-chips--readonly">
-                    {saved.dietaryPreferences.map(pref => (
-                      <span key={pref} className="settings-chip active">
-                        {t(`settings.dietary.${pref}`)}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           )}
         </div>
       </section>
 
-      {/* App settings section */}
+      {/* Préférences nutritionnelles */}
+      <section className="settings-section">
+        <h2 className="settings-section-title">{t('settings.nutritionalPreferences')}</h2>
+
+        <div className="settings-card">
+          <div className="settings-field">
+            <label className="settings-label">{t('settings.dietaryRestrictions')}</label>
+            <div className="settings-chips">
+              {DIETARY_RESTRICTIONS.map(pref => (
+                <button
+                  key={pref}
+                  type="button"
+                  className={`settings-chip ${profile.dietaryPreferences.includes(pref) ? 'active' : ''}`}
+                  onClick={() => handleDietaryToggle(pref)}
+                >
+                  {t(`settings.dietary.${pref}`)}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="settings-field">
+            <label className="settings-label">{t('settings.dietaryPreferences')}</label>
+            <div className="settings-chips">
+              {DIETARY_PREFERENCES.map(pref => (
+                <button
+                  key={pref}
+                  type="button"
+                  className={`settings-chip ${profile.dietaryPreferences.includes(pref) ? 'active' : ''}`}
+                  onClick={() => handleDietaryToggle(pref)}
+                >
+                  {t(`settings.dietary.${pref}`)}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="settings-field">
+            <label className="settings-label">{t('settings.dislikedIngredients')}</label>
+            <div className="settings-disliked-input-row">
+              <input
+                ref={dislikedInputRef}
+                type="text"
+                className="settings-input settings-disliked-input"
+                placeholder={t('settings.dislikedPlaceholder')}
+                value={dislikedInput}
+                onChange={e => setDislikedInput(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddDisliked(dislikedInput); } }}
+              />
+              <button
+                type="button"
+                className="settings-disliked-add-btn"
+                onClick={() => handleAddDisliked(dislikedInput)}
+                disabled={!dislikedInput.trim()}
+              >+</button>
+            </div>
+            {profile.dislikedIngredients.length > 0 && (
+              <div className="settings-chips settings-chips--disliked">
+                {profile.dislikedIngredients.map(item => (
+                  <span key={item} className="settings-chip settings-chip--disliked">
+                    {item}
+                    <button
+                      type="button"
+                      className="settings-chip-remove"
+                      onClick={() => handleRemoveDisliked(item)}
+                    >×</button>
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Préférences app */}
       <section className="settings-section">
         <h2 className="settings-section-title">{t('settings.appSettings')}</h2>
 
@@ -210,7 +270,7 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout }: Props) =>
         </div>
       </section>
 
-      {/* Logout section */}
+      {/* Logout */}
       <section className="settings-section">
         <div className="settings-card">
           <button className="settings-logout-btn" onClick={onLogout}>

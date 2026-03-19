@@ -176,6 +176,75 @@
   pointer-events: none;
 }
 
+/* Disliked ingredients */
+.settings-disliked-input-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.settings-disliked-input {
+  flex: 1;
+}
+
+.settings-disliked-add-btn {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font-size: 1.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.settings-disliked-add-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.settings-disliked-add-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.settings-chips--disliked {
+  margin-top: 0;
+}
+
+.settings-chip--disliked {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: var(--bg-surface);
+  border-color: var(--border);
+  color: var(--text-secondary);
+  padding-right: 0.5rem;
+  pointer-events: auto;
+}
+
+.settings-chip-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+}
+
+.settings-chip-remove:hover {
+  color: var(--red);
+}
+
 /* Save / cancel row */
 .settings-save-row {
   display: flex;

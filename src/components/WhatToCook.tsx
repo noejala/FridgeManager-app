@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Product } from '../types/Product';
+import { DietaryPreference } from '../types/UserProfile';
 import { searchByIngredient, getMealDetails, MealDetails, singularize } from '../utils/mealApi';
 import { toEnglishIngredient } from '../utils/ingredientTranslation';
 import { getDaysUntilExpiration } from '../utils/storage';
@@ -8,6 +9,8 @@ import './WhatToCook.css';
 
 interface WhatToCookProps {
   products: Product[];
+  dietaryPreferences?: DietaryPreference[];
+  dislikedIngredients?: string[];
 }
 
 const MAX_MISSING = 4;
@@ -23,6 +26,69 @@ const PANTRY_STAPLES = new Set([
   'ginger', 'ginger paste', 'mustard', 'mustard powder', 'honey',
   'lemon', 'lime', 'lemon juice', 'lime juice',
 ]);
+
+const MEAT_FISH = [
+  'beef', 'chicken', 'pork', 'lamb', 'turkey', 'bacon', 'ham', 'sausage',
+  'mince', 'mutton', 'duck', 'veal', 'venison', 'steak', 'chorizo',
+  'pepperoni', 'prosciutto', 'salami', 'pancetta',
+];
+const FISH_SEAFOOD = [
+  'anchovy', 'tuna', 'salmon', 'cod', 'haddock', 'shrimp', 'prawn',
+  'crab', 'lobster', 'fish', 'seafood', 'clam', 'oyster', 'scallop',
+  'squid', 'octopus', 'sardine', 'mackerel', 'tilapia', 'trout',
+  'crawfish', 'crayfish',
+];
+const DAIRY_EGG = [
+  'milk', 'cheese', 'cream', 'butter', 'egg', 'honey', 'yogurt', 'yoghurt',
+  'ghee', 'gelatin', 'mayonnaise', 'parmesan', 'mozzarella', 'cheddar',
+  'ricotta', 'brie', 'feta',
+];
+const GLUTEN_SOURCES = [
+  'flour', 'bread', 'pasta', 'spaghetti', 'noodle', 'wheat', 'barley',
+  'rye', 'breadcrumb', 'semolina', 'couscous', 'bulgur', 'pita', 'tortilla',
+  'soy sauce',
+];
+const DAIRY = [
+  'milk', 'cream', 'cheese', 'butter', 'yogurt', 'yoghurt', 'ghee', 'whey',
+  'parmesan', 'mozzarella', 'cheddar', 'brie', 'feta', 'ricotta',
+];
+const PORK = ['pork', 'bacon', 'ham', 'lard', 'prosciutto', 'pancetta', 'chorizo', 'salami', 'pepperoni'];
+const SHELLFISH = ['shrimp', 'crab', 'lobster', 'oyster', 'clam', 'scallop', 'squid', 'octopus', 'prawn', 'crawfish', 'crayfish'];
+
+const DIETARY_BLACKLIST: Record<DietaryPreference, string[]> = {
+  vegetarian: [...MEAT_FISH, ...FISH_SEAFOOD],
+  pescatarian: MEAT_FISH,
+  vegan: [...MEAT_FISH, ...FISH_SEAFOOD, ...DAIRY_EGG],
+  gluten_free: GLUTEN_SOURCES,
+  lactose_free: DAIRY,
+  halal: PORK,
+  kosher: [...PORK, ...SHELLFISH],
+};
+
+function hasKeyword(ingName: string, keyword: string): boolean {
+  const lower = ingName.toLowerCase();
+  if (keyword.includes(' ')) return lower.includes(keyword);
+  return new RegExp(`\\b${keyword}s?\\b`, 'i').test(lower);
+}
+
+function meetsPreferences(recipe: RecipeMatch, prefs: DietaryPreference[]): boolean {
+  if (prefs.length === 0) return true;
+  const allIngredients = [...recipe.available, ...recipe.missing, ...recipe.pantry];
+  for (const pref of prefs) {
+    for (const ing of allIngredients) {
+      if (DIETARY_BLACKLIST[pref].some(kw => hasKeyword(ing.name, kw))) return false;
+    }
+  }
+  return true;
+}
+
+function meetsDislikedFilter(recipe: RecipeMatch, disliked: string[]): boolean {
+  if (disliked.length === 0) return true;
+  const allIngredients = [...recipe.available, ...recipe.missing, ...recipe.pantry];
+  return !disliked.some(d =>
+    allIngredients.some(ing => ing.name.toLowerCase().includes(d))
+  );
+}
 
 type CourseFilter = 'all' | 'starter' | 'main' | 'dessert';
 type SortMode = 'smart' | 'available';
@@ -112,7 +178,7 @@ function applySort(recipes: RecipeMatch[], mode: SortMode): RecipeMatch[] {
   });
 }
 
-export const WhatToCook = ({ products }: WhatToCookProps) => {
+export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredients = [] }: WhatToCookProps) => {
   const { t } = useTranslation();
   const [recipes, setRecipes] = useState<RecipeMatch[]>([]);
   const [loading, setLoading] = useState(false);
@@ -244,12 +310,22 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
         </div>
       )}
 
+      {!loading && !error && recipes.length > 0 && recipes.filter(r => meetsPreferences(r, dietaryPreferences) && meetsDislikedFilter(r, dislikedIngredients)).length === 0 && (
+        <div className="empty-suggestions">
+          <div className="empty-icon">🥗</div>
+          <p>{t('cook.noRecipesDietary')}</p>
+        </div>
+      )}
+
       {!loading && recipes.length > 0 && (() => {
+        const dietFiltered = recipes.filter(r =>
+          meetsPreferences(r, dietaryPreferences) && meetsDislikedFilter(r, dislikedIngredients)
+        );
         const counts = {
-          all: recipes.length,
-          starter: recipes.filter(r => getCourse(r.meal.category) === 'starter').length,
-          main: recipes.filter(r => getCourse(r.meal.category) === 'main').length,
-          dessert: recipes.filter(r => getCourse(r.meal.category) === 'dessert').length,
+          all: dietFiltered.length,
+          starter: dietFiltered.filter(r => getCourse(r.meal.category) === 'starter').length,
+          main: dietFiltered.filter(r => getCourse(r.meal.category) === 'main').length,
+          dessert: dietFiltered.filter(r => getCourse(r.meal.category) === 'dessert').length,
         };
         const filters: { key: CourseFilter; label: string }[] = [
           { key: 'all', label: t('cook.filterAll') },
@@ -258,13 +334,20 @@ export const WhatToCook = ({ products }: WhatToCookProps) => {
           { key: 'dessert', label: t('cook.filterDessert') },
         ];
         const courseFiltered = courseFilter === 'all'
-          ? recipes
-          : recipes.filter(r => getCourse(r.meal.category) === courseFilter);
+          ? dietFiltered
+          : dietFiltered.filter(r => getCourse(r.meal.category) === courseFilter);
         const filteredRecipes = applySort(courseFiltered, sortMode);
 
         return (
           <>
-            <div className="filters-row">
+            {dietaryPreferences.length > 0 && (
+            <div className="diet-filter-bar">
+              {t('cook.dietaryFilterActive', {
+                prefs: dietaryPreferences.map(p => t(`settings.dietary.${p}`)).join(', '),
+              })}
+            </div>
+          )}
+          <div className="filters-row">
             <div className="course-dropdown">
               <button
                 className="course-dropdown-btn"

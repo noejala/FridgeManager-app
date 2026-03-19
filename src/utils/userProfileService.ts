@@ -14,6 +14,7 @@ export async function fetchUserProfile(): Promise<UserProfile | null> {
     gender: data.gender ?? null,
     age: data.age ?? null,
     dietaryPreferences: (data.dietary_preferences ?? []) as DietaryPreference[],
+    dislikedIngredients: (data.disliked_ingredients ?? []) as string[],
   };
 }
 
@@ -27,6 +28,7 @@ export async function saveUserProfile(profile: UserProfile): Promise<void> {
     gender: profile.gender,
     age: profile.age,
     dietary_preferences: profile.dietaryPreferences,
+    disliked_ingredients: profile.dislikedIngredients,
     updated_at: new Date().toISOString(),
   });
 }
