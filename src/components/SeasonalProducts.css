@@ -3,12 +3,12 @@
 }
 
 .seasonal-header {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .seasonal-header h2 {
   font-family: var(--font-display);
-  font-size: 2.25rem;
+  font-size: 1.5rem;
   font-weight: 400;
   color: var(--text);
   margin-bottom: 0.25rem;
@@ -25,7 +25,7 @@
 .region-selector {
   display: flex;
   gap: 0.5rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   overflow-x: auto;
   padding-bottom: 2px;
   scrollbar-width: none;
@@ -67,20 +67,18 @@
   width: 100%;
 }
 
-.seasonal-info {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 1.25rem 1.5rem;
-  border-radius: var(--radius);
-  margin-bottom: 1.5rem;
+.season-tabs {
   display: flex;
-  align-items: center;
-  gap: 1.25rem;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
   flex-wrap: wrap;
 }
 
 .season-badge {
+  cursor: pointer;
+  background: none;
+  font-family: var(--font-body);
+  transition: opacity 0.15s, border-color 0.15s;
   padding: 0.3rem 0.875rem;
   border-radius: 40px;
   font-size: 0.7rem;
@@ -115,25 +113,51 @@
   background: var(--amber-bg);
 }
 
-.seasonal-info p {
-  margin: 0;
-  flex: 1;
-  min-width: 180px;
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-  line-height: 1.6;
+.season-badge-inactive {
+  color: var(--text-muted) !important;
+  border-color: var(--border) !important;
+  background: transparent !important;
+  opacity: 0.6;
+}
+
+.season-badge-inactive.season-badge-selected {
+  opacity: 1;
+  border-color: var(--border-hover) !important;
+  color: var(--text-secondary) !important;
+}
+
+.season-badge-inactive:hover {
+  opacity: 0.9;
+}
+
+.products-section {
+  margin-bottom: 1rem;
+}
+
+.products-section:last-child {
+  margin-bottom: 0;
+}
+
+.products-section-title {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 0.75rem 0;
 }
 
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 0.5rem;
 }
 
 .seasonal-product-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  padding: 1.25rem 0.75rem;
+  padding: 0.75rem 0.5rem;
   border-radius: var(--radius);
   text-align: center;
   transition: border-color 0.2s, transform 0.2s;
@@ -150,11 +174,11 @@
 }
 
 .product-emoji {
-  font-size: 2.25rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+  margin-bottom: 0.35rem;
 }
 
-.seasonal-product-card h3 {
+.seasonal-product-card p {
   margin: 0;
   color: var(--text-secondary);
   font-size: 0.8rem;
@@ -164,7 +188,7 @@
 
 @media (max-width: 768px) {
   .products-grid {
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
   }
   .seasonal-info {
     flex-direction: column;

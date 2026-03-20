@@ -84,6 +84,13 @@ export const seasonalDataByRegion: Record<RegionId, Record<number, SeasonalEntry
   },
 };
 
+export const FRUITS = new Set([
+  'Apples', 'Pears', 'Clementines', 'Oranges', 'Strawberries', 'Cherries',
+  'Raspberries', 'Peaches', 'Figs', 'Grapes', 'Blueberries', 'Plums',
+  'Melons', 'Watermelon', 'Pomegranates', 'Cranberries', 'Blackberries',
+  'Apricots', 'Citrus fruits', 'Rhubarb',
+]);
+
 export const productEmojiMap: Record<string, string> = {
   'Citrus fruits': '🍊',
   'Cabbage': '🥬',

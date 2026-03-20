@@ -229,6 +229,8 @@
     "title": "🌱 Seasonal products",
     "recommendedFor": "Recommended products for {{month}} ({{season}})",
     "description": "These products are in season right now, meaning they're fresher, more flavorful, and often more affordable!",
+    "vegetables": "Vegetables",
+    "fruits": "Fruits",
     "season": {
       "winter": "Winter",
       "spring": "Spring",
