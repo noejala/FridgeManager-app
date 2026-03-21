@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Product } from '../types/Product';
 import { DietaryPreference } from '../types/UserProfile';
 import { searchByIngredient, getMealDetails, MealDetails, singularize } from '../utils/mealApi';
+import { searchSpoonacularByIngredients, getSpoonacularRecipeDetails } from '../utils/spoonacularApi';
 import { toEnglishIngredient } from '../utils/ingredientTranslation';
 import { getDaysUntilExpiration } from '../utils/storage';
 import './WhatToCook.css';
@@ -205,28 +206,40 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
         .map((p) => toEnglishIngredient(p.name));
       const ingredientNames = fridgeNames.slice(0, 5);
 
-      const searchResults = await Promise.all(
-        ingredientNames.map((name) => searchByIngredient(name))
-      );
+      // Fetch from both APIs in parallel
+      const [mealDbSearchResults, spoonacularSummaries] = await Promise.all([
+        Promise.all(ingredientNames.map((name) => searchByIngredient(name))),
+        searchSpoonacularByIngredients(ingredientNames),
+      ]);
 
+      // MealDB: rank by how many ingredients matched
       const mealHits = new Map<string, number>();
-      for (const meals of searchResults) {
+      for (const meals of mealDbSearchResults) {
         for (const meal of meals) {
           mealHits.set(meal.id, (mealHits.get(meal.id) || 0) + 1);
         }
       }
-
-      const sortedIds = [...mealHits.entries()]
+      const mealDbIds = [...mealHits.entries()]
         .sort((a, b) => b[1] - a[1])
-        .map(([id]) => id);
+        .map(([id]) => id)
+        .slice(0, 30);
 
-      const detailsResults = await Promise.all(
-        sortedIds.slice(0, 30).map((id) => getMealDetails(id))
-      );
+      // Fetch all details in parallel
+      const [mealDbDetails, spoonacularDetails] = await Promise.all([
+        Promise.all(mealDbIds.map((id) => getMealDetails(id))),
+        Promise.all(spoonacularSummaries.map((r) => getSpoonacularRecipeDetails(r.id))),
+      ]);
 
+      // Merge and deduplicate by name (case-insensitive)
+      const seenNames = new Set<string>();
       const matched: RecipeMatch[] = [];
-      for (const meal of detailsResults) {
+
+      for (const meal of [...mealDbDetails, ...spoonacularDetails]) {
         if (!meal) continue;
+        const key = meal.name.toLowerCase();
+        if (seenNames.has(key)) continue;
+        seenNames.add(key);
+
         const { available, missing, pantry, urgentAvailableCount } = matchIngredients(meal, fridgeNames, urgentFridgeNames);
         if (missing.length <= MAX_MISSING) {
           matched.push({ meal, available, missing, pantry, urgentAvailableCount });
