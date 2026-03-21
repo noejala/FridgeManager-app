@@ -228,7 +228,6 @@
   "seasonal": {
     "title": "🌱 Produits de saison",
     "recommendedFor": "Produits recommandés pour {{month}} ({{season}})",
-    "description": "Ces produits sont de saison en ce moment, ce qui signifie qu'ils sont plus frais, plus savoureux et souvent moins chers !",
     "vegetables": "Légumes",
     "fruits": "Fruits",
     "season": {
