@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { Product } from '../types/Product';
 import { DietaryPreference } from '../types/UserProfile';
 import { searchByIngredient, getMealDetails, MealDetails, singularize } from '../utils/mealApi';
-import { searchSpoonacularByIngredients, getSpoonacularRecipeDetails } from '../utils/spoonacularApi';
 import { toEnglishIngredient } from '../utils/ingredientTranslation';
 import { getDaysUntilExpiration } from '../utils/storage';
 import './WhatToCook.css';
@@ -206,13 +205,9 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
         .map((p) => toEnglishIngredient(p.name));
       const ingredientNames = fridgeNames.slice(0, 5);
 
-      // Fetch from both APIs in parallel
-      const [mealDbSearchResults, spoonacularSummaries] = await Promise.all([
-        Promise.all(ingredientNames.map((name) => searchByIngredient(name))),
-        searchSpoonacularByIngredients(ingredientNames),
-      ]);
+      const mealDbSearchResults = await Promise.all(ingredientNames.map((name) => searchByIngredient(name)));
 
-      // MealDB: rank by how many ingredients matched
+      // Rank by how many ingredients matched
       const mealHits = new Map<string, number>();
       for (const meals of mealDbSearchResults) {
         for (const meal of meals) {
@@ -224,17 +219,12 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
         .map(([id]) => id)
         .slice(0, 30);
 
-      // Fetch all details in parallel
-      const [mealDbDetails, spoonacularDetails] = await Promise.all([
-        Promise.all(mealDbIds.map((id) => getMealDetails(id))),
-        Promise.all(spoonacularSummaries.map((r) => getSpoonacularRecipeDetails(r.id))),
-      ]);
+      const mealDbDetails = await Promise.all(mealDbIds.map((id) => getMealDetails(id)));
 
-      // Merge and deduplicate by name (case-insensitive)
       const seenNames = new Set<string>();
       const matched: RecipeMatch[] = [];
 
-      for (const meal of [...mealDbDetails, ...spoonacularDetails]) {
+      for (const meal of mealDbDetails) {
         if (!meal) continue;
         const key = meal.name.toLowerCase();
         if (seenNames.has(key)) continue;
