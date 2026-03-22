@@ -34,6 +34,7 @@ export function NotifPermissionModal({ permission, onRequest }: Props) {
 
   const handleAllow = async () => {
     await onRequest();
+    localStorage.setItem(DISMISSED_KEY, 'true');
     setDismissed(true);
   };
 
