@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Product } from '../types/Product';
 import { DietaryPreference } from '../types/UserProfile';
 import { searchByIngredient, getMealDetails, MealDetails, singularize } from '../utils/mealApi';
+import { fetchGeminiRecipes } from '../utils/geminiApi';
 import { toEnglishIngredient } from '../utils/ingredientTranslation';
 import { getDaysUntilExpiration } from '../utils/storage';
 import './WhatToCook.css';
@@ -164,6 +165,22 @@ function matchIngredients(
   return { available, missing, pantry, urgentAvailableCount };
 }
 
+async function fetchMealDbMeals(fridgeNames: string[]): Promise<(MealDetails | null)[]> {
+  const ingredientNames = fridgeNames.slice(0, 5);
+  const searchResults = await Promise.all(ingredientNames.map((name) => searchByIngredient(name)));
+  const mealHits = new Map<string, number>();
+  for (const meals of searchResults) {
+    for (const meal of meals) {
+      mealHits.set(meal.id, (mealHits.get(meal.id) || 0) + 1);
+    }
+  }
+  const ids = [...mealHits.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .map(([id]) => id)
+    .slice(0, 30);
+  return Promise.all(ids.map((id) => getMealDetails(id)));
+}
+
 function scoreRecipe(recipe: RecipeMatch): number {
   return recipe.available.length * 10 + recipe.urgentAvailableCount * 15 - recipe.missing.length * 2;
 }
@@ -178,8 +195,10 @@ function applySort(recipes: RecipeMatch[], mode: SortMode): RecipeMatch[] {
   });
 }
 
+const hasGeminiKey = !!import.meta.env.VITE_GEMINI_API_KEY;
+
 export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredients = [] }: WhatToCookProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [recipes, setRecipes] = useState<RecipeMatch[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -188,6 +207,14 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
   const [courseDropdownOpen, setCourseDropdownOpen] = useState(false);
   const [sortMode, setSortMode] = useState<SortMode>('smart');
   const [servings, setServings] = useState(DEFAULT_SERVINGS);
+  const [recipeMode, setRecipeMode] = useState<'api' | 'ai'>(() => {
+    if (!hasGeminiKey) return 'api';
+    return (localStorage.getItem('recipe-mode') as 'api' | 'ai') || 'api';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('recipe-mode', recipeMode);
+  }, [recipeMode]);
 
   const fetchRecipes = useCallback(async () => {
     if (products.length === 0) {
@@ -203,48 +230,61 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       const urgentFridgeNames = products
         .filter((p) => getDaysUntilExpiration(p.expirationDate) <= 3)
         .map((p) => toEnglishIngredient(p.name));
-      const ingredientNames = fridgeNames.slice(0, 5);
 
-      const mealDbSearchResults = await Promise.all(ingredientNames.map((name) => searchByIngredient(name)));
+      let meals: (MealDetails | null)[];
+      let isAiMode = false;
 
-      // Rank by how many ingredients matched
-      const mealHits = new Map<string, number>();
-      for (const meals of mealDbSearchResults) {
-        for (const meal of meals) {
-          mealHits.set(meal.id, (mealHits.get(meal.id) || 0) + 1);
+      if (recipeMode === 'ai') {
+        const geminiResults = await fetchGeminiRecipes(fridgeNames, dietaryPreferences, i18n.language);
+        if (geminiResults.length > 0) {
+          meals = geminiResults;
+          isAiMode = true;
+        } else {
+          meals = await fetchMealDbMeals(fridgeNames);
         }
+      } else {
+        meals = await fetchMealDbMeals(fridgeNames);
       }
-      const mealDbIds = [...mealHits.entries()]
-        .sort((a, b) => b[1] - a[1])
-        .map(([id]) => id)
-        .slice(0, 30);
-
-      const mealDbDetails = await Promise.all(mealDbIds.map((id) => getMealDetails(id)));
 
       const seenNames = new Set<string>();
       const matched: RecipeMatch[] = [];
 
-      for (const meal of mealDbDetails) {
+      for (const meal of meals) {
         if (!meal) continue;
         const key = meal.name.toLowerCase();
         if (seenNames.has(key)) continue;
         seenNames.add(key);
 
-        const { available, missing, pantry, urgentAvailableCount } = matchIngredients(meal, fridgeNames, urgentFridgeNames);
+        let available: { name: string; measure: string }[];
+        let missing: { name: string; measure: string }[];
+        let pantry: { name: string; measure: string }[];
+        let urgentAvailableCount: number;
+        if (isAiMode) {
+          // Gemini designed recipes for these fridge contents — treat all non-pantry ingredients as available
+          pantry = meal.ingredients.filter(ing =>
+            PANTRY_STAPLES.has(singularize(ing.name.toLowerCase())) ||
+            PANTRY_STAPLES.has(ing.name.toLowerCase())
+          );
+          available = meal.ingredients.filter(ing => !pantry.includes(ing));
+          missing = [];
+          urgentAvailableCount = 0;
+        } else {
+          ({ available, missing, pantry, urgentAvailableCount } = matchIngredients(meal, fridgeNames, urgentFridgeNames));
+        }
+
         if (missing.length <= MAX_MISSING) {
           matched.push({ meal, available, missing, pantry, urgentAvailableCount });
         }
       }
 
       matched.sort((a, b) => scoreRecipe(b) - scoreRecipe(a));
-
       setRecipes(matched);
     } catch {
       setError(t('cook.failedFetch'));
     } finally {
       setLoading(false);
     }
-  }, [products, t]);
+  }, [products, t, recipeMode, dietaryPreferences, i18n.language]);
 
   useEffect(() => {
     fetchRecipes();
@@ -269,7 +309,25 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
   return (
     <div className="what-to-cook">
       <div className="cook-header">
-        <h2>{t('cook.title')}</h2>
+        <div className="cook-header-top">
+          <h2>{t('cook.title')}</h2>
+          {hasGeminiKey && (
+            <div className="mode-toggle">
+              <button
+                className={`mode-btn${recipeMode === 'api' ? ' active' : ''}`}
+                onClick={() => setRecipeMode('api')}
+              >
+                {t('cook.modeApi')}
+              </button>
+              <button
+                className={`mode-btn mode-btn-ai${recipeMode === 'ai' ? ' active' : ''}`}
+                onClick={() => setRecipeMode('ai')}
+              >
+                {t('cook.modeAi')}
+              </button>
+            </div>
+          )}
+        </div>
         <div className="cook-subtitle-row">
           <p className="cook-subtitle">
             {t('cook.recipesBasedOn', { count: products.length })}
@@ -295,7 +353,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       {loading && (
         <div className="loading-state">
           <div className="spinner" />
-          <p>{t('cook.searching')}</p>
+          <p>{recipeMode === 'ai' ? t('cook.searchingAi') : t('cook.searching')}</p>
         </div>
       )}
 
@@ -406,7 +464,10 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
               onClick={() => setSelectedRecipe(recipe)}
               style={{ '--index': index } as React.CSSProperties}
             >
-              <img src={recipe.meal.thumbnail} alt={recipe.meal.name} className="recipe-thumbnail" />
+              {recipe.meal.thumbnail
+                ? <img src={recipe.meal.thumbnail} alt={recipe.meal.name} className="recipe-thumbnail" />
+                : <div className="recipe-thumbnail-placeholder" aria-hidden="true">✨</div>
+              }
               <div className="recipe-info">
                 <h3>{recipe.meal.name}</h3>
                 <div className="recipe-match-info">
@@ -431,11 +492,10 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
         <div className="modal-overlay" onClick={closeDetails}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close" onClick={closeDetails}>✕</button>
-            <img
-              src={selectedRecipe.meal.thumbnail}
-              alt={selectedRecipe.meal.name}
-              className="modal-image"
-            />
+            {selectedRecipe.meal.thumbnail
+              ? <img src={selectedRecipe.meal.thumbnail} alt={selectedRecipe.meal.name} className="modal-image" />
+              : <div className="modal-thumbnail-placeholder" aria-hidden="true">✨</div>
+            }
             <h2>{selectedRecipe.meal.name}</h2>
             <div className="modal-tags">
               {selectedRecipe.meal.category && <span className="tag">{selectedRecipe.meal.category}</span>}

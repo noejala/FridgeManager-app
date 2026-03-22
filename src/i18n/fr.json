@@ -119,7 +119,10 @@
     "filterDessert": "Desserts",
     "noRecipesInCategory": "Aucune recette dans cette catégorie pour vos produits actuels.",
     "dietaryFilterActive": "Filtré : {{prefs}}",
-    "noRecipesDietary": "Aucune recette ne correspond à vos préférences alimentaires. Modifiez-les dans Réglages."
+    "noRecipesDietary": "Aucune recette ne correspond à vos préférences alimentaires. Modifiez-les dans Réglages.",
+    "modeApi": "🍽️ Recettes",
+    "modeAi": "✨ IA",
+    "searchingAi": "Génération de recettes IA…"
   },
   "categories": {
     "Fruits": "Fruits",

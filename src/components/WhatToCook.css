@@ -218,6 +218,78 @@
   color: #fff;
 }
 
+.cook-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.mode-toggle {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 40px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.mode-btn {
+  background: transparent;
+  border: none;
+  padding: 0.3rem 0.85rem;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  border-left: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.mode-btn:first-child {
+  border-left: none;
+}
+
+.mode-btn:hover:not(.active) {
+  background: var(--bg-surface);
+  color: var(--text);
+}
+
+.mode-btn.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.mode-btn-ai.active {
+  background: linear-gradient(135deg, #7c3aed, #2c6fe0);
+  color: #fff;
+}
+
+.recipe-thumbnail-placeholder {
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  background: linear-gradient(135deg, color-mix(in srgb, #7c3aed 12%, var(--bg-card)), color-mix(in srgb, #2c6fe0 10%, var(--bg-card)));
+}
+
+.modal-thumbnail-placeholder {
+  width: 100%;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.5rem;
+  border-radius: 10px;
+  margin-bottom: 1.25rem;
+  background: linear-gradient(135deg, color-mix(in srgb, #7c3aed 12%, var(--bg-card)), color-mix(in srgb, #2c6fe0 10%, var(--bg-card)));
+}
+
 .cook-header h2 {
   font-family: var(--font-display);
   font-size: 2.25rem;
