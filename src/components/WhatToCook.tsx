@@ -207,6 +207,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
   const [courseDropdownOpen, setCourseDropdownOpen] = useState(false);
   const [sortMode, setSortMode] = useState<SortMode>('smart');
   const [servings, setServings] = useState(DEFAULT_SERVINGS);
+  const [aiFallback, setAiFallback] = useState(false);
   const [recipeMode, setRecipeMode] = useState<'api' | 'ai'>(() => {
     if (!hasGeminiKey) return 'api';
     return (localStorage.getItem('recipe-mode') as 'api' | 'ai') || 'api';
@@ -239,11 +240,14 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
         if (geminiResults.length > 0) {
           meals = geminiResults;
           isAiMode = true;
+          setAiFallback(false);
         } else {
           meals = await fetchMealDbMeals(fridgeNames);
+          setAiFallback(true);
         }
       } else {
         meals = await fetchMealDbMeals(fridgeNames);
+        setAiFallback(false);
       }
 
       const seenNames = new Set<string>();
@@ -284,7 +288,8 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
     } finally {
       setLoading(false);
     }
-  }, [products, t, recipeMode, dietaryPreferences, i18n.language]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [products, t, recipeMode, dietaryPreferences.join(','), i18n.language]);
 
   useEffect(() => {
     fetchRecipes();
@@ -349,6 +354,13 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
           </div>
         </div>
       </div>
+
+      {recipeMode === 'ai' && aiFallback && !loading && (
+        <div className="ai-fallback-notice">
+          ⚠️ {t('cook.aiFallback')}
+          <button onClick={fetchRecipes}>{t('cook.retry')}</button>
+        </div>
+      )}
 
       {loading && (
         <div className="loading-state">

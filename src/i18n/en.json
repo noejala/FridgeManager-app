@@ -122,7 +122,8 @@
     "noRecipesDietary": "No recipes match your dietary preferences. Update them in Settings.",
     "modeApi": "🍽️ Recipes",
     "modeAi": "✨ AI",
-    "searchingAi": "Generating AI recipes…"
+    "searchingAi": "Generating AI recipes…",
+    "aiFallback": "Gemini unavailable (rate limit reached) — showing classic recipes."
   },
   "categories": {
     "Fruits": "Fruits",

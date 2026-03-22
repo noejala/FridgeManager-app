@@ -61,12 +61,29 @@ difficulty must be one of: ${difficultyOptions}`;
       }),
     });
 
-    if (!res.ok) return [];
+    if (!res.ok) {
+      const err = await res.json().catch(() => null);
+      console.error('[Gemini] API error', res.status, err);
+      return [];
+    }
 
     const data = await res.json();
     const text: string = data.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
-    const jsonText = text.replace(/^```(?:json)?\n?/m, '').replace(/\n?```$/m, '').trim();
-    const raws: GeminiRecipeRaw[] = JSON.parse(jsonText);
+
+    // Extract the JSON array from anywhere in the response (handles markdown fences and surrounding text)
+    const jsonMatch = text.match(/\[[\s\S]*\]/);
+    if (!jsonMatch) {
+      console.error('[Gemini] No JSON array found in response:\n', text);
+      return [];
+    }
+
+    let raws: GeminiRecipeRaw[];
+    try {
+      raws = JSON.parse(jsonMatch[0]);
+    } catch (e) {
+      console.error('[Gemini] JSON parse error', e, '\nExtracted:', jsonMatch[0]);
+      return [];
+    }
 
     const results: MealDetails[] = raws.map((r, i) => ({
       id: `gemini-${i}`,
@@ -80,7 +97,8 @@ difficulty must be one of: ${difficultyOptions}`;
 
     localStorage.setItem(cacheKey, JSON.stringify(results));
     return results;
-  } catch {
+  } catch (e) {
+    console.error('[Gemini] Unexpected error', e);
     return [];
   }
 }

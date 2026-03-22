@@ -122,7 +122,8 @@
     "noRecipesDietary": "Aucune recette ne correspond à vos préférences alimentaires. Modifiez-les dans Réglages.",
     "modeApi": "🍽️ Recettes",
     "modeAi": "✨ IA",
-    "searchingAi": "Génération de recettes IA…"
+    "searchingAi": "Génération de recettes IA…",
+    "aiFallback": "Gemini indisponible (limite atteinte) — affichage des recettes classiques."
   },
   "categories": {
     "Fruits": "Fruits",
