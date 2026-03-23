@@ -195,7 +195,7 @@ function applySort(recipes: RecipeMatch[], mode: SortMode): RecipeMatch[] {
   });
 }
 
-const hasGeminiKey = !!import.meta.env.VITE_GEMINI_API_KEY;
+const hasGeminiKey = import.meta.env.VITE_GEMINI_ENABLED === 'true';
 
 export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredients = [] }: WhatToCookProps) => {
   const { t, i18n } = useTranslation();
