@@ -8,10 +8,13 @@ import { toEnglishIngredient } from '../utils/ingredientTranslation';
 import { getDaysUntilExpiration } from '../utils/storage';
 import './WhatToCook.css';
 
+const GEMINI_ALLOWED_USER = '6afffd0a-0346-43e9-9476-e184e33410f8';
+
 interface WhatToCookProps {
   products: Product[];
   dietaryPreferences?: DietaryPreference[];
   dislikedIngredients?: string[];
+  userId?: string;
 }
 
 const MAX_MISSING = 4;
@@ -195,9 +198,9 @@ function applySort(recipes: RecipeMatch[], mode: SortMode): RecipeMatch[] {
   });
 }
 
-const hasGeminiKey = import.meta.env.VITE_GEMINI_ENABLED === 'true';
+const geminiEnabled = import.meta.env.VITE_GEMINI_ENABLED === 'true';
 
-export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredients = [] }: WhatToCookProps) => {
+export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredients = [], userId }: WhatToCookProps) => {
   const { t, i18n } = useTranslation();
   const [recipes, setRecipes] = useState<RecipeMatch[]>([]);
   const [loading, setLoading] = useState(false);
@@ -208,9 +211,10 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
   const [sortMode, setSortMode] = useState<SortMode>('smart');
   const [servings, setServings] = useState(DEFAULT_SERVINGS);
   const [aiFallback, setAiFallback] = useState(false);
+  const [showAiTeaser, setShowAiTeaser] = useState(false);
   const fetchingRef = useRef(false);
   const [recipeMode, setRecipeMode] = useState<'api' | 'ai'>(() => {
-    if (!hasGeminiKey) return 'api';
+    if (!geminiEnabled || userId !== GEMINI_ALLOWED_USER) return 'api';
     return (localStorage.getItem('recipe-mode') as 'api' | 'ai') || 'api';
   });
 
@@ -321,7 +325,23 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       <div className="cook-header">
         <div className="cook-header-top">
           <h2>{t('cook.title')}</h2>
-          {hasGeminiKey && (
+          {geminiEnabled && userId !== GEMINI_ALLOWED_USER && (
+            <div className="mode-toggle-wrapper">
+              <div className="mode-toggle">
+                <button
+                  className="mode-btn mode-btn-ai mode-btn-teaser"
+                  title={t('cook.aiComingSoon')}
+                  onClick={() => setShowAiTeaser(p => !p)}
+                >
+                  ✨ {t('cook.modeAi')}
+                </button>
+              </div>
+              {showAiTeaser && (
+                <div className="ai-teaser-tooltip">{t('cook.aiComingSoon')}</div>
+              )}
+            </div>
+          )}
+          {geminiEnabled && userId === GEMINI_ALLOWED_USER && (
             <div className="mode-toggle">
               <button
                 className={`mode-btn${recipeMode === 'api' ? ' active' : ''}`}
