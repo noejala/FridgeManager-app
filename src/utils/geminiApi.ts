@@ -1,8 +1,6 @@
 import { MealDetails } from './mealApi';
 import { DietaryPreference } from '../types/UserProfile';
 
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
-
 function hashString(s: string): number {
   let h = 0;
   for (let i = 0; i < s.length; i++) {
@@ -24,17 +22,11 @@ export async function fetchGeminiRecipes(
   dietaryPrefs: DietaryPreference[],
   language: string
 ): Promise<MealDetails[]> {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
-  if (!apiKey) { console.error('[Gemini] key MISSING'); return []; }
-
   const rateLimitUntil = localStorage.getItem('gemini-ratelimit-until');
   if (rateLimitUntil && Date.now() < Number(rateLimitUntil)) {
     console.warn('[Gemini] rate limit active until', new Date(Number(rateLimitUntil)).toLocaleTimeString());
     return [];
   }
-
-  console.log('[Gemini] key:', apiKey.slice(0, 10) + '...');
-  console.log('[Gemini] making request to:', `${GEMINI_API_URL}?key=${apiKey.slice(0, 10)}...`);
 
   const today = new Date().toISOString().slice(0, 10);
   const raw = [...productNames].sort().join(',') + '|' + [...dietaryPrefs].sort().join(',') + '|' + language + '|' + today;
@@ -61,13 +53,10 @@ Respond ONLY in ${langLabel}. Return ONLY a valid JSON array with no markdown or
 difficulty must be one of: ${difficultyOptions}`;
 
   try {
-    const res = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
+    const res = await fetch('/api/gemini', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.7, maxOutputTokens: 8192 },
-      }),
+      body: JSON.stringify({ prompt }),
     });
 
     if (!res.ok) {

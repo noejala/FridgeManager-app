@@ -12,7 +12,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-npm run dev      # Start Vite dev server (http://localhost:5173)
+vercel dev       # Start local dev server with serverless functions (http://localhost:3000) — use this
+npm run dev      # Start Vite only (http://localhost:5173) — no /api/gemini function
 npm run build    # Type-check with tsc, then build to dist/
 npm run preview  # Preview production build locally
 ```
