@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Product } from '../types/Product';
 import { DietaryPreference } from '../types/UserProfile';
@@ -208,6 +208,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
   const [sortMode, setSortMode] = useState<SortMode>('smart');
   const [servings, setServings] = useState(DEFAULT_SERVINGS);
   const [aiFallback, setAiFallback] = useState(false);
+  const fetchingRef = useRef(false);
   const [recipeMode, setRecipeMode] = useState<'api' | 'ai'>(() => {
     if (!hasGeminiKey) return 'api';
     return (localStorage.getItem('recipe-mode') as 'api' | 'ai') || 'api';
@@ -222,6 +223,9 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       setRecipes([]);
       return;
     }
+
+    if (fetchingRef.current) return;
+    fetchingRef.current = true;
 
     setLoading(true);
     setError(null);
@@ -287,9 +291,10 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       setError(t('cook.failedFetch'));
     } finally {
       setLoading(false);
+      fetchingRef.current = false;
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [products, t, recipeMode, dietaryPreferences.join(','), i18n.language]);
+  }, [products, recipeMode, dietaryPreferences.join(','), i18n.language]);
 
   useEffect(() => {
     fetchRecipes();

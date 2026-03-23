@@ -1,7 +1,7 @@
 import { MealDetails } from './mealApi';
 import { DietaryPreference } from '../types/UserProfile';
 
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
 function hashString(s: string): number {
   let h = 0;
@@ -25,7 +25,16 @@ export async function fetchGeminiRecipes(
   language: string
 ): Promise<MealDetails[]> {
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
-  if (!apiKey) return [];
+  if (!apiKey) { console.error('[Gemini] key MISSING'); return []; }
+
+  const rateLimitUntil = localStorage.getItem('gemini-ratelimit-until');
+  if (rateLimitUntil && Date.now() < Number(rateLimitUntil)) {
+    console.warn('[Gemini] rate limit active until', new Date(Number(rateLimitUntil)).toLocaleTimeString());
+    return [];
+  }
+
+  console.log('[Gemini] key:', apiKey.slice(0, 10) + '...');
+  console.log('[Gemini] making request to:', `${GEMINI_API_URL}?key=${apiKey.slice(0, 10)}...`);
 
   const today = new Date().toISOString().slice(0, 10);
   const raw = [...productNames].sort().join(',') + '|' + [...dietaryPrefs].sort().join(',') + '|' + language + '|' + today;
@@ -46,7 +55,7 @@ export async function fetchGeminiRecipes(
 
   const prompt = `You are a cooking assistant. I have these ingredients in my fridge: ${productNames.join(', ')}.
 ${dietLabel}
-Suggest 10 recipes using mostly these ingredients. Common pantry staples (salt, pepper, oil, flour, garlic, butter) are available.
+Suggest 5 recipes using mostly these ingredients. Common pantry staples (salt, pepper, oil, flour, garlic, butter) are available.
 Respond ONLY in ${langLabel}. Return ONLY a valid JSON array with no markdown or explanation:
 [{"name":"...","ingredients":[{"name":"...","quantity":"..."}],"instructions":"...","prepTime":"...","difficulty":"..."}]
 difficulty must be one of: ${difficultyOptions}`;
@@ -57,18 +66,22 @@ difficulty must be one of: ${difficultyOptions}`;
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.7, maxOutputTokens: 4096 },
+        generationConfig: { temperature: 0.7, maxOutputTokens: 8192 },
       }),
     });
 
     if (!res.ok) {
       const err = await res.json().catch(() => null);
-      console.error('[Gemini] API error', res.status, err);
+      console.error('[Gemini] API error', res.status, res.statusText, JSON.stringify(err, null, 2));
+      if (res.status === 429) {
+        localStorage.setItem('gemini-ratelimit-until', String(Date.now() + 5 * 60 * 1000));
+      }
       return [];
     }
 
     const data = await res.json();
-    const text: string = data.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
+    const parts: { text?: string }[] = data.candidates?.[0]?.content?.parts ?? [];
+    const text: string = parts.map(p => p.text ?? '').join('');
 
     // Extract the JSON array from anywhere in the response (handles markdown fences and surrounding text)
     const jsonMatch = text.match(/\[[\s\S]*\]/);
