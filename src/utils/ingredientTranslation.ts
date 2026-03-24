@@ -146,8 +146,11 @@ export function toEnglishIngredient(name: string): string {
   if (FR_TO_EN[normalized]) return FR_TO_EN[normalized];
 
   // Partial match — handles "blanc de poulet" → "chicken", etc.
+  // Uses word boundaries to avoid false matches ("barista" matching "bar", etc.)
   for (const [fr, en] of Object.entries(FR_TO_EN)) {
-    if (normalized.includes(fr)) return en;
+    const escaped = fr.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`(?:^|[^a-zA-ZàâäéèêëïîôùûüçÀÂÄÉÈÊËÏÎÔÙÛÜÇ])${escaped}(?:$|[^a-zA-ZàâäéèêëïîôùûüçÀÂÄÉÈÊËÏÎÔÙÛÜÇ])`, 'i');
+    if (regex.test(normalized)) return en;
   }
 
   return name;
