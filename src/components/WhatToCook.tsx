@@ -10,6 +10,22 @@ import './WhatToCook.css';
 
 const GEMINI_ALLOWED_USER = '6afffd0a-0346-43e9-9476-e184e33410f8';
 
+function parseSteps(instructions: string): string[] {
+  // Split by newlines first (TheMealDB uses \r\n, Gemini uses \n)
+  const byNewline = instructions
+    .split(/\r?\n/)
+    .map(s => s.replace(/^(step\s*\d+\s*[:.]*\s*)/i, '').trim())
+    .filter(s => s.length > 2);
+
+  if (byNewline.length > 1) return byNewline;
+
+  // Fallback: split by "1. 2. 3." numbered list pattern
+  const byNumber = instructions.split(/(?=\d+\.\s)/).map(s => s.replace(/^\d+\.\s*/, '').trim()).filter(s => s.length > 0);
+  if (byNumber.length > 1) return byNumber;
+
+  return [instructions.trim()];
+}
+
 interface WhatToCookProps {
   products: Product[];
   dietaryPreferences?: DietaryPreference[];
@@ -583,7 +599,14 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
 
             <div className="modal-section">
               <h3>{t('cook.instructions')}</h3>
-              <p className="modal-instructions">{selectedRecipe.meal.instructions}</p>
+              <ol className="modal-steps">
+                {parseSteps(selectedRecipe.meal.instructions).map((step, i) => (
+                  <li key={i} className="modal-step">
+                    <span className="step-number">{i + 1}</span>
+                    <span className="step-text">{step}</span>
+                  </li>
+                ))}
+              </ol>
             </div>
           </div>
         </div>

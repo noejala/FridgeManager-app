@@ -50,6 +50,7 @@ ${dietLabel}
 Suggest 5 recipes using mostly these ingredients. Common pantry staples (salt, pepper, oil, flour, garlic, butter) are available.
 Respond ONLY in ${langLabel}. Return ONLY a valid JSON array with no markdown or explanation:
 [{"name":"...","ingredients":[{"name":"...","quantity":"..."}],"instructions":"...","prepTime":"...","difficulty":"..."}]
+For "instructions", write each step on its own line separated by \\n, like: "1. Preheat oven.\\n2. Mix ingredients.\\n3. Bake 30 min."
 difficulty must be one of: ${difficultyOptions}`;
 
   try {
