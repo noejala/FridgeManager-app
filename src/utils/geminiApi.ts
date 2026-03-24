@@ -29,7 +29,7 @@ export async function fetchGeminiRecipes(
   }
 
   const today = new Date().toISOString().slice(0, 10);
-  const raw = [...productNames].sort().join(',') + '|' + [...dietaryPrefs].sort().join(',') + '|' + language + '|' + today + '|v4';
+  const raw = [...productNames].sort().join(',') + '|' + [...dietaryPrefs].sort().join(',') + '|' + language + '|' + today + '|v5';
   const cacheKey = `gemini-recipes-${hashString(raw).toString(36)}`;
 
   const cached = localStorage.getItem(cacheKey);
@@ -47,7 +47,7 @@ export async function fetchGeminiRecipes(
 
   const prompt = `You are a creative chef. I have these ingredients available: ${productNames.join(', ')}.
 ${dietLabel}
-Suggest 5 delicious, coherent recipes. For each recipe, pick only the ingredients that naturally belong together — do NOT try to include all available ingredients. Prioritize taste and culinary sense over using as many ingredients as possible. Common pantry staples (salt, pepper, oil, flour, garlic, butter, onion) are available.
+Suggest 5 delicious, coherent recipes. For each recipe, use whichever ingredients naturally belong together — use all of them if it makes culinary sense, or just a few. Never force an ingredient into a recipe just because it's available. Taste and coherence always come first. Common pantry staples (salt, pepper, oil, flour, garlic, butter, onion) are available.
 Respond ONLY in ${langLabel}. Return ONLY a valid JSON array with no markdown or explanation:
 [{"name":"...","ingredients":[{"name":"...","quantity":"..."}],"instructions":["step 1","step 2","step 3"],"prepTime":"...","difficulty":"..."}]
 "instructions" must be a JSON array of strings, one string per step (no numbering in the text).
