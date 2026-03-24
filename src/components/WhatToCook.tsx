@@ -14,7 +14,7 @@ function parseSteps(instructions: string): string[] {
   // Split by newlines first (TheMealDB uses \r\n, Gemini uses \n)
   const byNewline = instructions
     .split(/\r?\n/)
-    .map(s => s.replace(/^(step\s*\d+\s*[:.]*\s*)/i, '').trim())
+    .map(s => s.replace(/^(step\s*\d+\s*[:.]*\s*|\d+[.:)]\s*)/i, '').trim())
     .filter(s => s.length > 2);
 
   if (byNewline.length > 1) return byNewline;
