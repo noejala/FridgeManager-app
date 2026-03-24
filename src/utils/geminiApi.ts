@@ -12,7 +12,7 @@ function hashString(s: string): number {
 interface GeminiRecipeRaw {
   name: string;
   ingredients: { name: string; quantity: string }[];
-  instructions: string;
+  instructions: string | string[];
   prepTime: string;
   difficulty: string;
 }
@@ -29,7 +29,7 @@ export async function fetchGeminiRecipes(
   }
 
   const today = new Date().toISOString().slice(0, 10);
-  const raw = [...productNames].sort().join(',') + '|' + [...dietaryPrefs].sort().join(',') + '|' + language + '|' + today + '|v2';
+  const raw = [...productNames].sort().join(',') + '|' + [...dietaryPrefs].sort().join(',') + '|' + language + '|' + today + '|v3';
   const cacheKey = `gemini-recipes-${hashString(raw).toString(36)}`;
 
   const cached = localStorage.getItem(cacheKey);
@@ -49,8 +49,8 @@ export async function fetchGeminiRecipes(
 ${dietLabel}
 Suggest 5 recipes using mostly these ingredients. Common pantry staples (salt, pepper, oil, flour, garlic, butter) are available.
 Respond ONLY in ${langLabel}. Return ONLY a valid JSON array with no markdown or explanation:
-[{"name":"...","ingredients":[{"name":"...","quantity":"..."}],"instructions":"...","prepTime":"...","difficulty":"..."}]
-For "instructions", write each step on its own line separated by \\n, like: "1. Preheat oven.\\n2. Mix ingredients.\\n3. Bake 30 min."
+[{"name":"...","ingredients":[{"name":"...","quantity":"..."}],"instructions":["step 1","step 2","step 3"],"prepTime":"...","difficulty":"..."}]
+"instructions" must be a JSON array of strings, one string per step (no numbering in the text).
 difficulty must be one of: ${difficultyOptions}`;
 
   try {
@@ -94,7 +94,7 @@ difficulty must be one of: ${difficultyOptions}`;
       thumbnail: '',
       category: r.difficulty || '',
       area: r.prepTime || '',
-      instructions: r.instructions,
+      instructions: Array.isArray(r.instructions) ? r.instructions.join('\n') : r.instructions,
       ingredients: r.ingredients.map(ing => ({ name: ing.name, measure: ing.quantity })),
     }));
 
