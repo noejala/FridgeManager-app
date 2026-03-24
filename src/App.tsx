@@ -281,6 +281,7 @@ function App() {
   };
 
   const handleLogout = async () => {
+    localStorage.removeItem(TAB_STORAGE_KEY);
     await supabase.auth.signOut();
   };
 
