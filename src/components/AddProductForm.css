@@ -115,6 +115,16 @@
   margin-bottom: 1.25rem;
 }
 
+.date-error-msg {
+  font-size: 0.8rem;
+  color: var(--red);
+  background: var(--red-bg);
+  border: 1px solid rgba(220, 50, 50, 0.2);
+  border-radius: 8px;
+  padding: 0.55rem 0.875rem;
+  margin-bottom: 0.75rem;
+}
+
 .add-product-form {
   background: var(--bg-card);
   border: 1px solid var(--border-hover);

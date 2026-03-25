@@ -4,6 +4,7 @@ import { User } from '@supabase/supabase-js';
 import { Product } from './types/Product';
 import { supabase } from './lib/supabase';
 import { fetchProducts, fetchRecentlyConsumed, insertProduct, updateProduct, deleteProduct, deleteAllProducts, consumeProduct, restoreProduct } from './utils/productService';
+import { lookupBarcode, FoodFactsResult } from './utils/foodFactsApi';
 import { fetchUserProfile } from './utils/userProfileService';
 import { DietaryPreference } from './types/UserProfile';
 import { isExpired, isExpiringSoon } from './utils/storage';
@@ -54,6 +55,7 @@ function App() {
   });
   const [dietaryPreferences, setDietaryPreferences] = useState<DietaryPreference[]>([]);
   const [dislikedIngredients, setDislikedIngredients] = useState<string[]>([]);
+  const [scanPrefill, setScanPrefill] = useState<FoodFactsResult | null>(null);
   const [scrolledDown, setScrolledDown] = useState(false);
   const lastScrollY = useRef(0);
 
@@ -285,6 +287,12 @@ function App() {
     await supabase.auth.signOut();
   };
 
+  const handleFridgeBarcode = useCallback(async (barcode: string) => {
+    setActiveTab('add-product');
+    const result = await lookupBarcode(barcode);
+    setScanPrefill(result);
+  }, []);
+
   const renderTabContent = () => (
     <>
       <div hidden={activeTab !== 'add-product'}>
@@ -292,6 +300,8 @@ function App() {
           onAdd={async (data) => { await handleAddProduct(data); setActiveTab('fridge'); }}
           isFormOpen={true}
           onFormOpenChange={() => setActiveTab('fridge')}
+          prefill={scanPrefill}
+          onPrefillApplied={() => setScanPrefill(null)}
         />
       </div>
       <div hidden={activeTab !== 'fridge'}>
@@ -306,6 +316,7 @@ function App() {
             onAdd={handleAddProduct}
             isFormOpen={false}
             onFormOpenChange={(open) => open && setActiveTab('add-product')}
+            onScanBarcode={handleFridgeBarcode}
           />
         )}
         <ProductList

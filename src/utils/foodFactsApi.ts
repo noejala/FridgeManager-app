@@ -9,13 +9,27 @@ export interface FoodFactsResult {
 
 // Maps Open Food Facts category tags to our ProductCategory
 const CATEGORY_TAG_MAP: { tag: string; category: ProductCategory }[] = [
+  // Milk
+  { tag: 'en:milks', category: 'Milk' },
+  { tag: 'en:plant-milks', category: 'Milk' },
+  // Cream
+  { tag: 'en:creams', category: 'Cream' },
+  { tag: 'en:cooking-creams', category: 'Cream' },
+  { tag: 'en:whipping-creams', category: 'Cream' },
+  // Juice
+  { tag: 'en:fruit-juices', category: 'Juice' },
+  { tag: 'en:fruit-nectars', category: 'Juice' },
+  // Sauces
+  { tag: 'en:sauces', category: 'Sauces' },
+  { tag: 'en:condiments', category: 'Sauces' },
+  { tag: 'en:ketchup', category: 'Sauces' },
+  { tag: 'en:mustards', category: 'Sauces' },
+  { tag: 'en:mayonnaises', category: 'Sauces' },
   // Dairy
   { tag: 'en:dairy', category: 'Dairy' },
-  { tag: 'en:milks', category: 'Dairy' },
   { tag: 'en:cheeses', category: 'Dairy' },
   { tag: 'en:yogurts', category: 'Dairy' },
   { tag: 'en:butters', category: 'Dairy' },
-  { tag: 'en:creams', category: 'Dairy' },
   { tag: 'en:eggs', category: 'Dairy' },
   // Fruits
   { tag: 'en:fruits', category: 'Fruits' },
@@ -36,7 +50,6 @@ const CATEGORY_TAG_MAP: { tag: string; category: ProductCategory }[] = [
   { tag: 'en:waters', category: 'Beverages' },
   { tag: 'en:beers', category: 'Beverages' },
   { tag: 'en:wines', category: 'Beverages' },
-  { tag: 'en:fruit-juices', category: 'Beverages' },
   { tag: 'en:sodas', category: 'Beverages' },
   // Frozen
   { tag: 'en:frozen-foods', category: 'Frozen' },
@@ -73,10 +86,10 @@ function parseQuantity(raw: string): { quantity: number; unit: string } | null {
     const count = parseFloat(multiMatch[1]);
     const amount = parseFloat(multiMatch[2].replace(',', '.'));
     const rawUnit = multiMatch[3].toLowerCase();
+    // Convert cl → mL before multiplying (e.g. 6×50 cl = 6×500 mL = 3000 mL)
+    if (rawUnit === 'cl') return { quantity: count * amount * 10, unit: 'mL' };
     const unit = UNIT_MAP[rawUnit] ?? rawUnit;
-    // Return total quantity (e.g. 6×50 cl = 300 mL)
-    const totalAmount = count * amount;
-    return { quantity: totalAmount, unit };
+    return { quantity: count * amount, unit };
   }
 
   const match = raw.match(/([\d.,]+)\s*([a-zA-Z]+)/);

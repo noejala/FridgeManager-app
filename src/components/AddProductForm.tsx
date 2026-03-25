@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Product, ProductCategory } from '../types/Product';
 import { guessCategory } from '../utils/categoryMapping';
 import { estimateExpirationDate, estimateExpirationFromOpenDate, isProductRecognized } from '../utils/shelfLife';
-import { lookupBarcode } from '../utils/foodFactsApi';
+import { lookupBarcode, FoodFactsResult } from '../utils/foodFactsApi';
 import { BarcodeScanner } from './BarcodeScanner';
 import './AddProductForm.css';
 
@@ -11,6 +11,9 @@ interface AddProductFormProps {
   onAdd: (product: Omit<Product, 'id' | 'addedDate'>) => Promise<void>;
   isFormOpen: boolean;
   onFormOpenChange: (open: boolean) => void;
+  prefill?: FoodFactsResult | null;
+  onPrefillApplied?: () => void;
+  onScanBarcode?: (barcode: string) => void;
 }
 
 const CATEGORIES: ProductCategory[] = [
@@ -31,7 +34,7 @@ const CATEGORIES: ProductCategory[] = [
 const isOpenableCategory = (cat: ProductCategory) =>
   ['Sauces', 'Milk', 'Juice', 'Cream'].includes(cat);
 
-export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange }: AddProductFormProps) => {
+export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, onPrefillApplied, onScanBarcode }: AddProductFormProps) => {
   const { t } = useTranslation();
   const [fabOpen, setFabOpen] = useState(false);
   const [fabVisible, setFabVisible] = useState(true);
@@ -64,6 +67,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange }: AddProdu
   }, [isFormOpen]);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [dateError, setDateError] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
   const [isLookingUp, setIsLookingUp] = useState(false);
   const [lookupError, setLookupError] = useState<string | null>(null);
@@ -94,16 +98,33 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange }: AddProdu
     if (part === 'year')  setExpYear(val);
     if (newDay && newMonth && newYear) {
       setExpirationDate(`${newYear}-${newMonth.padStart(2, '0')}-${newDay.padStart(2, '0')}`);
+      setDateError(false);
     } else {
       setExpirationDate('');
     }
   };
 
+  useEffect(() => {
+    if (!prefill) return;
+    setName(prefill.name);
+    setCategory(prefill.category === 'Other' ? guessCategory(prefill.name) : prefill.category);
+    setQuantity(String(prefill.quantity));
+    setUnit(prefill.unit);
+    onPrefillApplied?.();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [prefill]);
+
   const recognized = isProductRecognized(name);
 
-  const handleBarcodeDetected = async (barcode: string) => {
+  const handleBarcodeDetected = useCallback(async (barcode: string) => {
     setIsScanning(false);
-    onFormOpenChange(true);
+
+    // When scanning from the fridge tab, delegate to App.tsx which owns the add-product form
+    if (onScanBarcode) {
+      onScanBarcode(barcode);
+      return;
+    }
+
     setIsLookingUp(true);
     setLookupError(null);
 
@@ -119,7 +140,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange }: AddProdu
     }
 
     setIsLookingUp(false);
-  };
+  }, [onFormOpenChange, onScanBarcode]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -129,7 +150,10 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange }: AddProdu
       : (unknownExpiration && recognized)
         ? estimateExpirationDate(name, purchaseDate || undefined)
         : expirationDate;
-    if (!name || !finalExpirationDate) return;
+    if (!name || !finalExpirationDate) {
+      if (!finalExpirationDate) setDateError(true);
+      return;
+    }
 
     const quantityNum = Number(quantity);
     if (isNaN(quantityNum) || quantityNum <= 0) {
@@ -414,6 +438,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange }: AddProdu
               if (val) {
                 const [y, m, d] = val.split('-');
                 setExpYear(y); setExpMonth(m); setExpDay(d);
+                setDateError(false);
               } else {
                 setExpYear(''); setExpMonth(''); setExpDay('');
               }
@@ -469,7 +494,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange }: AddProdu
             id="expirationDate"
             type="date"
             value={expirationDate}
-            onChange={(e) => setExpirationDate(e.target.value)}
+            onChange={(e) => { setExpirationDate(e.target.value); if (e.target.value) setDateError(false); }}
             min={minDate}
             required
           />
@@ -488,6 +513,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange }: AddProdu
               if (val) {
                 const [y, m, d] = val.split('-');
                 setExpYear(y); setExpMonth(m); setExpDay(d);
+                setDateError(false);
               } else {
                 setExpYear(''); setExpMonth(''); setExpDay('');
               }
@@ -527,8 +553,20 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange }: AddProdu
         </div>
       )}
 
+      {dateError && (
+        <p className="date-error-msg">Veuillez ajouter une date d'expiration</p>
+      )}
+
       <div className="form-actions">
-        <button type="button" className="cancel-btn" onClick={() => onFormOpenChange(false)} disabled={isLoading || isLookingUp}>
+        <button type="button" className="cancel-btn" onClick={() => {
+          setName(''); setCategory('Other'); setExpirationDate('');
+          setQuantity('1'); setUnit('unit'); setUnknownExpiration(false);
+          setPurchaseDate(''); setIsOpened(false);
+          setSauceOpenedDate(new Date().toISOString().split('T')[0]);
+          setExpDay(''); setExpMonth(''); setExpYear('');
+          setLookupError(null);
+          onFormOpenChange(false);
+        }} disabled={isLoading || isLookingUp}>
           {t('form.cancel')}
         </button>
         <button type="submit" className="submit-btn" disabled={isLoading || isLookingUp}>
