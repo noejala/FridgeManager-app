@@ -524,7 +524,16 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
               <div className="recipe-info">
                 <h3>{recipe.meal.name}</h3>
                 <div className="recipe-match-info">
-                  {recipe.missing.length === 0 ? (
+                  {recipe.meal.id.startsWith('gemini-') ? (
+                    <>
+                      {recipe.meal.category && (
+                        <span className={`match-badge difficulty difficulty--${['facile','easy'].includes(recipe.meal.category.toLowerCase()) ? 'easy' : ['moyen','medium'].includes(recipe.meal.category.toLowerCase()) ? 'medium' : 'hard'}`}>
+                          {recipe.meal.category}
+                        </span>
+                      )}
+                      {recipe.meal.area && <span className="match-badge preptime">⏱ {recipe.meal.area}</span>}
+                    </>
+                  ) : recipe.missing.length === 0 ? (
                     <span className="match-badge ready">{t('cook.readyToCook')}</span>
                   ) : (
                     <span className="match-badge to-buy">

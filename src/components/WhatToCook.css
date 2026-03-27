@@ -505,6 +505,26 @@
   color: var(--amber);
 }
 
+.match-badge.difficulty--easy {
+  background: var(--green-bg);
+  color: var(--green);
+}
+
+.match-badge.difficulty--medium {
+  background: var(--amber-bg);
+  color: var(--amber);
+}
+
+.match-badge.difficulty--hard {
+  background: var(--red-bg);
+  color: var(--red);
+}
+
+.match-badge.preptime {
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+}
+
 /* Modal */
 .modal-overlay {
   position: fixed;
