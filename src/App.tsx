@@ -43,6 +43,7 @@ function App() {
   const { t } = useTranslation();
   const { permission, requestPermission, checkAndNotify } = useProductNotifications();
   const [user, setUser] = useState<User | null>(null);
+  const [modalKey, setModalKey] = useState(0);
   const [authLoading, setAuthLoading] = useState(true);
   const [products, setProducts] = useState<Product[]>([]);
   const [consumedProducts, setConsumedProducts] = useState<Product[]>([]);
@@ -97,8 +98,13 @@ function App() {
       setAuthLoading(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
+      if (event === 'SIGNED_IN') {
+        // Only clear snooze on login — "never" persists across sessions
+        localStorage.removeItem('notif-permission-snoozed-until');
+        setModalKey(k => k + 1);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -357,10 +363,15 @@ function App() {
     <div className="app">
       <header className={`app-header${scrolledDown ? ' header-hidden' : ''}`}>
         <div className="app-header-controls">
-          {permission === 'default' && (
+          {permission !== 'granted' && (
             <button
               className="notif-btn"
-              onClick={requestPermission}
+              onClick={() => {
+                localStorage.removeItem('notif-permission-dismissed');
+                localStorage.removeItem('notif-permission-snoozed-until');
+                setModalKey(k => k + 1);
+                requestPermission();
+              }}
               title={t('notifications.enable')}
             >
               🔔
@@ -385,7 +396,7 @@ function App() {
       {notification && (
         <div className="toast-notification">{notification}</div>
       )}
-      <NotifPermissionModal permission={permission} onRequest={requestPermission} />
+      <NotifPermissionModal key={modalKey} permission={permission} onRequest={requestPermission} />
       <InstallBanner />
       {pendingProduct && (
         <DuplicateModal

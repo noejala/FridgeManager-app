@@ -30,7 +30,7 @@ export function NotifPermissionModal({ permission, onRequest }: Props) {
     () => localStorage.getItem(DISMISSED_KEY) === 'true' || isSnoozed()
   );
 
-  if (!isStandaloneMode() || permission !== 'default' || dismissed) return null;
+  if (!isStandaloneMode() || permission === 'granted' || dismissed) return null;
 
   const handleAllow = async () => {
     await onRequest();

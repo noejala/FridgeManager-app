@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Product } from '../types/Product';
 import { getDaysUntilExpiration } from '../utils/storage';
 import { supabase } from '../lib/supabase';
@@ -48,14 +48,26 @@ export function useProductNotifications() {
     return Notification.permission;
   });
 
+  // Sync from actual browser permission on mount — handles PWA restart after granting
+  useEffect(() => {
+    if (!isSupported) return;
+    if (Notification.permission === 'granted') {
+      localStorage.setItem(PERMISSION_GRANTED_KEY, 'true');
+      setPermission('granted');
+    }
+  }, []);
+
   const requestPermission = useCallback(async () => {
-    if (!isSupported) return 'denied' as NotificationPermission;
+    if (!isSupported) { console.log('[Notif] not supported'); return 'denied' as NotificationPermission; }
+    console.log('[Notif] requesting, Notification.permission before:', Notification.permission);
     const result = await Notification.requestPermission();
-    setPermission(result);
+    console.log('[Notif] result:', result);
     if (result === 'granted') {
       localStorage.setItem(PERMISSION_GRANTED_KEY, 'true');
       subscribeToPush().catch(console.error);
     }
+    setPermission(result);
+    console.log('[Notif] setPermission called with:', result);
     return result;
   }, []);
 
