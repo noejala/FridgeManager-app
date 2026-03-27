@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Product } from '../types/Product';
 import { DietaryPreference } from '../types/UserProfile';
 import { searchByIngredient, getMealDetails, MealDetails, singularize } from '../utils/mealApi';
-import { fetchGeminiRecipes } from '../utils/geminiApi';
+import { fetchGeminiRecipes, CookingMode } from '../utils/geminiApi';
 import { toEnglishIngredient } from '../utils/ingredientTranslation';
 import { getDaysUntilExpiration } from '../utils/storage';
 import './WhatToCook.css';
@@ -254,13 +254,24 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
     if (!geminiEnabled || userId !== GEMINI_ALLOWED_USER) return 'api';
     return (localStorage.getItem('recipe-mode') as 'api' | 'ai') || 'api';
   });
+  const [selectedCookingMode, setSelectedCookingMode] = useState<CookingMode | null>(null);
 
   useEffect(() => {
     localStorage.setItem('recipe-mode', recipeMode);
+    if (recipeMode === 'api') {
+      setSelectedCookingMode(null);
+      setRecipes([]);
+    }
   }, [recipeMode]);
 
   const fetchRecipes = useCallback(async () => {
     if (products.length === 0) {
+      setRecipes([]);
+      return;
+    }
+
+    // In AI mode, wait for the user to pick a cooking mode
+    if (recipeMode === 'ai' && !selectedCookingMode) {
       setRecipes([]);
       return;
     }
@@ -281,7 +292,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       let isAiMode = false;
 
       if (recipeMode === 'ai') {
-        const geminiResults = await fetchGeminiRecipes(fridgeNames, dietaryPreferences, i18n.language);
+        const geminiResults = await fetchGeminiRecipes(fridgeNames, dietaryPreferences, i18n.language, selectedCookingMode ?? undefined, urgentFridgeNames);
         if (geminiResults.length > 0) {
           meals = geminiResults;
           isAiMode = true;
@@ -335,7 +346,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       fetchingRef.current = false;
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [products, recipeMode, dietaryPreferences.join(','), i18n.language]);
+  }, [products, recipeMode, selectedCookingMode, dietaryPreferences.join(','), i18n.language]);
 
   useEffect(() => {
     fetchRecipes();
@@ -399,6 +410,14 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
           <p className="cook-subtitle">
             {t('cook.recipesBasedOn', { count: products.length })}
           </p>
+          {recipeMode === 'ai' && selectedCookingMode && (
+            <button
+              className="change-cooking-mode-btn"
+              onClick={() => { setSelectedCookingMode(null); setRecipes([]); }}
+            >
+              {t(`cook.cookingModes.${selectedCookingMode}.icon`)} {t(`cook.cookingModes.${selectedCookingMode}.label`)} ↩
+            </button>
+          )}
           <div className="servings-stepper">
             <button
               className="stepper-btn"
@@ -416,6 +435,28 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
           </div>
         </div>
       </div>
+
+      {recipeMode === 'ai' && !selectedCookingMode && (
+        <div className="cooking-mode-picker">
+          <div className="cooking-mode-picker-header">
+            <h3>{t('cook.cookingModes.title')}</h3>
+            <p>{t('cook.cookingModes.subtitle')}</p>
+          </div>
+          <div className="cooking-mode-grid">
+            {(['quick', 'empty_fridge', 'expiring', 'seasonal', 'chef'] as CookingMode[]).map((mode) => (
+              <button
+                key={mode}
+                className="cooking-mode-card"
+                onClick={() => setSelectedCookingMode(mode)}
+              >
+                <span className="cooking-mode-icon">{t(`cook.cookingModes.${mode}.icon`)}</span>
+                <span className="cooking-mode-label">{t(`cook.cookingModes.${mode}.label`)}</span>
+                <span className="cooking-mode-desc">{t(`cook.cookingModes.${mode}.description`)}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {recipeMode === 'ai' && aiFallback && !loading && (
         <div className="ai-fallback-notice">

@@ -124,7 +124,37 @@
     "modeAi": "✨ AI",
     "aiComingSoon": "👨‍🍳 Noé is cooking... this feature is coming soon!",
     "searchingAi": "Generating AI recipes…",
-    "aiFallback": "Gemini unavailable (rate limit reached) — showing classic recipes."
+    "aiFallback": "Gemini unavailable (rate limit reached) — showing classic recipes.",
+    "changeCookingMode": "Change mode",
+    "cookingModes": {
+      "title": "How do you want to cook?",
+      "subtitle": "Pick a mode and we'll generate 5 personalised recipes",
+      "quick": {
+        "icon": "⚡",
+        "label": "Quick & easy",
+        "description": "Ready in under 30 minutes, no fuss"
+      },
+      "empty_fridge": {
+        "icon": "🧹",
+        "label": "Empty my fridge",
+        "description": "Use as many available ingredients as possible"
+      },
+      "expiring": {
+        "icon": "⏰",
+        "label": "Before it expires",
+        "description": "Priority on products expiring soon"
+      },
+      "seasonal": {
+        "icon": "🌿",
+        "label": "Cook seasonally",
+        "description": "Recipes that celebrate what's in season"
+      },
+      "chef": {
+        "icon": "👨‍🍳",
+        "label": "Chef's recipe",
+        "description": "An elaborate, technical and refined dish"
+      }
+    }
   },
   "categories": {
     "Fruits": "Fruits",
