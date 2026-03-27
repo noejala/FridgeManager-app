@@ -200,6 +200,27 @@ async function fetchMealDbMeals(fridgeNames: string[]): Promise<(MealDetails | n
   return Promise.all(ids.map((id) => getMealDetails(id)));
 }
 
+const DIFFICULTY_RANK: Record<string, number> = {
+  facile: 1, easy: 1,
+  moyen: 2, medium: 2,
+  difficile: 3, hard: 3,
+};
+
+function parsePrepMinutes(area: string): number {
+  const h = area.match(/(\d+)\s*h/i);
+  const m = area.match(/(\d+)\s*m/i);
+  return (h ? parseInt(h[1]) * 60 : 0) + (m ? parseInt(m[1]) : 0) || 999;
+}
+
+function sortGeminiRecipes(recipes: RecipeMatch[]): RecipeMatch[] {
+  return [...recipes].sort((a, b) => {
+    const da = DIFFICULTY_RANK[a.meal.category?.toLowerCase() ?? ''] ?? 2;
+    const db = DIFFICULTY_RANK[b.meal.category?.toLowerCase() ?? ''] ?? 2;
+    if (da !== db) return da - db;
+    return parsePrepMinutes(a.meal.area ?? '') - parsePrepMinutes(b.meal.area ?? '');
+  });
+}
+
 function scoreRecipe(recipe: RecipeMatch): number {
   return recipe.available.length * 10 + recipe.urgentAvailableCount * 15 - recipe.missing.length * 2;
 }
@@ -305,8 +326,8 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
         }
       }
 
-      matched.sort((a, b) => scoreRecipe(b) - scoreRecipe(a));
-      setRecipes(matched);
+      const sorted = isAiMode ? sortGeminiRecipes(matched) : matched.sort((a, b) => scoreRecipe(b) - scoreRecipe(a));
+      setRecipes(sorted);
     } catch {
       setError(t('cook.failedFetch'));
     } finally {
