@@ -14,9 +14,6 @@
   margin-top: 0.25rem;
 }
 
-.cook-subtitle-row .servings-stepper {
-  flex-shrink: 0;
-}
 
 .servings-stepper {
   display: flex;
@@ -30,10 +27,10 @@
 .stepper-btn {
   background: transparent;
   border: none;
-  width: 2rem;
-  height: 2rem;
+  width: 1.6rem;
+  height: 1.6rem;
   cursor: pointer;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   color: var(--text-secondary);
   display: flex;
   align-items: center;
@@ -54,15 +51,15 @@
 }
 
 .servings-value {
-  min-width: 2rem;
+  min-width: 2.2rem;
   text-align: center;
-  font-size: 0.95rem;
+  font-size: 0.78rem;
   font-weight: 600;
   color: var(--text);
   border-left: 1px solid var(--border);
   border-right: 1px solid var(--border);
-  line-height: 2rem;
-  padding: 0 0.5rem;
+  line-height: 1.6rem;
+  padding: 0 0.4rem;
 }
 
 .servings-unit {

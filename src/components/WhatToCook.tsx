@@ -407,6 +407,21 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
               </button>
             </div>
           )}
+          <div className="servings-stepper">
+            <button
+              className="stepper-btn"
+              onClick={() => setServings(s => Math.max(1, s - 1))}
+              disabled={servings <= 1}
+            >−</button>
+            <span className="servings-value">
+              {servings} <span className="servings-unit">{t('cook.servingsUnit')}</span>
+            </span>
+            <button
+              className="stepper-btn"
+              onClick={() => setServings(s => Math.min(20, s + 1))}
+              disabled={servings >= 20}
+            >+</button>
+          </div>
         </div>
         <div className="cook-subtitle-row">
           {!(recipeMode === 'ai' && selectedCookingMode && selectedCourse) && (
@@ -430,21 +445,6 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
               </button>
             </>
           )}
-          <div className="servings-stepper">
-            <button
-              className="stepper-btn"
-              onClick={() => setServings(s => Math.max(1, s - 1))}
-              disabled={servings <= 1}
-            >−</button>
-            <span className="servings-value">
-              {servings} <span className="servings-unit">{t('cook.servingsUnit')}</span>
-            </span>
-            <button
-              className="stepper-btn"
-              onClick={() => setServings(s => Math.min(20, s + 1))}
-              disabled={servings >= 20}
-            >+</button>
-          </div>
         </div>
       </div>
 
