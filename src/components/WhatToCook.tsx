@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Product } from '../types/Product';
 import { DietaryPreference } from '../types/UserProfile';
 import { searchByIngredient, getMealDetails, MealDetails, singularize } from '../utils/mealApi';
-import { fetchGeminiRecipes, CookingMode } from '../utils/geminiApi';
+import { fetchGeminiRecipes, CookingMode, CourseSelection } from '../utils/geminiApi';
 import { toEnglishIngredient } from '../utils/ingredientTranslation';
 import { getDaysUntilExpiration } from '../utils/storage';
 import './WhatToCook.css';
@@ -255,11 +255,13 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
     return (localStorage.getItem('recipe-mode') as 'api' | 'ai') || 'api';
   });
   const [selectedCookingMode, setSelectedCookingMode] = useState<CookingMode | null>(null);
+  const [selectedCourse, setSelectedCourse] = useState<CourseSelection | null>(null);
 
   useEffect(() => {
     localStorage.setItem('recipe-mode', recipeMode);
     if (recipeMode === 'api') {
       setSelectedCookingMode(null);
+      setSelectedCourse(null);
       setRecipes([]);
     }
   }, [recipeMode]);
@@ -270,8 +272,8 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       return;
     }
 
-    // In AI mode, wait for the user to pick a cooking mode
-    if (recipeMode === 'ai' && !selectedCookingMode) {
+    // In AI mode, wait for the user to pick a cooking mode and a course
+    if (recipeMode === 'ai' && (!selectedCookingMode || !selectedCourse)) {
       setRecipes([]);
       return;
     }
@@ -292,7 +294,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       let isAiMode = false;
 
       if (recipeMode === 'ai') {
-        const geminiResults = await fetchGeminiRecipes(fridgeNames, dietaryPreferences, i18n.language, selectedCookingMode ?? undefined, urgentFridgeNames);
+        const geminiResults = await fetchGeminiRecipes(fridgeNames, dietaryPreferences, i18n.language, selectedCookingMode ?? undefined, urgentFridgeNames, selectedCourse ?? undefined);
         if (geminiResults.length > 0) {
           meals = geminiResults;
           isAiMode = true;
@@ -346,7 +348,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       fetchingRef.current = false;
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [products, recipeMode, selectedCookingMode, dietaryPreferences.join(','), i18n.language]);
+  }, [products, recipeMode, selectedCookingMode, selectedCourse, dietaryPreferences.join(','), i18n.language]);
 
   useEffect(() => {
     fetchRecipes();
@@ -410,13 +412,21 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
           <p className="cook-subtitle">
             {t('cook.recipesBasedOn', { count: products.length })}
           </p>
-          {recipeMode === 'ai' && selectedCookingMode && (
-            <button
-              className="change-cooking-mode-btn"
-              onClick={() => { setSelectedCookingMode(null); setRecipes([]); }}
-            >
-              {t(`cook.cookingModes.${selectedCookingMode}.icon`)} {t(`cook.cookingModes.${selectedCookingMode}.label`)} ↩
-            </button>
+          {recipeMode === 'ai' && selectedCookingMode && selectedCourse && (
+            <>
+              <button
+                className="change-cooking-mode-btn"
+                onClick={() => { setSelectedCookingMode(null); setSelectedCourse(null); setRecipes([]); }}
+              >
+                {t(`cook.cookingModes.${selectedCookingMode}.icon`)} {t(`cook.cookingModes.${selectedCookingMode}.label`)} ↩
+              </button>
+              <button
+                className="change-cooking-mode-btn"
+                onClick={() => { setSelectedCourse(null); setRecipes([]); }}
+              >
+                {t(`cook.coursePicker.${selectedCourse}.icon`)} {t(`cook.coursePicker.${selectedCourse}.label`)} ↩
+              </button>
+            </>
           )}
           <div className="servings-stepper">
             <button
@@ -458,6 +468,34 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
         </div>
       )}
 
+      {recipeMode === 'ai' && selectedCookingMode && !selectedCourse && (
+        <div className="cooking-mode-picker">
+          <div className="cooking-mode-picker-header">
+            <button
+              className="course-picker-back"
+              onClick={() => setSelectedCookingMode(null)}
+            >
+              ← {t(`cook.cookingModes.${selectedCookingMode}.icon`)} {t(`cook.cookingModes.${selectedCookingMode}.label`)}
+            </button>
+            <h3>{t('cook.coursePicker.title')}</h3>
+            <p>{t('cook.coursePicker.subtitle')}</p>
+          </div>
+          <div className="cooking-mode-grid">
+            {(['starter', 'main', 'dessert', 'all'] as CourseSelection[]).map((course) => (
+              <button
+                key={course}
+                className="cooking-mode-card"
+                onClick={() => setSelectedCourse(course)}
+              >
+                <span className="cooking-mode-icon">{t(`cook.coursePicker.${course}.icon`)}</span>
+                <span className="cooking-mode-label">{t(`cook.coursePicker.${course}.label`)}</span>
+                <span className="cooking-mode-desc">{t(`cook.coursePicker.${course}.description`)}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {recipeMode === 'ai' && aiFallback && !loading && (
         <div className="ai-fallback-notice">
           ⚠️ {t('cook.aiFallback')}
@@ -479,7 +517,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
         </div>
       )}
 
-      {!loading && !error && recipes.length === 0 && !(recipeMode === 'ai' && !selectedCookingMode) && (
+      {!loading && !error && recipes.length === 0 && !(recipeMode === 'ai' && (!selectedCookingMode || !selectedCourse)) && (
         <div className="empty-suggestions">
           <div className="empty-icon">🔍</div>
           <p>{t('cook.noRecipes')}</p>

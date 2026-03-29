@@ -19,6 +19,7 @@ export interface MealDetails {
   area: string;
   instructions: string;
   ingredients: { name: string; measure: string }[];
+  course?: 'starter' | 'main' | 'dessert';
 }
 
 interface ApiMealSummary {

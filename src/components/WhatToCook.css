@@ -375,6 +375,26 @@
   line-height: 1.4;
 }
 
+/* Course picker back button */
+.course-picker-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  margin-bottom: 0.75rem;
+  transition: color 0.15s;
+}
+
+.course-picker-back:hover {
+  color: var(--accent);
+}
+
 /* Change cooking mode button */
 .change-cooking-mode-btn {
   display: inline-flex;

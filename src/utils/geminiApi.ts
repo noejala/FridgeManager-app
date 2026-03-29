@@ -2,6 +2,7 @@ import { MealDetails } from './mealApi';
 import { DietaryPreference } from '../types/UserProfile';
 
 export type CookingMode = 'quick' | 'empty_fridge' | 'expiring' | 'seasonal' | 'chef';
+export type CourseSelection = 'starter' | 'main' | 'dessert' | 'all';
 
 function hashString(s: string): number {
   let h = 0;
@@ -17,6 +18,7 @@ interface GeminiRecipeRaw {
   instructions: string | string[];
   prepTime: string;
   difficulty: string;
+  course?: 'starter' | 'main' | 'dessert';
 }
 
 export async function fetchGeminiRecipes(
@@ -24,7 +26,8 @@ export async function fetchGeminiRecipes(
   dietaryPrefs: DietaryPreference[],
   language: string,
   cookingMode?: CookingMode,
-  expiringNames?: string[]
+  expiringNames?: string[],
+  courseSelection?: CourseSelection
 ): Promise<MealDetails[]> {
   const rateLimitUntil = localStorage.getItem('gemini-ratelimit-until');
   if (rateLimitUntil && Date.now() < Number(rateLimitUntil)) {
@@ -33,7 +36,7 @@ export async function fetchGeminiRecipes(
   }
 
   const today = new Date().toISOString().slice(0, 10);
-  const raw = [...productNames].sort().join(',') + '|' + [...dietaryPrefs].sort().join(',') + '|' + language + '|' + today + '|' + (cookingMode ?? 'none') + '|v8';
+  const raw = [...productNames].sort().join(',') + '|' + [...dietaryPrefs].sort().join(',') + '|' + language + '|' + today + '|' + (cookingMode ?? 'none') + '|' + (courseSelection ?? 'none') + '|v9';
   const cacheKey = `gemini-recipes-${hashString(raw).toString(36)}`;
 
   const cached = localStorage.getItem(cacheKey);
@@ -76,14 +79,35 @@ export async function fetchGeminiRecipes(
       : 'Suggest elaborate, chef-level recipes with refined techniques, sophisticated plating, and complex flavors. Difficulty is a feature. Give each recipe a short, elegant name (3 words max) — not a list of ingredients.';
   }
 
-  const recipeCount = cookingMode === 'chef' ? 2 : 5;
+  const isChef = cookingMode === 'chef';
+  const isAll = courseSelection === 'all';
+  const perCourse = isChef ? 1 : 2;
+  const recipeCount = isAll ? perCourse * 3 : (isChef ? 2 : 4);
+
+  let courseInstruction = '';
+  if (isAll) {
+    courseInstruction = isFrench
+      ? `Génère exactement ${perCourse} entrée${perCourse > 1 ? 's' : ''}, ${perCourse} plat${perCourse > 1 ? 's' : ''} principal${perCourse > 1 ? 'x' : ''} et ${perCourse} dessert${perCourse > 1 ? 's' : ''}. Chaque recette doit inclure un champ "course" avec la valeur "starter", "main" ou "dessert".`
+      : `Generate exactly ${perCourse} starter${perCourse > 1 ? 's' : ''}, ${perCourse} main course${perCourse > 1 ? 's' : ''}, and ${perCourse} dessert${perCourse > 1 ? 's' : ''}. Each recipe must include a "course" field set to "starter", "main", or "dessert".`;
+  } else if (courseSelection === 'starter') {
+    courseInstruction = isFrench ? 'Toutes les recettes doivent être des entrées.' : 'All recipes must be starter dishes.';
+  } else if (courseSelection === 'main') {
+    courseInstruction = isFrench ? 'Toutes les recettes doivent être des plats principaux.' : 'All recipes must be main course dishes.';
+  } else if (courseSelection === 'dessert') {
+    courseInstruction = isFrench ? 'Toutes les recettes doivent être des desserts.' : 'All recipes must be desserts.';
+  }
+
+  const jsonSchema = isAll
+    ? '[{"name":"...","ingredients":[{"name":"...","quantity":"..."}],"instructions":["step 1","step 2"],"prepTime":"...","difficulty":"...","course":"starter|main|dessert"}]'
+    : '[{"name":"...","ingredients":[{"name":"...","quantity":"..."}],"instructions":["step 1","step 2"],"prepTime":"...","difficulty":"..."}]';
 
   const prompt = `You are a creative chef. I have these ingredients available: ${productNames.join(', ')}.
 ${dietLabel}
 ${modeInstruction}
+${courseInstruction}
 Suggest ${recipeCount} delicious, coherent recipes. For each recipe, use whichever ingredients naturally belong together — use all of them if it makes culinary sense, or just a few. Never force an ingredient into a recipe just because it's available. Taste and coherence always come first. Common pantry staples (salt, pepper, oil, flour, garlic, butter, onion) are available.
 Respond ONLY in ${langLabel}. Return ONLY a valid JSON array with no markdown or explanation:
-[{"name":"...","ingredients":[{"name":"...","quantity":"..."}],"instructions":["step 1","step 2","step 3"],"prepTime":"...","difficulty":"..."}]
+${jsonSchema}
 "instructions" must be a JSON array of strings, one string per step (no numbering in the text).
 difficulty must be one of: ${difficultyOptions}`;
 
@@ -130,6 +154,7 @@ difficulty must be one of: ${difficultyOptions}`;
       area: r.prepTime || '',
       instructions: Array.isArray(r.instructions) ? r.instructions.join('\n') : r.instructions,
       ingredients: r.ingredients.map(ing => ({ name: ing.name, measure: ing.quantity })),
+      ...(r.course ? { course: r.course } : courseSelection && courseSelection !== 'all' ? { course: courseSelection as 'starter' | 'main' | 'dessert' } : {}),
     }));
 
     localStorage.setItem(cacheKey, JSON.stringify(results));

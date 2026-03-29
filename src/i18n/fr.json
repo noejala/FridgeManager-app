@@ -126,9 +126,33 @@
     "searchingAi": "Génération de recettes IA…",
     "aiFallback": "Gemini indisponible (limite atteinte) — affichage des recettes classiques.",
     "changeCookingMode": "Changer de mode",
+    "coursePicker": {
+      "title": "Quel type de plat ?",
+      "subtitle": "Choisis un service, on adapte les recettes",
+      "starter": {
+        "icon": "🥗",
+        "label": "Entrée",
+        "description": "Soupes, salades, amuse-bouches"
+      },
+      "main": {
+        "icon": "🍽️",
+        "label": "Plat principal",
+        "description": "Le cœur du repas"
+      },
+      "dessert": {
+        "icon": "🍰",
+        "label": "Dessert",
+        "description": "La touche sucrée finale"
+      },
+      "all": {
+        "icon": "🎯",
+        "label": "Les 3 services",
+        "description": "Un menu complet, de l'entrée au dessert"
+      }
+    },
     "cookingModes": {
       "title": "Comment tu veux cuisiner ?",
-      "subtitle": "Choisis un mode, on génère 5 recettes personnalisées",
+      "subtitle": "Choisis un mode, on génère des recettes personnalisées",
       "quick": {
         "icon": "⚡",
         "label": "Rapide & efficace",

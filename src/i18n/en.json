@@ -126,9 +126,33 @@
     "searchingAi": "Generating AI recipes…",
     "aiFallback": "Gemini unavailable (rate limit reached) — showing classic recipes.",
     "changeCookingMode": "Change mode",
+    "coursePicker": {
+      "title": "What type of dish?",
+      "subtitle": "Pick a course and we'll tailor the recipes",
+      "starter": {
+        "icon": "🥗",
+        "label": "Starter",
+        "description": "Soups, salads, appetizers"
+      },
+      "main": {
+        "icon": "🍽️",
+        "label": "Main course",
+        "description": "The heart of the meal"
+      },
+      "dessert": {
+        "icon": "🍰",
+        "label": "Dessert",
+        "description": "Sweet endings"
+      },
+      "all": {
+        "icon": "🎯",
+        "label": "All 3 courses",
+        "description": "A full menu, starter to dessert"
+      }
+    },
     "cookingModes": {
       "title": "How do you want to cook?",
-      "subtitle": "Pick a mode and we'll generate 5 personalised recipes",
+      "subtitle": "Pick a mode and we'll generate personalised recipes",
       "quick": {
         "icon": "⚡",
         "label": "Quick & easy",
