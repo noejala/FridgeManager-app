@@ -409,9 +409,11 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
           )}
         </div>
         <div className="cook-subtitle-row">
-          <p className="cook-subtitle">
-            {t('cook.recipesBasedOn', { count: products.length })}
-          </p>
+          {!(recipeMode === 'ai' && selectedCookingMode && selectedCourse) && (
+            <p className="cook-subtitle">
+              {t('cook.recipesBasedOn', { count: products.length })}
+            </p>
+          )}
           {recipeMode === 'ai' && selectedCookingMode && selectedCourse && (
             <>
               <button
