@@ -1,7 +1,7 @@
 import { MealDetails } from './mealApi';
 import { DietaryPreference } from '../types/UserProfile';
 
-export type CookingMode = 'quick' | 'empty_fridge' | 'expiring' | 'seasonal' | 'chef';
+export type CookingMode = 'quick' | 'empty_fridge' | 'expiring' | 'chef';
 export type CourseSelection = 'starter' | 'main' | 'dessert' | 'all';
 
 function hashString(s: string): number {
@@ -68,11 +68,6 @@ export async function fetchGeminiRecipes(
     modeInstruction = isFrench
       ? `Ces ingrédients expirent bientôt : ${expiringList}. Donne-leur la priorité absolue dans les recettes.`
       : `These ingredients are expiring soon: ${expiringList}. Prioritize using them prominently in the recipes.`;
-  } else if (cookingMode === 'seasonal') {
-    const month = new Date().toLocaleString(isFrench ? 'fr-FR' : 'en-US', { month: 'long' });
-    modeInstruction = isFrench
-      ? `Nous sommes en ${month}. Propose des recettes qui mettent en valeur les saveurs et produits de saison du moment.`
-      : `It is currently ${month}. Suggest recipes that celebrate the flavors and seasonal produce of the moment.`;
   } else if (cookingMode === 'chef') {
     modeInstruction = isFrench
       ? "Propose des recettes élaborées et techniques, dignes d'un chef. Techniques raffinées, dressage soigné et saveurs complexes sont les bienvenus. La difficulté est un atout. Donne à chaque recette un nom court et élégant (3 mots maximum), pas une liste d'ingrédients."

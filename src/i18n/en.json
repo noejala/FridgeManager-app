@@ -168,11 +168,6 @@
         "label": "Before it expires",
         "description": "Priority on products expiring soon"
       },
-      "seasonal": {
-        "icon": "🌿",
-        "label": "Cook seasonally",
-        "description": "Recipes that celebrate what's in season"
-      },
       "chef": {
         "icon": "👨‍🍳",
         "label": "Chef's recipe",

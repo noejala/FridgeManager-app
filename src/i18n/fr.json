@@ -168,11 +168,6 @@
         "label": "Avant que ça expire",
         "description": "Priorité aux produits qui partent bientôt"
       },
-      "seasonal": {
-        "icon": "🌿",
-        "label": "Cuisiner de saison",
-        "description": "Des recettes qui célèbrent les produits du moment"
-      },
       "chef": {
         "icon": "👨‍🍳",
         "label": "Recette de chef",

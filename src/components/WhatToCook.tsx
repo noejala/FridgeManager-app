@@ -453,7 +453,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
             <p>{t('cook.cookingModes.subtitle')}</p>
           </div>
           <div className="cooking-mode-grid">
-            {(['quick', 'empty_fridge', 'expiring', 'seasonal', 'chef'] as CookingMode[]).map((mode) => (
+            {(['quick', 'empty_fridge', 'expiring', 'chef'] as CookingMode[]).map((mode) => (
               <button
                 key={mode}
                 className="cooking-mode-card"
