@@ -535,6 +535,73 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
         const dietFiltered = recipes.filter(r =>
           meetsPreferences(r, dietaryPreferences) && meetsDislikedFilter(r, dislikedIngredients)
         );
+
+        const renderCard = (recipe: RecipeMatch, index: number) => (
+          <div
+            key={recipe.meal.id}
+            className="recipe-card"
+            onClick={() => setSelectedRecipe(recipe)}
+            style={{ '--index': index } as React.CSSProperties}
+          >
+            {recipe.meal.thumbnail
+              ? <img src={recipe.meal.thumbnail} alt={recipe.meal.name} className="recipe-thumbnail" />
+              : <div className="recipe-thumbnail-placeholder" aria-hidden="true">✨</div>
+            }
+            <div className="recipe-info">
+              <h3>{recipe.meal.name}</h3>
+              <div className="recipe-match-info">
+                {recipe.meal.id.startsWith('gemini-') ? (
+                  <>
+                    {recipe.meal.category && (
+                      <span className={`match-badge difficulty difficulty--${['facile','easy'].includes(recipe.meal.category.toLowerCase()) ? 'easy' : ['moyen','medium'].includes(recipe.meal.category.toLowerCase()) ? 'medium' : 'hard'}`}>
+                        {recipe.meal.category}
+                      </span>
+                    )}
+                    {recipe.meal.area && <span className="match-badge preptime">⏱ {recipe.meal.area}</span>}
+                  </>
+                ) : recipe.missing.length === 0 ? (
+                  <span className="match-badge ready">{t('cook.readyToCook')}</span>
+                ) : (
+                  <span className="match-badge to-buy">
+                    {t('cook.toBuy', { count: recipe.missing.length })}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+
+        // AI mode with all 3 courses: grouped sections
+        if (recipeMode === 'ai' && selectedCourse === 'all') {
+          return (
+            <>
+              {dietaryPreferences.length > 0 && (
+                <div className="diet-filter-bar">
+                  {t('cook.dietaryFilterActive', {
+                    prefs: dietaryPreferences.map(p => t(`settings.dietary.${p}`)).join(', '),
+                  })}
+                </div>
+              )}
+              {(['starter', 'main', 'dessert'] as const).map(course => {
+                const courseRecipes = dietFiltered.filter(r => r.meal.course === course);
+                if (courseRecipes.length === 0) return null;
+                return (
+                  <div key={course} className="course-section">
+                    <div className="course-section-header">
+                      <span className="course-section-icon">{t(`cook.coursePicker.${course}.icon`)}</span>
+                      <h4 className="course-section-title">{t(`cook.coursePicker.${course}.label`)}</h4>
+                    </div>
+                    <div className="recipes-grid">
+                      {courseRecipes.map((recipe, index) => renderCard(recipe, index))}
+                    </div>
+                  </div>
+                );
+              })}
+            </>
+          );
+        }
+
+        // API mode or single AI course: flat grid with filters
         const counts = {
           all: dietFiltered.length,
           starter: dietFiltered.filter(r => getCourse(r.meal.category) === 'starter').length,
@@ -555,52 +622,52 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
         return (
           <>
             {dietaryPreferences.length > 0 && (
-            <div className="diet-filter-bar">
-              {t('cook.dietaryFilterActive', {
-                prefs: dietaryPreferences.map(p => t(`settings.dietary.${p}`)).join(', '),
-              })}
-            </div>
-          )}
-          <div className="filters-row">
-            <div className="course-dropdown">
-              <button
-                className="course-dropdown-btn"
-                onClick={() => setCourseDropdownOpen(o => !o)}
-              >
-                {filters.find(f => f.key === courseFilter)?.label}
-                <span className="course-dropdown-count">{counts[courseFilter]}</span>
-                <span className="dropdown-chevron">▾</span>
-              </button>
-              {courseDropdownOpen && (
-                <>
-                  <div className="dropdown-backdrop" onClick={() => setCourseDropdownOpen(false)} />
-                  <div className="course-dropdown-menu">
-                    {filters.map(f => (
-                      <button
-                        key={f.key}
-                        className={`course-dropdown-item${courseFilter === f.key ? ' active' : ''}`}
-                        onClick={() => { setCourseFilter(f.key); setCourseDropdownOpen(false); }}
-                      >
-                        {f.label}
-                        <span className="course-dropdown-count">{counts[f.key]}</span>
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
-            <div className="filter-divider" />
-            <div className="sort-control">
-              {(['smart', 'available'] as SortMode[]).map((mode) => (
+              <div className="diet-filter-bar">
+                {t('cook.dietaryFilterActive', {
+                  prefs: dietaryPreferences.map(p => t(`settings.dietary.${p}`)).join(', '),
+                })}
+              </div>
+            )}
+            <div className="filters-row">
+              <div className="course-dropdown">
                 <button
-                  key={mode}
-                  className={`sort-btn${sortMode === mode ? ' active' : ''}`}
-                  onClick={() => setSortMode(mode)}
+                  className="course-dropdown-btn"
+                  onClick={() => setCourseDropdownOpen(o => !o)}
                 >
-                  {t(`cook.sort.${mode}`)}
+                  {filters.find(f => f.key === courseFilter)?.label}
+                  <span className="course-dropdown-count">{counts[courseFilter]}</span>
+                  <span className="dropdown-chevron">▾</span>
                 </button>
-              ))}
-            </div>
+                {courseDropdownOpen && (
+                  <>
+                    <div className="dropdown-backdrop" onClick={() => setCourseDropdownOpen(false)} />
+                    <div className="course-dropdown-menu">
+                      {filters.map(f => (
+                        <button
+                          key={f.key}
+                          className={`course-dropdown-item${courseFilter === f.key ? ' active' : ''}`}
+                          onClick={() => { setCourseFilter(f.key); setCourseDropdownOpen(false); }}
+                        >
+                          {f.label}
+                          <span className="course-dropdown-count">{counts[f.key]}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+              <div className="filter-divider" />
+              <div className="sort-control">
+                {(['smart', 'available'] as SortMode[]).map((mode) => (
+                  <button
+                    key={mode}
+                    className={`sort-btn${sortMode === mode ? ' active' : ''}`}
+                    onClick={() => setSortMode(mode)}
+                  >
+                    {t(`cook.sort.${mode}`)}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {filteredRecipes.length === 0 ? (
@@ -610,40 +677,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
               </div>
             ) : (
               <div className="recipes-grid">
-                {filteredRecipes.map((recipe, index) => (
-            <div
-              key={recipe.meal.id}
-              className="recipe-card"
-              onClick={() => setSelectedRecipe(recipe)}
-              style={{ '--index': index } as React.CSSProperties}
-            >
-              {recipe.meal.thumbnail
-                ? <img src={recipe.meal.thumbnail} alt={recipe.meal.name} className="recipe-thumbnail" />
-                : <div className="recipe-thumbnail-placeholder" aria-hidden="true">✨</div>
-              }
-              <div className="recipe-info">
-                <h3>{recipe.meal.name}</h3>
-                <div className="recipe-match-info">
-                  {recipe.meal.id.startsWith('gemini-') ? (
-                    <>
-                      {recipe.meal.category && (
-                        <span className={`match-badge difficulty difficulty--${['facile','easy'].includes(recipe.meal.category.toLowerCase()) ? 'easy' : ['moyen','medium'].includes(recipe.meal.category.toLowerCase()) ? 'medium' : 'hard'}`}>
-                          {recipe.meal.category}
-                        </span>
-                      )}
-                      {recipe.meal.area && <span className="match-badge preptime">⏱ {recipe.meal.area}</span>}
-                    </>
-                  ) : recipe.missing.length === 0 ? (
-                    <span className="match-badge ready">{t('cook.readyToCook')}</span>
-                  ) : (
-                    <span className="match-badge to-buy">
-                      {t('cook.toBuy', { count: recipe.missing.length })}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-                ))}
+                {filteredRecipes.map((recipe, index) => renderCard(recipe, index))}
               </div>
             )}
           </>
