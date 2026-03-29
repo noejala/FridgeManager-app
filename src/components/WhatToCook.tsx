@@ -479,7 +479,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
         </div>
       )}
 
-      {!loading && !error && recipes.length === 0 && (
+      {!loading && !error && recipes.length === 0 && !(recipeMode === 'ai' && !selectedCookingMode) && (
         <div className="empty-suggestions">
           <div className="empty-icon">🔍</div>
           <p>{t('cook.noRecipes')}</p>
