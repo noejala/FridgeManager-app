@@ -73,6 +73,11 @@ function App() {
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
     localStorage.setItem('theme', darkMode ? 'dark' : 'light');
+    document.querySelectorAll('meta[name="theme-color"]').forEach(el => el.remove());
+    const meta = document.createElement('meta');
+    meta.name = 'theme-color';
+    meta.content = darkMode ? '#0f1117' : '#f5f5f5';
+    document.head.appendChild(meta);
   }, [darkMode]);
 
   const loadUserProducts = useCallback(async () => {
