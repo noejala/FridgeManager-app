@@ -420,7 +420,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
         onClick={(e) => toggleSave(e, recipe.meal)}
         aria-label={savedMap.has(recipe.meal.name.toLowerCase()) ? t('cook.unsaveRecipe') : t('cook.saveRecipe')}
       >
-        {savedMap.has(recipe.meal.name.toLowerCase()) ? '♥' : '♡'}
+        ♥
       </button>
       <div className="recipe-info">
         <h3>{recipe.meal.name}</h3>
