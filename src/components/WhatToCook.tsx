@@ -470,7 +470,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       <div className="cook-header">
         <div className="cook-header-top">
           <h2>{t('cook.title')}</h2>
-          {geminiEnabled && userId !== GEMINI_ALLOWED_USER && (
+          {!savedView && geminiEnabled && userId !== GEMINI_ALLOWED_USER && (
             <div className="mode-toggle-wrapper">
               <div className="mode-toggle">
                 <button
@@ -486,7 +486,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
               )}
             </div>
           )}
-          {geminiEnabled && userId === GEMINI_ALLOWED_USER && (
+          {!savedView && geminiEnabled && userId === GEMINI_ALLOWED_USER && (
             <div className="mode-toggle">
               <button
                 className={`mode-btn${recipeMode === 'api' ? ' active' : ''}`}
