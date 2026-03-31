@@ -4,10 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Workflow
 
+**Git:** Commit freely after each change, but **never push** unless the user explicitly asks to push. Pushing = deploying to Vercel production.
+
 **End of session:** When the user says they're done for the day, always:
 1. Do a recap of everything done during the session
 2. Scan the codebase for unused files, dead code, or stale imports and clean them up
-3. Commit any pending changes
+3. Commit any pending changes (do NOT push)
 
 ## Commands
 
