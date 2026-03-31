@@ -367,14 +367,14 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       .catch(() => {});
   }, []);
 
+  const [confirmUnsave, setConfirmUnsave] = useState<MealDetails | null>(null);
+
   const toggleSave = useCallback(async (e: React.MouseEvent, meal: MealDetails) => {
     e.stopPropagation();
     const key = meal.name.toLowerCase();
     const existingId = savedMap.get(key);
     if (existingId) {
-      await unsaveRecipe(existingId);
-      setSavedMap(prev => { const m = new Map(prev); m.delete(key); return m; });
-      setSavedRecipes(prev => prev.filter(s => s.id !== existingId));
+      setConfirmUnsave(meal);
     } else {
       const source = meal.id.startsWith('gemini-') ? 'gemini' : 'mealdb';
       const saved = await saveRecipe(meal, source);
@@ -382,6 +382,18 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       setSavedRecipes(prev => [saved, ...prev]);
     }
   }, [savedMap]);
+
+  const confirmUnsaveRecipe = useCallback(async () => {
+    if (!confirmUnsave) return;
+    const key = confirmUnsave.name.toLowerCase();
+    const existingId = savedMap.get(key);
+    if (existingId) {
+      await unsaveRecipe(existingId);
+      setSavedMap(prev => { const m = new Map(prev); m.delete(key); return m; });
+      setSavedRecipes(prev => prev.filter(s => s.id !== existingId));
+    }
+    setConfirmUnsave(null);
+  }, [confirmUnsave, savedMap]);
 
   const closeDetails = () => setSelectedRecipe(null);
 
@@ -834,6 +846,24 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
                   </li>
                 ))}
               </ol>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {confirmUnsave && (
+        <div className="modal-overlay" onClick={() => setConfirmUnsave(null)}>
+          <div className="confirm-unsave-modal" onClick={e => e.stopPropagation()}>
+            <p className="confirm-unsave-icon">♡</p>
+            <h3 className="confirm-unsave-title">{t('cook.unsaveTitle')}</h3>
+            <p className="confirm-unsave-body">{t('cook.unsaveBody')}</p>
+            <div className="confirm-unsave-actions">
+              <button className="confirm-unsave-cancel" onClick={() => setConfirmUnsave(null)}>
+                {t('cook.unsaveCancel')}
+              </button>
+              <button className="confirm-unsave-confirm" onClick={confirmUnsaveRecipe}>
+                {t('cook.unsaveConfirm')}
+              </button>
             </div>
           </div>
         </div>

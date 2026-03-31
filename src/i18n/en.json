@@ -129,6 +129,10 @@
     "saveRecipe": "Save recipe",
     "unsaveRecipe": "Remove from saved",
     "noSavedRecipes": "No saved recipes yet. Tap ♡ on any recipe to save it here.",
+    "unsaveTitle": "Remove from saved?",
+    "unsaveBody": "If you remove this recipe, you might never find it again. Are you sure?",
+    "unsaveCancel": "Cancel",
+    "unsaveConfirm": "Remove anyway",
     "coursePicker": {
       "title": "What type of dish?",
       "subtitle": "Pick a course and we'll tailor the recipes",
