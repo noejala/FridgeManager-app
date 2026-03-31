@@ -121,25 +121,22 @@
   background: rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  color: #fff;
+  color: rgba(255, 255, 255, 0.75);
   font-size: 1.05rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.15s, transform 0.15s, color 0.15s;
   z-index: 1;
   line-height: 1;
 }
 
 .recipe-save-btn:hover {
-  background: rgba(224, 36, 94, 0.8);
-  transform: scale(1.1);
+  background: rgba(0, 0, 0, 0.6);
 }
 
 .recipe-save-btn.saved {
-  background: rgba(224, 36, 94, 0.85);
-  color: #fff;
+  color: #e0245e;
 }
 
 .diet-filter-bar {
