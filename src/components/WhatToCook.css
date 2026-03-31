@@ -94,7 +94,9 @@
 }
 
 .saved-toggle-btn.active {
-  color: #e0245e;
+  background: #e0245e;
+  border-color: #e0245e;
+  color: #fff;
 }
 
 .saved-count {
