@@ -121,8 +121,7 @@
   background: rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  color: transparent;
-  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.8);
   font-size: 1.05rem;
   cursor: pointer;
   display: flex;
@@ -138,7 +137,6 @@
 
 .recipe-save-btn.saved {
   color: #e0245e;
-  -webkit-text-stroke: 0;
 }
 
 .diet-filter-bar {
