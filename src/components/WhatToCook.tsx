@@ -470,7 +470,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       <div className="cook-header">
         <div className="cook-header-top">
           <h2>{t('cook.title')}</h2>
-          {!savedView && geminiEnabled && userId !== GEMINI_ALLOWED_USER && (
+          {geminiEnabled && userId !== GEMINI_ALLOWED_USER && (
             <div className="mode-toggle-wrapper">
               <div className="mode-toggle">
                 <button
@@ -486,17 +486,17 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
               )}
             </div>
           )}
-          {!savedView && geminiEnabled && userId === GEMINI_ALLOWED_USER && (
+          {geminiEnabled && userId === GEMINI_ALLOWED_USER && (
             <div className="mode-toggle">
               <button
-                className={`mode-btn${recipeMode === 'api' ? ' active' : ''}`}
-                onClick={() => setRecipeMode('api')}
+                className={`mode-btn${recipeMode === 'api' && !savedView ? ' active' : ''}`}
+                onClick={() => { setRecipeMode('api'); setSavedView(false); }}
               >
                 {t('cook.modeApi')}
               </button>
               <button
-                className={`mode-btn mode-btn-ai${recipeMode === 'ai' ? ' active' : ''}`}
-                onClick={() => setRecipeMode('ai')}
+                className={`mode-btn mode-btn-ai${recipeMode === 'ai' && !savedView ? ' active' : ''}`}
+                onClick={() => { setRecipeMode('ai'); setSavedView(false); }}
               >
                 {t('cook.modeAi')}
               </button>
