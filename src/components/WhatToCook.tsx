@@ -415,6 +415,13 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
         ? <img src={recipe.meal.thumbnail} alt={recipe.meal.name} className="recipe-thumbnail" />
         : <div className="recipe-thumbnail-placeholder" aria-hidden="true">✨</div>
       }
+      <button
+        className={`recipe-save-btn${savedMap.has(recipe.meal.name.toLowerCase()) ? ' saved' : ''}`}
+        onClick={(e) => toggleSave(e, recipe.meal)}
+        aria-label={savedMap.has(recipe.meal.name.toLowerCase()) ? t('cook.unsaveRecipe') : t('cook.saveRecipe')}
+      >
+        {savedMap.has(recipe.meal.name.toLowerCase()) ? '♥' : '♡'}
+      </button>
       <div className="recipe-info">
         <h3>{recipe.meal.name}</h3>
         <div className="recipe-match-info">
@@ -435,13 +442,6 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
             </span>
           )}
         </div>
-        <button
-          className={`recipe-save-btn${savedMap.has(recipe.meal.name.toLowerCase()) ? ' saved' : ''}`}
-          onClick={(e) => toggleSave(e, recipe.meal)}
-          aria-label={savedMap.has(recipe.meal.name.toLowerCase()) ? t('cook.unsaveRecipe') : t('cook.saveRecipe')}
-        >
-          {savedMap.has(recipe.meal.name.toLowerCase()) ? '♥' : '♡'}
-        </button>
       </div>
     </div>
   );
