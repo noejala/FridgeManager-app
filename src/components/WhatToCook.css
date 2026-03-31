@@ -85,7 +85,6 @@
   display: flex;
   align-items: center;
   gap: 0.3rem;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
   line-height: 1;
 }
 
@@ -95,8 +94,6 @@
 }
 
 .saved-toggle-btn.active {
-  background: color-mix(in srgb, #e0245e 12%, transparent);
-  border-color: color-mix(in srgb, #e0245e 30%, transparent);
   color: #e0245e;
 }
 

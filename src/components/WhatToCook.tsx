@@ -506,7 +506,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
             className={`saved-toggle-btn${savedView ? ' active' : ''}`}
             onClick={() => setSavedView(v => !v)}
           >
-            {savedView ? '♥' : '♡'}
+            ♡
             {savedRecipes.length > 0 && !savedView && <span className="saved-count">{savedRecipes.length}</span>}
           </button>
           <div className="servings-stepper">
