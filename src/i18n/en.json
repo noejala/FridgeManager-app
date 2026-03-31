@@ -126,6 +126,9 @@
     "searchingAi": "Generating AI recipes…",
     "aiFallback": "Gemini unavailable (rate limit reached) — showing classic recipes.",
     "changeCookingMode": "Change mode",
+    "saveRecipe": "Save recipe",
+    "unsaveRecipe": "Remove from saved",
+    "noSavedRecipes": "No saved recipes yet. Tap ♡ on any recipe to save it here.",
     "coursePicker": {
       "title": "What type of dish?",
       "subtitle": "Pick a course and we'll tailor the recipes",

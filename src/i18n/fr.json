@@ -126,6 +126,9 @@
     "searchingAi": "Génération de recettes IA…",
     "aiFallback": "Gemini indisponible (limite atteinte) — affichage des recettes classiques.",
     "changeCookingMode": "Changer de mode",
+    "saveRecipe": "Sauvegarder",
+    "unsaveRecipe": "Retirer des favoris",
+    "noSavedRecipes": "Aucune recette sauvegardée. Appuie sur ♡ sur une recette pour la garder ici.",
     "coursePicker": {
       "title": "Quel type de plat ?",
       "subtitle": "Choisis un service, on adapte les recettes",

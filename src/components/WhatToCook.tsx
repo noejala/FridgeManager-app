@@ -1,9 +1,10 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Product } from '../types/Product';
 import { DietaryPreference } from '../types/UserProfile';
 import { searchByIngredient, getMealDetails, MealDetails, singularize } from '../utils/mealApi';
 import { fetchGeminiRecipes, CookingMode, CourseSelection } from '../utils/geminiApi';
+import { fetchSavedRecipes, saveRecipe, unsaveRecipe, SavedRecipe } from '../utils/savedRecipeService';
 import { toEnglishIngredient } from '../utils/ingredientTranslation';
 import { getDaysUntilExpiration } from '../utils/storage';
 import './WhatToCook.css';
@@ -256,6 +257,9 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
   });
   const [selectedCookingMode, setSelectedCookingMode] = useState<CookingMode | null>(null);
   const [selectedCourse, setSelectedCourse] = useState<CourseSelection | null>(null);
+  const [savedView, setSavedView] = useState(false);
+  const [savedRecipes, setSavedRecipes] = useState<SavedRecipe[]>([]);
+  const [savedMap, setSavedMap] = useState<Map<string, string>>(new Map());
 
   useEffect(() => {
     localStorage.setItem('recipe-mode', recipeMode);
@@ -354,13 +358,104 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
     fetchRecipes();
   }, [fetchRecipes]);
 
+  useEffect(() => {
+    fetchSavedRecipes()
+      .then(saved => {
+        setSavedRecipes(saved);
+        setSavedMap(new Map(saved.map(s => [s.recipeData.name.toLowerCase(), s.id])));
+      })
+      .catch(() => {});
+  }, []);
+
+  const toggleSave = useCallback(async (e: React.MouseEvent, meal: MealDetails) => {
+    e.stopPropagation();
+    const key = meal.name.toLowerCase();
+    const existingId = savedMap.get(key);
+    if (existingId) {
+      await unsaveRecipe(existingId);
+      setSavedMap(prev => { const m = new Map(prev); m.delete(key); return m; });
+      setSavedRecipes(prev => prev.filter(s => s.id !== existingId));
+    } else {
+      const source = meal.id.startsWith('gemini-') ? 'gemini' : 'mealdb';
+      const saved = await saveRecipe(meal, source);
+      setSavedMap(prev => new Map(prev).set(key, saved.id));
+      setSavedRecipes(prev => [saved, ...prev]);
+    }
+  }, [savedMap]);
+
   const closeDetails = () => setSelectedRecipe(null);
 
-  if (products.length === 0) {
+  const savedMatches = useMemo<RecipeMatch[]>(() => {
+    const fridgeNames = products.map(p => toEnglishIngredient(p.name));
+    const urgentFridgeNames = products
+      .filter(p => getDaysUntilExpiration(p.expirationDate) <= 3)
+      .map(p => toEnglishIngredient(p.name));
+    return savedRecipes.map(s => {
+      const meal = s.recipeData;
+      if (s.source === 'gemini') {
+        const pantry = meal.ingredients.filter(ing =>
+          PANTRY_STAPLES.has(singularize(ing.name.toLowerCase())) ||
+          PANTRY_STAPLES.has(ing.name.toLowerCase())
+        );
+        const available = meal.ingredients.filter(ing => !pantry.includes(ing));
+        return { meal, available, missing: [], pantry, urgentAvailableCount: 0 };
+      }
+      return { meal, ...matchIngredients(meal, fridgeNames, urgentFridgeNames) };
+    });
+  }, [savedRecipes, products]);
+
+  const renderCard = (recipe: RecipeMatch, index: number) => (
+    <div
+      key={recipe.meal.id}
+      className="recipe-card"
+      onClick={() => setSelectedRecipe(recipe)}
+      style={{ '--index': index } as React.CSSProperties}
+    >
+      {recipe.meal.thumbnail
+        ? <img src={recipe.meal.thumbnail} alt={recipe.meal.name} className="recipe-thumbnail" />
+        : <div className="recipe-thumbnail-placeholder" aria-hidden="true">✨</div>
+      }
+      <div className="recipe-info">
+        <h3>{recipe.meal.name}</h3>
+        <div className="recipe-match-info">
+          {recipe.meal.id.startsWith('gemini-') ? (
+            <>
+              {recipe.meal.category && (
+                <span className={`match-badge difficulty difficulty--${['facile','easy'].includes(recipe.meal.category.toLowerCase()) ? 'easy' : ['moyen','medium'].includes(recipe.meal.category.toLowerCase()) ? 'medium' : 'hard'}`}>
+                  {recipe.meal.category}
+                </span>
+              )}
+              {recipe.meal.area && <span className="match-badge preptime">⏱ {recipe.meal.area}</span>}
+            </>
+          ) : recipe.missing.length === 0 ? (
+            <span className="match-badge ready">{t('cook.readyToCook')}</span>
+          ) : (
+            <span className="match-badge to-buy">
+              {t('cook.toBuy', { count: recipe.missing.length })}
+            </span>
+          )}
+        </div>
+        <button
+          className={`recipe-save-btn${savedMap.has(recipe.meal.name.toLowerCase()) ? ' saved' : ''}`}
+          onClick={(e) => toggleSave(e, recipe.meal)}
+          aria-label={savedMap.has(recipe.meal.name.toLowerCase()) ? t('cook.unsaveRecipe') : t('cook.saveRecipe')}
+        >
+          {savedMap.has(recipe.meal.name.toLowerCase()) ? '♥' : '♡'}
+        </button>
+      </div>
+    </div>
+  );
+
+  if (products.length === 0 && !savedView) {
     return (
       <div className="what-to-cook">
         <div className="cook-header">
-          <h2>{t('cook.title')}</h2>
+          <div className="cook-header-top">
+            <h2>{t('cook.title')}</h2>
+            <button className="saved-toggle-btn" onClick={() => setSavedView(true)}>
+              ♡{savedRecipes.length > 0 && <span className="saved-count">{savedRecipes.length}</span>}
+            </button>
+          </div>
         </div>
         <div className="empty-suggestions">
           <div className="empty-icon">🍽️</div>
@@ -407,6 +502,13 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
               </button>
             </div>
           )}
+          <button
+            className={`saved-toggle-btn${savedView ? ' active' : ''}`}
+            onClick={() => setSavedView(v => !v)}
+          >
+            {savedView ? '♥' : '♡'}
+            {savedRecipes.length > 0 && !savedView && <span className="saved-count">{savedRecipes.length}</span>}
+          </button>
           <div className="servings-stepper">
             <button
               className="stepper-btn"
@@ -448,7 +550,22 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
         </div>
       </div>
 
-      {recipeMode === 'ai' && !selectedCookingMode && (
+      {savedView && (
+        <div className="saved-recipes-view">
+          {savedMatches.length === 0 ? (
+            <div className="empty-suggestions">
+              <div className="empty-icon">♡</div>
+              <p>{t('cook.noSavedRecipes')}</p>
+            </div>
+          ) : (
+            <div className="recipes-grid">
+              {savedMatches.map((recipe, index) => renderCard(recipe, index))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {!savedView && recipeMode === 'ai' && !selectedCookingMode && (
         <div className="cooking-mode-picker">
           <div className="cooking-mode-picker-header">
             <h3>{t('cook.cookingModes.title')}</h3>
@@ -470,7 +587,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
         </div>
       )}
 
-      {recipeMode === 'ai' && selectedCookingMode && !selectedCourse && (
+      {!savedView && recipeMode === 'ai' && selectedCookingMode && !selectedCourse && (
         <div className="cooking-mode-picker">
           <div className="cooking-mode-picker-header">
             <button
@@ -498,79 +615,44 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
         </div>
       )}
 
-      {recipeMode === 'ai' && aiFallback && !loading && (
+      {!savedView && recipeMode === 'ai' && aiFallback && !loading && (
         <div className="ai-fallback-notice">
           ⚠️ {t('cook.aiFallback')}
           <button onClick={fetchRecipes}>{t('cook.retry')}</button>
         </div>
       )}
 
-      {loading && (
+      {!savedView && loading && (
         <div className="loading-state">
           <div className="spinner" />
           <p>{recipeMode === 'ai' ? t('cook.searchingAi') : t('cook.searching')}</p>
         </div>
       )}
 
-      {error && (
+      {!savedView && error && (
         <div className="error-state">
           <p>{error}</p>
           <button onClick={fetchRecipes}>{t('cook.retry')}</button>
         </div>
       )}
 
-      {!loading && !error && recipes.length === 0 && !(recipeMode === 'ai' && (!selectedCookingMode || !selectedCourse)) && (
+      {!savedView && !loading && !error && recipes.length === 0 && !(recipeMode === 'ai' && (!selectedCookingMode || !selectedCourse)) && (
         <div className="empty-suggestions">
           <div className="empty-icon">🔍</div>
           <p>{t('cook.noRecipes')}</p>
         </div>
       )}
 
-      {!loading && !error && recipes.length > 0 && recipes.filter(r => meetsPreferences(r, dietaryPreferences) && meetsDislikedFilter(r, dislikedIngredients)).length === 0 && (
+      {!savedView && !loading && !error && recipes.length > 0 && recipes.filter(r => meetsPreferences(r, dietaryPreferences) && meetsDislikedFilter(r, dislikedIngredients)).length === 0 && (
         <div className="empty-suggestions">
           <div className="empty-icon">🥗</div>
           <p>{t('cook.noRecipesDietary')}</p>
         </div>
       )}
 
-      {!loading && recipes.length > 0 && (() => {
+      {!savedView && !loading && recipes.length > 0 && (() => {
         const dietFiltered = recipes.filter(r =>
           meetsPreferences(r, dietaryPreferences) && meetsDislikedFilter(r, dislikedIngredients)
-        );
-
-        const renderCard = (recipe: RecipeMatch, index: number) => (
-          <div
-            key={recipe.meal.id}
-            className="recipe-card"
-            onClick={() => setSelectedRecipe(recipe)}
-            style={{ '--index': index } as React.CSSProperties}
-          >
-            {recipe.meal.thumbnail
-              ? <img src={recipe.meal.thumbnail} alt={recipe.meal.name} className="recipe-thumbnail" />
-              : <div className="recipe-thumbnail-placeholder" aria-hidden="true">✨</div>
-            }
-            <div className="recipe-info">
-              <h3>{recipe.meal.name}</h3>
-              <div className="recipe-match-info">
-                {recipe.meal.id.startsWith('gemini-') ? (
-                  <>
-                    {recipe.meal.category && (
-                      <span className={`match-badge difficulty difficulty--${['facile','easy'].includes(recipe.meal.category.toLowerCase()) ? 'easy' : ['moyen','medium'].includes(recipe.meal.category.toLowerCase()) ? 'medium' : 'hard'}`}>
-                        {recipe.meal.category}
-                      </span>
-                    )}
-                    {recipe.meal.area && <span className="match-badge preptime">⏱ {recipe.meal.area}</span>}
-                  </>
-                ) : recipe.missing.length === 0 ? (
-                  <span className="match-badge ready">{t('cook.readyToCook')}</span>
-                ) : (
-                  <span className="match-badge to-buy">
-                    {t('cook.toBuy', { count: recipe.missing.length })}
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
         );
 
         // AI mode with all 3 courses: grouped sections

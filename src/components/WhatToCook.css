@@ -74,6 +74,64 @@
   color: var(--accent);
 }
 
+.saved-toggle-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 40px;
+  padding: 0.25rem 0.65rem;
+  font-size: 1rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  line-height: 1;
+}
+
+.saved-toggle-btn:hover {
+  background: var(--bg-surface);
+  color: var(--text);
+}
+
+.saved-toggle-btn.active {
+  background: color-mix(in srgb, #e0245e 12%, transparent);
+  border-color: color-mix(in srgb, #e0245e 30%, transparent);
+  color: #e0245e;
+}
+
+.saved-count {
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 10px;
+  padding: 0 0.35rem;
+  line-height: 1.4;
+}
+
+.recipe-save-btn {
+  background: transparent;
+  border: none;
+  padding: 0.2rem 0.3rem;
+  font-size: 1rem;
+  cursor: pointer;
+  color: var(--text-muted);
+  line-height: 1;
+  margin-left: auto;
+  transition: color 0.15s, transform 0.1s;
+  align-self: flex-end;
+}
+
+.recipe-save-btn:hover {
+  color: #e0245e;
+  transform: scale(1.2);
+}
+
+.recipe-save-btn.saved {
+  color: #e0245e;
+}
+
 .diet-filter-bar {
   display: inline-flex;
   align-items: center;
@@ -618,6 +676,8 @@
 
 .recipe-info {
   padding: 0.875rem 1rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .recipe-info h3 {
