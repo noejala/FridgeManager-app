@@ -130,9 +130,11 @@
   outline: none;
 }
 
-.settings-chip:hover {
-  border-color: var(--accent);
-  color: var(--accent);
+@media (hover: hover) {
+  .settings-chip:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
 }
 
 .settings-chip.active {
