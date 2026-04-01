@@ -733,18 +733,22 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
                   </>
                 )}
               </div>
-              <div className="filter-divider" />
-              <div className="sort-control">
-                {(['smart', 'available'] as SortMode[]).map((mode) => (
-                  <button
-                    key={mode}
-                    className={`sort-btn${sortMode === mode ? ' active' : ''}`}
-                    onClick={() => setSortMode(mode)}
-                  >
-                    {t(`cook.sort.${mode}`)}
-                  </button>
-                ))}
-              </div>
+              {recipeMode === 'api' && (
+                <>
+                  <div className="filter-divider" />
+                  <div className="sort-control">
+                    {(['smart', 'available'] as SortMode[]).map((mode) => (
+                      <button
+                        key={mode}
+                        className={`sort-btn${sortMode === mode ? ' active' : ''}`}
+                        onClick={() => setSortMode(mode)}
+                      >
+                        {t(`cook.sort.${mode}`)}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
 
             {filteredRecipes.length === 0 ? (
