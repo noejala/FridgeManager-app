@@ -126,6 +126,10 @@
   transition: all 0.15s;
 }
 
+.settings-chip:focus {
+  outline: none;
+}
+
 .settings-chip:hover {
   border-color: var(--accent);
   color: var(--accent);
