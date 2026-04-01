@@ -343,7 +343,7 @@ function App() {
         />
       </div>
       <div hidden={activeTab !== 'cook'}>
-        <WhatToCook products={products} dietaryPreferences={dietaryPreferences} dislikedIngredients={dislikedIngredients} userId={user?.id} />
+        <WhatToCook products={products} dietaryPreferences={dietaryPreferences} dislikedIngredients={dislikedIngredients} />
       </div>
       <div hidden={activeTab !== 'seasonal'}>
         <SeasonalProducts isActive={activeTab === 'seasonal'} />
