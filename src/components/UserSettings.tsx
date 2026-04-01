@@ -173,7 +173,7 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
                   key={pref}
                   type="button"
                   className={`settings-chip ${profile.dietaryPreferences.includes(pref) ? 'active' : ''}`}
-                  onClick={() => handleDietaryToggle(pref)}
+                  onClick={(e) => { handleDietaryToggle(pref); (e.currentTarget as HTMLButtonElement).blur(); }}
                 >
                   {t(`settings.dietary.${pref}`)}
                 </button>
@@ -189,7 +189,7 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
                   key={pref}
                   type="button"
                   className={`settings-chip ${profile.dietaryPreferences.includes(pref) ? 'active' : ''}`}
-                  onClick={() => handleDietaryToggle(pref)}
+                  onClick={(e) => { handleDietaryToggle(pref); (e.currentTarget as HTMLButtonElement).blur(); }}
                 >
                   {t(`settings.dietary.${pref}`)}
                 </button>
