@@ -13,4 +13,5 @@ export interface UserProfile {
   age: number | null;
   dietaryPreferences: DietaryPreference[];
   dislikedIngredients: string[];
+  customPreferences: string;
 }

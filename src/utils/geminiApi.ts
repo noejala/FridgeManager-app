@@ -27,7 +27,8 @@ export async function fetchGeminiRecipes(
   language: string,
   cookingMode?: CookingMode,
   expiringNames?: string[],
-  courseSelection?: CourseSelection
+  courseSelection?: CourseSelection,
+  customPreferences?: string
 ): Promise<MealDetails[]> {
   const rateLimitUntil = localStorage.getItem('gemini-ratelimit-until');
   if (rateLimitUntil && Date.now() < Number(rateLimitUntil)) {
@@ -36,7 +37,7 @@ export async function fetchGeminiRecipes(
   }
 
   const today = new Date().toISOString().slice(0, 10);
-  const raw = [...productNames].sort().join(',') + '|' + [...dietaryPrefs].sort().join(',') + '|' + language + '|' + today + '|' + (cookingMode ?? 'none') + '|' + (courseSelection ?? 'none') + '|v9';
+  const raw = [...productNames].sort().join(',') + '|' + [...dietaryPrefs].sort().join(',') + '|' + language + '|' + today + '|' + (cookingMode ?? 'none') + '|' + (courseSelection ?? 'none') + '|' + (customPreferences ?? '') + '|v9';
   const cacheKey = `gemini-recipes-${hashString(raw).toString(36)}`;
 
   const cached = localStorage.getItem(cacheKey);
@@ -50,6 +51,9 @@ export async function fetchGeminiRecipes(
   const difficultyOptions = isFrench ? 'Facile, Moyen, Difficile' : 'Easy, Medium, Hard';
   const dietLabel = dietaryPrefs.length > 0
     ? `Dietary restrictions to respect: ${dietaryPrefs.join(', ')}.`
+    : '';
+  const customLabel = customPreferences?.trim()
+    ? `Also take into account these personal preferences: ${customPreferences.trim()}`
     : '';
 
   let modeInstruction = '';
@@ -98,6 +102,7 @@ export async function fetchGeminiRecipes(
 
   const prompt = `You are a creative chef. I have these ingredients available: ${productNames.join(', ')}.
 ${dietLabel}
+${customLabel}
 ${modeInstruction}
 ${courseInstruction}
 Suggest ${recipeCount} delicious, coherent recipes. For each recipe, use whichever ingredients naturally belong together — use all of them if it makes culinary sense, or just a few. Never force an ingredient into a recipe just because it's available. Taste and coherence always come first. Common pantry staples (salt, pepper, oil, flour, garlic, butter, onion) are available.

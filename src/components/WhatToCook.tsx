@@ -30,6 +30,7 @@ interface WhatToCookProps {
   products: Product[];
   dietaryPreferences?: DietaryPreference[];
   dislikedIngredients?: string[];
+  customPreferences?: string;
 }
 
 const MAX_MISSING = 4;
@@ -236,7 +237,7 @@ function applySort(recipes: RecipeMatch[], mode: SortMode): RecipeMatch[] {
 
 const geminiEnabled = import.meta.env.VITE_GEMINI_ENABLED === 'true';
 
-export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredients = [] }: WhatToCookProps) => {
+export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredients = [], customPreferences = '' }: WhatToCookProps) => {
   const { t, i18n } = useTranslation();
   const [recipes, setRecipes] = useState<RecipeMatch[]>([]);
   const [loading, setLoading] = useState(false);
@@ -295,7 +296,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       let isAiMode = false;
 
       if (recipeMode === 'ai') {
-        const geminiResults = await fetchGeminiRecipes(fridgeNames, dietaryPreferences, i18n.language, selectedCookingMode ?? undefined, urgentFridgeNames, selectedCourse ?? undefined);
+        const geminiResults = await fetchGeminiRecipes(fridgeNames, dietaryPreferences, i18n.language, selectedCookingMode ?? undefined, urgentFridgeNames, selectedCourse ?? undefined, customPreferences || undefined);
         if (geminiResults.length > 0) {
           meals = geminiResults;
           isAiMode = true;

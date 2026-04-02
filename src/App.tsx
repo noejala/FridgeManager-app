@@ -56,6 +56,7 @@ function App() {
   });
   const [dietaryPreferences, setDietaryPreferences] = useState<DietaryPreference[]>([]);
   const [dislikedIngredients, setDislikedIngredients] = useState<string[]>([]);
+  const [customPreferences, setCustomPreferences] = useState<string>('');
   const [scanPrefill, setScanPrefill] = useState<FoodFactsResult | null>(null);
   const [scrolledDown, setScrolledDown] = useState(false);
   const lastScrollY = useRef(0);
@@ -91,6 +92,7 @@ function App() {
       setConsumedProducts(consumed);
       setDietaryPreferences(profile?.dietaryPreferences ?? []);
       setDislikedIngredients(profile?.dislikedIngredients ?? []);
+      setCustomPreferences(profile?.customPreferences ?? '');
       checkAndNotify(data, t);
     } catch (err) {
       console.error('Failed to load products:', err);
@@ -343,7 +345,7 @@ function App() {
         />
       </div>
       <div hidden={activeTab !== 'cook'}>
-        <WhatToCook products={products} dietaryPreferences={dietaryPreferences} dislikedIngredients={dislikedIngredients} />
+        <WhatToCook products={products} dietaryPreferences={dietaryPreferences} dislikedIngredients={dislikedIngredients} customPreferences={customPreferences} />
       </div>
       <div hidden={activeTab !== 'seasonal'}>
         <SeasonalProducts isActive={activeTab === 'seasonal'} />
@@ -355,6 +357,7 @@ function App() {
           onLogout={handleLogout}
           onDietaryPreferencesChange={setDietaryPreferences}
           onDislikedIngredientsChange={setDislikedIngredients}
+          onCustomPreferencesChange={setCustomPreferences}
         />
       </div>
     </>

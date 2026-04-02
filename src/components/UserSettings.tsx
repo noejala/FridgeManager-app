@@ -13,6 +13,7 @@ const EMPTY_PROFILE: UserProfile = {
   age: null,
   dietaryPreferences: [],
   dislikedIngredients: [],
+  customPreferences: '',
 };
 
 interface Props {
@@ -21,9 +22,10 @@ interface Props {
   onLogout: () => void;
   onDietaryPreferencesChange?: (prefs: DietaryPreference[]) => void;
   onDislikedIngredientsChange?: (items: string[]) => void;
+  onCustomPreferencesChange?: (value: string) => void;
 }
 
-export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPreferencesChange, onDislikedIngredientsChange }: Props) => {
+export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPreferencesChange, onDislikedIngredientsChange, onCustomPreferencesChange }: Props) => {
   const { t, i18n } = useTranslation();
 
   const [profile, setProfile] = useState<UserProfile>(EMPTY_PROFILE);
@@ -74,6 +76,15 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
     setProfile(updated);
     setDraft(updated);
     onDislikedIngredientsChange?.(updated.dislikedIngredients);
+    await saveUserProfile(updated);
+  };
+
+  const handleCustomPreferencesBlur = async (value: string) => {
+    if (value === profile.customPreferences) return;
+    const updated = { ...profile, customPreferences: value };
+    setProfile(updated);
+    setDraft(updated);
+    onCustomPreferencesChange?.(value);
     await saveUserProfile(updated);
   };
 
@@ -229,6 +240,19 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
                 ))}
               </div>
             )}
+          </div>
+
+          <div className="settings-field">
+            <label className="settings-label">{t('settings.customPreferences')}</label>
+            <textarea
+              className="settings-input settings-custom-prefs-textarea"
+              placeholder={t('settings.customPreferencesPlaceholder')}
+              defaultValue={profile.customPreferences}
+              key={profile.customPreferences}
+              rows={3}
+              onBlur={e => handleCustomPreferencesBlur(e.target.value.trim())}
+            />
+            <span className="settings-field-hint">{t('settings.customPreferencesHint')}</span>
           </div>
         </div>
       </section>
