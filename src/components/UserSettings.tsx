@@ -258,12 +258,18 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
                 {i18n.language === 'fr' ? 'Français' : 'English'}
               </span>
             </div>
-            <button
-              className="settings-lang-btn"
-              onClick={() => i18n.changeLanguage(i18n.language === 'en' ? 'fr' : 'en')}
-            >
-              {i18n.language === 'en' ? 'FR' : 'EN'}
-            </button>
+            <div className="settings-lang-segmented">
+              {(['en', 'fr'] as const).map(lang => (
+                <button
+                  key={lang}
+                  className={`settings-lang-seg-btn${i18n.language === lang ? ' active' : ''}`}
+                  onClick={() => i18n.changeLanguage(lang)}
+                  disabled={i18n.language === lang}
+                >
+                  {lang.toUpperCase()}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </section>
