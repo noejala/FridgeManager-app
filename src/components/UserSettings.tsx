@@ -35,7 +35,6 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
   const [saving, setSaving] = useState(false);
   const [dislikedInput, setDislikedInput] = useState('');
   const [customPrefSaved, setCustomPrefSaved] = useState(false);
-  const [editingCustomPref, setEditingCustomPref] = useState(false);
 
   const hasProfileData = (p: UserProfile) => p.country || p.age;
 
@@ -248,26 +247,14 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
 
           <div className="settings-field">
             <label className="settings-label">{t('settings.customPreferences')}</label>
-            {editingCustomPref ? (
-              <textarea
-                className="settings-input settings-custom-prefs-textarea"
-                placeholder={t('settings.customPreferencesPlaceholder')}
-                defaultValue={profile.customPreferences}
-                rows={3}
-                autoFocus
-                onBlur={async e => {
-                  await handleCustomPreferencesBlur(e.target.value.trim());
-                  setEditingCustomPref(false);
-                }}
-              />
-            ) : (
-              <div
-                className={`settings-custom-prefs-view${!profile.customPreferences ? ' settings-custom-prefs-view--empty' : ''}`}
-                onClick={() => setEditingCustomPref(true)}
-              >
-                {profile.customPreferences || t('settings.customPreferencesPlaceholder')}
-              </div>
-            )}
+            <textarea
+              className="settings-input settings-custom-prefs-textarea"
+              placeholder={t('settings.customPreferencesPlaceholder')}
+              defaultValue={profile.customPreferences}
+              key={profile.customPreferences}
+              rows={3}
+              onBlur={e => handleCustomPreferencesBlur(e.target.value.trim())}
+            />
             <span className={`settings-field-hint${customPrefSaved ? ' settings-field-hint--saved' : ''}`}>
               {customPrefSaved ? t('settings.saved') : t('settings.customPreferencesHint')}
             </span>
