@@ -34,6 +34,7 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [dislikedInput, setDislikedInput] = useState('');
+  const [customPrefSaved, setCustomPrefSaved] = useState(false);
 
   const hasProfileData = (p: UserProfile) => p.country || p.age;
 
@@ -86,6 +87,8 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
     setDraft(updated);
     onCustomPreferencesChange?.(value);
     await saveUserProfile(updated);
+    setCustomPrefSaved(true);
+    setTimeout(() => setCustomPrefSaved(false), 2000);
   };
 
   const handleDietaryToggle = async (pref: DietaryPreference) => {
@@ -252,7 +255,9 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
               rows={3}
               onBlur={e => handleCustomPreferencesBlur(e.target.value.trim())}
             />
-            <span className="settings-field-hint">{t('settings.customPreferencesHint')}</span>
+            <span className={`settings-field-hint${customPrefSaved ? ' settings-field-hint--saved' : ''}`}>
+              {customPrefSaved ? t('settings.saved') : t('settings.customPreferencesHint')}
+            </span>
           </div>
         </div>
       </section>
