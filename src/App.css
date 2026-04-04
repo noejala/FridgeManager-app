@@ -20,7 +20,7 @@
   --border-hover: rgba(44, 111, 224, 0.22);
   --shadow: 0 4px 20px rgba(44, 111, 224, 0.08);
   --radius: 12px;
-  --font-display: 'Lora', Georgia, serif;
+  --font-display: 'Figtree', system-ui, sans-serif;
   --font-body: 'Figtree', system-ui, sans-serif;
 }
 
@@ -201,7 +201,7 @@ body::after {
 }
 
 .app-header h1 {
-  font-family: var(--font-display);
+  font-family: 'Lora', Georgia, serif;
   font-size: 4.5rem;
   font-weight: 300;
   color: var(--text);

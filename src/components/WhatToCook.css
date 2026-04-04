@@ -355,7 +355,7 @@
 .cooking-mode-picker-header h3 {
   font-family: var(--font-display);
   font-size: 1.6rem;
-  font-weight: 400;
+  font-weight: 600;
   color: var(--text);
   margin-bottom: 0.25rem;
 }
@@ -548,7 +548,7 @@
 .cook-header h2 {
   font-family: var(--font-display);
   font-size: 2.25rem;
-  font-weight: 400;
+  font-weight: 600;
   color: var(--text);
   margin-bottom: 0.25rem;
   letter-spacing: 0.01em;
