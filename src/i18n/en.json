@@ -92,7 +92,7 @@
     "confirmOpen": "Confirm"
   },
   "cook": {
-    "title": "🍳 What to cook",
+    "title": "What to cook",
     "addProductsForSuggestions": "Add products to get recipe suggestions",
     "recipesBasedOn_one": "Recipes based on your {{count}} product",
     "recipesBasedOn_other": "Recipes based on your {{count}} products",
@@ -289,7 +289,7 @@
     }
   },
   "seasonal": {
-    "title": "🌱 Seasonal products",
+    "title": "Seasonal products",
     "recommendedFor": "Recommended products for {{month}} ({{season}})",
     "vegetables": "Vegetables",
     "fruits": "Fruits",
