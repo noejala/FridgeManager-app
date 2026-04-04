@@ -552,6 +552,7 @@
   color: var(--text);
   margin-bottom: 0.25rem;
   letter-spacing: 0.01em;
+  flex: 0 0 100%;
 }
 
 .cook-subtitle {
