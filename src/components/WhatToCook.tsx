@@ -423,7 +423,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
     >
       {recipe.meal.thumbnail
         ? <img src={recipe.meal.thumbnail} alt={recipe.meal.name} className="recipe-thumbnail" />
-        : <div className="recipe-thumbnail-placeholder" aria-hidden="true">✨</div>
+        : <div className="recipe-thumbnail-placeholder" aria-hidden="true" />
       }
       <button
         className={`recipe-save-btn${savedMap.has(recipe.meal.name.toLowerCase()) ? ' saved' : ''}`}
@@ -772,7 +772,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
             <button className="modal-close" onClick={closeDetails}>✕</button>
             {selectedRecipe.meal.thumbnail
               ? <img src={selectedRecipe.meal.thumbnail} alt={selectedRecipe.meal.name} className="modal-image" />
-              : <div className="modal-thumbnail-placeholder" aria-hidden="true">✨</div>
+              : <div className="modal-thumbnail-placeholder" aria-hidden="true" />
             }
             <h2>{selectedRecipe.meal.name}</h2>
             <div className="modal-tags">
