@@ -330,7 +330,7 @@
 }
 
 .mode-btn-ai.active {
-  background: linear-gradient(135deg, #7c3aed, #2c6fe0);
+  background: var(--accent);
   color: #fff;
 }
 
@@ -530,7 +530,7 @@
   align-items: center;
   justify-content: center;
   font-size: 2.5rem;
-  background: linear-gradient(135deg, color-mix(in srgb, #7c3aed 12%, var(--bg-card)), color-mix(in srgb, #2c6fe0 10%, var(--bg-card)));
+  background: var(--bg-surface);
 }
 
 .modal-thumbnail-placeholder {
@@ -542,7 +542,7 @@
   font-size: 3.5rem;
   border-radius: 10px;
   margin-bottom: 1.25rem;
-  background: linear-gradient(135deg, color-mix(in srgb, #7c3aed 12%, var(--bg-card)), color-mix(in srgb, #2c6fe0 10%, var(--bg-card)));
+  background: var(--bg-surface);
 }
 
 .cook-header h2 {
