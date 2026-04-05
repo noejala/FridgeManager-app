@@ -2,7 +2,7 @@
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-left: 3px solid var(--green);
-  border-radius: var(--radius);
+  border-radius: 6px var(--radius) var(--radius) 6px;
   padding: 1.25rem;
   position: relative;
   transition: border-color 0.2s, box-shadow 0.2s;
