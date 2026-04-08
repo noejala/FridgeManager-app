@@ -255,6 +255,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
   });
   const [selectedCookingMode, setSelectedCookingMode] = useState<CookingMode | null>(null);
   const [selectedCourse, setSelectedCourse] = useState<CourseSelection | null>(null);
+  const [localPrompt, setLocalPrompt] = useState<string>(() => localStorage.getItem('cook-custom-prompt') ?? '');
   const [savedView, setSavedView] = useState(false);
   const [savedRecipes, setSavedRecipes] = useState<SavedRecipe[]>([]);
   const [savedMap, setSavedMap] = useState<Map<string, string>>(new Map());
@@ -296,7 +297,8 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       let isAiMode = false;
 
       if (recipeMode === 'ai') {
-        const geminiResults = await fetchGeminiRecipes(fridgeNames, dietaryPreferences, i18n.language, selectedCookingMode ?? undefined, urgentFridgeNames, selectedCourse ?? undefined, customPreferences || undefined);
+        const activePrompt = localPrompt.trim() || customPreferences || undefined;
+        const geminiResults = await fetchGeminiRecipes(fridgeNames, dietaryPreferences, i18n.language, selectedCookingMode ?? undefined, urgentFridgeNames, selectedCourse ?? undefined, activePrompt);
         if (geminiResults.length > 0) {
           meals = geminiResults;
           isAiMode = true;
@@ -350,7 +352,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       fetchingRef.current = false;
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [products, recipeMode, selectedCookingMode, selectedCourse, dietaryPreferences.join(','), i18n.language]);
+  }, [products, recipeMode, selectedCookingMode, selectedCourse, dietaryPreferences.join(','), i18n.language, localPrompt]);
 
   useEffect(() => {
     fetchRecipes();
@@ -539,6 +541,11 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
               >
                 {t(`cook.coursePicker.${selectedCourse}.icon`)} {t(`cook.coursePicker.${selectedCourse}.label`)} ↩
               </button>
+              {localPrompt.trim() && (
+                <span className="custom-prompt-badge" title={localPrompt}>
+                  ✦ {t('cook.customPromptActive')}
+                </span>
+              )}
             </>
           )}
         </div>
@@ -564,6 +571,20 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
           <div className="cooking-mode-picker-header">
             <h3>{t('cook.cookingModes.title')}</h3>
             <p>{t('cook.cookingModes.subtitle')}</p>
+          </div>
+          <div className="custom-prompt-area">
+            <label className="custom-prompt-label">{t('cook.customPromptLabel')}</label>
+            <textarea
+              className="custom-prompt-input"
+              value={localPrompt}
+              onChange={e => {
+                setLocalPrompt(e.target.value);
+                localStorage.setItem('cook-custom-prompt', e.target.value);
+              }}
+              placeholder={t('cook.customPromptPlaceholder')}
+              rows={2}
+            />
+            <p className="custom-prompt-hint">{t('cook.customPromptHint')}</p>
           </div>
           <div className="cooking-mode-grid">
             {(['quick', 'empty_fridge', 'expiring', 'chef'] as CookingMode[]).map((mode) => (
