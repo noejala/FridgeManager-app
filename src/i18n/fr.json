@@ -156,10 +156,10 @@
         "description": "Un menu complet, de l'entrée au dessert"
       }
     },
-    "customPromptLabel": "Contexte ou envie particulière",
-    "customPromptPlaceholder": "Ex : je suis sportif, je veux plus de protéines • compter les calories • repas léger le soir…",
-    "customPromptHint": "L'IA prendra ces préférences en compte pour toutes les générations de cette session.",
-    "customPromptActive": "Préf. active",
+    "customModeAdd": "Mode perso",
+    "customModeAddDesc": "Ajouter une envie ou un contexte…",
+    "customModePlaceholder": "Ex : inspiration asiatique, +protéines…",
+    "customModeDelete": "Supprimer",
     "cookingModes": {
       "title": "Comment tu veux cuisiner ?",
       "subtitle": "Choisis un mode, on génère des recettes personnalisées",

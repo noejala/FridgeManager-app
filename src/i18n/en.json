@@ -156,10 +156,10 @@
         "description": "A full menu, starter to dessert"
       }
     },
-    "customPromptLabel": "Context or special preference",
-    "customPromptPlaceholder": "E.g. I'm an athlete, I want more protein • count calories • light meal tonight…",
-    "customPromptHint": "The AI will factor these preferences into every generation for this session.",
-    "customPromptActive": "Pref. active",
+    "customModeAdd": "Custom mode",
+    "customModeAddDesc": "Add a preference or context…",
+    "customModePlaceholder": "E.g. Asian inspiration, high protein…",
+    "customModeDelete": "Delete",
     "cookingModes": {
       "title": "How do you want to cook?",
       "subtitle": "Pick a mode and we'll generate personalised recipes",

@@ -1,7 +1,7 @@
 import { MealDetails } from './mealApi';
 import { DietaryPreference } from '../types/UserProfile';
 
-export type CookingMode = 'quick' | 'empty_fridge' | 'expiring' | 'chef';
+export type CookingMode = 'quick' | 'empty_fridge' | 'expiring' | 'chef' | 'custom';
 export type CourseSelection = 'starter' | 'main' | 'dessert' | 'all';
 
 function hashString(s: string): number {
@@ -28,7 +28,8 @@ export async function fetchGeminiRecipes(
   cookingMode?: CookingMode,
   expiringNames?: string[],
   courseSelection?: CourseSelection,
-  customPreferences?: string
+  customPreferences?: string,
+  customModeText?: string
 ): Promise<MealDetails[]> {
   const rateLimitUntil = localStorage.getItem('gemini-ratelimit-until');
   if (rateLimitUntil && Date.now() < Number(rateLimitUntil)) {
@@ -37,7 +38,7 @@ export async function fetchGeminiRecipes(
   }
 
   const today = new Date().toISOString().slice(0, 10);
-  const raw = [...productNames].sort().join(',') + '|' + [...dietaryPrefs].sort().join(',') + '|' + language + '|' + today + '|' + (cookingMode ?? 'none') + '|' + (courseSelection ?? 'none') + '|' + (customPreferences ?? '') + '|v9';
+  const raw = [...productNames].sort().join(',') + '|' + [...dietaryPrefs].sort().join(',') + '|' + language + '|' + today + '|' + (cookingMode ?? 'none') + '|' + (courseSelection ?? 'none') + '|' + (customPreferences ?? '') + '|' + (customModeText ?? '') + '|v9';
   const cacheKey = `gemini-recipes-${hashString(raw).toString(36)}`;
 
   const cached = localStorage.getItem(cacheKey);
@@ -76,6 +77,10 @@ export async function fetchGeminiRecipes(
     modeInstruction = isFrench
       ? "Propose des recettes élaborées et techniques, dignes d'un chef. Techniques raffinées, dressage soigné et saveurs complexes sont les bienvenus. La difficulté est un atout. Donne à chaque recette un nom court et élégant (3 mots maximum), pas une liste d'ingrédients."
       : 'Suggest elaborate, chef-level recipes with refined techniques, sophisticated plating, and complex flavors. Difficulty is a feature. Give each recipe a short, elegant name (3 words max) — not a list of ingredients.';
+  } else if (cookingMode === 'custom' && customModeText) {
+    modeInstruction = isFrench
+      ? `Respecte impérativement ce contexte ou cette envie : ${customModeText}`
+      : `Strictly respect this context or preference: ${customModeText}`;
   }
 
   const isChef = cookingMode === 'chef';
