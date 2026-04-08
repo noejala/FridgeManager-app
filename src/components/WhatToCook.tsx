@@ -304,14 +304,23 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       let isAiMode = false;
 
       if (recipeMode === 'ai') {
-        const geminiResults = await fetchGeminiRecipes(fridgeNames, dietaryPreferences, i18n.language, selectedCookingMode ?? undefined, urgentFridgeNames, selectedCourse ?? undefined, customPreferences || undefined, selectedCustomModeText ?? undefined);
-        if (geminiResults.length > 0) {
-          meals = geminiResults;
-          isAiMode = true;
-          setAiFallback(false);
-        } else {
+        try {
+          const geminiResults = await fetchGeminiRecipes(fridgeNames, dietaryPreferences, i18n.language, selectedCookingMode ?? undefined, urgentFridgeNames, selectedCourse ?? undefined, customPreferences || undefined, selectedCustomModeText ?? undefined);
+          if (geminiResults.length > 0) {
+            meals = geminiResults;
+            isAiMode = true;
+            setAiFallback(false);
+          } else {
+            meals = await fetchMealDbMeals(fridgeNames);
+            setAiFallback(true);
+          }
+        } catch (e) {
+          const msg = e instanceof Error ? e.message : '';
           meals = await fetchMealDbMeals(fridgeNames);
           setAiFallback(true);
+          if (msg === 'gemini_unavailable') {
+            setError(t('cook.aiFallbackUnavailable'));
+          }
         }
       } else {
         meals = await fetchMealDbMeals(fridgeNames);

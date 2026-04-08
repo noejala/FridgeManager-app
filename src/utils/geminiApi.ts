@@ -129,6 +129,9 @@ difficulty must be one of: ${difficultyOptions}`;
       if (res.status === 429) {
         localStorage.setItem('gemini-ratelimit-until', String(Date.now() + 5 * 60 * 1000));
       }
+      if (res.status === 503) {
+        throw new Error('gemini_unavailable');
+      }
       return [];
     }
 

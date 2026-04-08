@@ -124,6 +124,7 @@
     "modeAi": "✨ IA",
     "searchingAi": "Génération de recettes IA…",
     "aiFallback": "Gemini indisponible (limite atteinte) — affichage des recettes classiques.",
+    "aiFallbackUnavailable": "Gemini surchargé en ce moment — affichage des recettes classiques. Réessaie dans quelques instants.",
     "changeCookingMode": "Changer de mode",
     "saveRecipe": "Sauvegarder",
     "unsaveRecipe": "Retirer des favoris",
