@@ -248,6 +248,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
   const [sortMode, setSortMode] = useState<SortMode>('smart');
   const [servings, setServings] = useState(DEFAULT_SERVINGS);
   const [aiFallback, setAiFallback] = useState(false);
+  const [geminiOverloaded, setGeminiOverloaded] = useState(false);
   const fetchingRef = useRef(false);
   const [recipeMode, setRecipeMode] = useState<'api' | 'ai'>(() => {
     if (!geminiEnabled) return 'api';
@@ -293,6 +294,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
 
     setLoading(true);
     setError(null);
+    setGeminiOverloaded(false);
 
     try {
       const fridgeNames = products.map((p) => toEnglishIngredient(p.name));
@@ -319,7 +321,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
           meals = await fetchMealDbMeals(fridgeNames);
           setAiFallback(true);
           if (msg === 'gemini_unavailable') {
-            setError(t('cook.aiFallbackUnavailable'));
+            setGeminiOverloaded(true);
           }
         }
       } else {
@@ -698,7 +700,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
 
       {!savedView && recipeMode === 'ai' && aiFallback && !loading && (
         <div className="ai-fallback-notice">
-          ⚠️ {t('cook.aiFallback')}
+          ⚠️ {geminiOverloaded ? t('cook.aiFallbackUnavailable') : t('cook.aiFallback')}
           <button onClick={fetchRecipes}>{t('cook.retry')}</button>
         </div>
       )}

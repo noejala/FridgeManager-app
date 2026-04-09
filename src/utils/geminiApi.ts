@@ -168,6 +168,9 @@ difficulty must be one of: ${difficultyOptions}`;
     localStorage.setItem(cacheKey, JSON.stringify(results));
     return results;
   } catch (e) {
+    if (e instanceof Error && e.message === 'gemini_unavailable') {
+      throw e;
+    }
     console.error('[Gemini] Unexpected error', e);
     return [];
   }
