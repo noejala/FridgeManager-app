@@ -24,13 +24,17 @@ export const BarcodeScanner = ({ onDetected, onClose }: Props) => {
   const [status, setStatus] = useState<Status>('requesting');
   const [manualCode, setManualCode] = useState('');
   const [retryCount, setRetryCount] = useState(0);
+  const [torchOn, setTorchOn] = useState(false);
+  const [torchSupported, setTorchSupported] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const controlsRef = useRef<any>(null);
   const detectedRef = useRef(false);
+  const streamRef = useRef<MediaStream | null>(null);
 
   const handleRetry = () => {
     detectedRef.current = false;
+    setTorchOn(false);
     setStatus('requesting');
     setRetryCount(c => c + 1);
   };
@@ -68,6 +72,16 @@ export const BarcodeScanner = ({ onDetected, onClose }: Props) => {
         }
         controlsRef.current = controls;
         setStatus('scanning');
+
+        // Check torch support from the video track
+        const stream = videoRef.current?.srcObject as MediaStream | null;
+        streamRef.current = stream;
+        const track = stream?.getVideoTracks()[0];
+        if (track) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const caps = (track.getCapabilities as any)?.();
+          if (caps?.torch) setTorchSupported(true);
+        }
       })
       .catch((err: unknown) => {
         if (!active) return;
@@ -83,8 +97,23 @@ export const BarcodeScanner = ({ onDetected, onClose }: Props) => {
       active = false;
       controlsRef.current?.stop();
       controlsRef.current = null;
+      streamRef.current = null;
     };
   }, [onDetected, retryCount]);
+
+  const toggleTorch = async () => {
+    const stream = streamRef.current;
+    const track = stream?.getVideoTracks()[0];
+    if (!track) return;
+    const next = !torchOn;
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (track.applyConstraints as any)({ advanced: [{ torch: next }] });
+      setTorchOn(next);
+    } catch {
+      // torch not supported on this device
+    }
+  };
 
   const handleManualSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -126,6 +155,17 @@ export const BarcodeScanner = ({ onDetected, onClose }: Props) => {
                   </svg>
                   Pointez le code-barres vers la caméra
                 </div>
+                {torchSupported && (
+                  <button
+                    className={`scanner-torch${torchOn ? ' scanner-torch--on' : ''}`}
+                    onClick={toggleTorch}
+                    aria-label={torchOn ? 'Éteindre le flash' : 'Allumer le flash'}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                    </svg>
+                  </button>
+                )}
               </>
             )}
             {status === 'requesting' && (
