@@ -111,13 +111,22 @@ export const BarcodeScanner = ({ onDetected, onClose }: Props) => {
           <div className="scanner-viewport">
             <video ref={videoRef} className="scanner-video" autoPlay playsInline muted />
             {status === 'scanning' && (
-              <div className="scanner-viewfinder">
-                <span className="scanner-corner scanner-corner--tl" />
-                <span className="scanner-corner scanner-corner--tr" />
-                <span className="scanner-corner scanner-corner--bl" />
-                <span className="scanner-corner scanner-corner--br" />
-                <div className="scanner-line" />
-              </div>
+              <>
+                <div className="scanner-viewfinder">
+                  <span className="scanner-corner scanner-corner--tl" />
+                  <span className="scanner-corner scanner-corner--tr" />
+                  <span className="scanner-corner scanner-corner--bl" />
+                  <span className="scanner-corner scanner-corner--br" />
+                  <div className="scanner-line" />
+                </div>
+                <div className="scanner-hint">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                    <rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM17 17h3v3h-3z"/>
+                  </svg>
+                  Pointez le code-barres vers la caméra
+                </div>
+              </>
             )}
             {status === 'requesting' && (
               <div className="scanner-placeholder">
@@ -126,10 +135,6 @@ export const BarcodeScanner = ({ onDetected, onClose }: Props) => {
               </div>
             )}
           </div>
-        )}
-
-        {status === 'scanning' && (
-          <p className="scanner-hint">Pointez le code-barres vers la caméra</p>
         )}
 
         {showFallback && (
