@@ -392,6 +392,18 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
     saveCustomModes(customModes.filter((_, i) => i !== index));
   };
 
+  const handleChipClick = (chip: string) => {
+    const current = newCustomModeText.trim();
+    if (!current) {
+      setNewCustomModeText(chip);
+    } else {
+      const parts = current.split(',').map(p => p.trim());
+      if (!parts.includes(chip)) {
+        setNewCustomModeText(current + ', ' + chip);
+      }
+    }
+  };
+
   useEffect(() => {
     fetchSavedRecipes()
       .then(saved => {
@@ -635,7 +647,30 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
               </div>
             ))}
             {addingCustomMode ? (
-              <div className="cooking-mode-card cooking-mode-card--adding">
+              <div className="custom-mode-builder">
+                <div className="custom-mode-builder-header">
+                  <span className="custom-mode-builder-title">{t('cook.customModeBuilderTitle')}</span>
+                  <span className="custom-mode-builder-hint">{t('cook.customModeBuilderHint')}</span>
+                </div>
+                {(['cuisine', 'nutrition', 'context', 'mood'] as const).map(cat => {
+                  const category = t(`cook.customModeBuilderCategories.${cat}`, { returnObjects: true }) as { label: string; chips: string[] };
+                  const activeChips = new Set(newCustomModeText.split(',').map(p => p.trim()));
+                  return (
+                    <div key={cat} className="custom-mode-chips-section">
+                      <span className="custom-mode-chips-label">{category.label}</span>
+                      <div className="custom-mode-chips-row">
+                        {category.chips.map(chip => (
+                          <button
+                            key={chip}
+                            type="button"
+                            className={`custom-mode-chip${activeChips.has(chip) ? ' custom-mode-chip--active' : ''}`}
+                            onClick={() => handleChipClick(chip)}
+                          >{chip}</button>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
                 <input
                   className="custom-mode-input"
                   autoFocus
@@ -646,7 +681,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
                     if (e.key === 'Enter') confirmAddCustomMode();
                     if (e.key === 'Escape') { setAddingCustomMode(false); setNewCustomModeText(''); }
                   }}
-                  maxLength={60}
+                  maxLength={80}
                 />
                 <div className="custom-mode-actions">
                   <button className="custom-mode-confirm" onClick={confirmAddCustomMode} disabled={!newCustomModeText.trim()}>✓</button>

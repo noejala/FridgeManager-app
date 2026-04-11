@@ -161,6 +161,26 @@
     "customModeAddDesc": "Add a preference or context…",
     "customModePlaceholder": "E.g. Asian inspiration, high protein…",
     "customModeDelete": "Delete",
+    "customModeBuilderTitle": "Describe your craving",
+    "customModeBuilderHint": "Click a suggestion or type freely below",
+    "customModeBuilderCategories": {
+      "cuisine": {
+        "label": "Cuisine",
+        "chips": ["Asian", "Italian", "Mediterranean", "Mexican", "Indian", "Japanese", "French"]
+      },
+      "nutrition": {
+        "label": "Goal",
+        "chips": ["High protein", "Light", "Low carb", "Meatless", "Gluten-free", "High fiber"]
+      },
+      "context": {
+        "label": "Context",
+        "chips": ["Family meal", "For guests", "Kid-friendly", "Meal prep", "Date night", "Budget-friendly"]
+      },
+      "mood": {
+        "label": "Mood",
+        "chips": ["Comfort food", "Summer vibes", "Cozy", "Spicy", "Original & creative"]
+      }
+    },
     "cookingModes": {
       "title": "How do you want to cook?",
       "subtitle": "Pick a mode and we'll generate personalised recipes",

@@ -159,8 +159,28 @@
     },
     "customModeAdd": "Mode perso",
     "customModeAddDesc": "Ajouter une envie ou un contexte…",
-    "customModePlaceholder": "Ex : inspiration asiatique, +protéines…",
+    "customModePlaceholder": "Ex : inspiration asiatique, riche en protéines…",
     "customModeDelete": "Supprimer",
+    "customModeBuilderTitle": "Décris ton envie du moment",
+    "customModeBuilderHint": "Clique sur une suggestion ou écris librement ci-dessous",
+    "customModeBuilderCategories": {
+      "cuisine": {
+        "label": "Cuisine",
+        "chips": ["Asiatique", "Italienne", "Méditerranéenne", "Mexicaine", "Indienne", "Japonaise", "Française"]
+      },
+      "nutrition": {
+        "label": "Objectif",
+        "chips": ["Riche en protéines", "Léger", "Low carb", "Sans viande", "Sans gluten", "Riche en fibres"]
+      },
+      "context": {
+        "label": "Contexte",
+        "chips": ["Pour la famille", "Pour des invités", "Pour enfants", "Meal prep", "Repas romantique", "Petit budget"]
+      },
+      "mood": {
+        "label": "Ambiance",
+        "chips": ["Comfort food", "Estival", "Réconfortant", "Épicé", "Original & créatif"]
+      }
+    },
     "cookingModes": {
       "title": "Comment tu veux cuisiner ?",
       "subtitle": "Choisis un mode, on génère des recettes personnalisées",
