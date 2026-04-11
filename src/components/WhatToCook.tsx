@@ -257,12 +257,20 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
   const [selectedCookingMode, setSelectedCookingMode] = useState<CookingMode | null>(null);
   const [selectedCourse, setSelectedCourse] = useState<CourseSelection | null>(null);
   const [selectedCustomModeText, setSelectedCustomModeText] = useState<string | null>(null);
-  const [customModes, setCustomModes] = useState<string[]>(() => {
-    try { return JSON.parse(localStorage.getItem('cook-custom-modes') ?? '[]'); }
-    catch { return []; }
+  const [selectedCustomModeTitle, setSelectedCustomModeTitle] = useState<string | null>(null);
+  interface CustomMode { title: string; prompt: string; }
+  const [customModes, setCustomModes] = useState<CustomMode[]>(() => {
+    try {
+      const raw = JSON.parse(localStorage.getItem('cook-custom-modes') ?? '[]');
+      if (raw.length > 0 && typeof raw[0] === 'string') {
+        return (raw as string[]).map(s => ({ title: s, prompt: s }));
+      }
+      return raw as CustomMode[];
+    } catch { return []; }
   });
   const [addingCustomMode, setAddingCustomMode] = useState(false);
-  const [newCustomModeText, setNewCustomModeText] = useState('');
+  const [customModeTitle, setCustomModeTitle] = useState('');
+  const [customModeFields, setCustomModeFields] = useState({ cuisine: '', goal: '', occasion: '', extra: '' });
   const [savedView, setSavedView] = useState(false);
   const [savedRecipes, setSavedRecipes] = useState<SavedRecipe[]>([]);
   const [savedMap, setSavedMap] = useState<Map<string, string>>(new Map());
@@ -272,6 +280,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
     if (recipeMode === 'api') {
       setSelectedCookingMode(null);
       setSelectedCustomModeText(null);
+      setSelectedCustomModeTitle(null);
       setSelectedCourse(null);
       setRecipes([]);
     }
@@ -375,33 +384,28 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
     fetchRecipes();
   }, [fetchRecipes]);
 
-  const saveCustomModes = (modes: string[]) => {
+  const saveCustomModes = (modes: { title: string; prompt: string }[]) => {
     setCustomModes(modes);
     localStorage.setItem('cook-custom-modes', JSON.stringify(modes));
   };
 
   const confirmAddCustomMode = () => {
-    const text = newCustomModeText.trim();
-    if (!text) return;
-    saveCustomModes([...customModes, text]);
-    setNewCustomModeText('');
+    const title = customModeTitle.trim();
+    if (!title) return;
+    const prompt = [
+      customModeFields.cuisine.trim(),
+      customModeFields.goal.trim(),
+      customModeFields.occasion.trim(),
+      customModeFields.extra.trim(),
+    ].filter(Boolean).join('. ');
+    saveCustomModes([...customModes, { title, prompt: prompt || title }]);
+    setCustomModeTitle('');
+    setCustomModeFields({ cuisine: '', goal: '', occasion: '', extra: '' });
     setAddingCustomMode(false);
   };
 
   const deleteCustomMode = (index: number) => {
     saveCustomModes(customModes.filter((_, i) => i !== index));
-  };
-
-  const handleChipClick = (chip: string) => {
-    const current = newCustomModeText.trim();
-    if (!current) {
-      setNewCustomModeText(chip);
-    } else {
-      const parts = current.split(',').map(p => p.trim());
-      if (!parts.includes(chip)) {
-        setNewCustomModeText(current + ', ' + chip);
-      }
-    }
   };
 
   useEffect(() => {
@@ -577,10 +581,10 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
             <>
               <button
                 className="change-cooking-mode-btn"
-                onClick={() => { setSelectedCookingMode(null); setSelectedCustomModeText(null); setSelectedCourse(null); setRecipes([]); }}
+                onClick={() => { setSelectedCookingMode(null); setSelectedCustomModeText(null); setSelectedCustomModeTitle(null); setSelectedCourse(null); setRecipes([]); }}
               >
                 {selectedCookingMode === 'custom'
-                  ? `✦ ${selectedCustomModeText} ↩`
+                  ? `✦ ${selectedCustomModeTitle} ↩`
                   : `${t(`cook.cookingModes.${selectedCookingMode}.icon`)} ${t(`cook.cookingModes.${selectedCookingMode}.label`)} ↩`
                 }
               </button>
@@ -628,17 +632,17 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
                 <span className="cooking-mode-desc">{t(`cook.cookingModes.${mode}.description`)}</span>
               </button>
             ))}
-            {customModes.map((text, i) => (
+            {customModes.map((mode, i) => (
               <div
                 key={`custom-${i}`}
                 className="cooking-mode-card cooking-mode-card--custom"
                 role="button"
                 tabIndex={0}
-                onClick={() => { setSelectedCookingMode('custom'); setSelectedCustomModeText(text); }}
-                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setSelectedCookingMode('custom'); setSelectedCustomModeText(text); } }}
+                onClick={() => { setSelectedCookingMode('custom'); setSelectedCustomModeText(mode.prompt); setSelectedCustomModeTitle(mode.title); }}
+                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setSelectedCookingMode('custom'); setSelectedCustomModeText(mode.prompt); setSelectedCustomModeTitle(mode.title); } }}
               >
                 <span className="cooking-mode-icon">✦</span>
-                <span className="cooking-mode-label">{text}</span>
+                <span className="cooking-mode-label">{mode.title}</span>
                 <button
                   className="custom-mode-delete"
                   onClick={e => { e.stopPropagation(); deleteCustomMode(i); }}
@@ -650,42 +654,45 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
               <div className="custom-mode-builder">
                 <div className="custom-mode-builder-header">
                   <span className="custom-mode-builder-title">{t('cook.customModeBuilderTitle')}</span>
-                  <span className="custom-mode-builder-hint">{t('cook.customModeBuilderHint')}</span>
                 </div>
-                {(['cuisine', 'nutrition', 'context', 'mood'] as const).map(cat => {
-                  const category = t(`cook.customModeBuilderCategories.${cat}`, { returnObjects: true }) as { label: string; chips: string[] };
-                  const activeChips = new Set(newCustomModeText.split(',').map(p => p.trim()));
-                  return (
-                    <div key={cat} className="custom-mode-chips-section">
-                      <span className="custom-mode-chips-label">{category.label}</span>
-                      <div className="custom-mode-chips-row">
-                        {category.chips.map(chip => (
-                          <button
-                            key={chip}
-                            type="button"
-                            className={`custom-mode-chip${activeChips.has(chip) ? ' custom-mode-chip--active' : ''}`}
-                            onClick={() => handleChipClick(chip)}
-                          >{chip}</button>
-                        ))}
-                      </div>
+                <div className="custom-mode-builder-field custom-mode-builder-field--title">
+                  <label className="custom-mode-builder-label">{t('cook.customModeBuilderTitleLabel')}</label>
+                  <input
+                    className="custom-mode-input"
+                    autoFocus
+                    value={customModeTitle}
+                    onChange={e => setCustomModeTitle(e.target.value)}
+                    placeholder={t('cook.customModeBuilderTitlePlaceholder')}
+                    onKeyDown={e => { if (e.key === 'Escape') { setAddingCustomMode(false); setCustomModeTitle(''); setCustomModeFields({ cuisine: '', goal: '', occasion: '', extra: '' }); } }}
+                    maxLength={40}
+                  />
+                </div>
+                <div className="custom-mode-builder-questions">
+                  {([
+                    { key: 'cuisine', labelKey: 'customModeBuilderQ1Label', placeholderKey: 'customModeBuilderQ1Placeholder' },
+                    { key: 'goal',    labelKey: 'customModeBuilderQ2Label', placeholderKey: 'customModeBuilderQ2Placeholder' },
+                    { key: 'occasion',labelKey: 'customModeBuilderQ3Label', placeholderKey: 'customModeBuilderQ3Placeholder' },
+                    { key: 'extra',   labelKey: 'customModeBuilderExtraLabel', placeholderKey: 'customModeBuilderExtraPlaceholder' },
+                  ] as const).map(({ key, labelKey, placeholderKey }) => (
+                    <div key={key} className="custom-mode-builder-field">
+                      <label className="custom-mode-builder-label">{t(`cook.${labelKey}`)}</label>
+                      <input
+                        className="custom-mode-input"
+                        value={customModeFields[key]}
+                        onChange={e => setCustomModeFields(f => ({ ...f, [key]: e.target.value }))}
+                        placeholder={t(`cook.${placeholderKey}`)}
+                        maxLength={80}
+                      />
                     </div>
-                  );
-                })}
-                <input
-                  className="custom-mode-input"
-                  autoFocus
-                  value={newCustomModeText}
-                  onChange={e => setNewCustomModeText(e.target.value)}
-                  placeholder={t('cook.customModePlaceholder')}
-                  onKeyDown={e => {
-                    if (e.key === 'Enter') confirmAddCustomMode();
-                    if (e.key === 'Escape') { setAddingCustomMode(false); setNewCustomModeText(''); }
-                  }}
-                  maxLength={80}
-                />
+                  ))}
+                </div>
                 <div className="custom-mode-actions">
-                  <button className="custom-mode-confirm" onClick={confirmAddCustomMode} disabled={!newCustomModeText.trim()}>✓</button>
-                  <button className="custom-mode-cancel" onClick={() => { setAddingCustomMode(false); setNewCustomModeText(''); }}>✕</button>
+                  <button className="custom-mode-cancel" onClick={() => { setAddingCustomMode(false); setCustomModeTitle(''); setCustomModeFields({ cuisine: '', goal: '', occasion: '', extra: '' }); }}>
+                    {t('product.cancel')}
+                  </button>
+                  <button className="custom-mode-confirm" onClick={confirmAddCustomMode} disabled={!customModeTitle.trim()}>
+                    {t('product.save')}
+                  </button>
                 </div>
               </div>
             ) : (
@@ -707,10 +714,10 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
           <div className="cooking-mode-picker-header">
             <button
               className="course-picker-back"
-              onClick={() => { setSelectedCookingMode(null); setSelectedCustomModeText(null); }}
+              onClick={() => { setSelectedCookingMode(null); setSelectedCustomModeText(null); setSelectedCustomModeTitle(null); }}
             >
               {selectedCookingMode === 'custom'
-                ? `← ✦ ${selectedCustomModeText}`
+                ? `← ✦ ${selectedCustomModeTitle}`
                 : `← ${t(`cook.cookingModes.${selectedCookingMode}.icon`)} ${t(`cook.cookingModes.${selectedCookingMode}.label`)}`
               }
             </button>
