@@ -660,87 +660,14 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
                 >×</button>
               </div>
             ))}
-            {addingCustomMode ? (
-              <div className="custom-mode-builder">
-                <div className="custom-mode-builder-header">
-                  <span className="custom-mode-builder-title">{t('cook.customModeBuilderTitle')}</span>
-                  <div className="custom-mode-type-toggle">
-                    <button
-                      type="button"
-                      className={`custom-mode-type-btn${customModeType === 'guided' ? ' active' : ''}`}
-                      onClick={() => setCustomModeType('guided')}
-                    >{t('cook.customModeTypeGuided')}</button>
-                    <button
-                      type="button"
-                      className={`custom-mode-type-btn${customModeType === 'free' ? ' active' : ''}`}
-                      onClick={() => setCustomModeType('free')}
-                    >{t('cook.customModeTypeFree')}</button>
-                  </div>
-                </div>
-                <div className="custom-mode-builder-field custom-mode-builder-field--title">
-                  <label className="custom-mode-builder-label">{t('cook.customModeBuilderTitleLabel')}</label>
-                  <input
-                    className="custom-mode-input"
-                    autoFocus
-                    value={customModeTitle}
-                    onChange={e => setCustomModeTitle(e.target.value)}
-                    placeholder={t('cook.customModeBuilderTitlePlaceholder')}
-                    onKeyDown={e => { if (e.key === 'Escape') { resetBuilderForm(); } }}
-                    maxLength={40}
-                  />
-                </div>
-                {customModeType === 'guided' ? (
-                  <div className="custom-mode-builder-questions">
-                    {([
-                      { key: 'cuisine',  labelKey: 'customModeBuilderQ1Label',    placeholderKey: 'customModeBuilderQ1Placeholder' },
-                      { key: 'goal',     labelKey: 'customModeBuilderQ2Label',    placeholderKey: 'customModeBuilderQ2Placeholder' },
-                      { key: 'occasion', labelKey: 'customModeBuilderQ3Label',    placeholderKey: 'customModeBuilderQ3Placeholder' },
-                      { key: 'extra',    labelKey: 'customModeBuilderExtraLabel', placeholderKey: 'customModeBuilderExtraPlaceholder' },
-                    ] as const).map(({ key, labelKey, placeholderKey }) => (
-                      <div key={key} className="custom-mode-builder-field">
-                        <label className="custom-mode-builder-label">{t(`cook.${labelKey}`)}</label>
-                        <input
-                          className="custom-mode-input"
-                          value={customModeFields[key]}
-                          onChange={e => setCustomModeFields(f => ({ ...f, [key]: e.target.value }))}
-                          placeholder={t(`cook.${placeholderKey}`)}
-                          maxLength={80}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="custom-mode-builder-field">
-                    <label className="custom-mode-builder-label">{t('cook.customModeFreePropmt')}</label>
-                    <textarea
-                      className="custom-mode-textarea"
-                      value={customModeFreeText}
-                      onChange={e => setCustomModeFreeText(e.target.value)}
-                      placeholder={t('cook.customModeFreePromptPlaceholder')}
-                      rows={5}
-                      maxLength={400}
-                    />
-                  </div>
-                )}
-                <div className="custom-mode-actions">
-                  <button className="custom-mode-cancel" onClick={() => { resetBuilderForm(); }}>
-                    {t('form.cancel')}
-                  </button>
-                  <button className="custom-mode-confirm" onClick={confirmAddCustomMode} disabled={!customModeTitle.trim()}>
-                    {t('form.save')}
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <button
-                className="cooking-mode-card cooking-mode-card--add"
-                onClick={() => setAddingCustomMode(true)}
-              >
-                <span className="cooking-mode-icon">+</span>
-                <span className="cooking-mode-label">{t('cook.customModeAdd')}</span>
-                <span className="cooking-mode-desc">{t('cook.customModeAddDesc')}</span>
-              </button>
-            )}
+            <button
+              className="cooking-mode-card cooking-mode-card--add"
+              onClick={() => setAddingCustomMode(true)}
+            >
+              <span className="cooking-mode-icon">+</span>
+              <span className="cooking-mode-label">{t('cook.customModeAdd')}</span>
+              <span className="cooking-mode-desc">{t('cook.customModeAddDesc')}</span>
+            </button>
           </div>
         </div>
       )}
@@ -999,6 +926,81 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
                   </li>
                 ))}
               </ol>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {addingCustomMode && (
+        <div className="modal-overlay" onClick={resetBuilderForm}>
+          <div className="custom-mode-builder" onClick={e => e.stopPropagation()}>
+            <div className="custom-mode-builder-header">
+              <span className="custom-mode-builder-title">{t('cook.customModeBuilderTitle')}</span>
+              <div className="custom-mode-type-toggle">
+                <button
+                  type="button"
+                  className={`custom-mode-type-btn${customModeType === 'guided' ? ' active' : ''}`}
+                  onClick={() => setCustomModeType('guided')}
+                >{t('cook.customModeTypeGuided')}</button>
+                <button
+                  type="button"
+                  className={`custom-mode-type-btn${customModeType === 'free' ? ' active' : ''}`}
+                  onClick={() => setCustomModeType('free')}
+                >{t('cook.customModeTypeFree')}</button>
+              </div>
+            </div>
+            <div className="custom-mode-builder-field custom-mode-builder-field--title">
+              <label className="custom-mode-builder-label">{t('cook.customModeBuilderTitleLabel')}</label>
+              <input
+                className="custom-mode-input"
+                autoFocus
+                value={customModeTitle}
+                onChange={e => setCustomModeTitle(e.target.value)}
+                placeholder={t('cook.customModeBuilderTitlePlaceholder')}
+                onKeyDown={e => { if (e.key === 'Escape') resetBuilderForm(); }}
+                maxLength={40}
+              />
+            </div>
+            {customModeType === 'guided' ? (
+              <div className="custom-mode-builder-questions">
+                {([
+                  { key: 'cuisine',  labelKey: 'customModeBuilderQ1Label',    placeholderKey: 'customModeBuilderQ1Placeholder' },
+                  { key: 'goal',     labelKey: 'customModeBuilderQ2Label',    placeholderKey: 'customModeBuilderQ2Placeholder' },
+                  { key: 'occasion', labelKey: 'customModeBuilderQ3Label',    placeholderKey: 'customModeBuilderQ3Placeholder' },
+                  { key: 'extra',    labelKey: 'customModeBuilderExtraLabel', placeholderKey: 'customModeBuilderExtraPlaceholder' },
+                ] as const).map(({ key, labelKey, placeholderKey }) => (
+                  <div key={key} className="custom-mode-builder-field">
+                    <label className="custom-mode-builder-label">{t(`cook.${labelKey}`)}</label>
+                    <input
+                      className="custom-mode-input"
+                      value={customModeFields[key]}
+                      onChange={e => setCustomModeFields(f => ({ ...f, [key]: e.target.value }))}
+                      placeholder={t(`cook.${placeholderKey}`)}
+                      maxLength={80}
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="custom-mode-builder-field">
+                <label className="custom-mode-builder-label">{t('cook.customModeFreePropmt')}</label>
+                <textarea
+                  className="custom-mode-textarea"
+                  value={customModeFreeText}
+                  onChange={e => setCustomModeFreeText(e.target.value)}
+                  placeholder={t('cook.customModeFreePromptPlaceholder')}
+                  rows={5}
+                  maxLength={400}
+                />
+              </div>
+            )}
+            <div className="custom-mode-actions">
+              <button className="custom-mode-cancel" onClick={resetBuilderForm}>
+                {t('form.cancel')}
+              </button>
+              <button className="custom-mode-confirm" onClick={confirmAddCustomMode} disabled={!customModeTitle.trim()}>
+                {t('form.save')}
+              </button>
             </div>
           </div>
         </div>
