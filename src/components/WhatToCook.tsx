@@ -269,8 +269,10 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
     } catch { return []; }
   });
   const [addingCustomMode, setAddingCustomMode] = useState(false);
+  const [customModeType, setCustomModeType] = useState<'guided' | 'free'>('guided');
   const [customModeTitle, setCustomModeTitle] = useState('');
   const [customModeFields, setCustomModeFields] = useState({ cuisine: '', goal: '', occasion: '', extra: '' });
+  const [customModeFreeText, setCustomModeFreeText] = useState('');
   const [savedView, setSavedView] = useState(false);
   const [savedRecipes, setSavedRecipes] = useState<SavedRecipe[]>([]);
   const [savedMap, setSavedMap] = useState<Map<string, string>>(new Map());
@@ -389,19 +391,27 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
     localStorage.setItem('cook-custom-modes', JSON.stringify(modes));
   };
 
+  const resetBuilderForm = () => {
+    setCustomModeTitle('');
+    setCustomModeFields({ cuisine: '', goal: '', occasion: '', extra: '' });
+    setCustomModeFreeText('');
+    setCustomModeType('guided');
+    setAddingCustomMode(false);
+  };
+
   const confirmAddCustomMode = () => {
     const title = customModeTitle.trim();
     if (!title) return;
-    const prompt = [
-      customModeFields.cuisine.trim(),
-      customModeFields.goal.trim(),
-      customModeFields.occasion.trim(),
-      customModeFields.extra.trim(),
-    ].filter(Boolean).join('. ');
-    saveCustomModes([...customModes, { title, prompt: prompt || title }]);
-    setCustomModeTitle('');
-    setCustomModeFields({ cuisine: '', goal: '', occasion: '', extra: '' });
-    setAddingCustomMode(false);
+    const prompt = customModeType === 'free'
+      ? customModeFreeText.trim() || title
+      : [
+          customModeFields.cuisine.trim(),
+          customModeFields.goal.trim(),
+          customModeFields.occasion.trim(),
+          customModeFields.extra.trim(),
+        ].filter(Boolean).join('. ') || title;
+    saveCustomModes([...customModes, { title, prompt }]);
+    resetBuilderForm();
   };
 
   const deleteCustomMode = (index: number) => {
@@ -654,6 +664,18 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
               <div className="custom-mode-builder">
                 <div className="custom-mode-builder-header">
                   <span className="custom-mode-builder-title">{t('cook.customModeBuilderTitle')}</span>
+                  <div className="custom-mode-type-toggle">
+                    <button
+                      type="button"
+                      className={`custom-mode-type-btn${customModeType === 'guided' ? ' active' : ''}`}
+                      onClick={() => setCustomModeType('guided')}
+                    >{t('cook.customModeTypeGuided')}</button>
+                    <button
+                      type="button"
+                      className={`custom-mode-type-btn${customModeType === 'free' ? ' active' : ''}`}
+                      onClick={() => setCustomModeType('free')}
+                    >{t('cook.customModeTypeFree')}</button>
+                  </div>
                 </div>
                 <div className="custom-mode-builder-field custom-mode-builder-field--title">
                   <label className="custom-mode-builder-label">{t('cook.customModeBuilderTitleLabel')}</label>
@@ -663,31 +685,45 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
                     value={customModeTitle}
                     onChange={e => setCustomModeTitle(e.target.value)}
                     placeholder={t('cook.customModeBuilderTitlePlaceholder')}
-                    onKeyDown={e => { if (e.key === 'Escape') { setAddingCustomMode(false); setCustomModeTitle(''); setCustomModeFields({ cuisine: '', goal: '', occasion: '', extra: '' }); } }}
+                    onKeyDown={e => { if (e.key === 'Escape') { resetBuilderForm(); } }}
                     maxLength={40}
                   />
                 </div>
-                <div className="custom-mode-builder-questions">
-                  {([
-                    { key: 'cuisine', labelKey: 'customModeBuilderQ1Label', placeholderKey: 'customModeBuilderQ1Placeholder' },
-                    { key: 'goal',    labelKey: 'customModeBuilderQ2Label', placeholderKey: 'customModeBuilderQ2Placeholder' },
-                    { key: 'occasion',labelKey: 'customModeBuilderQ3Label', placeholderKey: 'customModeBuilderQ3Placeholder' },
-                    { key: 'extra',   labelKey: 'customModeBuilderExtraLabel', placeholderKey: 'customModeBuilderExtraPlaceholder' },
-                  ] as const).map(({ key, labelKey, placeholderKey }) => (
-                    <div key={key} className="custom-mode-builder-field">
-                      <label className="custom-mode-builder-label">{t(`cook.${labelKey}`)}</label>
-                      <input
-                        className="custom-mode-input"
-                        value={customModeFields[key]}
-                        onChange={e => setCustomModeFields(f => ({ ...f, [key]: e.target.value }))}
-                        placeholder={t(`cook.${placeholderKey}`)}
-                        maxLength={80}
-                      />
-                    </div>
-                  ))}
-                </div>
+                {customModeType === 'guided' ? (
+                  <div className="custom-mode-builder-questions">
+                    {([
+                      { key: 'cuisine',  labelKey: 'customModeBuilderQ1Label',    placeholderKey: 'customModeBuilderQ1Placeholder' },
+                      { key: 'goal',     labelKey: 'customModeBuilderQ2Label',    placeholderKey: 'customModeBuilderQ2Placeholder' },
+                      { key: 'occasion', labelKey: 'customModeBuilderQ3Label',    placeholderKey: 'customModeBuilderQ3Placeholder' },
+                      { key: 'extra',    labelKey: 'customModeBuilderExtraLabel', placeholderKey: 'customModeBuilderExtraPlaceholder' },
+                    ] as const).map(({ key, labelKey, placeholderKey }) => (
+                      <div key={key} className="custom-mode-builder-field">
+                        <label className="custom-mode-builder-label">{t(`cook.${labelKey}`)}</label>
+                        <input
+                          className="custom-mode-input"
+                          value={customModeFields[key]}
+                          onChange={e => setCustomModeFields(f => ({ ...f, [key]: e.target.value }))}
+                          placeholder={t(`cook.${placeholderKey}`)}
+                          maxLength={80}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="custom-mode-builder-field">
+                    <label className="custom-mode-builder-label">{t('cook.customModeFreePropmt')}</label>
+                    <textarea
+                      className="custom-mode-textarea"
+                      value={customModeFreeText}
+                      onChange={e => setCustomModeFreeText(e.target.value)}
+                      placeholder={t('cook.customModeFreePromptPlaceholder')}
+                      rows={5}
+                      maxLength={400}
+                    />
+                  </div>
+                )}
                 <div className="custom-mode-actions">
-                  <button className="custom-mode-cancel" onClick={() => { setAddingCustomMode(false); setCustomModeTitle(''); setCustomModeFields({ cuisine: '', goal: '', occasion: '', extra: '' }); }}>
+                  <button className="custom-mode-cancel" onClick={() => { resetBuilderForm(); }}>
                     {t('product.cancel')}
                   </button>
                   <button className="custom-mode-confirm" onClick={confirmAddCustomMode} disabled={!customModeTitle.trim()}>
