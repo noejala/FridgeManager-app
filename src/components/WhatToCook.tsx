@@ -724,10 +724,10 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
                 )}
                 <div className="custom-mode-actions">
                   <button className="custom-mode-cancel" onClick={() => { resetBuilderForm(); }}>
-                    {t('product.cancel')}
+                    {t('form.cancel')}
                   </button>
                   <button className="custom-mode-confirm" onClick={confirmAddCustomMode} disabled={!customModeTitle.trim()}>
-                    {t('product.save')}
+                    {t('form.save')}
                   </button>
                 </div>
               </div>
