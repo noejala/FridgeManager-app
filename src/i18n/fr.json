@@ -57,7 +57,7 @@
     "quantity": "Quantité",
     "unit": "Unité",
     "unknownExpiration": "Je ne connais pas la date d'expiration",
-    "unknownProductWarning": "Produit non reconnu — saisissez la date manuellement *",
+    "unknownProductWarning": "Produit non reconnu, saisissez la date manuellement *",
     "whenDidYouBuy": "Quand l'avez-vous acheté ?",
     "sauceAlreadyOpened": "Elle est déjà ouverte",
     "sauceOpenedSince": "Ouverte depuis :",
@@ -85,13 +85,13 @@
     "estimated": "(estimé)",
     "estimatedExpiredCheck": "~Expiré ?",
     "estimatedExpiringSoonCheck": "~Expire bientôt",
-    "estimatedCheckTooltip": "Date estimée — vérifie à l'œil, à l'odeur ou au goût avant de décider",
+    "estimatedCheckTooltip": "Date estimée, vérifie à l'œil, à l'odeur ou au goût avant de décider",
     "consume": "Consommé",
     "consumed": "Consommé ✓",
     "edit": "Modifier",
     "delete": "Supprimer",
     "markOpened": "Marquer comme ouverte",
-    "sauceUnopened": "Non ouverte — cliquer pour enregistrer l'ouverture",
+    "sauceUnopened": "Non ouverte, cliquer pour enregistrer l'ouverture",
     "confirmOpen": "Confirmer"
   },
   "cook": {
@@ -126,8 +126,8 @@
     "modeApi": "🍽️ Recettes",
     "modeAi": "✨ IA",
     "searchingAi": "Génération de recettes IA…",
-    "aiFallback": "Gemini indisponible (limite atteinte) — affichage des recettes classiques.",
-    "aiFallbackUnavailable": "Gemini surchargé en ce moment — affichage des recettes classiques. Réessaie dans quelques instants.",
+    "aiFallback": "Gemini indisponible (limite atteinte), affichage des recettes classiques.",
+    "aiFallbackUnavailable": "Gemini surchargé en ce moment, affichage des recettes classiques. Réessaie dans quelques instants.",
     "changeCookingMode": "Changer de mode",
     "saveRecipe": "Sauvegarder",
     "unsaveRecipe": "Retirer des favoris",
@@ -226,11 +226,11 @@
     "Crisper drawer": "Bac à légumes"
   },
   "zoneExplanations": {
-    "Top of fridge": "Le haut du frigo a une température douce et stable — idéal pour les produits laitiers, les restes et les aliments prêts à consommer.",
-    "Middle of fridge": "Les étagères du milieu ont une température constante et modérée — parfait pour la charcuterie, les plats cuisinés et les aliments préparés.",
-    "Bottom of fridge": "Le bas du frigo est la zone la plus froide — indispensable pour la viande et le poisson crus afin de prévenir la prolifération bactérienne.",
-    "Fridge door": "La porte est la partie la plus chaude du frigo — adaptée aux condiments, boissons, beurre et œufs qui tolèrent les légères variations de température.",
-    "Crisper drawer": "Le bac à légumes maintient une humidité plus élevée — conçu pour garder fruits et légumes frais et les empêcher de se dessécher."
+    "Top of fridge": "Le haut du frigo a une température douce et stable, idéal pour les produits laitiers, les restes et les aliments prêts à consommer.",
+    "Middle of fridge": "Les étagères du milieu ont une température constante et modérée, parfait pour la charcuterie, les plats cuisinés et les aliments préparés.",
+    "Bottom of fridge": "Le bas du frigo est la zone la plus froide, indispensable pour la viande et le poisson crus afin de prévenir la prolifération bactérienne.",
+    "Fridge door": "La porte est la partie la plus chaude du frigo, adaptée aux condiments, boissons, beurre et œufs qui tolèrent les légères variations de température.",
+    "Crisper drawer": "Le bac à légumes maintient une humidité plus élevée, conçu pour garder fruits et légumes frais et les empêcher de se dessécher."
   },
   "duplicate": {
     "title": "{{name}} est déjà dans votre frigo",
@@ -241,7 +241,7 @@
     "replace": "Remplacer",
     "addSeparately": "Ajouter séparément",
     "addSeparatelyDesc": "Garder les deux",
-    "dateMismatch": "Dates d'expiration différentes — le groupement utilisera la plus tardive ({{date}})",
+    "dateMismatch": "Dates d'expiration différentes, le groupement utilisera la plus tardive ({{date}})",
     "unitMismatch": "Les unités ne correspondent pas ({{a}} ≠ {{b}})",
     "groupDisabled": "Impossible de grouper des produits avec des unités différentes"
   },

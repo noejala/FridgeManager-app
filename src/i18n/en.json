@@ -57,7 +57,7 @@
     "quantity": "Quantity",
     "unit": "Unit",
     "unknownExpiration": "I don't know the expiration date",
-    "unknownProductWarning": "Product not recognized — please enter the date manually *",
+    "unknownProductWarning": "Product not recognized, please enter the date manually *",
     "whenDidYouBuy": "When did you buy it?",
     "sauceAlreadyOpened": "It's already opened",
     "sauceOpenedSince": "Opened since:",
@@ -85,13 +85,13 @@
     "estimated": "(estimated)",
     "estimatedExpiredCheck": "~Expired?",
     "estimatedExpiringSoonCheck": "~Expiring soon",
-    "estimatedCheckTooltip": "Estimated date — check by sight, smell or taste before deciding",
+    "estimatedCheckTooltip": "Estimated date, check by sight, smell or taste before deciding",
     "consume": "Mark as consumed",
     "consumed": "Consumed ✓",
     "edit": "Edit",
     "delete": "Delete",
     "markOpened": "Mark as opened",
-    "sauceUnopened": "Not yet opened — click to record the opening date",
+    "sauceUnopened": "Not yet opened, click to record the opening date",
     "confirmOpen": "Confirm"
   },
   "cook": {
@@ -126,8 +126,8 @@
     "modeApi": "🍽️ Recipes",
     "modeAi": "✨ AI",
     "searchingAi": "Generating AI recipes…",
-    "aiFallback": "Gemini unavailable (rate limit reached) — showing classic recipes.",
-    "aiFallbackUnavailable": "Gemini is overloaded right now — showing classic recipes. Try again in a moment.",
+    "aiFallback": "Gemini unavailable (rate limit reached), showing classic recipes.",
+    "aiFallbackUnavailable": "Gemini is overloaded right now, showing classic recipes. Try again in a moment.",
     "changeCookingMode": "Change mode",
     "saveRecipe": "Save recipe",
     "unsaveRecipe": "Remove from saved",
@@ -226,11 +226,11 @@
     "Crisper drawer": "Crisper drawer"
   },
   "zoneExplanations": {
-    "Top of fridge": "The top of the fridge has a mild, stable temperature — ideal for dairy products, leftovers, and ready-to-eat items that don't need intense cold.",
-    "Middle of fridge": "The middle shelves have a consistent, moderate temperature — perfect for deli meats, cooked dishes, and prepared foods.",
-    "Bottom of fridge": "The bottom of the fridge is the coldest zone — essential for raw meat and fish to prevent bacterial growth and keep them fresh longer.",
-    "Fridge door": "The door is the warmest part of the fridge — suitable for condiments, drinks, butter, and eggs which tolerate slight temperature changes.",
-    "Crisper drawer": "The crisper drawer maintains higher humidity — designed to keep fruits and vegetables fresh and prevent them from drying out."
+    "Top of fridge": "The top of the fridge has a mild, stable temperature, ideal for dairy products, leftovers, and ready-to-eat items that don't need intense cold.",
+    "Middle of fridge": "The middle shelves have a consistent, moderate temperature, perfect for deli meats, cooked dishes, and prepared foods.",
+    "Bottom of fridge": "The bottom of the fridge is the coldest zone, essential for raw meat and fish to prevent bacterial growth and keep them fresh longer.",
+    "Fridge door": "The door is the warmest part of the fridge, suitable for condiments, drinks, butter, and eggs which tolerate slight temperature changes.",
+    "Crisper drawer": "The crisper drawer maintains higher humidity, designed to keep fruits and vegetables fresh and prevent them from drying out."
   },
   "duplicate": {
     "title": "{{name}} is already in your fridge",
@@ -241,7 +241,7 @@
     "replace": "Replace",
     "addSeparately": "Add separately",
     "addSeparatelyDesc": "Keep both entries",
-    "dateMismatch": "Different expiration dates — grouping will use the latest ({{date}})",
+    "dateMismatch": "Different expiration dates, grouping will use the latest ({{date}})",
     "unitMismatch": "Units don't match ({{a}} ≠ {{b}})",
     "groupDisabled": "Can't group products with different units"
   },
