@@ -30,8 +30,11 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
     return 'status-ok';
   };
 
+  const showSensoryHint = !!product.isEstimatedExpiration && (expired || expiringSoon);
+
   const getStatusText = () => {
-    if (expired) return t('productCard.expired');
+    if (expired) return showSensoryHint ? t('productCard.estimatedExpiredCheck') : t('productCard.expired');
+    if (expiringSoon) return showSensoryHint ? t('productCard.estimatedExpiringSoonCheck') : t('productCard.expiresIn', { count: daysUntil });
     if (daysUntil >= 60) return t('productCard.expiresInMonths', { count: Math.round(daysUntil / 30) });
     if (daysUntil >= 14) return t('productCard.expiresInWeeks', { count: Math.round(daysUntil / 7) });
     return t('productCard.expiresIn', { count: daysUntil });
@@ -150,7 +153,10 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
           </span>
         </div>
       </div>
-      <div className={`status-badge ${getStatusClass()}`}>
+      <div
+        className={`status-badge ${getStatusClass()}${showSensoryHint ? ' estimated-hint' : ''}`}
+        data-tooltip={showSensoryHint ? t('productCard.estimatedCheckTooltip') : undefined}
+      >
         {getStatusText()}
       </div>
     </div>

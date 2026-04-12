@@ -300,3 +300,34 @@
   background: var(--red-bg);
   color: var(--red);
 }
+
+.status-badge.estimated-hint {
+  cursor: help;
+  position: relative;
+  border-style: dashed;
+  border-width: 1px;
+  border-color: currentColor;
+}
+
+.status-badge.estimated-hint:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-hover);
+  color: var(--text);
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 400;
+  width: 230px;
+  line-height: 1.5;
+  z-index: 10;
+  box-shadow: var(--shadow);
+  pointer-events: none;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: normal;
+}
