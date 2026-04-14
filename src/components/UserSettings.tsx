@@ -42,6 +42,9 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
   const [dislikedInput, setDislikedInput] = useState('');
   const [customPrefSaved, setCustomPrefSaved] = useState(false);
   const [pantryInput, setPantryInput] = useState('');
+  const [pantryDraft, setPantryDraft] = useState<string[]>([]);
+  const [pantrySaving, setPantrySaving] = useState(false);
+  const [pantrySaved, setPantrySaved] = useState(false);
 
   const hasProfileData = (p: UserProfile) => p.country || p.age;
 
@@ -50,6 +53,7 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
       const p = data ?? EMPTY_PROFILE;
       setProfile(p);
       setDraft(p);
+      setPantryDraft(p.pantryStaples);
       setEditing(!hasProfileData(p));
       setLoading(false);
     });
@@ -109,37 +113,36 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
     await saveUserProfile(updated);
   };
 
-  const handlePantryTogglePreset = async (en: string) => {
-    const newStaples = profile.pantryStaples.includes(en)
-      ? profile.pantryStaples.filter(s => s !== en)
-      : [...profile.pantryStaples, en];
-    const updated = { ...profile, pantryStaples: newStaples };
-    setProfile(updated);
-    setDraft(updated);
-    onPantryStaplesChange?.(newStaples);
-    await saveUserProfile(updated);
+  const handlePantryTogglePreset = (en: string) => {
+    setPantryDraft(prev =>
+      prev.includes(en) ? prev.filter(s => s !== en) : [...prev, en]
+    );
   };
 
-  const handleAddPantryCustom = async (value: string) => {
+  const handleAddPantryCustom = (value: string) => {
     const trimmed = value.trim().toLowerCase();
-    if (!trimmed || profile.pantryStaples.includes(trimmed)) return;
-    const newStaples = [...profile.pantryStaples, trimmed];
-    const updated = { ...profile, pantryStaples: newStaples };
-    setProfile(updated);
-    setDraft(updated);
+    if (!trimmed || pantryDraft.includes(trimmed)) return;
+    setPantryDraft(prev => [...prev, trimmed]);
     setPantryInput('');
-    onPantryStaplesChange?.(newStaples);
-    await saveUserProfile(updated);
   };
 
-  const handleRemovePantryCustom = async (item: string) => {
-    const newStaples = profile.pantryStaples.filter(s => s !== item);
-    const updated = { ...profile, pantryStaples: newStaples };
+  const handleRemovePantryCustom = (item: string) => {
+    setPantryDraft(prev => prev.filter(s => s !== item));
+  };
+
+  const handleSavePantry = async () => {
+    setPantrySaving(true);
+    const updated = { ...profile, pantryStaples: pantryDraft };
+    await saveUserProfile(updated);
     setProfile(updated);
     setDraft(updated);
-    onPantryStaplesChange?.(newStaples);
-    await saveUserProfile(updated);
+    onPantryStaplesChange?.(pantryDraft);
+    setPantrySaving(false);
+    setPantrySaved(true);
+    setTimeout(() => setPantrySaved(false), 2000);
   };
+
+  const pantryDirty = JSON.stringify([...pantryDraft].sort()) !== JSON.stringify([...profile.pantryStaples].sort());
 
   if (loading) return <div className="settings-loading" />;
 
@@ -317,7 +320,7 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
                     <button
                       key={item.key}
                       type="button"
-                      className={`settings-chip${profile.pantryStaples.includes(item.en) ? ' active' : ''}`}
+                      className={`settings-chip${pantryDraft.includes(item.en) ? ' active' : ''}`}
                       onClick={(e) => { handlePantryTogglePreset(item.en); (e.currentTarget as HTMLButtonElement).blur(); }}
                     >
                       {t(`pantryOnboarding.items.${item.key}`)}
@@ -329,9 +332,9 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
           })}
 
           {/* Custom items (not in preset) */}
-          {profile.pantryStaples.filter(s => !PRESET_EN_SET.has(s)).length > 0 && (
+          {pantryDraft.filter(s => !PRESET_EN_SET.has(s)).length > 0 && (
             <div className="settings-chips settings-chips--disliked">
-              {profile.pantryStaples.filter(s => !PRESET_EN_SET.has(s)).map(item => (
+              {pantryDraft.filter(s => !PRESET_EN_SET.has(s)).map(item => (
                 <span key={item} className="settings-chip settings-chip--disliked">
                   {item}
                   <button
@@ -359,6 +362,19 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
               onClick={() => handleAddPantryCustom(pantryInput)}
               disabled={!pantryInput.trim()}
             >+</button>
+          </div>
+
+          <div className="settings-save-row">
+            <span className={`settings-field-hint${pantrySaved ? ' settings-field-hint--saved' : ''}`}>
+              {pantrySaved ? t('settings.saved') : ''}
+            </span>
+            <button
+              className="settings-save-btn"
+              onClick={handleSavePantry}
+              disabled={pantrySaving || !pantryDirty}
+            >
+              {pantrySaving ? t('settings.saving') : t('settings.save')}
+            </button>
           </div>
         </div>
       </section>
