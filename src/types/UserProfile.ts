@@ -14,4 +14,5 @@ export interface UserProfile {
   dietaryPreferences: DietaryPreference[];
   dislikedIngredients: string[];
   customPreferences: string;
+  pantryStaples: string[];
 }

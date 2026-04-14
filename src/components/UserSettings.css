@@ -270,6 +270,13 @@
   color: var(--green);
 }
 
+.settings-pantry-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
 /* Save / cancel row */
 .settings-save-row {
   display: flex;

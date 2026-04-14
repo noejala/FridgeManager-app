@@ -5,7 +5,7 @@ import { Product } from './types/Product';
 import { supabase } from './lib/supabase';
 import { fetchProducts, fetchRecentlyConsumed, insertProduct, updateProduct, deleteProduct, deleteAllProducts, consumeProduct, restoreProduct } from './utils/productService';
 import { lookupBarcode, FoodFactsResult } from './utils/foodFactsApi';
-import { fetchUserProfile } from './utils/userProfileService';
+import { fetchUserProfile, saveUserProfile } from './utils/userProfileService';
 import { DietaryPreference } from './types/UserProfile';
 import { isExpired, isExpiringSoon } from './utils/storage';
 import { getFridgeZone } from './utils/fridgePlacement';
@@ -22,6 +22,7 @@ import { UserSettings } from './components/UserSettings';
 import { Auth } from './components/Auth';
 import { InstallBanner } from './components/InstallBanner';
 import { NotifPermissionModal } from './components/NotifPermissionModal';
+import { PantryOnboarding } from './components/PantryOnboarding';
 import './App.css';
 
 const TAB_STORAGE_KEY = 'lastActiveTab';
@@ -57,6 +58,8 @@ function App() {
   const [dietaryPreferences, setDietaryPreferences] = useState<DietaryPreference[]>([]);
   const [dislikedIngredients, setDislikedIngredients] = useState<string[]>([]);
   const [customPreferences, setCustomPreferences] = useState<string>('');
+  const [pantryStaples, setPantryStaples] = useState<string[]>([]);
+  const [showPantryOnboarding, setShowPantryOnboarding] = useState(false);
   const [scanPrefill, setScanPrefill] = useState<FoodFactsResult | null>(null);
   const [scrolledDown, setScrolledDown] = useState(false);
   const lastScrollY = useRef(0);
@@ -81,7 +84,7 @@ function App() {
     document.head.appendChild(meta);
   }, [darkMode]);
 
-  const loadUserProducts = useCallback(async () => {
+  const loadUserProducts = useCallback(async (userId?: string) => {
     try {
       const [data, consumed, profile] = await Promise.all([
         fetchProducts(),
@@ -93,6 +96,15 @@ function App() {
       setDietaryPreferences(profile?.dietaryPreferences ?? []);
       setDislikedIngredients(profile?.dislikedIngredients ?? []);
       setCustomPreferences(profile?.customPreferences ?? '');
+      const staples = profile?.pantryStaples ?? [];
+      setPantryStaples(staples);
+      // Show onboarding if staples never set and user hasn't dismissed it
+      if (staples.length === 0 && userId) {
+        const key = `pantry-onboarding-seen-${userId}`;
+        if (!localStorage.getItem(key)) {
+          setShowPantryOnboarding(true);
+        }
+      }
       checkAndNotify(data, t);
     } catch (err) {
       console.error('Failed to load products:', err);
@@ -119,7 +131,7 @@ function App() {
 
   useEffect(() => {
     if (user) {
-      loadUserProducts();
+      loadUserProducts(user.id);
       setActiveTab(getSavedTab());
     } else {
       setProducts([]);
@@ -295,6 +307,26 @@ function App() {
     }
   };
 
+  const dismissPantryOnboarding = (userId: string) => {
+    localStorage.setItem(`pantry-onboarding-seen-${userId}`, '1');
+    setShowPantryOnboarding(false);
+  };
+
+  const handlePantryOnboardingConfirm = async (staples: string[]) => {
+    if (!user) return;
+    setPantryStaples(staples);
+    const profile = await fetchUserProfile();
+    if (profile) {
+      await saveUserProfile({ ...profile, pantryStaples: staples });
+    }
+    dismissPantryOnboarding(user.id);
+  };
+
+  const handlePantryOnboardingSkip = () => {
+    if (!user) return;
+    dismissPantryOnboarding(user.id);
+  };
+
   const handleLogout = async () => {
     localStorage.removeItem(TAB_STORAGE_KEY);
     await supabase.auth.signOut();
@@ -345,7 +377,7 @@ function App() {
         />
       </div>
       <div hidden={activeTab !== 'cook'}>
-        <WhatToCook products={products} dietaryPreferences={dietaryPreferences} dislikedIngredients={dislikedIngredients} customPreferences={customPreferences} />
+        <WhatToCook products={products} dietaryPreferences={dietaryPreferences} dislikedIngredients={dislikedIngredients} customPreferences={customPreferences} pantryStaples={pantryStaples} />
       </div>
       <div hidden={activeTab !== 'seasonal'}>
         <SeasonalProducts isActive={activeTab === 'seasonal'} />
@@ -358,6 +390,7 @@ function App() {
           onDietaryPreferencesChange={setDietaryPreferences}
           onDislikedIngredientsChange={setDislikedIngredients}
           onCustomPreferencesChange={setCustomPreferences}
+          onPantryStaplesChange={setPantryStaples}
         />
       </div>
     </>
@@ -406,6 +439,12 @@ function App() {
       )}
       <NotifPermissionModal key={modalKey} permission={permission} onRequest={requestPermission} />
       <InstallBanner />
+      {showPantryOnboarding && (
+        <PantryOnboarding
+          onConfirm={handlePantryOnboardingConfirm}
+          onSkip={handlePantryOnboardingSkip}
+        />
+      )}
       {pendingProduct && (
         <DuplicateModal
           existing={products.find(

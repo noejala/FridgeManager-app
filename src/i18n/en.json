@@ -273,6 +273,45 @@
     "permLater": "Maybe later",
     "permNever": "Don't ask again"
   },
+  "pantryOnboarding": {
+    "title": "What do you always have at home?",
+    "subtitle": "We'll use this to improve AI recipe suggestions. You can update this anytime in Settings.",
+    "addPlaceholder": "Something else… (e.g. tahini, miso…)",
+    "skip": "Skip",
+    "confirm": "Let's go!",
+    "groups": {
+      "starches": "Starches",
+      "fats": "Fats",
+      "condiments": "Condiments & seasonings",
+      "canned": "Canned & preserved",
+      "spices": "Herbs & spices"
+    },
+    "items": {
+      "pasta": "Pasta",
+      "rice": "Rice",
+      "bread": "Bread",
+      "couscous": "Couscous",
+      "lentils": "Lentils",
+      "chickpeas": "Chickpeas",
+      "olive_oil": "Olive oil",
+      "butter": "Butter",
+      "vegetable_oil": "Vegetable oil",
+      "salt": "Salt",
+      "pepper": "Pepper",
+      "sugar": "Sugar",
+      "vinegar": "Vinegar",
+      "soy_sauce": "Soy sauce",
+      "mustard": "Mustard",
+      "honey": "Honey",
+      "canned_tomatoes": "Canned tomatoes",
+      "tomato_paste": "Tomato paste",
+      "bouillon_cubes": "Bouillon cubes",
+      "dried_herbs": "Dried herbs",
+      "paprika": "Paprika",
+      "cumin": "Cumin",
+      "cinnamon": "Cinnamon"
+    }
+  },
   "settings": {
     "profile": "My profile",
     "country": "Country",
@@ -301,6 +340,9 @@
       "other": "Other",
       "prefer_not_to_say": "Prefer not to say"
     },
+    "pantryStaples": "Pantry staples",
+    "pantryStaplesHint": "These items will be considered always available by the AI when suggesting recipes.",
+    "pantryAddPlaceholder": "Add another item…",
     "dietary": {
       "vegetarian": "Vegetarian",
       "vegan": "Vegan",

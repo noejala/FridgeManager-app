@@ -273,6 +273,45 @@
     "permLater": "Plus tard",
     "permNever": "Ne plus demander"
   },
+  "pantryOnboarding": {
+    "title": "Qu'est-ce que tu as toujours chez toi ?",
+    "subtitle": "On adaptera les recettes IA en conséquence. Tu pourras modifier ça dans les réglages.",
+    "addPlaceholder": "Autre chose… (ex : tahini, miso…)",
+    "skip": "Passer",
+    "confirm": "C'est parti !",
+    "groups": {
+      "starches": "Féculents",
+      "fats": "Matières grasses",
+      "condiments": "Condiments & assaisonnements",
+      "canned": "Conserves",
+      "spices": "Herbes & épices"
+    },
+    "items": {
+      "pasta": "Pâtes",
+      "rice": "Riz",
+      "bread": "Pain",
+      "couscous": "Couscous",
+      "lentils": "Lentilles",
+      "chickpeas": "Pois chiches",
+      "olive_oil": "Huile d'olive",
+      "butter": "Beurre",
+      "vegetable_oil": "Huile végétale",
+      "salt": "Sel",
+      "pepper": "Poivre",
+      "sugar": "Sucre",
+      "vinegar": "Vinaigre",
+      "soy_sauce": "Sauce soja",
+      "mustard": "Moutarde",
+      "honey": "Miel",
+      "canned_tomatoes": "Tomates en boîte",
+      "tomato_paste": "Concentré de tomate",
+      "bouillon_cubes": "Bouillon cube",
+      "dried_herbs": "Herbes séchées",
+      "paprika": "Paprika",
+      "cumin": "Cumin",
+      "cinnamon": "Cannelle"
+    }
+  },
   "settings": {
     "profile": "Mon profil",
     "country": "Pays",
@@ -301,6 +340,9 @@
       "other": "Autre",
       "prefer_not_to_say": "Je préfère ne pas préciser"
     },
+    "pantryStaples": "Placard de base",
+    "pantryStaplesHint": "Ces produits seront considérés comme toujours disponibles par l'IA pour les recettes.",
+    "pantryAddPlaceholder": "Ajouter un autre produit…",
     "dietary": {
       "vegetarian": "Végétarien",
       "vegan": "Vegan",

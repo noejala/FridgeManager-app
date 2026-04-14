@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UserProfile, DietaryPreference } from '../types/UserProfile';
 import { fetchUserProfile, saveUserProfile } from '../utils/userProfileService';
+import { PANTRY_PRESET_ITEMS, PRESET_EN_SET } from '../utils/pantryPresets';
 import './UserSettings.css';
 
 const DIETARY_RESTRICTIONS: DietaryPreference[] = ['gluten_free', 'lactose_free', 'halal', 'kosher'];
@@ -14,7 +15,11 @@ const EMPTY_PROFILE: UserProfile = {
   dietaryPreferences: [],
   dislikedIngredients: [],
   customPreferences: '',
+  pantryStaples: [],
 };
+
+type PantryGroup = 'starches' | 'fats' | 'condiments' | 'canned' | 'spices';
+const PANTRY_GROUP_ORDER: PantryGroup[] = ['starches', 'fats', 'condiments', 'canned', 'spices'];
 
 interface Props {
   darkMode: boolean;
@@ -23,9 +28,10 @@ interface Props {
   onDietaryPreferencesChange?: (prefs: DietaryPreference[]) => void;
   onDislikedIngredientsChange?: (items: string[]) => void;
   onCustomPreferencesChange?: (value: string) => void;
+  onPantryStaplesChange?: (items: string[]) => void;
 }
 
-export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPreferencesChange, onDislikedIngredientsChange, onCustomPreferencesChange }: Props) => {
+export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPreferencesChange, onDislikedIngredientsChange, onCustomPreferencesChange, onPantryStaplesChange }: Props) => {
   const { t, i18n } = useTranslation();
 
   const [profile, setProfile] = useState<UserProfile>(EMPTY_PROFILE);
@@ -35,6 +41,7 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
   const [saving, setSaving] = useState(false);
   const [dislikedInput, setDislikedInput] = useState('');
   const [customPrefSaved, setCustomPrefSaved] = useState(false);
+  const [pantryInput, setPantryInput] = useState('');
 
   const hasProfileData = (p: UserProfile) => p.country || p.age;
 
@@ -99,6 +106,38 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
     setProfile(updated);
     setDraft(updated);
     onDietaryPreferencesChange?.(newPrefs);
+    await saveUserProfile(updated);
+  };
+
+  const handlePantryTogglePreset = async (en: string) => {
+    const newStaples = profile.pantryStaples.includes(en)
+      ? profile.pantryStaples.filter(s => s !== en)
+      : [...profile.pantryStaples, en];
+    const updated = { ...profile, pantryStaples: newStaples };
+    setProfile(updated);
+    setDraft(updated);
+    onPantryStaplesChange?.(newStaples);
+    await saveUserProfile(updated);
+  };
+
+  const handleAddPantryCustom = async (value: string) => {
+    const trimmed = value.trim().toLowerCase();
+    if (!trimmed || profile.pantryStaples.includes(trimmed)) return;
+    const newStaples = [...profile.pantryStaples, trimmed];
+    const updated = { ...profile, pantryStaples: newStaples };
+    setProfile(updated);
+    setDraft(updated);
+    setPantryInput('');
+    onPantryStaplesChange?.(newStaples);
+    await saveUserProfile(updated);
+  };
+
+  const handleRemovePantryCustom = async (item: string) => {
+    const newStaples = profile.pantryStaples.filter(s => s !== item);
+    const updated = { ...profile, pantryStaples: newStaples };
+    setProfile(updated);
+    setDraft(updated);
+    onPantryStaplesChange?.(newStaples);
     await saveUserProfile(updated);
   };
 
@@ -258,6 +297,68 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
             <span className={`settings-field-hint${customPrefSaved ? ' settings-field-hint--saved' : ''}`}>
               {customPrefSaved ? t('settings.saved') : t('settings.customPreferencesHint')}
             </span>
+          </div>
+        </div>
+      </section>
+
+      {/* Placard de base */}
+      <section className="settings-section">
+        <h2 className="settings-section-title">{t('settings.pantryStaples')}</h2>
+        <div className="settings-card">
+          <p className="settings-pantry-hint">{t('settings.pantryStaplesHint')}</p>
+
+          {PANTRY_GROUP_ORDER.map(group => {
+            const items = PANTRY_PRESET_ITEMS.filter(i => i.group === group);
+            return (
+              <div key={group} className="settings-field">
+                <label className="settings-label">{t(`pantryOnboarding.groups.${group}`)}</label>
+                <div className="settings-chips">
+                  {items.map(item => (
+                    <button
+                      key={item.key}
+                      type="button"
+                      className={`settings-chip${profile.pantryStaples.includes(item.en) ? ' active' : ''}`}
+                      onClick={(e) => { handlePantryTogglePreset(item.en); (e.currentTarget as HTMLButtonElement).blur(); }}
+                    >
+                      {t(`pantryOnboarding.items.${item.key}`)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+
+          {/* Custom items (not in preset) */}
+          {profile.pantryStaples.filter(s => !PRESET_EN_SET.has(s)).length > 0 && (
+            <div className="settings-chips settings-chips--disliked">
+              {profile.pantryStaples.filter(s => !PRESET_EN_SET.has(s)).map(item => (
+                <span key={item} className="settings-chip settings-chip--disliked">
+                  {item}
+                  <button
+                    type="button"
+                    className="settings-chip-remove"
+                    onClick={() => handleRemovePantryCustom(item)}
+                  >×</button>
+                </span>
+              ))}
+            </div>
+          )}
+
+          <div className="settings-disliked-input-row">
+            <input
+              type="text"
+              className="settings-input settings-disliked-input"
+              placeholder={t('settings.pantryAddPlaceholder')}
+              value={pantryInput}
+              onChange={e => setPantryInput(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddPantryCustom(pantryInput); } }}
+            />
+            <button
+              type="button"
+              className="settings-disliked-add-btn"
+              onClick={() => handleAddPantryCustom(pantryInput)}
+              disabled={!pantryInput.trim()}
+            >+</button>
           </div>
         </div>
       </section>
