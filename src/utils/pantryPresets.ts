@@ -35,7 +35,5 @@ export const PANTRY_PRESET_ITEMS: PantryPresetItem[] = [
   { key: 'cinnamon',        en: 'cinnamon',        group: 'spices' },
 ];
 
-export const DEFAULT_PANTRY_STAPLES = ['salt', 'pepper', 'olive oil', 'butter'];
-
 /** All preset English names as a Set, for quick lookup */
 export const PRESET_EN_SET = new Set(PANTRY_PRESET_ITEMS.map(i => i.en));
