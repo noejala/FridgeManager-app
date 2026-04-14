@@ -40,7 +40,13 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [dislikedInput, setDislikedInput] = useState('');
-  const [customPrefSaved, setCustomPrefSaved] = useState(false);
+  const [nutritionDraft, setNutritionDraft] = useState<{
+    dietaryPreferences: DietaryPreference[];
+    dislikedIngredients: string[];
+    customPreferences: string;
+  }>({ dietaryPreferences: [], dislikedIngredients: [], customPreferences: '' });
+  const [nutritionSaving, setNutritionSaving] = useState(false);
+  const [nutritionSaved, setNutritionSaved] = useState(false);
   const [pantryInput, setPantryInput] = useState('');
   const [pantryDraft, setPantryDraft] = useState<string[]>([]);
   const [pantrySaving, setPantrySaving] = useState(false);
@@ -54,6 +60,11 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
       setProfile(p);
       setDraft(p);
       setPantryDraft(p.pantryStaples);
+      setNutritionDraft({
+        dietaryPreferences: p.dietaryPreferences,
+        dislikedIngredients: p.dislikedIngredients,
+        customPreferences: p.customPreferences,
+      });
       setEditing(!hasProfileData(p));
       setLoading(false);
     });
@@ -72,46 +83,44 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
     setEditing(false);
   };
 
-  const handleAddDisliked = async (value: string) => {
+  const handleDietaryToggle = (pref: DietaryPreference) => {
+    setNutritionDraft(prev => ({
+      ...prev,
+      dietaryPreferences: prev.dietaryPreferences.includes(pref)
+        ? prev.dietaryPreferences.filter(p => p !== pref)
+        : [...prev.dietaryPreferences, pref],
+    }));
+  };
+
+  const handleAddDisliked = (value: string) => {
     const trimmed = value.trim().toLowerCase();
-    if (!trimmed || profile.dislikedIngredients.includes(trimmed)) return;
-    const updated = { ...profile, dislikedIngredients: [...profile.dislikedIngredients, trimmed] };
-    setProfile(updated);
-    setDraft(updated);
+    if (!trimmed || nutritionDraft.dislikedIngredients.includes(trimmed)) return;
+    setNutritionDraft(prev => ({ ...prev, dislikedIngredients: [...prev.dislikedIngredients, trimmed] }));
     setDislikedInput('');
-    onDislikedIngredientsChange?.(updated.dislikedIngredients);
-    await saveUserProfile(updated);
   };
 
-  const handleRemoveDisliked = async (item: string) => {
-    const updated = { ...profile, dislikedIngredients: profile.dislikedIngredients.filter(i => i !== item) };
-    setProfile(updated);
-    setDraft(updated);
-    onDislikedIngredientsChange?.(updated.dislikedIngredients);
-    await saveUserProfile(updated);
+  const handleRemoveDisliked = (item: string) => {
+    setNutritionDraft(prev => ({ ...prev, dislikedIngredients: prev.dislikedIngredients.filter(i => i !== item) }));
   };
 
-  const handleCustomPreferencesBlur = async (value: string) => {
-    if (value === profile.customPreferences) return;
-    const updated = { ...profile, customPreferences: value };
+  const handleSaveNutrition = async () => {
+    setNutritionSaving(true);
+    const updated = { ...profile, ...nutritionDraft };
+    await saveUserProfile(updated);
     setProfile(updated);
     setDraft(updated);
-    onCustomPreferencesChange?.(value);
-    await saveUserProfile(updated);
-    setCustomPrefSaved(true);
-    setTimeout(() => setCustomPrefSaved(false), 2000);
+    onDietaryPreferencesChange?.(nutritionDraft.dietaryPreferences);
+    onDislikedIngredientsChange?.(nutritionDraft.dislikedIngredients);
+    onCustomPreferencesChange?.(nutritionDraft.customPreferences);
+    setNutritionSaving(false);
+    setNutritionSaved(true);
+    setTimeout(() => setNutritionSaved(false), 2000);
   };
 
-  const handleDietaryToggle = async (pref: DietaryPreference) => {
-    const newPrefs = profile.dietaryPreferences.includes(pref)
-      ? profile.dietaryPreferences.filter(p => p !== pref)
-      : [...profile.dietaryPreferences, pref];
-    const updated = { ...profile, dietaryPreferences: newPrefs };
-    setProfile(updated);
-    setDraft(updated);
-    onDietaryPreferencesChange?.(newPrefs);
-    await saveUserProfile(updated);
-  };
+  const nutritionDirty =
+    JSON.stringify([...nutritionDraft.dietaryPreferences].sort()) !== JSON.stringify([...profile.dietaryPreferences].sort()) ||
+    JSON.stringify([...nutritionDraft.dislikedIngredients].sort()) !== JSON.stringify([...profile.dislikedIngredients].sort()) ||
+    nutritionDraft.customPreferences !== profile.customPreferences;
 
   const handlePantryTogglePreset = (en: string) => {
     setPantryDraft(prev =>
@@ -228,7 +237,7 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
                 <button
                   key={pref}
                   type="button"
-                  className={`settings-chip ${profile.dietaryPreferences.includes(pref) ? 'active' : ''}`}
+                  className={`settings-chip ${nutritionDraft.dietaryPreferences.includes(pref) ? 'active' : ''}`}
                   onClick={(e) => { handleDietaryToggle(pref); (e.currentTarget as HTMLButtonElement).blur(); }}
                 >
                   {t(`settings.dietary.${pref}`)}
@@ -244,7 +253,7 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
                 <button
                   key={pref}
                   type="button"
-                  className={`settings-chip ${profile.dietaryPreferences.includes(pref) ? 'active' : ''}`}
+                  className={`settings-chip ${nutritionDraft.dietaryPreferences.includes(pref) ? 'active' : ''}`}
                   onClick={(e) => { handleDietaryToggle(pref); (e.currentTarget as HTMLButtonElement).blur(); }}
                 >
                   {t(`settings.dietary.${pref}`)}
@@ -271,9 +280,9 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
                 disabled={!dislikedInput.trim()}
               >+</button>
             </div>
-            {profile.dislikedIngredients.length > 0 && (
+            {nutritionDraft.dislikedIngredients.length > 0 && (
               <div className="settings-chips settings-chips--disliked">
-                {profile.dislikedIngredients.map(item => (
+                {nutritionDraft.dislikedIngredients.map(item => (
                   <span key={item} className="settings-chip settings-chip--disliked">
                     {item}
                     <button
@@ -292,14 +301,24 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
             <textarea
               className="settings-input settings-custom-prefs-textarea"
               placeholder={t('settings.customPreferencesPlaceholder')}
-              defaultValue={profile.customPreferences}
-              key={profile.customPreferences}
+              value={nutritionDraft.customPreferences}
               rows={3}
-              onBlur={e => handleCustomPreferencesBlur(e.target.value.trim())}
+              onChange={e => setNutritionDraft(prev => ({ ...prev, customPreferences: e.target.value }))}
             />
-            <span className={`settings-field-hint${customPrefSaved ? ' settings-field-hint--saved' : ''}`}>
-              {customPrefSaved ? t('settings.saved') : t('settings.customPreferencesHint')}
+            <span className="settings-field-hint">{t('settings.customPreferencesHint')}</span>
+          </div>
+
+          <div className="settings-save-row">
+            <span className={`settings-field-hint${nutritionSaved ? ' settings-field-hint--saved' : ''}`}>
+              {nutritionSaved ? t('settings.saved') : ''}
             </span>
+            <button
+              className="settings-save-btn"
+              onClick={handleSaveNutrition}
+              disabled={nutritionSaving || !nutritionDirty}
+            >
+              {nutritionSaving ? t('settings.saving') : t('settings.save')}
+            </button>
           </div>
         </div>
       </section>
