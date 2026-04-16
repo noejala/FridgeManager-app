@@ -179,6 +179,20 @@
     "customModeBuilderQ3Placeholder": "Ex : repas en famille, meal prep, invités…",
     "customModeBuilderExtraLabel": "Autre chose à préciser ?",
     "customModeBuilderExtraPlaceholder": "Ex : épicé, comfort food, sans tomate…",
+    "cookNow": "Cuisiner",
+    "session": {
+      "title_one": "En cuisine ({{count}} recette)",
+      "title_other": "En cuisine ({{count}} recettes)",
+      "badge_one": "🍳 {{count}} recette en cours",
+      "badge_other": "🍳 {{count}} recettes en cours",
+      "removeRecipe": "Retirer cette recette",
+      "done": "J'ai terminé",
+      "back": "Retour",
+      "confirmTitle": "Que retirer du frigo ?",
+      "confirmHint": "Ces produits correspondent aux ingrédients utilisés. Décoche ceux que tu n'as pas utilisés.",
+      "noProductsMatched": "Aucun produit du frigo n'a pu être associé aux ingrédients.",
+      "removeFridge": "Retirer du frigo"
+    },
     "cookingModes": {
       "title": "Comment tu veux cuisiner ?",
       "subtitle": "Choisis un mode, on génère des recettes personnalisées",

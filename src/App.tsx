@@ -377,7 +377,14 @@ function App() {
         />
       </div>
       <div hidden={activeTab !== 'cook'}>
-        <WhatToCook products={products} dietaryPreferences={dietaryPreferences} dislikedIngredients={dislikedIngredients} customPreferences={customPreferences} pantryStaples={pantryStaples} />
+        <WhatToCook
+          products={products}
+          dietaryPreferences={dietaryPreferences}
+          dislikedIngredients={dislikedIngredients}
+          customPreferences={customPreferences}
+          pantryStaples={pantryStaples}
+          onConsumeProducts={(ids) => ids.forEach(id => handleConsumeProduct(id))}
+        />
       </div>
       <div hidden={activeTab !== 'seasonal'}>
         <SeasonalProducts isActive={activeTab === 'seasonal'} />

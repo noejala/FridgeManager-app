@@ -5,6 +5,7 @@ import { DietaryPreference } from '../types/UserProfile';
 import { searchByIngredient, getMealDetails, MealDetails, singularize } from '../utils/mealApi';
 import { fetchGeminiRecipes, CookingMode, CourseSelection } from '../utils/geminiApi';
 import { fetchSavedRecipes, saveRecipe, unsaveRecipe, SavedRecipe } from '../utils/savedRecipeService';
+import { CookingSession } from './CookingSession';
 import { toEnglishIngredient } from '../utils/ingredientTranslation';
 import { getDaysUntilExpiration } from '../utils/storage';
 import './WhatToCook.css';
@@ -32,6 +33,7 @@ interface WhatToCookProps {
   dislikedIngredients?: string[];
   customPreferences?: string;
   pantryStaples?: string[];
+  onConsumeProducts?: (ids: string[]) => void;
 }
 
 const MAX_MISSING = 4;
@@ -144,7 +146,7 @@ function getCourse(category: string): 'starter' | 'main' | 'dessert' {
   return 'main';
 }
 
-interface RecipeMatch {
+export interface RecipeMatch {
   meal: MealDetails;
   available: { name: string; measure: string }[];
   missing: { name: string; measure: string }[];
@@ -238,7 +240,7 @@ function applySort(recipes: RecipeMatch[], mode: SortMode): RecipeMatch[] {
 
 const geminiEnabled = import.meta.env.VITE_GEMINI_ENABLED === 'true';
 
-export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredients = [], customPreferences = '', pantryStaples = [] }: WhatToCookProps) => {
+export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredients = [], customPreferences = '', pantryStaples = [], onConsumeProducts }: WhatToCookProps) => {
   const { t, i18n } = useTranslation();
   const [recipes, setRecipes] = useState<RecipeMatch[]>([]);
   const [loading, setLoading] = useState(false);
@@ -430,6 +432,31 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
 
   const [confirmUnsave, setConfirmUnsave] = useState<MealDetails | null>(null);
 
+  // Cooking session
+  const [cookingRecipes, setCookingRecipes] = useState<RecipeMatch[]>([]);
+  const [cookingOpen, setCookingOpen] = useState(false);
+
+  const addToCooking = (e: React.MouseEvent, recipe: RecipeMatch) => {
+    e.stopPropagation();
+    setCookingRecipes(prev =>
+      prev.some(r => r.meal.id === recipe.meal.id) ? prev : [...prev, recipe]
+    );
+  };
+
+  const removeFromCooking = (recipeId: string) => {
+    setCookingRecipes(prev => {
+      const next = prev.filter(r => r.meal.id !== recipeId);
+      if (next.length === 0) setCookingOpen(false);
+      return next;
+    });
+  };
+
+  const handleFinishCooking = (productIds: string[]) => {
+    onConsumeProducts?.(productIds);
+    setCookingOpen(false);
+    setCookingRecipes([]);
+  };
+
   const toggleSave = useCallback(async (e: React.MouseEvent, meal: MealDetails) => {
     e.stopPropagation();
     const key = meal.name.toLowerCase();
@@ -494,6 +521,14 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
         aria-label={savedMap.has(recipe.meal.name.toLowerCase()) ? t('cook.unsaveRecipe') : t('cook.saveRecipe')}
       >
         ♡
+      </button>
+      <button
+        className={`recipe-cook-btn${cookingRecipes.some(r => r.meal.id === recipe.meal.id) ? ' active' : ''}`}
+        onClick={(e) => addToCooking(e, recipe)}
+        aria-label={t('cook.cookNow')}
+        title={t('cook.cookNow')}
+      >
+        🍳
       </button>
       <div className="recipe-info">
         <h3>{recipe.meal.name}</h3>
@@ -917,6 +952,16 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
               </div>
             )}
 
+            <button
+              className={`modal-cook-btn${cookingRecipes.some(r => r.meal.id === selectedRecipe.meal.id) ? ' active' : ''}`}
+              onClick={(e) => { addToCooking(e, selectedRecipe); closeDetails(); }}
+            >
+              {cookingRecipes.some(r => r.meal.id === selectedRecipe.meal.id)
+                ? `✓ ${t('cook.cookNow')}`
+                : `🍳 ${t('cook.cookNow')}`
+              }
+            </button>
+
             <div className="modal-section">
               <h3>{t('cook.instructions')}</h3>
               <ol className="modal-steps">
@@ -930,6 +975,23 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
             </div>
           </div>
         </div>
+      )}
+
+      {cookingRecipes.length > 0 && !cookingOpen && (
+        <button className="cooking-session-badge" onClick={() => setCookingOpen(true)}>
+          {t('cook.session.badge', { count: cookingRecipes.length })}
+          <span className="cooking-session-badge-count">{cookingRecipes.length}</span>
+        </button>
+      )}
+
+      {cookingOpen && (
+        <CookingSession
+          recipes={cookingRecipes}
+          fridgeProducts={products}
+          onClose={() => setCookingOpen(false)}
+          onFinish={handleFinishCooking}
+          onRemoveRecipe={removeFromCooking}
+        />
       )}
 
       {addingCustomMode && (

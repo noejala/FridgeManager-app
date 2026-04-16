@@ -179,6 +179,20 @@
     "customModeBuilderQ3Placeholder": "E.g. family dinner, meal prep, guests…",
     "customModeBuilderExtraLabel": "Anything else?",
     "customModeBuilderExtraPlaceholder": "E.g. spicy, comfort food, no tomatoes…",
+    "cookNow": "Cook",
+    "session": {
+      "title_one": "Cooking ({{count}} recipe)",
+      "title_other": "Cooking ({{count}} recipes)",
+      "badge_one": "🍳 {{count}} recipe in progress",
+      "badge_other": "🍳 {{count}} recipes in progress",
+      "removeRecipe": "Remove this recipe",
+      "done": "I'm done cooking",
+      "back": "Back",
+      "confirmTitle": "What to remove from the fridge?",
+      "confirmHint": "These products match the ingredients used. Uncheck anything you didn't actually use.",
+      "noProductsMatched": "No fridge products could be matched to the recipe ingredients.",
+      "removeFridge": "Remove from fridge"
+    },
     "cookingModes": {
       "title": "How do you want to cook?",
       "subtitle": "Pick a mode and we'll generate personalised recipes",
