@@ -11,6 +11,9 @@ interface EditProductFormProps {
   onCancel: () => void;
 }
 
+const getDefaultExpirationDateType = (cat: ProductCategory): 'dlc' | 'ddm' =>
+  ['Meat', 'Fish', 'Dairy', 'Milk', 'Cream'].includes(cat) ? 'dlc' : 'ddm';
+
 const CATEGORIES: ProductCategory[] = [
   'Fruits',
   'Vegetables',
@@ -31,6 +34,9 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
   const [quantity, setQuantity] = useState<string>(product.quantity.toString());
   const [unit, setUnit] = useState(product.unit);
   const [unknownExpiration, setUnknownExpiration] = useState(product.isEstimatedExpiration ?? false);
+  const [expirationDateType, setExpirationDateType] = useState<'dlc' | 'ddm'>(
+    product.expirationDateType ?? getDefaultExpirationDateType(product.category as ProductCategory)
+  );
   const [purchaseDate, setPurchaseDate] = useState('');
 
   useEffect(() => {
@@ -40,6 +46,7 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
     setQuantity(product.quantity.toString());
     setUnit(product.unit);
     setUnknownExpiration(product.isEstimatedExpiration ?? false);
+    setExpirationDateType(product.expirationDateType ?? getDefaultExpirationDateType(product.category as ProductCategory));
   }, [product]);
 
   const recognized = isProductRecognized(name);
@@ -66,6 +73,7 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
       quantity: quantityNum,
       unit,
       isEstimatedExpiration: unknownExpiration && recognized,
+      expirationDateType,
     });
     setIsLoading(false);
   };
@@ -151,6 +159,28 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
           />
           {t('form.unknownExpiration')}
         </label>
+      </div>
+
+      <div className="form-group">
+        <label>{t('form.expirationDateType')}</label>
+        <div className="expiry-type-toggle">
+          <button
+            type="button"
+            className={`expiry-type-btn${expirationDateType === 'ddm' ? ' active' : ''}`}
+            onClick={() => setExpirationDateType('ddm')}
+          >
+            <span className="expiry-type-label">{t('form.ddm')}</span>
+            <span className="expiry-type-desc">{t('form.ddmDesc')}</span>
+          </button>
+          <button
+            type="button"
+            className={`expiry-type-btn${expirationDateType === 'dlc' ? ' active' : ''}`}
+            onClick={() => setExpirationDateType('dlc')}
+          >
+            <span className="expiry-type-label">{t('form.dlc')}</span>
+            <span className="expiry-type-desc">{t('form.dlcDesc')}</span>
+          </button>
+        </div>
       </div>
 
       {unknownExpiration && recognized ? (

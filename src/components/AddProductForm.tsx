@@ -34,6 +34,9 @@ const CATEGORIES: ProductCategory[] = [
 const isOpenableCategory = (cat: ProductCategory) =>
   ['Sauces', 'Milk', 'Juice', 'Cream'].includes(cat);
 
+const getDefaultExpirationDateType = (cat: ProductCategory): 'dlc' | 'ddm' =>
+  ['Meat', 'Fish', 'Dairy', 'Milk', 'Cream'].includes(cat) ? 'dlc' : 'ddm';
+
 export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, onPrefillApplied, onScanBarcode }: AddProductFormProps) => {
   const { t } = useTranslation();
   const [fabOpen, setFabOpen] = useState(false);
@@ -73,6 +76,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
   const [lookupError, setLookupError] = useState<string | null>(null);
   const [name, setName] = useState('');
   const [category, setCategory] = useState<ProductCategory>('Other');
+  const [expirationDateType, setExpirationDateType] = useState<'dlc' | 'ddm'>('ddm');
   const [expirationDate, setExpirationDate] = useState('');
   const [quantity, setQuantity] = useState<string>('1');
   const [unit, setUnit] = useState('unit');
@@ -107,7 +111,9 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
   useEffect(() => {
     if (!prefill) return;
     setName(prefill.name);
-    setCategory(prefill.category === 'Other' ? guessCategory(prefill.name) : prefill.category);
+    const cat = prefill.category === 'Other' ? guessCategory(prefill.name) : prefill.category;
+    setCategory(cat);
+    setExpirationDateType(getDefaultExpirationDateType(cat));
     setQuantity(String(prefill.quantity));
     setUnit(prefill.unit);
     onPrefillApplied?.();
@@ -169,6 +175,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
       quantity: quantityNum,
       unit,
       isEstimatedExpiration: isSauceOpened || (unknownExpiration && recognized),
+      expirationDateType,
       openedDate: isSauceOpened ? sauceOpenedDate : undefined,
     });
     setIsLoading(false);
@@ -179,6 +186,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
     setQuantity('1');
     setUnit('unit');
     setUnknownExpiration(false);
+    setExpirationDateType('ddm');
     setPurchaseDate('');
     setIsOpened(false);
     setSauceOpenedDate(new Date().toISOString().split('T')[0]);
@@ -317,7 +325,9 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
             onChange={(e) => {
               const newName = e.target.value;
               setName(newName);
-              setCategory(guessCategory(newName));
+              const guessed = guessCategory(newName);
+              setCategory(guessed);
+              setExpirationDateType(getDefaultExpirationDateType(guessed));
               if (lookupError) setLookupError(null);
             }}
             required
@@ -331,7 +341,11 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
         <select
           id="category"
           value={category}
-          onChange={(e) => setCategory(e.target.value as ProductCategory)}
+          onChange={(e) => {
+            const cat = e.target.value as ProductCategory;
+            setCategory(cat);
+            setExpirationDateType(getDefaultExpirationDateType(cat));
+          }}
         >
           {CATEGORIES.map(cat => (
             <option key={cat} value={cat}>{t(`categories.${cat}`)}</option>
@@ -421,6 +435,30 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
             />
             {t('form.unknownExpiration')}
           </label>
+        </div>
+      )}
+
+      {!(isOpenableCategory(category) && isOpened) && (
+        <div className="form-group">
+          <label>{t('form.expirationDateType')}</label>
+          <div className="expiry-type-toggle">
+            <button
+              type="button"
+              className={`expiry-type-btn${expirationDateType === 'ddm' ? ' active' : ''}`}
+              onClick={() => setExpirationDateType('ddm')}
+            >
+              <span className="expiry-type-label">{t('form.ddm')}</span>
+              <span className="expiry-type-desc">{t('form.ddmDesc')}</span>
+            </button>
+            <button
+              type="button"
+              className={`expiry-type-btn${expirationDateType === 'dlc' ? ' active' : ''}`}
+              onClick={() => setExpirationDateType('dlc')}
+            >
+              <span className="expiry-type-label">{t('form.dlc')}</span>
+              <span className="expiry-type-desc">{t('form.dlcDesc')}</span>
+            </button>
+          </div>
         </div>
       )}
 
@@ -561,6 +599,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
         <button type="button" className="cancel-btn" onClick={() => {
           setName(''); setCategory('Other'); setExpirationDate('');
           setQuantity('1'); setUnit('unit'); setUnknownExpiration(false);
+          setExpirationDateType('ddm');
           setPurchaseDate(''); setIsOpened(false);
           setSauceOpenedDate(new Date().toISOString().split('T')[0]);
           setExpDay(''); setExpMonth(''); setExpYear('');

@@ -24,8 +24,10 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
   const expired = isExpired(product.expirationDate);
   const expiringSoon = isExpiringSoon(product.expirationDate);
 
+  const isDDM = product.expirationDateType === 'ddm';
+
   const getStatusClass = () => {
-    if (expired) return 'status-expired';
+    if (expired) return isDDM ? 'status-expired-ddm' : 'status-expired';
     if (expiringSoon) return 'status-expiring';
     return 'status-ok';
   };
@@ -33,7 +35,10 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
   const showSensoryHint = !!product.isEstimatedExpiration && (expired || expiringSoon);
 
   const getStatusText = () => {
-    if (expired) return showSensoryHint ? t('productCard.estimatedExpiredCheck') : t('productCard.expired');
+    if (expired) {
+      if (showSensoryHint) return t('productCard.estimatedExpiredCheck');
+      return isDDM ? t('productCard.ddmExpired') : t('productCard.expired');
+    }
     if (expiringSoon) return showSensoryHint ? t('productCard.estimatedExpiringSoonCheck') : t('productCard.expiresIn', { count: daysUntil });
     if (daysUntil >= 60) return t('productCard.expiresInMonths', { count: Math.round(daysUntil / 30) });
     if (daysUntil >= 14) return t('productCard.expiresInWeeks', { count: Math.round(daysUntil / 7) });
@@ -145,7 +150,7 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
           </div>
         )}
         <div className="date-info">
-          <span className="label">{t('productCard.expires')}</span>
+          <span className="label">{isDDM ? t('productCard.bestBefore') : t('productCard.expires')}</span>
           <span>
             {product.isEstimatedExpiration ? '~' : ''}
             {new Date(product.expirationDate).toLocaleDateString(locale)}

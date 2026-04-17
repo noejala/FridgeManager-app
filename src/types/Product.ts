@@ -7,6 +7,7 @@ export interface Product {
   unit: string; // 'unité', 'kg', 'L', etc.
   addedDate: string; // Format: YYYY-MM-DD
   isEstimatedExpiration?: boolean;
+  expirationDateType?: 'dlc' | 'ddm'; // DLC = date limite (safety), DDM = de préférence avant (quality)
   fridgeZone?: string;
   consumedAt?: string; // ISO timestamp, set when product is marked as consumed
   openedDate?: string; // YYYY-MM-DD, set when a sauce/condiment is opened

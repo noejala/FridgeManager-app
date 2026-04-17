@@ -301,6 +301,15 @@
   color: var(--red);
 }
 
+.status-badge.status-expired-ddm {
+  background: var(--amber-bg);
+  color: var(--amber);
+}
+
+.product-card.status-expired-ddm {
+  border-left-color: var(--amber);
+}
+
 .status-badge.estimated-hint {
   cursor: help;
   position: relative;
