@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Product, ProductCategory } from '../types/Product';
 import { guessCategory } from '../utils/categoryMapping';
+import { getDefaultExpirationDateType } from '../utils/expirationDateType';
 import { estimateExpirationDate, estimateExpirationFromOpenDate, isProductRecognized } from '../utils/shelfLife';
 import { lookupBarcode, FoodFactsResult } from '../utils/foodFactsApi';
 import { BarcodeScanner } from './BarcodeScanner';
@@ -34,8 +35,7 @@ const CATEGORIES: ProductCategory[] = [
 const isOpenableCategory = (cat: ProductCategory) =>
   ['Sauces', 'Milk', 'Juice', 'Cream'].includes(cat);
 
-const getDefaultExpirationDateType = (cat: ProductCategory): 'dlc' | 'ddm' =>
-  ['Meat', 'Fish', 'Dairy', 'Milk', 'Cream'].includes(cat) ? 'dlc' : 'ddm';
+
 
 export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, onPrefillApplied, onScanBarcode }: AddProductFormProps) => {
   const { t } = useTranslation();

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Product, ProductCategory } from '../types/Product';
 import { guessCategory } from '../utils/categoryMapping';
+import { getDefaultExpirationDateType } from '../utils/expirationDateType';
 import { estimateExpirationDate, isProductRecognized } from '../utils/shelfLife';
 import './AddProductForm.css';
 
@@ -10,9 +11,6 @@ interface EditProductFormProps {
   onSave: (product: Product) => Promise<void>;
   onCancel: () => void;
 }
-
-const getDefaultExpirationDateType = (cat: ProductCategory): 'dlc' | 'ddm' =>
-  ['Meat', 'Fish', 'Dairy', 'Milk', 'Cream'].includes(cat) ? 'dlc' : 'ddm';
 
 const CATEGORIES: ProductCategory[] = [
   'Fruits',
