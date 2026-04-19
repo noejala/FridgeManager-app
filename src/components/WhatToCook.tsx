@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Product } from '../types/Product';
 import { DietaryPreference } from '../types/UserProfile';
 import { searchByIngredient, getMealDetails, MealDetails, singularize } from '../utils/mealApi';
-import { fetchGeminiRecipes, CookingMode, CourseSelection } from '../utils/geminiApi';
+import { fetchAiRecipes, CookingMode, CourseSelection } from '../utils/mistralApi';
 import { fetchSavedRecipes, saveRecipe, unsaveRecipe, SavedRecipe } from '../utils/savedRecipeService';
 import { CookingSession } from './CookingSession';
 import { toEnglishIngredient } from '../utils/ingredientTranslation';
@@ -12,7 +12,7 @@ import './WhatToCook.css';
 
 
 function parseSteps(instructions: string): string[] {
-  // Split by newlines first (TheMealDB uses \r\n, Gemini uses \n)
+  // Split by newlines first (TheMealDB uses \r\n, AI models use \n)
   const byNewline = instructions
     .split(/\r?\n/)
     .map(s => s.replace(/^(step\s*\d+\s*[:.]*\s*|\d+[.:)]\s*)/i, '').trim())
@@ -215,7 +215,7 @@ function parsePrepMinutes(area: string): number {
   return (h ? parseInt(h[1]) * 60 : 0) + (m ? parseInt(m[1]) : 0) || 999;
 }
 
-function sortGeminiRecipes(recipes: RecipeMatch[]): RecipeMatch[] {
+function sortAiRecipes(recipes: RecipeMatch[]): RecipeMatch[] {
   return [...recipes].sort((a, b) => {
     const da = DIFFICULTY_RANK[a.meal.category?.toLowerCase() ?? ''] ?? 2;
     const db = DIFFICULTY_RANK[b.meal.category?.toLowerCase() ?? ''] ?? 2;
@@ -238,7 +238,7 @@ function applySort(recipes: RecipeMatch[], mode: SortMode): RecipeMatch[] {
   });
 }
 
-const geminiEnabled = import.meta.env.VITE_GEMINI_ENABLED === 'true';
+const aiEnabled = import.meta.env.VITE_AI_ENABLED === 'true';
 
 export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredients = [], customPreferences = '', pantryStaples = [], onConsumeProducts }: WhatToCookProps) => {
   const { t, i18n } = useTranslation();
@@ -251,10 +251,10 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
   const [sortMode, setSortMode] = useState<SortMode>('smart');
   const [servings, setServings] = useState(DEFAULT_SERVINGS);
   const [aiFallback, setAiFallback] = useState(false);
-  const [geminiOverloaded, setGeminiOverloaded] = useState(false);
+  const [aiOverloaded, setAiOverloaded] = useState(false);
   const fetchingRef = useRef(false);
   const [recipeMode, setRecipeMode] = useState<'api' | 'ai'>(() => {
-    if (!geminiEnabled) return 'api';
+    if (!aiEnabled) return 'api';
     return (localStorage.getItem('recipe-mode') as 'api' | 'ai') || 'api';
   });
   const [selectedCookingMode, setSelectedCookingMode] = useState<CookingMode | null>(null);
@@ -308,7 +308,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
 
     setLoading(true);
     setError(null);
-    setGeminiOverloaded(false);
+    setAiOverloaded(false);
 
     try {
       const fridgeNames = products.map((p) => toEnglishIngredient(p.name));
@@ -321,9 +321,9 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
 
       if (recipeMode === 'ai') {
         try {
-          const geminiResults = await fetchGeminiRecipes(fridgeNames, dietaryPreferences, i18n.language, selectedCookingMode ?? undefined, urgentFridgeNames, selectedCourse ?? undefined, customPreferences || undefined, selectedCustomModeText ?? undefined, pantryStaples.length > 0 ? pantryStaples : undefined);
-          if (geminiResults.length > 0) {
-            meals = geminiResults;
+          const aiResults = await fetchAiRecipes(fridgeNames, dietaryPreferences, i18n.language, selectedCookingMode ?? undefined, urgentFridgeNames, selectedCourse ?? undefined, customPreferences || undefined, selectedCustomModeText ?? undefined, pantryStaples.length > 0 ? pantryStaples : undefined);
+          if (aiResults.length > 0) {
+            meals = aiResults;
             isAiMode = true;
             setAiFallback(false);
           } else {
@@ -334,8 +334,8 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
           const msg = e instanceof Error ? e.message : '';
           meals = await fetchMealDbMeals(fridgeNames);
           setAiFallback(true);
-          if (msg === 'gemini_unavailable') {
-            setGeminiOverloaded(true);
+          if (msg === 'ai_unavailable') {
+            setAiOverloaded(true);
           }
         }
       } else {
@@ -357,7 +357,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
         let pantry: { name: string; measure: string }[];
         let urgentAvailableCount: number;
         if (isAiMode) {
-          // Gemini designed recipes for these fridge contents — treat all non-pantry ingredients as available
+          // AI designed recipes for these fridge contents — treat all non-pantry ingredients as available
           pantry = meal.ingredients.filter(ing =>
             PANTRY_STAPLES.has(singularize(ing.name.toLowerCase())) ||
             PANTRY_STAPLES.has(ing.name.toLowerCase())
@@ -374,7 +374,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
         }
       }
 
-      const sorted = isAiMode ? sortGeminiRecipes(matched) : matched.sort((a, b) => scoreRecipe(b) - scoreRecipe(a));
+      const sorted = isAiMode ? sortAiRecipes(matched) : matched.sort((a, b) => scoreRecipe(b) - scoreRecipe(a));
       setRecipes(sorted);
     } catch {
       setError(t('cook.failedFetch'));
@@ -464,7 +464,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
     if (existingId) {
       setConfirmUnsave(meal);
     } else {
-      const source = meal.id.startsWith('gemini-') ? 'gemini' : 'mealdb';
+      const source = meal.id.startsWith('mistral-') ? 'mistral' : 'mealdb';
       const saved = await saveRecipe(meal, source);
       setSavedMap(prev => new Map(prev).set(key, saved.id));
       setSavedRecipes(prev => [saved, ...prev]);
@@ -492,7 +492,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       .map(p => toEnglishIngredient(p.name));
     return savedRecipes.map(s => {
       const meal = s.recipeData;
-      if (s.source === 'gemini') {
+      if (s.source === 'mistral' || s.source === 'gemini') {
         const pantry = meal.ingredients.filter(ing =>
           PANTRY_STAPLES.has(singularize(ing.name.toLowerCase())) ||
           PANTRY_STAPLES.has(ing.name.toLowerCase())
@@ -533,7 +533,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       <div className="recipe-info">
         <h3>{recipe.meal.name}</h3>
         <div className="recipe-match-info">
-          {recipe.meal.id.startsWith('gemini-') ? (
+          {(recipe.meal.id.startsWith('mistral-') || recipe.meal.id.startsWith('gemini-')) ? (
             <>
               {recipe.meal.category && (
                 <span className={`match-badge difficulty difficulty--${['facile','easy'].includes(recipe.meal.category.toLowerCase()) ? 'easy' : ['moyen','medium'].includes(recipe.meal.category.toLowerCase()) ? 'medium' : 'hard'}`}>
@@ -578,7 +578,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       <div className="cook-header">
         <div className="cook-header-top">
           <h2>{t('cook.title')}</h2>
-          {geminiEnabled && (
+          {aiEnabled && (
             <div className="mode-toggle">
               <button
                 className={`mode-btn${recipeMode === 'api' && !savedView ? ' active' : ''}`}
@@ -741,7 +741,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
 
       {!savedView && recipeMode === 'ai' && aiFallback && !loading && (
         <div className="ai-fallback-notice">
-          ⚠️ {geminiOverloaded ? t('cook.aiFallbackUnavailable') : t('cook.aiFallback')}
+          ⚠️ {aiOverloaded ? t('cook.aiFallbackUnavailable') : t('cook.aiFallback')}
           <button onClick={fetchRecipes}>{t('cook.retry')}</button>
         </div>
       )}

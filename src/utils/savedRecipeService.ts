@@ -4,7 +4,7 @@ import { MealDetails } from './mealApi';
 export interface SavedRecipe {
   id: string;
   recipeData: MealDetails;
-  source: 'gemini' | 'mealdb';
+  source: 'mistral' | 'gemini' | 'mealdb'; // 'gemini' kept for backward compat with existing saved recipes
   savedAt: string;
 }
 
@@ -12,7 +12,7 @@ interface SavedRecipeRow {
   id: string;
   user_id: string;
   recipe_data: MealDetails;
-  source: 'gemini' | 'mealdb';
+  source: 'mistral' | 'gemini' | 'mealdb'; // 'gemini' kept for backward compat with existing saved recipes
   saved_at: string;
 }
 
@@ -34,7 +34,7 @@ export async function fetchSavedRecipes(): Promise<SavedRecipe[]> {
   return (data as SavedRecipeRow[]).map(rowToSavedRecipe);
 }
 
-export async function saveRecipe(meal: MealDetails, source: 'gemini' | 'mealdb'): Promise<SavedRecipe> {
+export async function saveRecipe(meal: MealDetails, source: 'mistral' | 'mealdb'): Promise<SavedRecipe> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
   const { data, error } = await supabase

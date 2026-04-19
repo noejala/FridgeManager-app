@@ -12,7 +12,7 @@ function hashString(s: string): number {
   return h >>> 0;
 }
 
-interface GeminiRecipeRaw {
+interface MistralRecipeRaw {
   name: string;
   ingredients: { name: string; quantity: string }[];
   instructions: string | string[];
@@ -21,7 +21,7 @@ interface GeminiRecipeRaw {
   course?: 'starter' | 'main' | 'dessert';
 }
 
-export async function fetchGeminiRecipes(
+export async function fetchAiRecipes(
   productNames: string[],
   dietaryPrefs: DietaryPreference[],
   language: string,
@@ -32,15 +32,15 @@ export async function fetchGeminiRecipes(
   customModeText?: string,
   pantryStaples?: string[]
 ): Promise<MealDetails[]> {
-  const rateLimitUntil = localStorage.getItem('gemini-ratelimit-until');
+  const rateLimitUntil = localStorage.getItem('mistral-ratelimit-until');
   if (rateLimitUntil && Date.now() < Number(rateLimitUntil)) {
-    console.warn('[Gemini] rate limit active until', new Date(Number(rateLimitUntil)).toLocaleTimeString());
+    console.warn('[Mistral] rate limit active until', new Date(Number(rateLimitUntil)).toLocaleTimeString());
     return [];
   }
 
   const today = new Date().toISOString().slice(0, 10);
   const raw = [...productNames].sort().join(',') + '|' + [...dietaryPrefs].sort().join(',') + '|' + language + '|' + today + '|' + (cookingMode ?? 'none') + '|' + (courseSelection ?? 'none') + '|' + (customPreferences ?? '') + '|' + (customModeText ?? '') + '|' + [...(pantryStaples ?? [])].sort().join(',') + '|v10';
-  const cacheKey = `gemini-recipes-${hashString(raw).toString(36)}`;
+  const cacheKey = `mistral-recipes-${hashString(raw).toString(36)}`;
 
   const cached = localStorage.getItem(cacheKey);
   if (cached) {
@@ -118,7 +118,7 @@ ${jsonSchema}
 difficulty must be one of: ${difficultyOptions}`;
 
   try {
-    const res = await fetch('/api/gemini', {
+    const res = await fetch('/api/mistral', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ prompt }),
@@ -126,37 +126,36 @@ difficulty must be one of: ${difficultyOptions}`;
 
     if (!res.ok) {
       const err = await res.json().catch(() => null);
-      console.error('[Gemini] API error', res.status, res.statusText, JSON.stringify(err, null, 2));
+      console.error('[Mistral] API error', res.status, res.statusText, JSON.stringify(err, null, 2));
       if (res.status === 429) {
-        localStorage.setItem('gemini-ratelimit-until', String(Date.now() + 5 * 60 * 1000));
+        localStorage.setItem('mistral-ratelimit-until', String(Date.now() + 5 * 60 * 1000));
       }
       if (res.status === 503) {
-        throw new Error('gemini_unavailable');
+        throw new Error('ai_unavailable');
       }
       return [];
     }
 
     const data = await res.json();
-    const parts: { text?: string }[] = data.candidates?.[0]?.content?.parts ?? [];
-    const text: string = parts.map(p => p.text ?? '').join('');
+    const text: string = data.choices?.[0]?.message?.content ?? '';
 
     // Extract the JSON array from anywhere in the response (handles markdown fences and surrounding text)
     const jsonMatch = text.match(/\[[\s\S]*\]/);
     if (!jsonMatch) {
-      console.error('[Gemini] No JSON array found in response:\n', text);
+      console.error('[Mistral] No JSON array found in response:\n', text);
       return [];
     }
 
-    let raws: GeminiRecipeRaw[];
+    let raws: MistralRecipeRaw[];
     try {
       raws = JSON.parse(jsonMatch[0]);
     } catch (e) {
-      console.error('[Gemini] JSON parse error', e, '\nExtracted:', jsonMatch[0]);
+      console.error('[Mistral] JSON parse error', e, '\nExtracted:', jsonMatch[0]);
       return [];
     }
 
     const results: MealDetails[] = raws.map((r, i) => ({
-      id: `gemini-${i}`,
+      id: `mistral-${i}`,
       name: r.name,
       thumbnail: '',
       category: r.difficulty || '',
@@ -169,10 +168,10 @@ difficulty must be one of: ${difficultyOptions}`;
     localStorage.setItem(cacheKey, JSON.stringify(results));
     return results;
   } catch (e) {
-    if (e instanceof Error && e.message === 'gemini_unavailable') {
+    if (e instanceof Error && e.message === 'ai_unavailable') {
       throw e;
     }
-    console.error('[Gemini] Unexpected error', e);
+    console.error('[Mistral] Unexpected error', e);
     return [];
   }
 }
