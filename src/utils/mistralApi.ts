@@ -177,7 +177,7 @@ difficulty must be one of: ${difficultyOptions}`;
 }
 
 export async function fetchProductFunFacts(productName: string, language: string): Promise<string[]> {
-  const cacheKey = `funfacts-${productName.toLowerCase()}-${language}`;
+  const cacheKey = `funfacts-v2-${productName.toLowerCase()}-${language}`;
   const cached = localStorage.getItem(cacheKey);
   if (cached) {
     try { return JSON.parse(cached) as string[]; }
@@ -187,7 +187,7 @@ export async function fetchProductFunFacts(productName: string, language: string
   const isFrench = language.startsWith('fr');
   const langLabel = isFrench ? 'français' : 'English';
 
-  const prompt = `Give me 3 short, surprising and interesting fun facts about ${productName} (the food/ingredient). Focus on nutrition, history, culinary uses, or surprising science. Each fact should be 1-2 sentences max.
+  const prompt = `Give me 3 surprising fun facts about ${productName} (the food/ingredient). Each fact must be a single short sentence of max 12 words. Be punchy and direct.
 Respond ONLY in ${langLabel}. Return ONLY a valid JSON array of 3 strings, no markdown:
 ["fact 1","fact 2","fact 3"]`;
 
