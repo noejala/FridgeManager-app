@@ -379,6 +379,8 @@
     "recommendedFor": "Recommended products for {{month}} ({{season}})",
     "vegetables": "Vegetables",
     "fruits": "Fruits",
+    "topRecipes": "{{season}} classics",
+    "ingredients": "Ingredients",
     "season": {
       "winter": "Winter",
       "spring": "Spring",
