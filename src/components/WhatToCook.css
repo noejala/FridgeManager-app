@@ -713,7 +713,7 @@
   display: flex;
   gap: 0.5rem;
   justify-content: flex-end;
-  padding-top: 1rem;
+  padding-top: 0.5rem;
   border-top: 1px solid var(--border);
 }
 
