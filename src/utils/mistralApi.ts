@@ -196,9 +196,11 @@ interface SeasonalRecipeRaw {
 export async function fetchSeasonalRecipes(
   season: string,
   region: RegionId,
-  language: string
+  language: string,
+  seasonalProducts: string[]
 ): Promise<MealDetails[]> {
-  const cacheKey = `seasonal-recipes-${season}-${region}-${language}`;
+  const productsKey = [...seasonalProducts].sort().join(',');
+  const cacheKey = `seasonal-recipes-v2-${season}-${region}-${language}-${hashString(productsKey).toString(36)}`;
   const cached = localStorage.getItem(cacheKey);
   if (cached) {
     try { return JSON.parse(cached) as MealDetails[]; }
@@ -210,8 +212,9 @@ export async function fetchSeasonalRecipes(
   const regionLabel = REGION_LABELS[region];
   const seasonLabel = season.charAt(0).toUpperCase() + season.slice(1).toLowerCase();
   const difficultyOptions = isFrench ? 'Facile, Moyen, Difficile' : 'Easy, Medium, Hard';
+  const productsLabel = seasonalProducts.slice(0, 20).join(', ');
 
-  const prompt = `You are a culinary expert. Give me the 5 most iconic and classic ${seasonLabel} recipes from ${regionLabel} cuisine. These should be well-known, beloved recipes that truly celebrate the season's best produce and flavors — the kind a local would cook every year.
+  const prompt = `You are a culinary expert. Give me the 5 most iconic and classic ${seasonLabel} recipes from ${regionLabel} cuisine that feature these seasonal ingredients: ${productsLabel}. Each recipe should prominently use one or more of these ingredients. These should be well-known, beloved recipes that truly celebrate the season — the kind a local would cook every year.
 Respond ONLY in ${langLabel}. Return ONLY a valid JSON array with no markdown or explanation:
 [{"name":"...","ingredients":[{"name":"...","quantity":"..."}],"instructions":["step 1","step 2"],"prepTime":"...","difficulty":"..."}]
 "instructions" must be a JSON array of strings, one string per step (no numbering).

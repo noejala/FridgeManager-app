@@ -44,24 +44,24 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
     if (isActive) setSelectedSeason(currentSeasonName);
   }, [isActive]);
 
+  const products = getSeasonProducts(selectedRegion, selectedSeason);
+  const fruits = products.filter(p => FRUITS.has(p));
+  const vegetables = products.filter(p => !FRUITS.has(p));
+
   const loadRecipes = useCallback(async () => {
     if (!aiEnabled) return;
     setLoadingRecipes(true);
     setSeasonalRecipes([]);
-    const results = await fetchSeasonalRecipes(selectedSeason.toLowerCase(), selectedRegion, i18n.language);
+    const results = await fetchSeasonalRecipes(selectedSeason.toLowerCase(), selectedRegion, i18n.language, products);
     setSeasonalRecipes(results);
     setLoadingRecipes(false);
-  }, [selectedSeason, selectedRegion, i18n.language, aiEnabled]);
+  }, [selectedSeason, selectedRegion, i18n.language, aiEnabled, products]);
 
   useEffect(() => {
     loadRecipes();
   }, [loadRecipes]);
 
   const monthName = t(`seasonal.months.${currentMonth}`);
-
-  const products = getSeasonProducts(selectedRegion, selectedSeason);
-  const fruits = products.filter(p => FRUITS.has(p));
-  const vegetables = products.filter(p => !FRUITS.has(p));
 
   return (
     <div className="seasonal-products">
