@@ -438,9 +438,14 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
 
   const addToCooking = (e: React.MouseEvent, recipe: RecipeMatch) => {
     e.stopPropagation();
-    setCookingRecipes(prev =>
-      prev.some(r => r.meal.id === recipe.meal.id) ? prev : [...prev, recipe]
-    );
+    setCookingRecipes(prev => {
+      if (prev.some(r => r.meal.id === recipe.meal.id)) {
+        const next = prev.filter(r => r.meal.id !== recipe.meal.id);
+        if (next.length === 0) setCookingOpen(false);
+        return next;
+      }
+      return [...prev, recipe];
+    });
   };
 
   const removeFromCooking = (recipeId: string) => {
@@ -525,10 +530,18 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       <button
         className={`recipe-cook-btn${cookingRecipes.some(r => r.meal.id === recipe.meal.id) ? ' active' : ''}`}
         onClick={(e) => addToCooking(e, recipe)}
-        aria-label={t('cook.cookNow')}
-        title={t('cook.cookNow')}
+        aria-label={cookingRecipes.some(r => r.meal.id === recipe.meal.id) ? t('cook.session.removeRecipe') : t('cook.cookNow')}
+        title={cookingRecipes.some(r => r.meal.id === recipe.meal.id) ? t('cook.session.removeRecipe') : t('cook.cookNow')}
       >
-        🍳
+        {cookingRecipes.some(r => r.meal.id === recipe.meal.id) ? (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        ) : (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+        )}
       </button>
       <div className="recipe-info">
         <h3>{recipe.meal.name}</h3>
