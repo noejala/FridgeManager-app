@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { UserProfile, DietaryPreference } from '../types/UserProfile';
 import { fetchUserProfile, saveUserProfile } from '../utils/userProfileService';
 import { PANTRY_PRESET_ITEMS, PRESET_EN_SET } from '../utils/pantryPresets';
-import { getPrompt, savePrompt, PROMPT_DEFAULTS } from '../utils/promptSettings';
 import './UserSettings.css';
 
 const DIETARY_RESTRICTIONS: DietaryPreference[] = ['gluten_free', 'lactose_free', 'halal', 'kosher'];
@@ -34,7 +33,6 @@ interface Props {
 
 export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPreferencesChange, onDislikedIngredientsChange, onCustomPreferencesChange, onPantryStaplesChange }: Props) => {
   const { t, i18n } = useTranslation();
-  const aiEnabled = import.meta.env.VITE_AI_ENABLED === 'true';
 
   const [profile, setProfile] = useState<UserProfile>(EMPTY_PROFILE);
   const [draft, setDraft] = useState<UserProfile>(EMPTY_PROFILE);
@@ -53,28 +51,6 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
   const [pantryDraft, setPantryDraft] = useState<string[]>([]);
   const [pantrySaving, setPantrySaving] = useState(false);
   const [pantrySaved, setPantrySaved] = useState(false);
-
-  const [recipesPromptDraft, setRecipesPromptDraft] = useState(() => getPrompt('recipes'));
-  const [funFactsPromptDraft, setFunFactsPromptDraft] = useState(() => getPrompt('funFacts'));
-  const [savedRecipesPrompt, setSavedRecipesPrompt] = useState(() => getPrompt('recipes'));
-  const [savedFunFactsPrompt, setSavedFunFactsPrompt] = useState(() => getPrompt('funFacts'));
-  const [promptSaved, setPromptSaved] = useState(false);
-
-  const promptsDirty = recipesPromptDraft !== savedRecipesPrompt || funFactsPromptDraft !== savedFunFactsPrompt;
-
-  const handleSavePrompts = () => {
-    savePrompt('recipes', recipesPromptDraft);
-    savePrompt('funFacts', funFactsPromptDraft);
-    setSavedRecipesPrompt(recipesPromptDraft);
-    setSavedFunFactsPrompt(funFactsPromptDraft);
-    setPromptSaved(true);
-    setTimeout(() => setPromptSaved(false), 2000);
-  };
-
-  const handleResetPrompts = () => {
-    setRecipesPromptDraft(PROMPT_DEFAULTS.recipes);
-    setFunFactsPromptDraft(PROMPT_DEFAULTS.funFacts);
-  };
 
   const hasProfileData = (p: UserProfile) => p.country || p.age;
 
@@ -462,60 +438,6 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
           </div>
         </div>
       </section>
-
-      {/* AI Prompts */}
-      {aiEnabled && (
-        <section className="settings-section">
-          <h2 className="settings-section-title">{t('settings.promptsSection')}</h2>
-          <div className="settings-card">
-            <p className="settings-pantry-hint">{t('settings.promptsHint')}</p>
-
-            <div className="settings-field">
-              <label className="settings-label">{t('settings.recipePromptLabel')}</label>
-              <span className="settings-field-hint settings-field-hint--mono">{t('settings.recipePromptPlaceholders')}</span>
-              <textarea
-                className="settings-input settings-prompt-textarea"
-                value={recipesPromptDraft}
-                rows={5}
-                onChange={e => setRecipesPromptDraft(e.target.value)}
-                spellCheck={false}
-              />
-            </div>
-
-            <div className="settings-field">
-              <label className="settings-label">{t('settings.funFactsPromptLabel')}</label>
-              <span className="settings-field-hint settings-field-hint--mono">{t('settings.funFactsPromptPlaceholders')}</span>
-              <textarea
-                className="settings-input settings-prompt-textarea"
-                value={funFactsPromptDraft}
-                rows={3}
-                onChange={e => setFunFactsPromptDraft(e.target.value)}
-                spellCheck={false}
-              />
-            </div>
-
-            <div className="settings-save-row">
-              <span className={`settings-field-hint${promptSaved ? ' settings-field-hint--saved' : ''}`}>
-                {promptSaved ? t('settings.saved') : ''}
-              </span>
-              <button
-                className="settings-reset-btn"
-                onClick={handleResetPrompts}
-                disabled={recipesPromptDraft === PROMPT_DEFAULTS.recipes && funFactsPromptDraft === PROMPT_DEFAULTS.funFacts}
-              >
-                {t('settings.promptReset')}
-              </button>
-              <button
-                className="settings-save-btn"
-                onClick={handleSavePrompts}
-                disabled={!promptsDirty}
-              >
-                {t('settings.save')}
-              </button>
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* Logout */}
       <section className="settings-section">

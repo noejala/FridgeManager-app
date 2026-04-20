@@ -364,13 +364,6 @@
     "pantryStaples": "Placard de base",
     "pantryStaplesHint": "Ces produits seront considérés comme toujours disponibles par l'IA pour les recettes.",
     "pantryAddPlaceholder": "Ajouter un autre produit…",
-    "promptsSection": "Prompts IA",
-    "promptsHint": "Personnalisez les instructions envoyées à l'IA. Les mots entre {{accolades}} sont remplacés dynamiquement.",
-    "recipePromptLabel": "Prompt recettes",
-    "recipePromptPlaceholders": "Disponible : {{ingredients}}, {{count}}, {{pantry}}",
-    "funFactsPromptLabel": "Prompt fun facts",
-    "funFactsPromptPlaceholders": "Disponible : {{product}}",
-    "promptReset": "Réinitialiser",
     "dietary": {
       "vegetarian": "Végétarien",
       "vegan": "Vegan",
