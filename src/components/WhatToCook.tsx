@@ -272,6 +272,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
     } catch { return []; }
   });
   const [addingCustomMode, setAddingCustomMode] = useState(false);
+  const [editingCustomModeIndex, setEditingCustomModeIndex] = useState<number | null>(null);
   const [customModeType, setCustomModeType] = useState<'guided' | 'free'>('guided');
   const [customModeTitle, setCustomModeTitle] = useState('');
   const [customModeFields, setCustomModeFields] = useState({ cuisine: '', goal: '', occasion: '', extra: '' });
@@ -400,6 +401,17 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
     setCustomModeFreeText('');
     setCustomModeType('guided');
     setAddingCustomMode(false);
+    setEditingCustomModeIndex(null);
+  };
+
+  const openEditCustomMode = (index: number) => {
+    const mode = customModes[index];
+    setEditingCustomModeIndex(index);
+    setCustomModeTitle(mode.title);
+    setCustomModeType('free');
+    setCustomModeFreeText(mode.prompt);
+    setCustomModeFields({ cuisine: '', goal: '', occasion: '', extra: '' });
+    setAddingCustomMode(true);
   };
 
   const confirmAddCustomMode = () => {
@@ -413,7 +425,17 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
           customModeFields.occasion.trim(),
           customModeFields.extra.trim(),
         ].filter(Boolean).join('. ') || title;
-    saveCustomModes([...customModes, { title, prompt }]);
+    if (editingCustomModeIndex !== null) {
+      const updated = customModes.map((m, i) => i === editingCustomModeIndex ? { title, prompt } : m);
+      saveCustomModes(updated);
+      // Update selected mode if we just edited the active one
+      if (selectedCustomModeTitle === customModes[editingCustomModeIndex].title) {
+        setSelectedCustomModeText(prompt);
+        setSelectedCustomModeTitle(title);
+      }
+    } else {
+      saveCustomModes([...customModes, { title, prompt }]);
+    }
     resetBuilderForm();
   };
 
@@ -702,6 +724,16 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
               >
                 <span className="cooking-mode-icon">✦</span>
                 <span className="cooking-mode-label">{mode.title}</span>
+                <button
+                  className="custom-mode-edit"
+                  onClick={e => { e.stopPropagation(); openEditCustomMode(i); }}
+                  aria-label={t('cook.customModeEdit')}
+                >
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                  </svg>
+                </button>
                 <button
                   className="custom-mode-delete"
                   onClick={e => { e.stopPropagation(); deleteCustomMode(i); }}
@@ -1011,7 +1043,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
         <div className="modal-overlay" onClick={resetBuilderForm}>
           <div className="custom-mode-builder" onClick={e => e.stopPropagation()}>
             <div className="custom-mode-builder-header">
-              <span className="custom-mode-builder-title">{t('cook.customModeBuilderTitle')}</span>
+              <span className="custom-mode-builder-title">{editingCustomModeIndex !== null ? t('cook.customModeEditTitle') : t('cook.customModeBuilderTitle')}</span>
               <div className="custom-mode-type-toggle">
                 <button
                   type="button"
