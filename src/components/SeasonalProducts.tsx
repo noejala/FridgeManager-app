@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { REGIONS, seasonalDataByRegion, productEmojiMap, FRUITS, type RegionId } from '../utils/seasonalData';
+import { fetchProductFunFacts } from '../utils/mistralApi';
 import './SeasonalProducts.css';
 
 const SEASON_ORDER = ['Winter', 'Spring', 'Summer', 'Autumn'] as const;
@@ -20,7 +21,7 @@ function getSeasonProducts(region: RegionId, season: Season): string[] {
 }
 
 export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const currentMonth = new Date().getMonth() + 1;
 
   const [selectedRegion, setSelectedRegion] = useState<RegionId>(() => {
@@ -38,11 +39,38 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
     if (isActive) setSelectedSeason(currentSeasonName);
   }, [isActive]);
 
+  const [funFactProduct, setFunFactProduct] = useState<string | null>(null);
+  const [funFacts, setFunFacts] = useState<string[]>([]);
+  const [loadingFunFacts, setLoadingFunFacts] = useState(false);
+  const aiEnabled = import.meta.env.VITE_AI_ENABLED === 'true';
+
+  const handleProductClick = async (product: string) => {
+    if (!aiEnabled) return;
+    setFunFactProduct(product);
+    setFunFacts([]);
+    setLoadingFunFacts(true);
+    const facts = await fetchProductFunFacts(product, i18n.language);
+    setFunFacts(facts);
+    setLoadingFunFacts(false);
+  };
+
   const monthName = t(`seasonal.months.${currentMonth}`);
 
   const products = getSeasonProducts(selectedRegion, selectedSeason);
   const fruits = products.filter(p => FRUITS.has(p));
   const vegetables = products.filter(p => !FRUITS.has(p));
+
+  const renderProductCard = (product: string, index: number) => (
+    <div
+      key={product}
+      className={`seasonal-product-card${aiEnabled ? ' seasonal-product-card--clickable' : ''}`}
+      style={{ '--index': index } as React.CSSProperties}
+      onClick={() => handleProductClick(product)}
+    >
+      <div className="product-emoji">{productEmojiMap[product] || '🥬'}</div>
+      <p>{t(`seasonal.products.${product}`, { defaultValue: product })}</p>
+    </div>
+  );
 
   return (
     <div className="seasonal-products">
@@ -88,12 +116,7 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
           <div className="products-section">
             <h3 className="products-section-title">{t('seasonal.vegetables')}</h3>
             <div className="products-grid">
-              {vegetables.map((product, index) => (
-                <div key={product} className="seasonal-product-card" style={{ '--index': index } as React.CSSProperties}>
-                  <div className="product-emoji">{productEmojiMap[product] || '🥬'}</div>
-                  <p>{t(`seasonal.products.${product}`, { defaultValue: product })}</p>
-                </div>
-              ))}
+              {vegetables.map((product, index) => renderProductCard(product, index))}
             </div>
           </div>
         )}
@@ -102,16 +125,41 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
           <div className="products-section">
             <h3 className="products-section-title">{t('seasonal.fruits')}</h3>
             <div className="products-grid">
-              {fruits.map((product, index) => (
-                <div key={product} className="seasonal-product-card" style={{ '--index': index + vegetables.length } as React.CSSProperties}>
-                  <div className="product-emoji">{productEmojiMap[product] || '🍎'}</div>
-                  <p>{t(`seasonal.products.${product}`, { defaultValue: product })}</p>
-                </div>
-              ))}
+              {fruits.map((product, index) => renderProductCard(product, index + vegetables.length))}
             </div>
           </div>
         )}
       </div>
+
+      {funFactProduct && (
+        <div className="modal-overlay" onClick={() => setFunFactProduct(null)}>
+          <div className="modal-content funfact-modal" onClick={e => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setFunFactProduct(null)}>✕</button>
+            <div className="funfact-header">
+              <span className="funfact-emoji">{productEmojiMap[funFactProduct] || '🥬'}</span>
+              <h2>{t(`seasonal.products.${funFactProduct}`, { defaultValue: funFactProduct })}</h2>
+            </div>
+            {loadingFunFacts ? (
+              <div className="funfact-loading">
+                <div className="funfact-skeleton" />
+                <div className="funfact-skeleton" />
+                <div className="funfact-skeleton" />
+              </div>
+            ) : funFacts.length > 0 ? (
+              <ul className="funfact-list">
+                {funFacts.map((fact, i) => (
+                  <li key={i} className="funfact-item">
+                    <span className="funfact-bullet">✦</span>
+                    <span>{fact}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="funfact-error">{t('seasonal.funFactError')}</p>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

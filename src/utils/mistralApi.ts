@@ -175,3 +175,37 @@ difficulty must be one of: ${difficultyOptions}`;
     return [];
   }
 }
+
+export async function fetchProductFunFacts(productName: string, language: string): Promise<string[]> {
+  const cacheKey = `funfacts-${productName.toLowerCase()}-${language}`;
+  const cached = localStorage.getItem(cacheKey);
+  if (cached) {
+    try { return JSON.parse(cached) as string[]; }
+    catch { localStorage.removeItem(cacheKey); }
+  }
+
+  const isFrench = language.startsWith('fr');
+  const langLabel = isFrench ? 'français' : 'English';
+
+  const prompt = `Give me 3 short, surprising and interesting fun facts about ${productName} (the food/ingredient). Focus on nutrition, history, culinary uses, or surprising science. Each fact should be 1-2 sentences max.
+Respond ONLY in ${langLabel}. Return ONLY a valid JSON array of 3 strings, no markdown:
+["fact 1","fact 2","fact 3"]`;
+
+  try {
+    const res = await fetch('/api/mistral', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt }),
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    const text: string = data.choices?.[0]?.message?.content ?? '';
+    const jsonMatch = text.match(/\[[\s\S]*\]/);
+    if (!jsonMatch) return [];
+    const facts: string[] = JSON.parse(jsonMatch[0]);
+    localStorage.setItem(cacheKey, JSON.stringify(facts));
+    return facts;
+  } catch {
+    return [];
+  }
+}

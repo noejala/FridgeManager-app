@@ -379,6 +379,7 @@
     "recommendedFor": "Produits recommandés pour {{month}} ({{season}})",
     "vegetables": "Légumes",
     "fruits": "Fruits",
+    "funFactError": "Impossible de charger les informations.",
     "season": {
       "winter": "Hiver",
       "spring": "Printemps",
