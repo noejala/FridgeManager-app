@@ -216,6 +216,15 @@
   margin: 0;
 }
 
+.funfact-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 1rem 0;
+}
+
 .funfact-loading {
   display: flex;
   flex-direction: column;

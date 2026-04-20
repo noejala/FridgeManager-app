@@ -379,6 +379,7 @@
     "recommendedFor": "Recommended products for {{month}} ({{season}})",
     "vegetables": "Vegetables",
     "fruits": "Fruits",
+    "funFactLabel": "Fun facts",
     "funFactError": "Could not load information.",
     "season": {
       "winter": "Winter",

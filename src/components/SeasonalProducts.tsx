@@ -139,6 +139,7 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
               <span className="funfact-emoji">{productEmojiMap[funFactProduct] || '🥬'}</span>
               <h2>{t(`seasonal.products.${funFactProduct}`, { defaultValue: funFactProduct })}</h2>
             </div>
+            <p className="funfact-label">{t('seasonal.funFactLabel')}</p>
             {loadingFunFacts ? (
               <div className="funfact-loading">
                 <div className="funfact-skeleton" />
