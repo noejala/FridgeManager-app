@@ -1,6 +1,5 @@
 import { MealDetails } from './mealApi';
 import { DietaryPreference } from '../types/UserProfile';
-import { RegionId } from './seasonalData';
 
 export type CookingMode = 'quick' | 'empty_fridge' | 'expiring' | 'chef' | 'custom';
 export type CourseSelection = 'starter' | 'main' | 'dessert' | 'all';
@@ -173,88 +172,6 @@ difficulty must be one of: ${difficultyOptions}`;
       throw e;
     }
     console.error('[Mistral] Unexpected error', e);
-    return [];
-  }
-}
-
-const REGION_LABELS: Record<RegionId, string> = {
-  france: 'French',
-  mediterranean: 'Mediterranean',
-  north_europe: 'Northern European',
-  north_america: 'North American',
-  southern_hemisphere: 'Southern Hemisphere',
-};
-
-interface SeasonalRecipeRaw {
-  name: string;
-  ingredients: { name: string; quantity: string }[];
-  instructions: string | string[];
-  prepTime: string;
-  difficulty: string;
-}
-
-export async function fetchSeasonalRecipes(
-  season: string,
-  region: RegionId,
-  language: string,
-  seasonalProducts: string[]
-): Promise<MealDetails[]> {
-  const productsKey = [...seasonalProducts].sort().join(',');
-  const cacheKey = `seasonal-recipes-v2-${season}-${region}-${language}-${hashString(productsKey).toString(36)}`;
-  const cached = localStorage.getItem(cacheKey);
-  if (cached) {
-    try { return JSON.parse(cached) as MealDetails[]; }
-    catch { localStorage.removeItem(cacheKey); }
-  }
-
-  const isFrench = language.startsWith('fr');
-  const langLabel = isFrench ? 'français' : 'English';
-  const regionLabel = REGION_LABELS[region];
-  const seasonLabel = season.charAt(0).toUpperCase() + season.slice(1).toLowerCase();
-  const difficultyOptions = isFrench ? 'Facile, Moyen, Difficile' : 'Easy, Medium, Hard';
-  const productsLabel = seasonalProducts.slice(0, 20).join(', ');
-
-  const prompt = `You are a culinary expert. Give me the 5 most iconic and classic ${seasonLabel} recipes from ${regionLabel} cuisine that feature these seasonal ingredients: ${productsLabel}. Each recipe should prominently use one or more of these ingredients. These should be well-known, beloved recipes that truly celebrate the season — the kind a local would cook every year.
-Respond ONLY in ${langLabel}. Return ONLY a valid JSON array with no markdown or explanation:
-[{"name":"...","ingredients":[{"name":"...","quantity":"..."}],"instructions":["step 1","step 2"],"prepTime":"...","difficulty":"..."}]
-"instructions" must be a JSON array of strings, one string per step (no numbering).
-difficulty must be one of: ${difficultyOptions}`;
-
-  try {
-    const res = await fetch('/api/mistral', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt }),
-    });
-
-    if (!res.ok) {
-      console.error('[Mistral/seasonal] API error', res.status);
-      return [];
-    }
-
-    const data = await res.json();
-    const text: string = data.choices?.[0]?.message?.content ?? '';
-    const jsonMatch = text.match(/\[[\s\S]*\]/);
-    if (!jsonMatch) return [];
-
-    let raws: SeasonalRecipeRaw[];
-    try { raws = JSON.parse(jsonMatch[0]); }
-    catch { return []; }
-
-    const results: MealDetails[] = raws.map((r, i) => ({
-      id: `seasonal-${i}`,
-      name: r.name,
-      thumbnail: '',
-      category: r.difficulty || '',
-      area: r.prepTime || '',
-      instructions: Array.isArray(r.instructions) ? r.instructions.join('\n') : r.instructions,
-      ingredients: r.ingredients.map(ing => ({ name: ing.name, measure: ing.quantity })),
-    }));
-
-    localStorage.setItem(cacheKey, JSON.stringify(results));
-    return results;
-  } catch (e) {
-    console.error('[Mistral/seasonal] Unexpected error', e);
     return [];
   }
 }
