@@ -439,8 +439,11 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
     resetBuilderForm();
   };
 
+  const [confirmDeleteCustomModeIndex, setConfirmDeleteCustomModeIndex] = useState<number | null>(null);
+
   const deleteCustomMode = (index: number) => {
     saveCustomModes(customModes.filter((_, i) => i !== index));
+    setConfirmDeleteCustomModeIndex(null);
   };
 
   useEffect(() => {
@@ -736,7 +739,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
                 </button>
                 <button
                   className="custom-mode-delete"
-                  onClick={e => { e.stopPropagation(); deleteCustomMode(i); }}
+                  onClick={e => { e.stopPropagation(); setConfirmDeleteCustomModeIndex(i); }}
                   aria-label={t('cook.customModeDelete')}
                 >×</button>
               </div>
@@ -1108,6 +1111,24 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
               </button>
               <button className="custom-mode-confirm" onClick={confirmAddCustomMode} disabled={!customModeTitle.trim()}>
                 {t('form.save')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {confirmDeleteCustomModeIndex !== null && (
+        <div className="modal-overlay" onClick={() => setConfirmDeleteCustomModeIndex(null)}>
+          <div className="confirm-unsave-modal" onClick={e => e.stopPropagation()}>
+            <p className="confirm-unsave-icon">✦</p>
+            <h3 className="confirm-unsave-title">{t('cook.customModeDeleteTitle')}</h3>
+            <p className="confirm-unsave-body">{t('cook.customModeDeleteBody', { name: customModes[confirmDeleteCustomModeIndex]?.title })}</p>
+            <div className="confirm-unsave-actions">
+              <button className="confirm-unsave-cancel" onClick={() => setConfirmDeleteCustomModeIndex(null)}>
+                {t('cook.unsaveCancel')}
+              </button>
+              <button className="confirm-unsave-confirm" onClick={() => deleteCustomMode(confirmDeleteCustomModeIndex)}>
+                {t('cook.customModeDeleteConfirm')}
               </button>
             </div>
           </div>
