@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { REGIONS, seasonalDataByRegion, productEmojiMap, FRUITS, type RegionId } from '../utils/seasonalData';
 import { fetchSeasonalRecipes } from '../utils/mistralApi';
@@ -48,18 +48,20 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
   const fruits = products.filter(p => FRUITS.has(p));
   const vegetables = products.filter(p => !FRUITS.has(p));
 
-  const loadRecipes = useCallback(async () => {
+  const loadRecipes = async () => {
     if (!aiEnabled) return;
     setLoadingRecipes(true);
     setSeasonalRecipes([]);
-    const results = await fetchSeasonalRecipes(selectedSeason.toLowerCase(), selectedRegion, i18n.language, products);
+    const currentProducts = getSeasonProducts(selectedRegion, selectedSeason);
+    const results = await fetchSeasonalRecipes(selectedSeason.toLowerCase(), selectedRegion, i18n.language, currentProducts);
     setSeasonalRecipes(results);
     setLoadingRecipes(false);
-  }, [selectedSeason, selectedRegion, i18n.language, aiEnabled, products]);
+  };
 
   useEffect(() => {
     loadRecipes();
-  }, [loadRecipes]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedSeason, selectedRegion, i18n.language]);
 
   const monthName = t(`seasonal.months.${currentMonth}`);
 
