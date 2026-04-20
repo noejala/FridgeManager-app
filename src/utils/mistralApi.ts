@@ -1,5 +1,6 @@
 import { MealDetails } from './mealApi';
 import { DietaryPreference } from '../types/UserProfile';
+import { getPrompt } from './promptSettings';
 
 export type CookingMode = 'quick' | 'empty_fridge' | 'expiring' | 'chef' | 'custom';
 export type CourseSelection = 'starter' | 'main' | 'dessert' | 'all';
@@ -39,7 +40,8 @@ export async function fetchAiRecipes(
   }
 
   const today = new Date().toISOString().slice(0, 10);
-  const raw = [...productNames].sort().join(',') + '|' + [...dietaryPrefs].sort().join(',') + '|' + language + '|' + today + '|' + (cookingMode ?? 'none') + '|' + (courseSelection ?? 'none') + '|' + (customPreferences ?? '') + '|' + (customModeText ?? '') + '|' + [...(pantryStaples ?? [])].sort().join(',') + '|v10';
+  const recipePromptTemplate = getPrompt('recipes');
+  const raw = [...productNames].sort().join(',') + '|' + [...dietaryPrefs].sort().join(',') + '|' + language + '|' + today + '|' + (cookingMode ?? 'none') + '|' + (courseSelection ?? 'none') + '|' + (customPreferences ?? '') + '|' + (customModeText ?? '') + '|' + [...(pantryStaples ?? [])].sort().join(',') + '|v11|' + hashString(recipePromptTemplate).toString(36);
   const cacheKey = `mistral-recipes-${hashString(raw).toString(36)}`;
 
   const cached = localStorage.getItem(cacheKey);
@@ -106,12 +108,17 @@ export async function fetchAiRecipes(
     ? '[{"name":"...","ingredients":[{"name":"...","quantity":"..."}],"instructions":["step 1","step 2"],"prepTime":"...","difficulty":"...","course":"starter|main|dessert"}]'
     : '[{"name":"...","ingredients":[{"name":"...","quantity":"..."}],"instructions":["step 1","step 2"],"prepTime":"...","difficulty":"..."}]';
 
-  const prompt = `You are a creative chef. I have these ingredients available: ${productNames.join(', ')}.
+  const pantryList = pantryStaples && pantryStaples.length > 0 ? pantryStaples.join(', ') : 'salt, pepper, oil, butter';
+  const corePrompt = recipePromptTemplate
+    .replace('{{ingredients}}', productNames.join(', '))
+    .replace('{{count}}', String(recipeCount))
+    .replace('{{pantry}}', pantryList);
+
+  const prompt = `${corePrompt}
 ${dietLabel}
 ${customLabel}
 ${modeInstruction}
 ${courseInstruction}
-Suggest ${recipeCount} delicious, coherent recipes. For each recipe, use whichever ingredients naturally belong together — use all of them if it makes culinary sense, or just a few. Never force an ingredient into a recipe just because it's available. Taste and coherence always come first. The user always has these pantry staples at home: ${pantryStaples && pantryStaples.length > 0 ? pantryStaples.join(', ') : 'salt, pepper, oil, butter'}.
 Respond ONLY in ${langLabel}. Return ONLY a valid JSON array with no markdown or explanation:
 ${jsonSchema}
 "instructions" must be a JSON array of strings, one string per step (no numbering in the text).
@@ -177,7 +184,8 @@ difficulty must be one of: ${difficultyOptions}`;
 }
 
 export async function fetchProductFunFacts(productName: string, language: string): Promise<string[]> {
-  const cacheKey = `funfacts-v2-${productName.toLowerCase()}-${language}`;
+  const funFactsTemplate = getPrompt('funFacts');
+  const cacheKey = `funfacts-v3-${productName.toLowerCase()}-${language}-${hashString(funFactsTemplate).toString(36)}`;
   const cached = localStorage.getItem(cacheKey);
   if (cached) {
     try { return JSON.parse(cached) as string[]; }
@@ -186,8 +194,9 @@ export async function fetchProductFunFacts(productName: string, language: string
 
   const isFrench = language.startsWith('fr');
   const langLabel = isFrench ? 'français' : 'English';
+  const coreInstruction = funFactsTemplate.replace('{{product}}', productName);
 
-  const prompt = `Give me 3 surprising fun facts about ${productName} (the food/ingredient). Each fact must be a single short sentence of max 12 words. Be punchy and direct.
+  const prompt = `${coreInstruction}
 Respond ONLY in ${langLabel}. Return ONLY a valid JSON array of 3 strings, no markdown:
 ["fact 1","fact 2","fact 3"]`;
 
