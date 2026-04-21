@@ -86,20 +86,28 @@ export async function fetchAiRecipes(
 
   const isChef = cookingMode === 'chef';
   const isAll = courseSelection === 'all';
-  const perCourse = isChef ? 1 : 2;
-  const recipeCount = isAll ? perCourse * 3 : (isChef ? 2 : 4);
+  const productCount = productNames.length;
+  const baseCount = productCount <= 2 ? 2 : productCount <= 4 ? 3 : 4;
+  const perCourse = isChef ? 1 : Math.max(1, baseCount - 1);
+  const recipeCount = isAll ? perCourse * 3 : (isChef ? 2 : baseCount);
 
   let courseInstruction = '';
   if (isAll) {
     courseInstruction = isFrench
-      ? `Génère exactement ${perCourse} entrée${perCourse > 1 ? 's' : ''}, ${perCourse} plat${perCourse > 1 ? 's' : ''} principal${perCourse > 1 ? 'x' : ''} et ${perCourse} dessert${perCourse > 1 ? 's' : ''}. Chaque recette doit inclure un champ "course" avec la valeur "starter", "main" ou "dessert".`
-      : `Generate exactly ${perCourse} starter${perCourse > 1 ? 's' : ''}, ${perCourse} main course${perCourse > 1 ? 's' : ''}, and ${perCourse} dessert${perCourse > 1 ? 's' : ''}. Each recipe must include a "course" field set to "starter", "main", or "dessert".`;
+      ? `Génère exactement ${perCourse} entrée${perCourse > 1 ? 's' : ''}, ${perCourse} plat${perCourse > 1 ? 's' : ''} principal${perCourse > 1 ? 'x' : ''} et ${perCourse} dessert${perCourse > 1 ? 's' : ''}. Chaque recette doit inclure un champ "course" avec la valeur "starter", "main" ou "dessert". Rappel : une entrée est une petite portion salée en début de repas (soupe, salade, verrine...) ; un plat principal est copieux et central (viande, poisson, pâtes...) ; un dessert est sucré et en fin de repas (gâteau, mousse, tarte...).`
+      : `Generate exactly ${perCourse} starter${perCourse > 1 ? 's' : ''}, ${perCourse} main course${perCourse > 1 ? 's' : ''}, and ${perCourse} dessert${perCourse > 1 ? 's' : ''}. Each recipe must include a "course" field set to "starter", "main", or "dessert". Reminder: a starter is a small savory portion at the start of a meal (soup, salad, verrine...); a main is substantial and central (meat, fish, pasta...); a dessert is sweet and at the end of a meal (cake, mousse, tart...).`;
   } else if (courseSelection === 'starter') {
-    courseInstruction = isFrench ? 'Toutes les recettes doivent être des entrées.' : 'All recipes must be starter dishes.';
+    courseInstruction = isFrench
+      ? 'Toutes les recettes doivent être des entrées. Une entrée est une petite portion servie en début de repas pour ouvrir l\'appétit : soupe, velouté salé, salade composée, verrine salée, tartine légère, carpaccio, ceviche, bouchée apéritive, etc. Une entrée peut contenir des ingrédients sucrés si la recette reste dans une logique salée/apéritive (ex: tartine poulet-pomme, salade de fruits acidulée). En revanche, un plat où le sucré est dominant (bouchées de chocolat, mousse, caramel, fruit sucré seul) est un dessert — jamais une entrée. Si les ingrédients disponibles ne permettent pas de faire N vraies entrées cohérentes, retournes-en moins plutôt que de forcer.'
+      : 'All recipes must be starter dishes. A starter is a small portion served at the beginning of a meal: soup, salad, bruschetta, tartare, carpaccio, ceviche, savory verrine, light bite, etc. A starter may include sweet ingredients if the overall dish remains savory/appetizer-oriented (e.g. chicken-apple tartine, acidic fruit salad). However, a dish where sweetness dominates (chocolate bites, mousse, caramel, sweet fruit alone) is a dessert — never a starter. If the available ingredients do not allow for N coherent starters, return fewer rather than forcing.';
   } else if (courseSelection === 'main') {
-    courseInstruction = isFrench ? 'Toutes les recettes doivent être des plats principaux.' : 'All recipes must be main course dishes.';
+    courseInstruction = isFrench
+      ? 'Toutes les recettes doivent être des plats principaux. Un plat principal est le plat central et copieux du repas : viande, poisson, pâtes, riz, légumineuses, etc. avec leurs accompagnements. Ce n\'est pas une entrée, pas un dessert.'
+      : 'All recipes must be main course dishes. A main course is the central and substantial dish of the meal: meat, fish, pasta, rice, legumes, etc. with sides. Not a starter, not a dessert.';
   } else if (courseSelection === 'dessert') {
-    courseInstruction = isFrench ? 'Toutes les recettes doivent être des desserts.' : 'All recipes must be desserts.';
+    courseInstruction = isFrench
+      ? 'Toutes les recettes doivent être des desserts. Un dessert est un plat sucré servi en fin de repas : gâteau, tarte, mousse, crème, fruit préparé, glace, etc. Ce n\'est pas une entrée, pas un plat principal.'
+      : 'All recipes must be desserts. A dessert is a sweet dish served at the end of a meal: cake, tart, mousse, cream, prepared fruit, ice cream, etc. Not a starter, not a main course.';
   }
 
   const jsonSchema = isAll
@@ -111,7 +119,7 @@ ${dietLabel}
 ${customLabel}
 ${modeInstruction}
 ${courseInstruction}
-Suggest ${recipeCount} delicious, coherent recipes. For each recipe, use whichever ingredients naturally belong together — use all of them if it makes culinary sense, or just a few. Never force an ingredient into a recipe just because it's available. Taste and coherence always come first. The user always has these pantry staples at home: ${pantryStaples && pantryStaples.length > 0 ? pantryStaples.join(', ') : 'salt, pepper, oil, butter'}.
+Suggest between 2 and ${recipeCount} delicious, coherent recipes. Only combine ingredients whose association makes clear culinary sense — avoid experimental or doubtful pairings. When in doubt, choose simple and classic over creative. Only include a recipe if it can be made almost entirely with the ingredients listed above plus the pantry staples — never invent an ingredient the user does not have. If you can only find 2 truly relevant recipes, return 2. For each recipe, use whichever ingredients naturally belong together — use all of them if it makes culinary sense, or just a few. Taste and coherence always come first. The user always has these pantry staples at home: ${pantryStaples && pantryStaples.length > 0 ? pantryStaples.join(', ') : 'salt, pepper, oil, butter'}.
 Respond ONLY in ${langLabel}. Return ONLY a valid JSON array with no markdown or explanation:
 ${jsonSchema}
 "instructions" must be a JSON array of strings, one string per step (no numbering in the text).
