@@ -16,7 +16,7 @@ function keywords(s: string): string[] {
     .filter(w => w.length > 2 && !STOP_WORDS.has(w));
 }
 
-export function matchIngredientToProduct(ingredientName: string, products: Product[]): Product | null {
+function matchIngredientToProduct(ingredientName: string, products: Product[]): Product | null {
   const ing = norm(ingredientName);
   const ingS = singularize(ing);
 
