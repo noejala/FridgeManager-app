@@ -28,9 +28,9 @@ const CATEGORY_KEYWORDS: Record<Exclude<ProductCategory, 'Other'>, string[]> = {
   ],
   Cream: [
     // English
-    'heavy cream', 'whipping cream', 'liquid cream', 'single cream', 'double cream',
+    'cream', 'heavy cream', 'whipping cream', 'liquid cream', 'single cream', 'double cream',
     // French
-    'crème liquide', 'crème fleurette', 'crème entière', 'crème légère',
+    'crème', 'crème liquide', 'crème fleurette', 'crème entière', 'crème légère',
   ],
   Fruits: [
     // English
