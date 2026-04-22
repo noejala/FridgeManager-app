@@ -1,6 +1,6 @@
 export interface PantryPresetItem {
   key: string;   // i18n key suffix (settings.pantry.items.<key>)
-  en: string;    // English name sent to Gemini
+  en: string;    // English name sent to Mistral
   group: 'starches' | 'fats' | 'condiments' | 'canned' | 'spices';
 }
 
