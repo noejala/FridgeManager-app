@@ -122,13 +122,17 @@ const CATEGORY_KEYWORDS: Record<Exclude<ProductCategory, 'Other'>, string[]> = {
   ],
 };
 
+function stripAccents(str: string): string {
+  return str.normalize('NFD').replace(/[̀-ͯ]/g, '');
+}
+
 export function guessCategory(name: string): ProductCategory {
-  const normalized = name.toLowerCase().trim();
+  const normalized = stripAccents(name.toLowerCase().trim());
   if (!normalized) return 'Other';
 
   for (const [category, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
     for (const keyword of keywords) {
-      if (normalized.includes(keyword)) {
+      if (normalized.includes(stripAccents(keyword))) {
         return category as ProductCategory;
       }
     }
