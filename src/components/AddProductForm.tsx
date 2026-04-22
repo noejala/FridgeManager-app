@@ -23,6 +23,8 @@ const CATEGORIES: ProductCategory[] = [
   'Meat',
   'Fish',
   'Dairy',
+  'Cheese',
+  'Butter',
   'Milk',
   'Cream',
   'Juice',

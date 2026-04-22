@@ -66,6 +66,8 @@ const ZONE_KEYWORDS: Record<FridgeZone, string[]> = {
 
 const CATEGORY_TO_ZONE: Record<string, FridgeZone> = {
   Dairy: 'Top of fridge',
+  Cheese: 'Top of fridge',
+  Butter: 'Fridge door',
   Meat: 'Bottom of fridge',
   Fish: 'Bottom of fridge',
   Fruits: 'Crisper drawer',

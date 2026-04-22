@@ -27,9 +27,9 @@ const CATEGORY_TAG_MAP: { tag: string; category: ProductCategory }[] = [
   { tag: 'en:mayonnaises', category: 'Sauces' },
   // Dairy
   { tag: 'en:dairy', category: 'Dairy' },
-  { tag: 'en:cheeses', category: 'Dairy' },
+  { tag: 'en:cheeses', category: 'Cheese' },
   { tag: 'en:yogurts', category: 'Dairy' },
-  { tag: 'en:butters', category: 'Dairy' },
+  { tag: 'en:butters', category: 'Butter' },
   { tag: 'en:eggs', category: 'Dairy' },
   // Fruits
   { tag: 'en:fruits', category: 'Fruits' },

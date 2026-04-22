@@ -83,15 +83,27 @@ const CATEGORY_KEYWORDS: Record<Exclude<ProductCategory, 'Other'>, string[]> = {
     'calmar', 'poulpe', 'palourde', 'espadon', 'bar', 'aiglefin', 'poisson',
     'lieu', 'dorade', 'daurade', 'sole', 'turbot',
   ],
+  Cheese: [
+    // English
+    'cheese', 'mozzarella', 'cheddar', 'parmesan', 'brie', 'camembert',
+    'gouda', 'feta', 'ricotta', 'cottage cheese', 'cream cheese', 'mascarpone',
+    'gruyère', 'gruyere', 'emmental', 'raclette', 'comté', 'comte', 'roquefort',
+    // French
+    'fromage', 'mozzarella', 'cheddar', 'parmesan', 'brie', 'camembert',
+    'gouda', 'feta', 'ricotta', 'fromage blanc', 'mascarpone',
+    'gruyère', 'emmental', 'raclette', 'comté', 'roquefort',
+  ],
+  Butter: [
+    // English
+    'butter', 'margarine',
+    // French
+    'beurre', 'margarine',
+  ],
   Dairy: [
     // English
-    'cheese', 'yogurt', 'butter', 'cream', 'egg', 'mozzarella',
-    'cheddar', 'parmesan', 'brie', 'camembert', 'gouda', 'feta',
-    'ricotta', 'cottage cheese', 'sour cream', 'whipped cream',
-    'cream cheese', 'mascarpone',
+    'yogurt', 'egg', 'sour cream', 'whipped cream', 'chantilly',
     // French
-    'fromage', 'yaourt', 'yogourt', 'beurre', 'crème', 'œuf', 'oeuf',
-    'fromage blanc', 'crème fraîche', 'chantilly',
+    'yaourt', 'yogourt', 'œuf', 'oeuf', 'crème fraîche',
   ],
   Beverages: [
     // English

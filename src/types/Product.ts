@@ -19,6 +19,8 @@ export type ProductCategory =
   | 'Meat'
   | 'Fish'
   | 'Dairy'
+  | 'Cheese'
+  | 'Butter'
   | 'Beverages'
   | 'Frozen'
   | 'Sauces'
