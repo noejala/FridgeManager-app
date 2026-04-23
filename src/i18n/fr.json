@@ -371,6 +371,11 @@
     "pantryStaples": "Placard de base",
     "pantryStaplesHint": "Ces produits seront considérés comme toujours disponibles par l'IA pour les recettes.",
     "pantryAddPlaceholder": "Ajouter un autre produit…",
+    "tabs": {
+      "profile": "Mon profil",
+      "preferences": "Préférences",
+      "pantry": "Mon placard"
+    },
     "dietary": {
       "vegetarian": "Végétarien",
       "vegan": "Vegan",

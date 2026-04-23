@@ -5,6 +5,43 @@
   padding-bottom: 2rem;
 }
 
+/* Tab bar */
+.settings-tabs {
+  display: flex;
+  gap: 0.25rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.25rem;
+}
+
+.settings-tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  padding: 0.55rem 0.5rem;
+  border-radius: calc(var(--radius) - 2px);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.settings-tab-btn:hover:not(.active) {
+  color: var(--text-secondary);
+  background: var(--bg-input);
+}
+
+.settings-tab-btn.active {
+  background: var(--bg-card);
+  color: var(--text);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
 .settings-loading {
   height: 200px;
 }
