@@ -340,6 +340,78 @@
   }
 }
 
+/* ── Category badge (auto-detected, shown below name) ────── */
+.category-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.45rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  border: 1px solid var(--border-hover);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.category-badge:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-bg);
+}
+
+.category-badge-edit {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.category-badge:hover .category-badge-edit {
+  color: var(--accent);
+  opacity: 0.75;
+}
+
+/* ── "Plus d'options" toggle ─────────────────────────────── */
+.details-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: color 0.15s;
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.details-toggle:hover {
+  color: var(--accent);
+}
+
+.details-toggle-chevron {
+  transition: transform 0.2s ease;
+}
+
+.details-toggle--open .details-toggle-chevron {
+  transform: rotate(180deg);
+}
+
+/* ── Collapsible details section ─────────────────────────── */
+.form-details {
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+  animation: fade-in 0.15s ease both;
+}
+
 /* ── Expiry type toggle (DDM / DLC) ─────────────────────── */
 .expiry-type-toggle {
   display: flex;
@@ -635,6 +707,27 @@
 
   .checkbox-label {
     font-size: 0.9rem;
+  }
+
+  .category-badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.6rem;
+  }
+
+  .details-toggle {
+    font-size: 0.78rem;
+    padding: 0.5rem 0;
+  }
+
+  .form-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-top: 0.75rem;
+  }
+
+  .form-details .form-group {
+    margin-bottom: 0;
   }
 }
 

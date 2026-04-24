@@ -76,6 +76,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
   const [isScanning, setIsScanning] = useState(false);
   const [isLookingUp, setIsLookingUp] = useState(false);
   const [lookupError, setLookupError] = useState<string | null>(null);
+  const [showDetails, setShowDetails] = useState(false);
   const [name, setName] = useState('');
   const [category, setCategory] = useState<ProductCategory>('Other');
   const [expirationDateType, setExpirationDateType] = useState<'dlc' | 'ddm'>('ddm');
@@ -118,6 +119,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
     setExpirationDateType(getDefaultExpirationDateType(cat));
     setQuantity(String(prefill.quantity));
     setUnit(prefill.unit);
+    setShowDetails(true);
     onPrefillApplied?.();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [prefill]);
@@ -143,6 +145,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
       setCategory(result.category === 'Other' ? guessCategory(result.name) : result.category);
       setQuantity(String(result.quantity));
       setUnit(result.unit);
+      setShowDetails(true);
     } else {
       setLookupError('Produit non trouvé. Remplissez le formulaire manuellement.');
     }
@@ -195,6 +198,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
     setExpDay('');
     setExpMonth('');
     setExpYear('');
+    setShowDetails(false);
     onFormOpenChange(false);
   };
 
@@ -318,6 +322,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
           </div>
         )}
 
+        {/* ── Nom du produit ── */}
         <div className="form-group">
           <label htmlFor="name">{t('form.productName')}</label>
           <input
@@ -336,285 +341,254 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
             disabled={isLookingUp}
             placeholder={isLookingUp ? 'Recherche en cours…' : t('form.productPlaceholder')}
           />
-        </div>
-
-      <div className="form-group">
-        <label htmlFor="category">{t('form.category')}</label>
-        <select
-          id="category"
-          value={category}
-          onChange={(e) => {
-            const cat = e.target.value as ProductCategory;
-            setCategory(cat);
-            setExpirationDateType(getDefaultExpirationDateType(cat));
-          }}
-        >
-          {CATEGORIES.map(cat => (
-            <option key={cat} value={cat}>{t(`categories.${cat}`)}</option>
-          ))}
-        </select>
-      </div>
-
-      <div className="form-row">
-        <div className="form-group">
-          <label htmlFor="quantity">{t('form.quantity')}</label>
-          <input
-            id="quantity"
-            type="number"
-            min="0.01"
-            step="0.01"
-            value={quantity}
-            onChange={(e) => setQuantity(e.target.value)}
-            onBlur={(e) => {
-              const value = e.target.value;
-              if (value === '' || Number(value) <= 0) {
-                setQuantity('1');
-              }
-            }}
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="unit">{t('form.unit')}</label>
-          <select
-            id="unit"
-            value={unit}
-            onChange={(e) => setUnit(e.target.value)}
-          >
-            <option value="unit">unit</option>
-            <option value="kg">kg</option>
-            <option value="g">g</option>
-            <option value="L">L</option>
-            <option value="mL">mL</option>
-            <option value="pack">pack</option>
-          </select>
-        </div>
-      </div>
-
-      {isOpenableCategory(category) ? (
-        <div className="form-group sauce-opened-group">
-          <label className="checkbox-label">
-            <input
-              type="checkbox"
-              checked={isOpened}
-              onChange={(e) => setIsOpened(e.target.checked)}
-            />
-            {t('form.sauceAlreadyOpened')}
-          </label>
-          {isOpened && (
-            <div className="purchase-date-row" style={{ marginTop: '0.5rem' }}>
-              <input
-                type="date"
-                value={sauceOpenedDate}
-                onChange={(e) => setSauceOpenedDate(e.target.value)}
-                max={minDate}
-              />
-              <button
-                type="button"
-                className={`today-btn${sauceOpenedDate === yesterdayDate ? ' today-btn-active' : ''}`}
-                onClick={() => setSauceOpenedDate(yesterdayDate)}
-              >
-                {t('productList.yesterday')}
-              </button>
-              <button
-                type="button"
-                className={`today-btn${sauceOpenedDate === minDate ? ' today-btn-active' : ''}`}
-                onClick={() => setSauceOpenedDate(minDate)}
-              >
-                {t('form.today')}
-              </button>
-            </div>
+          {name && !showDetails && (
+            <button
+              type="button"
+              className="category-badge"
+              onClick={() => setShowDetails(true)}
+            >
+              {t(`categories.${category}`)}
+              <span className="category-badge-edit">· Modifier</span>
+            </button>
           )}
         </div>
-      ) : (
-        <div className="form-group">
-          <label className="checkbox-label">
-            <input
-              type="checkbox"
-              checked={unknownExpiration}
-              onChange={(e) => setUnknownExpiration(e.target.checked)}
-            />
-            {t('form.unknownExpiration')}
-          </label>
-        </div>
-      )}
 
-      {!(isOpenableCategory(category) && isOpened) && (
-        <div className="form-group">
-          <label>{t('form.expirationDateType')}</label>
-          <div className="expiry-type-toggle">
-            <button
-              type="button"
-              className={`expiry-type-btn${expirationDateType === 'ddm' ? ' active' : ''}`}
-              onClick={() => setExpirationDateType('ddm')}
-            >
-              <span className="expiry-type-label">{t('form.ddm')}</span>
-              <span className="expiry-type-desc">{t('form.ddmDesc')}</span>
-            </button>
-            <button
-              type="button"
-              className={`expiry-type-btn${expirationDateType === 'dlc' ? ' active' : ''}`}
-              onClick={() => setExpirationDateType('dlc')}
-            >
-              <span className="expiry-type-label">{t('form.dlc')}</span>
-              <span className="expiry-type-desc">{t('form.dlcDesc')}</span>
-            </button>
+        {/* ── Sauce ouverte / date inconnue ── */}
+        {isOpenableCategory(category) ? (
+          <div className="form-group sauce-opened-group">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={isOpened}
+                onChange={(e) => setIsOpened(e.target.checked)}
+              />
+              {t('form.sauceAlreadyOpened')}
+            </label>
+            {isOpened && (
+              <div className="purchase-date-row" style={{ marginTop: '0.5rem' }}>
+                <input
+                  type="date"
+                  value={sauceOpenedDate}
+                  onChange={(e) => setSauceOpenedDate(e.target.value)}
+                  max={minDate}
+                />
+                <button
+                  type="button"
+                  className={`today-btn${sauceOpenedDate === yesterdayDate ? ' today-btn-active' : ''}`}
+                  onClick={() => setSauceOpenedDate(yesterdayDate)}
+                >
+                  {t('productList.yesterday')}
+                </button>
+                <button
+                  type="button"
+                  className={`today-btn${sauceOpenedDate === minDate ? ' today-btn-active' : ''}`}
+                  onClick={() => setSauceOpenedDate(minDate)}
+                >
+                  {t('form.today')}
+                </button>
+              </div>
+            )}
           </div>
-        </div>
-      )}
+        ) : recognized ? (
+          <div className="form-group">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={unknownExpiration}
+                onChange={(e) => setUnknownExpiration(e.target.checked)}
+              />
+              {t('form.unknownExpiration')}
+            </label>
+          </div>
+        ) : null}
 
-      {isOpenableCategory(category) && !isOpened && unknownExpiration === false ? (
-        // Sauce fermée → champ date d'expiration normale
-        <div className="form-group">
-          <label>{t('form.expirationDate')}</label>
-          <input
-            className="date-input-desktop"
-            type="date"
-            value={expirationDate}
-            onChange={(e) => {
-              const val = e.target.value;
-              setExpirationDate(val);
-              if (val) {
-                const [y, m, d] = val.split('-');
-                setExpYear(y); setExpMonth(m); setExpDay(d);
-                setDateError(false);
-              } else {
-                setExpYear(''); setExpMonth(''); setExpDay('');
-              }
-            }}
-            min={minDate}
-          />
-          <div className="date-selects">
-            <select value={expDay} onChange={(e) => handleDatePart('day', e.target.value)}>
-              <option value="">Jour</option>
-              {Array.from({ length: daysInSelectedMonth }, (_, i) => i + 1).map(d => (
-                <option key={d} value={String(d)}>{d}</option>
-              ))}
-            </select>
-            <select value={expMonth} onChange={(e) => handleDatePart('month', e.target.value)}>
-              <option value="">Mois</option>
-              {Array.from({ length: 12 }, (_, i) => (
-                <option key={i} value={String(i + 1)}>{String(i + 1).padStart(2, '0')}</option>
-              ))}
-            </select>
-            <select value={expYear} onChange={(e) => handleDatePart('year', e.target.value)}>
-              <option value="">Année</option>
-              {YEARS.map(y => (
-                <option key={y} value={String(y)}>{y}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-      ) : isOpenableCategory(category) && isOpened ? null : unknownExpiration && recognized ? (
-        <div className="form-group">
-          <label htmlFor="purchaseDate">{t('form.whenDidYouBuy')}</label>
-          <div className="purchase-date-row">
-            <input
-              id="purchaseDate"
-              type="date"
-              value={purchaseDate}
-              onChange={(e) => setPurchaseDate(e.target.value)}
-              max={minDate}
-            />
-            <button
-              type="button"
-              className={`today-btn${purchaseDate === new Date().toISOString().split('T')[0] ? ' today-btn-active' : ''}`}
-              onClick={() => setPurchaseDate(new Date().toISOString().split('T')[0])}
-            >
-              {t('form.today')}
-            </button>
-          </div>
-        </div>
-      ) : unknownExpiration && !recognized ? (
-        <div className="form-group">
-          <p className="unknown-product-warning">{t('form.unknownProductWarning')}</p>
-          <label htmlFor="expirationDate">{t('form.expirationDate')}</label>
-          <input
-            id="expirationDate"
-            type="date"
-            value={expirationDate}
-            onChange={(e) => { setExpirationDate(e.target.value); if (e.target.value) setDateError(false); }}
-            min={minDate}
-            required
-          />
-        </div>
-      ) : (
-        <div className="form-group">
-          <label>{t('form.expirationDate')}</label>
-          {/* Desktop : date picker natif */}
-          <input
-            className="date-input-desktop"
-            type="date"
-            value={expirationDate}
-            onChange={(e) => {
-              const val = e.target.value;
-              setExpirationDate(val);
-              if (val) {
-                const [y, m, d] = val.split('-');
-                setExpYear(y); setExpMonth(m); setExpDay(d);
-                setDateError(false);
-              } else {
-                setExpYear(''); setExpMonth(''); setExpDay('');
-              }
-            }}
-            min={minDate}
-          />
-          {/* Mobile : 3 selects */}
-          <div className="date-selects">
-            <select
-              value={expDay}
-              onChange={(e) => handleDatePart('day', e.target.value)}
-            >
-              <option value="">Jour</option>
-              {Array.from({ length: daysInSelectedMonth }, (_, i) => i + 1).map(d => (
-                <option key={d} value={String(d)}>{d}</option>
-              ))}
-            </select>
-            <select
-              value={expMonth}
-              onChange={(e) => handleDatePart('month', e.target.value)}
-            >
-              <option value="">Mois</option>
-              {Array.from({ length: 12 }, (_, i) => (
-                <option key={i} value={String(i + 1)}>{String(i + 1).padStart(2, '0')}</option>
-              ))}
-            </select>
-            <select
-              value={expYear}
-              onChange={(e) => handleDatePart('year', e.target.value)}
-            >
-              <option value="">Année</option>
-              {YEARS.map(y => (
-                <option key={y} value={String(y)}>{y}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-      )}
+        {/* ── Date d'expiration ── */}
+        {!(isOpenableCategory(category) && isOpened) && (
+          unknownExpiration && recognized ? (
+            <div className="form-group">
+              <label htmlFor="purchaseDate">{t('form.whenDidYouBuy')}</label>
+              <div className="purchase-date-row">
+                <input
+                  id="purchaseDate"
+                  type="date"
+                  value={purchaseDate}
+                  onChange={(e) => setPurchaseDate(e.target.value)}
+                  max={minDate}
+                />
+                <button
+                  type="button"
+                  className={`today-btn${purchaseDate === new Date().toISOString().split('T')[0] ? ' today-btn-active' : ''}`}
+                  onClick={() => setPurchaseDate(new Date().toISOString().split('T')[0])}
+                >
+                  {t('form.today')}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="form-group">
+              <label>{t('form.expirationDate')}</label>
+              <input
+                className="date-input-desktop"
+                type="date"
+                value={expirationDate}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setExpirationDate(val);
+                  if (val) {
+                    const [y, m, d] = val.split('-');
+                    setExpYear(y); setExpMonth(m); setExpDay(d);
+                    setDateError(false);
+                  } else {
+                    setExpYear(''); setExpMonth(''); setExpDay('');
+                  }
+                }}
+                min={minDate}
+              />
+              <div className="date-selects">
+                <select value={expDay} onChange={(e) => handleDatePart('day', e.target.value)}>
+                  <option value="">Jour</option>
+                  {Array.from({ length: daysInSelectedMonth }, (_, i) => i + 1).map(d => (
+                    <option key={d} value={String(d)}>{d}</option>
+                  ))}
+                </select>
+                <select value={expMonth} onChange={(e) => handleDatePart('month', e.target.value)}>
+                  <option value="">Mois</option>
+                  {Array.from({ length: 12 }, (_, i) => (
+                    <option key={i} value={String(i + 1)}>{String(i + 1).padStart(2, '0')}</option>
+                  ))}
+                </select>
+                <select value={expYear} onChange={(e) => handleDatePart('year', e.target.value)}>
+                  <option value="">Année</option>
+                  {YEARS.map(y => (
+                    <option key={y} value={String(y)}>{y}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          )
+        )}
 
-      {dateError && (
-        <p className="date-error-msg">Veuillez ajouter une date d'expiration</p>
-      )}
+        {dateError && (
+          <p className="date-error-msg">Veuillez ajouter une date d'expiration</p>
+        )}
 
-      <div className="form-actions">
-        <button type="button" className="cancel-btn" onClick={() => {
-          setName(''); setCategory('Other'); setExpirationDate('');
-          setQuantity('1'); setUnit('unit'); setUnknownExpiration(false);
-          setExpirationDateType('ddm');
-          setPurchaseDate(''); setIsOpened(false);
-          setSauceOpenedDate(new Date().toISOString().split('T')[0]);
-          setExpDay(''); setExpMonth(''); setExpYear('');
-          setLookupError(null);
-          onFormOpenChange(false);
-        }} disabled={isLoading || isLookingUp}>
-          {t('form.cancel')}
+        {/* ── Plus d'options ── */}
+        <button
+          type="button"
+          className={`details-toggle${showDetails ? ' details-toggle--open' : ''}`}
+          onClick={() => setShowDetails(!showDetails)}
+        >
+          <svg
+            className="details-toggle-chevron"
+            width="12" height="12" viewBox="0 0 12 12"
+            fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"
+          >
+            <polyline points="2,4 6,8 10,4" />
+          </svg>
+          {showDetails ? 'Moins d\'options' : 'Plus d\'options'}
         </button>
-        <button type="submit" className="submit-btn" disabled={isLoading || isLookingUp}>
-          {isLoading ? t('form.adding') : t('form.add')}
-        </button>
-      </div>
-    </form>
+
+        {showDetails && (
+          <div className="form-details">
+            <div className="form-group">
+              <label htmlFor="category">{t('form.category')}</label>
+              <select
+                id="category"
+                value={category}
+                onChange={(e) => {
+                  const cat = e.target.value as ProductCategory;
+                  setCategory(cat);
+                  setExpirationDateType(getDefaultExpirationDateType(cat));
+                }}
+              >
+                {CATEGORIES.map(cat => (
+                  <option key={cat} value={cat}>{t(`categories.${cat}`)}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="quantity">{t('form.quantity')}</label>
+                <input
+                  id="quantity"
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  value={quantity}
+                  onChange={(e) => setQuantity(e.target.value)}
+                  onBlur={(e) => {
+                    const value = e.target.value;
+                    if (value === '' || Number(value) <= 0) {
+                      setQuantity('1');
+                    }
+                  }}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="unit">{t('form.unit')}</label>
+                <select
+                  id="unit"
+                  value={unit}
+                  onChange={(e) => setUnit(e.target.value)}
+                >
+                  <option value="unit">unit</option>
+                  <option value="kg">kg</option>
+                  <option value="g">g</option>
+                  <option value="L">L</option>
+                  <option value="mL">mL</option>
+                  <option value="pack">pack</option>
+                </select>
+              </div>
+            </div>
+
+            {!(isOpenableCategory(category) && isOpened) && (
+              <div className="form-group">
+                <label>{t('form.expirationDateType')}</label>
+                <div className="expiry-type-toggle">
+                  <button
+                    type="button"
+                    className={`expiry-type-btn${expirationDateType === 'ddm' ? ' active' : ''}`}
+                    onClick={() => setExpirationDateType('ddm')}
+                  >
+                    <span className="expiry-type-label">{t('form.ddm')}</span>
+                    <span className="expiry-type-desc">{t('form.ddmDesc')}</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`expiry-type-btn${expirationDateType === 'dlc' ? ' active' : ''}`}
+                    onClick={() => setExpirationDateType('dlc')}
+                  >
+                    <span className="expiry-type-label">{t('form.dlc')}</span>
+                    <span className="expiry-type-desc">{t('form.dlcDesc')}</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="form-actions">
+          <button type="button" className="cancel-btn" onClick={() => {
+            setName(''); setCategory('Other'); setExpirationDate('');
+            setQuantity('1'); setUnit('unit'); setUnknownExpiration(false);
+            setExpirationDateType('ddm');
+            setPurchaseDate(''); setIsOpened(false);
+            setSauceOpenedDate(new Date().toISOString().split('T')[0]);
+            setExpDay(''); setExpMonth(''); setExpYear('');
+            setLookupError(null);
+            setShowDetails(false);
+            onFormOpenChange(false);
+          }} disabled={isLoading || isLookingUp}>
+            {t('form.cancel')}
+          </button>
+          <button type="submit" className="submit-btn" disabled={isLoading || isLookingUp}>
+            {isLoading ? t('form.adding') : t('form.add')}
+          </button>
+        </div>
+      </form>
     </>
   );
 };
