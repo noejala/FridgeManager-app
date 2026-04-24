@@ -561,38 +561,6 @@
   color: var(--accent);
 }
 
-/* ── Date presets ───────────────────────────────────────── */
-.date-presets {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  margin-bottom: 0.6rem;
-}
-
-.date-preset-btn {
-  padding: 0.35rem 0.7rem;
-  border-radius: 20px;
-  border: 1px solid var(--border-hover);
-  background: transparent;
-  color: var(--text-secondary);
-  font-family: var(--font-body);
-  font-size: 0.76rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
-  white-space: nowrap;
-}
-
-.date-preset-btn:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.date-preset-btn--active {
-  background: var(--accent-bg);
-  border-color: var(--accent);
-  color: var(--accent);
-}
 
 .date-input-desktop {
   display: block;
@@ -659,17 +627,7 @@
     gap: 0.625rem;
   }
 
-  .date-presets {
-    gap: 0.3rem;
-    margin-bottom: 0.35rem;
-  }
-
-  .date-preset-btn {
-    padding: 0.25rem 0.55rem;
-    font-size: 0.72rem;
-  }
-
-  .date-selects {
+.date-selects {
     gap: 0.5rem;
     grid-template-columns: 1.5fr 2fr 1.5fr;
   }
