@@ -322,7 +322,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
 
       if (recipeMode === 'ai') {
         try {
-          const aiResults = await fetchAiRecipes(fridgeNames, dietaryPreferences, i18n.language, selectedCookingMode ?? undefined, urgentFridgeNames, selectedCourse ?? undefined, customPreferences || undefined, selectedCustomModeText ?? undefined, pantryStaples.length > 0 ? pantryStaples : undefined);
+          const aiResults = await fetchAiRecipes(fridgeNames, dietaryPreferences, i18n.language, selectedCookingMode ?? undefined, urgentFridgeNames, selectedCourse ?? undefined, customPreferences || undefined, selectedCustomModeText ?? undefined, pantryStaples.length > 0 ? pantryStaples : undefined, servings);
           if (aiResults.length > 0) {
             meals = aiResults;
             isAiMode = true;
@@ -389,6 +389,14 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
   useEffect(() => {
     fetchRecipes();
   }, [fetchRecipes]);
+
+  const prevServingsRef = useRef(servings);
+  useEffect(() => {
+    if (recipeMode === 'ai' && selectedCookingMode && selectedCourse && prevServingsRef.current !== servings) {
+      prevServingsRef.current = servings;
+      fetchRecipes();
+    }
+  }, [servings, recipeMode, selectedCookingMode, selectedCourse, fetchRecipes]);
 
   const saveCustomModes = (modes: { title: string; prompt: string }[]) => {
     setCustomModes(modes);
@@ -639,21 +647,23 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
             ♡
             {savedRecipes.length > 0 && !savedView && <span className="saved-count">{savedRecipes.length}</span>}
           </button>
-          <div className="servings-stepper">
-            <button
-              className="stepper-btn"
-              onClick={() => setServings(s => Math.max(1, s - 1))}
-              disabled={servings <= 1}
-            >−</button>
-            <span className="servings-value">
-              {servings} <span className="servings-unit">{t('cook.servingsUnit')}</span>
-            </span>
-            <button
-              className="stepper-btn"
-              onClick={() => setServings(s => Math.min(20, s + 1))}
-              disabled={servings >= 20}
-            >+</button>
-          </div>
+          {!savedView && (
+            <div className="servings-stepper">
+              <button
+                className="stepper-btn"
+                onClick={() => setServings(s => Math.max(1, s - 1))}
+                disabled={servings <= 1}
+              >−</button>
+              <span className="servings-value">
+                {servings} <span className="servings-unit">{t('cook.servingsUnit')}</span>
+              </span>
+              <button
+                className="stepper-btn"
+                onClick={() => setServings(s => Math.min(20, s + 1))}
+                disabled={servings >= 20}
+              >+</button>
+            </div>
+          )}
         </div>
         <div className="cook-subtitle-row">
           {!(recipeMode === 'ai' && selectedCookingMode && selectedCourse) && (
@@ -956,9 +966,21 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
             <div className="modal-tags">
               {selectedRecipe.meal.category && <span className="tag">{selectedRecipe.meal.category}</span>}
               {selectedRecipe.meal.area && <span className="tag">{selectedRecipe.meal.area}</span>}
-              <span className="tag tag-servings">
-                {t('cook.servingsCount', { count: servings })}
-              </span>
+              <div className="servings-stepper">
+                <button
+                  className="stepper-btn"
+                  onClick={() => setServings(s => Math.max(1, s - 1))}
+                  disabled={servings <= 1}
+                >−</button>
+                <span className="servings-value">
+                  {servings} <span className="servings-unit">{t('cook.servingsUnit')}</span>
+                </span>
+                <button
+                  className="stepper-btn"
+                  onClick={() => setServings(s => Math.min(20, s + 1))}
+                  disabled={servings >= 20}
+                >+</button>
+              </div>
             </div>
 
             {selectedRecipe.available.length > 0 && (

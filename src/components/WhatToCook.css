@@ -68,12 +68,6 @@
   color: var(--text-muted);
 }
 
-.tag-servings {
-  background: var(--accent-bg);
-  border-color: transparent;
-  color: var(--accent);
-}
-
 .saved-toggle-btn {
   background: transparent;
   border: 1px solid var(--border);

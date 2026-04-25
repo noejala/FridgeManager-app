@@ -30,7 +30,8 @@ export async function fetchAiRecipes(
   courseSelection?: CourseSelection,
   customPreferences?: string,
   customModeText?: string,
-  pantryStaples?: string[]
+  pantryStaples?: string[],
+  servings?: number
 ): Promise<MealDetails[]> {
   const rateLimitUntil = localStorage.getItem('mistral-ratelimit-until');
   if (rateLimitUntil && Date.now() < Number(rateLimitUntil)) {
@@ -39,7 +40,7 @@ export async function fetchAiRecipes(
   }
 
   const today = new Date().toISOString().slice(0, 10);
-  const raw = [...productNames].sort().join(',') + '|' + [...dietaryPrefs].sort().join(',') + '|' + language + '|' + today + '|' + (cookingMode ?? 'none') + '|' + (courseSelection ?? 'none') + '|' + (customPreferences ?? '') + '|' + (customModeText ?? '') + '|' + [...(pantryStaples ?? [])].sort().join(',') + '|v10';
+  const raw = [...productNames].sort().join(',') + '|' + [...dietaryPrefs].sort().join(',') + '|' + language + '|' + today + '|' + (cookingMode ?? 'none') + '|' + (courseSelection ?? 'none') + '|' + (customPreferences ?? '') + '|' + (customModeText ?? '') + '|' + [...(pantryStaples ?? [])].sort().join(',') + '|' + (servings ?? 4) + '|v10';
   const cacheKey = `mistral-recipes-${hashString(raw).toString(36)}`;
 
   const cached = localStorage.getItem(cacheKey);
@@ -114,9 +115,14 @@ export async function fetchAiRecipes(
     ? '[{"name":"...","ingredients":[{"name":"...","quantity":"..."}],"instructions":["step 1","step 2"],"prepTime":"...","difficulty":"...","course":"starter|main|dessert"}]'
     : '[{"name":"...","ingredients":[{"name":"...","quantity":"..."}],"instructions":["step 1","step 2"],"prepTime":"...","difficulty":"..."}]';
 
+  const servingsLabel = servings && servings !== 4
+    ? (isFrench ? `Génère des recettes pour ${servings} personne${servings > 1 ? 's' : ''}.` : `Generate recipes for ${servings} serving${servings > 1 ? 's' : ''}.`)
+    : '';
+
   const prompt = `You are a creative chef. I have these ingredients available: ${productNames.join(', ')}.
 ${dietLabel}
 ${customLabel}
+${servingsLabel}
 ${modeInstruction}
 ${courseInstruction}
 Suggest between 2 and ${recipeCount} delicious, coherent recipes. Only combine ingredients whose association makes clear culinary sense — avoid experimental or doubtful pairings. When in doubt, choose simple and classic over creative. Only include a recipe if it can be made almost entirely with the ingredients listed above plus the pantry staples — never invent an ingredient the user does not have. If you can only find 2 truly relevant recipes, return 2. For each recipe, use whichever ingredients naturally belong together — use all of them if it makes culinary sense, or just a few. Taste and coherence always come first. The user always has these pantry staples at home: ${pantryStaples && pantryStaples.length > 0 ? pantryStaples.join(', ') : 'salt, pepper, oil, butter'}.
