@@ -79,6 +79,7 @@ export const VoiceInput = ({ onDraftReady, onClose }: VoiceInputProps) => {
   };
 
   const stopAndParse = async () => {
+    statusRef.current = 'parsing'; // prevent onend from auto-restarting
     recognitionRef.current?.stop();
     recognitionRef.current = null;
 
@@ -100,11 +101,14 @@ export const VoiceInput = ({ onDraftReady, onClose }: VoiceInputProps) => {
 
   useEffect(() => {
     return () => {
+      statusRef.current = 'idle'; // prevent onend from auto-restarting on unmount
       recognitionRef.current?.stop();
+      recognitionRef.current = null;
     };
   }, []);
 
   const handleClose = () => {
+    statusRef.current = 'idle'; // prevent onend from auto-restarting
     recognitionRef.current?.stop();
     recognitionRef.current = null;
     onClose();
