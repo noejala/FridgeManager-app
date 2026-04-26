@@ -28,15 +28,15 @@ const VALID_CATEGORIES: ProductCategory[] = [
   'Beverages', 'Frozen', 'Sauces', 'Milk', 'Juice', 'Cream', 'Other',
 ];
 
-// Default shelf life in days per category, used when no specific estimate is available
+// Default shelf life in days per category — aligned with PRODUCT_SHELF_LIFE in shelfLife.ts
 const CATEGORY_DEFAULT_DAYS: Partial<Record<ProductCategory, number>> = {
-  Meat: 3,
-  Fish: 2,
-  Dairy: 7,
-  Milk: 7,
-  Cream: 7,
-  Cheese: 30,
-  Butter: 60,
+  Meat: 4,       // chicken 3, beef 5
+  Fish: 2,       // salmon 2
+  Dairy: 14,     // yogurt 14
+  Milk: 7,       // milk 7
+  Cream: 10,     // cream 10
+  Cheese: 30,    // cheese 30
+  Butter: 30,    // butter 30
   Fruits: 7,
   Vegetables: 7,
   Juice: 14,
