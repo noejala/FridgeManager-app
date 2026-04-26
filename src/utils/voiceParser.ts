@@ -28,6 +28,31 @@ const VALID_CATEGORIES: ProductCategory[] = [
   'Beverages', 'Frozen', 'Sauces', 'Milk', 'Juice', 'Cream', 'Other',
 ];
 
+// Default shelf life in days per category, used when no specific estimate is available
+const CATEGORY_DEFAULT_DAYS: Partial<Record<ProductCategory, number>> = {
+  Meat: 3,
+  Fish: 2,
+  Dairy: 7,
+  Milk: 7,
+  Cream: 7,
+  Cheese: 30,
+  Butter: 60,
+  Fruits: 7,
+  Vegetables: 7,
+  Juice: 14,
+  Sauces: 180,
+  Frozen: 180,
+  Beverages: 365,
+  Other: 14,
+};
+
+function categoryFallbackDate(category: ProductCategory): string {
+  const days = CATEGORY_DEFAULT_DAYS[category] ?? 14;
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return d.toISOString().split('T')[0];
+}
+
 const VALID_UNITS = ['unit', 'kg', 'g', 'L', 'cl', 'ml', 'mL', 'pack'];
 
 export async function parseVoiceTranscript(transcript: string, language: string): Promise<DraftProduct[]> {
@@ -92,9 +117,14 @@ Return ONLY a valid JSON array with no markdown or explanation:
     let expirationDate = r.expirationDate;
     let isEstimatedExpiration = false;
     if (!expirationDate) {
+      // 1. Try name-based shelf life table
       const estimated = estimateExpirationDate(r.name);
       if (estimated) {
         expirationDate = estimated;
+        isEstimatedExpiration = true;
+      } else {
+        // 2. Fallback: category-based default
+        expirationDate = categoryFallbackDate(category);
         isEstimatedExpiration = true;
       }
     }
