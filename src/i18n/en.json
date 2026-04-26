@@ -386,6 +386,28 @@
       "pescatarian": "Pescatarian"
     }
   },
+  "voice": {
+    "title": "Add by voice",
+    "hint": "Dictate your products with quantity and expiration date. E.g. \"I have 1 kg of carrots expiring Friday\"",
+    "dictate": "Dictate",
+    "tapToStart": "Tap to start",
+    "tapToStop": "Tap to stop",
+    "parsing": "Analyzing…",
+    "retry": "Retry",
+    "notSupported": "Voice recognition is not available in this browser",
+    "micDenied": "Microphone access denied",
+    "error": "An error occurred",
+    "parseError": "Failed to analyze products — please try again",
+    "reviewTitle_one": "{{count}} product detected",
+    "reviewTitle_other": "{{count}} products detected",
+    "reviewSubtitle": "Review and correct before adding to your fridge",
+    "dateRequired": "Date required",
+    "reviewEmpty": "All products have been removed",
+    "addToFridge_one": "Add {{count}} product",
+    "addToFridge_other": "Add {{count}} products",
+    "addedSuccess_one": "{{count}} product added to the fridge",
+    "addedSuccess_other": "{{count}} products added to the fridge"
+  },
   "seasonal": {
     "title": "Seasonal products",
     "recommendedFor": "Recommended products for {{month}} ({{season}})",

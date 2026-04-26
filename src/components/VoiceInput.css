@@ -1,0 +1,196 @@
+/* ── Overlay ──────────────────────────────────────────── */
+.voice-input-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 500;
+  animation: fade-in 0.15s ease;
+}
+
+@media (min-width: 600px) {
+  .voice-input-overlay {
+    align-items: center;
+  }
+}
+
+/* ── Modal ────────────────────────────────────────────── */
+.voice-input-modal {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius) var(--radius) 0 0;
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 480px;
+  padding: 2rem 2rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  animation: modal-in 0.2s ease;
+}
+
+@media (min-width: 600px) {
+  .voice-input-modal {
+    border-radius: var(--radius);
+    width: min(420px, 95vw);
+  }
+}
+
+/* ── Close button ─────────────────────────────────────── */
+.voice-close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.voice-close-btn:hover {
+  color: var(--text);
+  background: var(--bg-surface);
+}
+
+/* ── Title & hint ─────────────────────────────────────── */
+.voice-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--text);
+  margin: 0;
+  text-align: center;
+}
+
+.voice-hint {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin: 0;
+  line-height: 1.5;
+  max-width: 300px;
+}
+
+/* ── Mic area ─────────────────────────────────────────── */
+.voice-mic-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1.25rem 0 0.5rem;
+}
+
+/* ── Mic button ───────────────────────────────────────── */
+.voice-mic-btn {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 2px solid var(--border-hover);
+  background: var(--bg-surface);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+
+.voice-mic-btn:hover:not(:disabled) {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+  transform: scale(1.04);
+}
+
+.voice-mic-btn--recording {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  box-shadow: 0 0 0 8px var(--accent-bg), 0 0 0 0 var(--accent);
+  animation: mic-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes mic-pulse {
+  0%   { box-shadow: 0 0 0 8px var(--accent-bg); }
+  50%  { box-shadow: 0 0 0 16px transparent; }
+  100% { box-shadow: 0 0 0 8px var(--accent-bg); }
+}
+
+.voice-mic-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Parsing spinner ──────────────────────────────────── */
+.voice-spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--border-hover);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Status label ─────────────────────────────────────── */
+.voice-status-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-align: center;
+  letter-spacing: 0.04em;
+  min-height: 1.2em;
+}
+
+/* ── Transcript ───────────────────────────────────────── */
+.voice-transcript {
+  width: 100%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.875rem 1rem;
+  max-height: 120px;
+  overflow-y: auto;
+  margin-top: 0.25rem;
+}
+
+.voice-transcript p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+/* ── Retry button ─────────────────────────────────────── */
+.voice-retry-btn {
+  padding: 0.6rem 1.5rem;
+  background: transparent;
+  border: 1px solid var(--border-hover);
+  border-radius: 40px;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.voice-retry-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}

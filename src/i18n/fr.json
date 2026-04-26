@@ -386,6 +386,28 @@
       "pescatarian": "Pescétarien"
     }
   },
+  "voice": {
+    "title": "Ajouter par la voix",
+    "hint": "Dictez vos produits avec la quantité et la date d'expiration. Ex : « j'ai 1 kg de carottes qui expirent vendredi »",
+    "dictate": "Dicter",
+    "tapToStart": "Appuyez pour commencer",
+    "tapToStop": "Appuyez pour arrêter",
+    "parsing": "Analyse en cours…",
+    "retry": "Réessayer",
+    "notSupported": "La reconnaissance vocale n'est pas disponible sur ce navigateur",
+    "micDenied": "Accès au microphone refusé",
+    "error": "Une erreur est survenue",
+    "parseError": "Impossible d'analyser les produits — réessayez",
+    "reviewTitle_one": "{{count}} produit détecté",
+    "reviewTitle_other": "{{count}} produits détectés",
+    "reviewSubtitle": "Vérifiez et corrigez avant d'ajouter au frigo",
+    "dateRequired": "Date requise",
+    "reviewEmpty": "Tous les produits ont été supprimés",
+    "addToFridge_one": "Ajouter {{count}} produit",
+    "addToFridge_other": "Ajouter {{count}} produits",
+    "addedSuccess_one": "{{count}} produit ajouté au frigo",
+    "addedSuccess_other": "{{count}} produits ajoutés au frigo"
+  },
   "seasonal": {
     "title": "Produits de saison",
     "recommendedFor": "Produits recommandés pour {{month}} ({{season}})",

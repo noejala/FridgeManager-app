@@ -23,6 +23,9 @@ import { Auth } from './components/Auth';
 import { InstallBanner } from './components/InstallBanner';
 import { NotifPermissionModal } from './components/NotifPermissionModal';
 import { PantryOnboarding } from './components/PantryOnboarding';
+import { VoiceInput } from './components/VoiceInput';
+import { VoiceDraftReview } from './components/VoiceDraftReview';
+import { DraftProduct } from './utils/voiceParser';
 import './App.css';
 
 const TAB_STORAGE_KEY = 'lastActiveTab';
@@ -61,6 +64,8 @@ function App() {
   const [pantryStaples, setPantryStaples] = useState<string[]>([]);
   const [showPantryOnboarding, setShowPantryOnboarding] = useState(false);
   const [scanPrefill, setScanPrefill] = useState<FoodFactsResult | null>(null);
+  const [isVoiceMode, setIsVoiceMode] = useState(false);
+  const [voiceDraft, setVoiceDraft] = useState<DraftProduct[] | null>(null);
   const [scrolledDown, setScrolledDown] = useState(false);
   const lastScrollY = useRef(0);
 
@@ -338,6 +343,29 @@ function App() {
     setScanPrefill(result);
   }, []);
 
+  const handleVoiceConfirm = async (drafts: Array<Omit<DraftProduct, '_draftId'>>) => {
+    if (!user) return;
+    try {
+      const added: Product[] = [];
+      for (const draft of drafts) {
+        const fridgeZone = getFridgeZone(draft.name, draft.category);
+        const saved = await insertProduct({
+          ...draft,
+          expirationDate: draft.expirationDate!,
+          addedDate: new Date().toISOString().split('T')[0],
+          fridgeZone,
+        }, user.id);
+        added.push(saved);
+      }
+      setProducts(prev => [...added, ...prev]);
+      setVoiceDraft(null);
+      setNotification(t('voice.addedSuccess', { count: added.length }));
+      setTimeout(() => setNotification(null), 4000);
+    } catch (err) {
+      console.error('Failed to add voice products:', err);
+    }
+  };
+
   const renderTabContent = () => (
     <>
       <div hidden={activeTab !== 'add-product'}>
@@ -347,6 +375,7 @@ function App() {
           onFormOpenChange={() => setActiveTab('fridge')}
           prefill={scanPrefill}
           onPrefillApplied={() => setScanPrefill(null)}
+          onVoiceStart={() => setIsVoiceMode(true)}
         />
       </div>
       <div hidden={activeTab !== 'fridge'}>
@@ -362,6 +391,7 @@ function App() {
             isFormOpen={false}
             onFormOpenChange={(open) => open && setActiveTab('add-product')}
             onScanBarcode={handleFridgeBarcode}
+            onVoiceStart={() => setIsVoiceMode(true)}
           />
         )}
         <ProductList
@@ -462,6 +492,19 @@ function App() {
           onGroup={handleGroupProducts}
           onReplace={handleReplaceProduct}
           onAddSeparately={handleAddSeparately}
+        />
+      )}
+      {isVoiceMode && (
+        <VoiceInput
+          onDraftReady={(drafts) => { setIsVoiceMode(false); setVoiceDraft(drafts); }}
+          onClose={() => setIsVoiceMode(false)}
+        />
+      )}
+      {voiceDraft && (
+        <VoiceDraftReview
+          drafts={voiceDraft}
+          onConfirm={handleVoiceConfirm}
+          onCancel={() => setVoiceDraft(null)}
         />
       )}
     </div>

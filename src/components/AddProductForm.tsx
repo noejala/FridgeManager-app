@@ -15,6 +15,7 @@ interface AddProductFormProps {
   prefill?: FoodFactsResult | null;
   onPrefillApplied?: () => void;
   onScanBarcode?: (barcode: string) => void;
+  onVoiceStart?: () => void;
 }
 
 const CATEGORIES: ProductCategory[] = [
@@ -39,7 +40,7 @@ const isOpenableCategory = (cat: ProductCategory) =>
 
 
 
-export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, onPrefillApplied, onScanBarcode }: AddProductFormProps) => {
+export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, onPrefillApplied, onScanBarcode, onVoiceStart }: AddProductFormProps) => {
   const { t } = useTranslation();
   const [fabOpen, setFabOpen] = useState(false);
   const [fabVisible, setFabVisible] = useState(true);
@@ -235,6 +236,21 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
             <span className="scan-btn-label-short">Scanner</span>
             <span className="scan-btn-label-long">Scanner un produit</span>
           </button>
+          {onVoiceStart && (
+            <button
+              className="scan-product-btn"
+              onClick={onVoiceStart}
+              title={t('voice.title')}
+            >
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="9" y="2" width="6" height="12" rx="3"/>
+                <path d="M5 10a7 7 0 0 0 14 0"/>
+                <line x1="12" y1="19" x2="12" y2="22"/>
+                <line x1="8" y1="22" x2="16" y2="22"/>
+              </svg>
+              <span className="scan-btn-label-short">{t('voice.dictate')}</span>
+            </button>
+          )}
         </div>
 
         {/* Mobile FAB speed dial */}
@@ -243,12 +259,27 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
         )}
         <div className={`fab-container${fabOpen ? ' fab-open' : ''}${!fabVisible || isScanning ? ' fab-hidden' : ''}`}>
           <div className="fab-actions">
+            {onVoiceStart && (
+              <div className="fab-action">
+                <span className="fab-action-label">{t('voice.dictate')}</span>
+                <button
+                  className="fab-action-btn"
+                  onClick={() => { setFabOpen(false); onVoiceStart(); }}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="9" y="2" width="6" height="12" rx="3"/>
+                    <path d="M5 10a7 7 0 0 0 14 0"/>
+                    <line x1="12" y1="19" x2="12" y2="22"/>
+                    <line x1="8" y1="22" x2="16" y2="22"/>
+                  </svg>
+                </button>
+              </div>
+            )}
             <div className="fab-action">
               <span className="fab-action-label">Scanner</span>
               <button
                 className="fab-action-btn"
                 onClick={() => { setFabOpen(false); setIsScanning(true); }}
-
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="3" y="3" width="5" height="5" rx="1"/>
