@@ -294,10 +294,13 @@ function App() {
   const handleOpenSauce = async (id: string, openedDate: string) => {
     const product = products.find(p => p.id === id);
     if (!product) return;
+    const computed = estimateExpirationFromOpenDate(product.name, openedDate);
+    // The label on the jar is always the upper bound
+    const newExpiration = computed < product.expirationDate ? computed : product.expirationDate;
     const updatedProduct: Product = {
       ...product,
       openedDate,
-      expirationDate: estimateExpirationFromOpenDate(product.name, openedDate),
+      expirationDate: newExpiration,
       isEstimatedExpiration: true,
     };
     await handleUpdateProduct(updatedProduct);
