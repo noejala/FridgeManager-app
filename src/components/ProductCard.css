@@ -1,7 +1,6 @@
 .product-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-left: 3px solid var(--green);
   border-radius: 6px var(--radius) var(--radius) 6px;
   padding: 1.25rem;
   position: relative;
@@ -9,17 +8,30 @@
   animation: card-in 0.35s ease both;
 }
 
+/* ::before avoids the iOS Safari GPU-layer bug that drops border-left during scroll */
+.product-card::before {
+  content: '';
+  position: absolute;
+  left: -1px;
+  top: -1px;
+  bottom: -1px;
+  width: 3px;
+  background: var(--green);
+  border-radius: 6px 0 0 6px;
+  pointer-events: none;
+}
+
 .product-card:hover {
   border-color: var(--border-hover);
   box-shadow: var(--shadow);
 }
 
-.product-card.status-expiring {
-  border-left-color: var(--amber);
+.product-card.status-expiring::before {
+  background: var(--amber);
 }
 
-.product-card.status-expired {
-  border-left-color: var(--red);
+.product-card.status-expired::before {
+  background: var(--red);
 }
 
 /* Stagger — driven by --index CSS custom property set inline */
@@ -149,13 +161,19 @@
 }
 
 .product-card.confirming-delete {
-  border-left-color: var(--red);
   border-color: rgba(220, 38, 38, 0.3);
 }
 
+.product-card.confirming-delete::before {
+  background: var(--red);
+}
+
 .product-card.confirming-consume {
-  border-left-color: var(--green);
   border-color: rgba(34, 197, 94, 0.25);
+}
+
+.product-card.confirming-consume::before {
+  background: var(--green);
 }
 
 .open-sauce-btn {
@@ -306,8 +324,8 @@
   color: var(--amber);
 }
 
-.product-card.status-expired-ddm {
-  border-left-color: var(--amber);
+.product-card.status-expired-ddm::before {
+  background: var(--amber);
 }
 
 .status-badge.estimated-hint {
