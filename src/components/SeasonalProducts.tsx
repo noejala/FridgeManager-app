@@ -1,19 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { REGIONS, seasonalDataByRegion, productEmojiMap, FRUITS, getNearestRegion, type RegionId } from '../utils/seasonalData';
+import { REGIONS, seasonalDataByRegion, productEmojiMap, productIllustrationMap, FRUITS, getNearestRegion, type RegionId } from '../utils/seasonalData';
 import { fetchProductFunFacts } from '../utils/mistralApi';
 import './SeasonalProducts.css';
 
-function OpenMojiImg({ emoji, size }: { emoji: string; size: number }) {
+function ProductIllustration({ product, size }: { product: string; size: number }) {
   const [failed, setFailed] = useState(false);
-  if (failed) return <span style={{ fontSize: size * 0.55 }}>{emoji}</span>;
-  const codepoints = [...emoji]
-    .map(c => c.codePointAt(0)!.toString(16).toUpperCase())
-    .filter(cp => cp !== 'FE0F') // OpenMoji filenames omit variation selectors
-    .join('-');
+  const icon = productIllustrationMap[product] ?? 'herb';
+  if (failed) {
+    return <span style={{ fontSize: size * 0.55 }}>{productEmojiMap[product] ?? '🥬'}</span>;
+  }
   return (
     <img
-      src={`https://cdn.jsdelivr.net/npm/openmoji@15.1.0/color/svg/${codepoints}.svg`}
+      src={`/illustrations/seasonal/${icon}.svg`}
       width={size}
       height={size}
       alt=""
@@ -100,7 +99,7 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
       onClick={() => handleProductClick(product)}
     >
       <div className="product-emoji">
-        <OpenMojiImg emoji={productEmojiMap[product] || '🥬'} size={44} />
+        <ProductIllustration product={product} size={44} />
       </div>
       <p>{t(`seasonal.products.${product}`, { defaultValue: product })}</p>
     </div>
@@ -173,7 +172,7 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
             <button className="modal-close" onClick={() => setFunFactProduct(null)}>✕</button>
             <div className="funfact-header">
               <div className="funfact-emoji">
-              <OpenMojiImg emoji={productEmojiMap[funFactProduct] || '🥬'} size={60} />
+              <ProductIllustration product={funFactProduct} size={60} />
             </div>
               <h2>{t(`seasonal.products.${funFactProduct}`, { defaultValue: funFactProduct })}</h2>
             </div>
