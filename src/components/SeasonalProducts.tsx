@@ -99,7 +99,7 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
       onClick={() => handleProductClick(product)}
     >
       <div className="product-emoji">
-        <ProductIllustration product={product} size={44} />
+        <ProductIllustration product={product} size={32} />
       </div>
       <p>{t(`seasonal.products.${product}`, { defaultValue: product })}</p>
     </div>
