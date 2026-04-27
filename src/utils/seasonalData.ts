@@ -1,15 +1,21 @@
-export type RegionId = 'france' | 'mediterranean' | 'north_europe' | 'north_america' | 'southern_hemisphere';
+export type RegionId = 'france_north' | 'france_south' | 'dom_tom';
+
+export type SeasonalEntry = { season: string; products: string[] };
+
+export const REGIONS: { id: RegionId; name: string; flag: string }[] = [
+  { id: 'france_north', name: 'France (Nord)',  flag: '🇫🇷' },
+  { id: 'france_south', name: 'France (Sud)',   flag: '☀️'  },
+  { id: 'dom_tom',      name: 'DOM-TOM',        flag: '🏝️' },
+];
 
 const REGION_CENTROIDS: Record<RegionId, { lat: number; lng: number }> = {
-  france:              { lat: 46.6,  lng:   2.3  },
-  mediterranean:       { lat: 37.0,  lng:  14.0  },
-  north_europe:        { lat: 57.0,  lng:  12.0  },
-  north_america:       { lat: 40.0,  lng: -96.0  },
-  southern_hemisphere: { lat: -30.0, lng: 135.0  },
+  france_north: { lat: 48.5, lng:   2.5  },
+  france_south: { lat: 43.5, lng:   5.5  },
+  dom_tom:      { lat: 14.6, lng: -61.0  },
 };
 
 export function getNearestRegion(lat: number, lng: number): RegionId {
-  let nearest: RegionId = 'france';
+  let nearest: RegionId = 'france_north';
   let minDist = Infinity;
   for (const [id, c] of Object.entries(REGION_CENTROIDS) as [RegionId, { lat: number; lng: number }][]) {
     const dlat = lat - c.lat;
@@ -20,19 +26,10 @@ export function getNearestRegion(lat: number, lng: number): RegionId {
   return nearest;
 }
 
-export type SeasonalEntry = { season: string; products: string[] };
-
-export const REGIONS: { id: RegionId; name: string; flag: string }[] = [
-  { id: 'france', name: 'France', flag: '🇫🇷' },
-  { id: 'mediterranean', name: 'Mediterranean', flag: '🌊' },
-  { id: 'north_europe', name: 'N. Europe', flag: '🇸🇪' },
-  { id: 'north_america', name: 'N. America', flag: '🇺🇸' },
-  { id: 'southern_hemisphere', name: 'S. Hemisphere', flag: '🌏' },
-];
-
 export const seasonalDataByRegion: Record<RegionId, Record<number, SeasonalEntry>> = {
-  // Source: Greenpeace France seasonal calendar (greenpeace.fr/guetteur/calendrier)
-  france: {
+  // Source: Calendrier Greenpeace France (greenpeace.fr/guetteur/calendrier)
+  // Représentatif de la France métropolitaine Nord (IDF, Bretagne, Normandie, Grand Est, Centre)
+  france_north: {
     1:  { season: 'Winter', products: ['Carrots', 'Leeks', 'Endives', 'Cabbage', 'Spinach', 'Apples', 'Pears', 'Clementines'] },
     2:  { season: 'Winter', products: ['Carrots', 'Leeks', 'Endives', 'Spinach', 'Radishes', 'Apples', 'Pears', 'Oranges'] },
     3:  { season: 'Spring', products: ['Asparagus', 'Leeks', 'Carrots', 'Spinach', 'Radishes', 'Apples', 'Pears', 'Oranges'] },
@@ -46,72 +43,55 @@ export const seasonalDataByRegion: Record<RegionId, Record<number, SeasonalEntry
     11: { season: 'Autumn', products: ['Carrots', 'Leeks', 'Celeriac', 'Cabbage', 'Broccoli', 'Endives', 'Clementines', 'Apples'] },
     12: { season: 'Winter', products: ['Carrots', 'Leeks', 'Endives', 'Cabbage', 'Spinach', 'Clementines', 'Oranges', 'Pears'] },
   },
-  mediterranean: {
-    1:  { season: 'Winter', products: ['Citrus fruits', 'Artichokes', 'Broccoli', 'Fennel', 'Cauliflower', 'Olives'] },
-    2:  { season: 'Winter', products: ['Citrus fruits', 'Artichokes', 'Fennel', 'Broccoli', 'Peas', 'Cauliflower'] },
-    3:  { season: 'Spring', products: ['Artichokes', 'Peas', 'Fava beans', 'Asparagus', 'Strawberries', 'Fennel'] },
-    4:  { season: 'Spring', products: ['Strawberries', 'Artichokes', 'Asparagus', 'Fava beans', 'Peas', 'Lettuce'] },
-    5:  { season: 'Spring', products: ['Strawberries', 'Cherries', 'Zucchini', 'Tomatoes', 'Fava beans', 'Peaches'] },
-    6:  { season: 'Summer', products: ['Tomatoes', 'Peppers', 'Zucchini', 'Peaches', 'Apricots', 'Cherries'] },
-    7:  { season: 'Summer', products: ['Tomatoes', 'Peppers', 'Eggplant', 'Watermelon', 'Peaches', 'Figs'] },
-    8:  { season: 'Summer', products: ['Tomatoes', 'Peppers', 'Eggplant', 'Figs', 'Grapes', 'Watermelon'] },
-    9:  { season: 'Autumn', products: ['Grapes', 'Figs', 'Tomatoes', 'Eggplant', 'Peppers', 'Mushrooms'] },
-    10: { season: 'Autumn', products: ['Grapes', 'Pomegranates', 'Mushrooms', 'Chestnuts', 'Artichokes', 'Fennel'] },
-    11: { season: 'Autumn', products: ['Citrus fruits', 'Artichokes', 'Broccoli', 'Fennel', 'Mushrooms', 'Olives'] },
-    12: { season: 'Winter', products: ['Citrus fruits', 'Artichokes', 'Broccoli', 'Cauliflower', 'Fennel', 'Olives'] },
+
+  // Source: données PACA/Occitanie — Réseau Civam, GRAB (Groupe de Recherche en Agriculture Biologique)
+  // Représentatif de la France méditerranéenne (PACA, Languedoc, Corse, Sud Occitanie)
+  france_south: {
+    1:  { season: 'Winter', products: ['Artichokes', 'Broccoli', 'Fennel', 'Spinach', 'Leeks', 'Clementines', 'Oranges', 'Lemons'] },
+    2:  { season: 'Winter', products: ['Artichokes', 'Fennel', 'Broccoli', 'Peas', 'Cauliflower', 'Spinach', 'Oranges', 'Lemons'] },
+    3:  { season: 'Spring', products: ['Artichokes', 'Peas', 'Fava beans', 'Asparagus', 'Radishes', 'Strawberries', 'Fennel', 'Oranges'] },
+    4:  { season: 'Spring', products: ['Artichokes', 'Asparagus', 'Peas', 'Fava beans', 'Lettuce', 'Radishes', 'Strawberries', 'Cherries'] },
+    5:  { season: 'Summer', products: ['Tomatoes', 'Zucchini', 'Peas', 'Fava beans', 'Cucumbers', 'Cherries', 'Apricots', 'Strawberries'] },
+    6:  { season: 'Summer', products: ['Tomatoes', 'Peppers', 'Zucchini', 'Eggplant', 'Cucumbers', 'Peaches', 'Apricots', 'Melons'] },
+    7:  { season: 'Summer', products: ['Tomatoes', 'Peppers', 'Eggplant', 'Zucchini', 'Fennel', 'Watermelon', 'Melons', 'Peaches'] },
+    8:  { season: 'Summer', products: ['Tomatoes', 'Peppers', 'Eggplant', 'Zucchini', 'Figs', 'Grapes', 'Peaches', 'Watermelon'] },
+    9:  { season: 'Autumn', products: ['Tomatoes', 'Peppers', 'Eggplant', 'Artichokes', 'Fennel', 'Figs', 'Grapes', 'Pomegranates'] },
+    10: { season: 'Autumn', products: ['Artichokes', 'Fennel', 'Mushrooms', 'Chestnuts', 'Quince', 'Grapes', 'Pomegranates', 'Olives'] },
+    11: { season: 'Autumn', products: ['Artichokes', 'Broccoli', 'Fennel', 'Spinach', 'Chestnuts', 'Olives', 'Clementines', 'Oranges'] },
+    12: { season: 'Winter', products: ['Artichokes', 'Broccoli', 'Fennel', 'Cauliflower', 'Spinach', 'Clementines', 'Oranges', 'Lemons'] },
   },
-  north_europe: {
-    1:  { season: 'Winter', products: ['Kale', 'Carrots', 'Potatoes', 'Parsnips', 'Beetroot', 'Cabbage'] },
-    2:  { season: 'Winter', products: ['Kale', 'Carrots', 'Leeks', 'Potatoes', 'Parsnips', 'Celeriac'] },
-    3:  { season: 'Winter', products: ['Kale', 'Leeks', 'Carrots', 'Potatoes', 'Broccoli', 'Celeriac'] },
-    4:  { season: 'Spring', products: ['Asparagus', 'Broccoli', 'Spinach', 'Radishes', 'Lettuce', 'Leeks'] },
-    5:  { season: 'Spring', products: ['Asparagus', 'Spinach', 'Radishes', 'Lettuce', 'Strawberries', 'Peas'] },
-    6:  { season: 'Summer', products: ['Strawberries', 'Peas', 'Lettuce', 'Broad beans', 'New potatoes', 'Raspberries'] },
-    7:  { season: 'Summer', products: ['Strawberries', 'Raspberries', 'Peas', 'Zucchini', 'Broad beans', 'Lettuce'] },
-    8:  { season: 'Summer', products: ['Tomatoes', 'Zucchini', 'Runner beans', 'Blueberries', 'Corn', 'Cucumbers'] },
-    9:  { season: 'Autumn', products: ['Apples', 'Pears', 'Blackberries', 'Mushrooms', 'Squash', 'Beetroot'] },
-    10: { season: 'Autumn', products: ['Apples', 'Pears', 'Kale', 'Mushrooms', 'Squash', 'Beetroot'] },
-    11: { season: 'Autumn', products: ['Kale', 'Parsnips', 'Carrots', 'Potatoes', 'Brussels sprouts', 'Leeks'] },
-    12: { season: 'Winter', products: ['Kale', 'Brussels sprouts', 'Parsnips', 'Carrots', 'Potatoes', 'Celeriac'] },
-  },
-  north_america: {
-    1:  { season: 'Winter', products: ['Citrus fruits', 'Kale', 'Brussels sprouts', 'Sweet potatoes', 'Carrots', 'Beets'] },
-    2:  { season: 'Winter', products: ['Citrus fruits', 'Kale', 'Leeks', 'Sweet potatoes', 'Carrots', 'Beets'] },
-    3:  { season: 'Spring', products: ['Asparagus', 'Artichokes', 'Spinach', 'Lettuce', 'Radishes', 'Peas'] },
-    4:  { season: 'Spring', products: ['Asparagus', 'Peas', 'Strawberries', 'Lettuce', 'Artichokes', 'Radishes'] },
-    5:  { season: 'Spring', products: ['Strawberries', 'Asparagus', 'Peas', 'Lettuce', 'Cherries', 'Radishes'] },
-    6:  { season: 'Summer', products: ['Blueberries', 'Cherries', 'Tomatoes', 'Zucchini', 'Corn', 'Peaches'] },
-    7:  { season: 'Summer', products: ['Tomatoes', 'Corn', 'Peaches', 'Blueberries', 'Peppers', 'Zucchini'] },
-    8:  { season: 'Summer', products: ['Tomatoes', 'Corn', 'Peaches', 'Plums', 'Melons', 'Peppers'] },
-    9:  { season: 'Autumn', products: ['Apples', 'Grapes', 'Pears', 'Pumpkins', 'Squash', 'Sweet potatoes'] },
-    10: { season: 'Autumn', products: ['Apples', 'Pears', 'Pumpkins', 'Sweet potatoes', 'Cranberries', 'Mushrooms'] },
-    11: { season: 'Autumn', products: ['Sweet potatoes', 'Kale', 'Brussels sprouts', 'Apples', 'Cranberries', 'Pears'] },
-    12: { season: 'Winter', products: ['Citrus fruits', 'Kale', 'Sweet potatoes', 'Brussels sprouts', 'Pomegranates', 'Carrots'] },
-  },
-  southern_hemisphere: {
-    1:  { season: 'Summer', products: ['Tomatoes', 'Zucchini', 'Cucumbers', 'Peaches', 'Cherries', 'Corn'] },
-    2:  { season: 'Summer', products: ['Tomatoes', 'Peppers', 'Eggplant', 'Peaches', 'Plums', 'Melons'] },
-    3:  { season: 'Autumn', products: ['Grapes', 'Apples', 'Pears', 'Tomatoes', 'Peppers', 'Figs'] },
-    4:  { season: 'Autumn', products: ['Apples', 'Pears', 'Grapes', 'Mushrooms', 'Pumpkins', 'Squash'] },
-    5:  { season: 'Autumn', products: ['Apples', 'Pears', 'Cabbage', 'Carrots', 'Potatoes', 'Citrus fruits'] },
-    6:  { season: 'Winter', products: ['Citrus fruits', 'Cabbage', 'Carrots', 'Potatoes', 'Leeks', 'Broccoli'] },
-    7:  { season: 'Winter', products: ['Citrus fruits', 'Cabbage', 'Kale', 'Carrots', 'Potatoes', 'Cauliflower'] },
-    8:  { season: 'Winter', products: ['Citrus fruits', 'Broccoli', 'Cauliflower', 'Leeks', 'Carrots', 'Kale'] },
-    9:  { season: 'Spring', products: ['Asparagus', 'Strawberries', 'Peas', 'Lettuce', 'Radishes', 'Spinach'] },
-    10: { season: 'Spring', products: ['Strawberries', 'Asparagus', 'Cherries', 'Peas', 'Lettuce', 'Artichokes'] },
-    11: { season: 'Spring', products: ['Strawberries', 'Cherries', 'Tomatoes', 'Zucchini', 'Peaches', 'Asparagus'] },
-    12: { season: 'Summer', products: ['Tomatoes', 'Zucchini', 'Cucumbers', 'Peaches', 'Cherries', 'Melons'] },
+
+  // Source: APICAD / Chambre d'Agriculture Martinique et Guadeloupe
+  // Représentatif des Antilles (Martinique, Guadeloupe) — approximatif pour Réunion et Guyane
+  // Carême (saison sèche) : jan–mai / Hivernage (saison des pluies) : juin–nov / Transition : déc
+  dom_tom: {
+    1:  { season: 'Dry', products: ['Christophine', 'Yams', 'Sweet potatoes', 'Avocados', 'Pomelo', 'Papayas', 'Bananas', 'Pineapples'] },
+    2:  { season: 'Dry', products: ['Christophine', 'Yams', 'Avocados', 'Pomelo', 'Lychees', 'Papayas', 'Bananas', 'Pineapples'] },
+    3:  { season: 'Dry', products: ['Mangoes', 'Avocados', 'Passion fruit', 'Papayas', 'Pineapples', 'Bananas', 'Yams', 'Pomelo'] },
+    4:  { season: 'Dry', products: ['Mangoes', 'Breadfruit', 'Avocados', 'Passion fruit', 'Pineapples', 'Papayas', 'Bananas', 'Coconuts'] },
+    5:  { season: 'Dry', products: ['Mangoes', 'Breadfruit', 'Passion fruit', 'Guava', 'Pineapples', 'Papayas', 'Bananas', 'Coconuts'] },
+    6:  { season: 'Wet', products: ['Breadfruit', 'Passion fruit', 'Guava', 'Soursop', 'Pineapples', 'Papayas', 'Bananas', 'Coconuts'] },
+    7:  { season: 'Wet', products: ['Breadfruit', 'Guava', 'Soursop', 'Passion fruit', 'Sweet potatoes', 'Cassava', 'Bananas', 'Pineapples'] },
+    8:  { season: 'Wet', products: ['Breadfruit', 'Guava', 'Soursop', 'Sweet potatoes', 'Cassava', 'Papayas', 'Bananas', 'Pineapples'] },
+    9:  { season: 'Wet', products: ['Soursop', 'Sweet potatoes', 'Cassava', 'Yams', 'Papayas', 'Pineapples', 'Bananas', 'Coconuts'] },
+    10: { season: 'Wet', products: ['Yams', 'Sweet potatoes', 'Cassava', 'Papayas', 'Guava', 'Pineapples', 'Bananas', 'Coconuts'] },
+    11: { season: 'Wet', products: ['Christophine', 'Yams', 'Sweet potatoes', 'Lychees', 'Papayas', 'Pineapples', 'Bananas', 'Cassava'] },
+    12: { season: 'Dry', products: ['Christophine', 'Yams', 'Sweet potatoes', 'Avocados', 'Lychees', 'Papayas', 'Pineapples', 'Bananas'] },
   },
 };
 
 export const FRUITS = new Set([
-  'Apples', 'Pears', 'Clementines', 'Oranges', 'Strawberries', 'Cherries',
-  'Raspberries', 'Peaches', 'Figs', 'Grapes', 'Blueberries', 'Plums',
-  'Melons', 'Watermelon', 'Pomegranates', 'Cranberries', 'Blackberries',
-  'Apricots', 'Citrus fruits', 'Rhubarb',
+  // Temperate
+  'Apples', 'Pears', 'Clementines', 'Oranges', 'Lemons', 'Pomelo', 'Strawberries', 'Cherries',
+  'Raspberries', 'Peaches', 'Figs', 'Grapes', 'Blueberries', 'Plums', 'Melons', 'Watermelon',
+  'Pomegranates', 'Cranberries', 'Blackberries', 'Apricots', 'Citrus fruits', 'Rhubarb', 'Quince',
+  // Tropical
+  'Mangoes', 'Avocados', 'Pineapples', 'Bananas', 'Papayas', 'Lychees', 'Coconuts',
+  'Passion fruit', 'Guava', 'Soursop',
 ]);
 
 export const productEmojiMap: Record<string, string> = {
+  // Existing
   'Citrus fruits': '🍊',
   'Cabbage': '🥬',
   'Carrots': '🥕',
@@ -170,4 +150,21 @@ export const productEmojiMap: Record<string, string> = {
   'Green beans': '🫘',
   'Rhubarb': '🌿',
   'Quince': '🍐',
+  // France Sud / DOM-TOM additions
+  'Lemons': '🍋',
+  'Mangoes': '🥭',
+  'Avocados': '🥑',
+  'Pineapples': '🍍',
+  'Bananas': '🍌',
+  'Papayas': '🍑',
+  'Lychees': '🔴',
+  'Coconuts': '🥥',
+  'Passion fruit': '🌺',
+  'Guava': '🍈',
+  'Soursop': '🍈',
+  'Breadfruit': '🫓',
+  'Christophine': '🥬',
+  'Yams': '🟤',
+  'Cassava': '🌿',
+  'Pomelo': '🍊',
 };

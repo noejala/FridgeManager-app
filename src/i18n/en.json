@@ -420,7 +420,9 @@
       "winter": "Winter",
       "spring": "Spring",
       "summer": "Summer",
-      "autumn": "Autumn"
+      "autumn": "Autumn",
+      "dry": "Dry season",
+      "wet": "Wet season"
     },
     "months": {
       "1": "January", "2": "February", "3": "March", "4": "April",

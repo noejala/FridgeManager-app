@@ -148,6 +148,18 @@
   background: var(--amber-bg);
 }
 
+.season-indicator-dry {
+  color: #e07b39;
+  border-color: rgba(224, 123, 57, 0.25);
+  background: rgba(224, 123, 57, 0.1);
+}
+
+.season-indicator-wet {
+  color: var(--accent);
+  border-color: var(--accent-bg);
+  background: var(--accent-bg);
+}
+
 /* Detect region button */
 .detect-btn {
   padding: 0.375rem 0.6rem;

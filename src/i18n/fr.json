@@ -420,7 +420,9 @@
       "winter": "Hiver",
       "spring": "Printemps",
       "summer": "Été",
-      "autumn": "Automne"
+      "autumn": "Automne",
+      "dry": "Saison sèche",
+      "wet": "Saison des pluies"
     },
     "months": {
       "1": "Janvier", "2": "Février", "3": "Mars", "4": "Avril",
@@ -485,7 +487,23 @@
       "Sweet potatoes": "Patates douces",
       "Tomatoes": "Tomates",
       "Watermelon": "Pastèque",
-      "Zucchini": "Courgettes"
+      "Zucchini": "Courgettes",
+      "Lemons": "Citrons",
+      "Mangoes": "Mangues",
+      "Avocados": "Avocats",
+      "Pineapples": "Ananas",
+      "Bananas": "Bananes",
+      "Papayas": "Papayes",
+      "Lychees": "Litchis",
+      "Coconuts": "Noix de coco",
+      "Passion fruit": "Fruits de la passion",
+      "Guava": "Goyaves",
+      "Soursop": "Corossols",
+      "Breadfruit": "Fruits à pain",
+      "Christophine": "Christophines",
+      "Yams": "Ignames",
+      "Cassava": "Manioc",
+      "Pomelo": "Pomelos"
     }
   }
 }

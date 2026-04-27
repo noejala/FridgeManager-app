@@ -11,7 +11,9 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
   const currentYear = now.getFullYear();
 
   const [selectedRegion, setSelectedRegion] = useState<RegionId>(() => {
-    return (localStorage.getItem('seasonal-region') as RegionId) || 'france';
+    const stored = localStorage.getItem('seasonal-region') as RegionId;
+    const valid: RegionId[] = ['france_north', 'france_south', 'dom_tom'];
+    return valid.includes(stored) ? stored : 'france_north';
   });
   const [selectedMonth, setSelectedMonth] = useState(currentMonth);
   const [selectedYear, setSelectedYear] = useState(currentYear);
