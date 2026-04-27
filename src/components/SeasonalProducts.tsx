@@ -4,6 +4,24 @@ import { REGIONS, seasonalDataByRegion, productEmojiMap, FRUITS, getNearestRegio
 import { fetchProductFunFacts } from '../utils/mistralApi';
 import './SeasonalProducts.css';
 
+function OpenMojiImg({ emoji, size }: { emoji: string; size: number }) {
+  const [failed, setFailed] = useState(false);
+  if (failed) return <span style={{ fontSize: size * 0.55 }}>{emoji}</span>;
+  const codepoints = [...emoji]
+    .map(c => c.codePointAt(0)!.toString(16).toUpperCase())
+    .filter(cp => cp !== 'FE0F') // OpenMoji filenames omit variation selectors
+    .join('-');
+  return (
+    <img
+      src={`https://cdn.jsdelivr.net/npm/openmoji@15.1.0/color/svg/${codepoints}.svg`}
+      width={size}
+      height={size}
+      alt=""
+      onError={() => setFailed(true)}
+    />
+  );
+}
+
 export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
   const { t, i18n } = useTranslation();
   const now = new Date();
@@ -81,7 +99,9 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
       style={{ '--index': index } as React.CSSProperties}
       onClick={() => handleProductClick(product)}
     >
-      <div className="product-emoji">{productEmojiMap[product] || '🥬'}</div>
+      <div className="product-emoji">
+        <OpenMojiImg emoji={productEmojiMap[product] || '🥬'} size={44} />
+      </div>
       <p>{t(`seasonal.products.${product}`, { defaultValue: product })}</p>
     </div>
   );
@@ -152,7 +172,9 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
           <div className="modal-content funfact-modal" onClick={e => e.stopPropagation()}>
             <button className="modal-close" onClick={() => setFunFactProduct(null)}>✕</button>
             <div className="funfact-header">
-              <span className="funfact-emoji">{productEmojiMap[funFactProduct] || '🥬'}</span>
+              <div className="funfact-emoji">
+              <OpenMojiImg emoji={productEmojiMap[funFactProduct] || '🥬'} size={60} />
+            </div>
               <h2>{t(`seasonal.products.${funFactProduct}`, { defaultValue: funFactProduct })}</h2>
             </div>
             <p className="funfact-label">{t('seasonal.funFactLabel')}</p>

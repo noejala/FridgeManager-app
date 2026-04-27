@@ -221,8 +221,11 @@
 }
 
 .product-emoji {
-  font-size: 1.5rem;
-  margin-bottom: 0.35rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  margin-bottom: 0.5rem;
 }
 
 .seasonal-product-card p {
@@ -246,9 +249,12 @@
 }
 
 .funfact-emoji {
-  font-size: 2.5rem;
-  line-height: 1;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
 }
 
 .funfact-header h2 {
