@@ -1,5 +1,25 @@
 export type RegionId = 'france' | 'mediterranean' | 'north_europe' | 'north_america' | 'southern_hemisphere';
 
+const REGION_CENTROIDS: Record<RegionId, { lat: number; lng: number }> = {
+  france:              { lat: 46.6,  lng:   2.3  },
+  mediterranean:       { lat: 37.0,  lng:  14.0  },
+  north_europe:        { lat: 57.0,  lng:  12.0  },
+  north_america:       { lat: 40.0,  lng: -96.0  },
+  southern_hemisphere: { lat: -30.0, lng: 135.0  },
+};
+
+export function getNearestRegion(lat: number, lng: number): RegionId {
+  let nearest: RegionId = 'france';
+  let minDist = Infinity;
+  for (const [id, c] of Object.entries(REGION_CENTROIDS) as [RegionId, { lat: number; lng: number }][]) {
+    const dlat = lat - c.lat;
+    const dlng = (lng - c.lng) * Math.cos((lat * Math.PI) / 180);
+    const dist = dlat * dlat + dlng * dlng;
+    if (dist < minDist) { minDist = dist; nearest = id; }
+  }
+  return nearest;
+}
+
 export type SeasonalEntry = { season: string; products: string[] };
 
 export const REGIONS: { id: RegionId; name: string; flag: string }[] = [

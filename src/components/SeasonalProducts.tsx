@@ -1,48 +1,60 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { REGIONS, seasonalDataByRegion, productEmojiMap, FRUITS, type RegionId } from '../utils/seasonalData';
+import { REGIONS, seasonalDataByRegion, productEmojiMap, FRUITS, getNearestRegion, type RegionId } from '../utils/seasonalData';
 import { fetchProductFunFacts } from '../utils/mistralApi';
 import './SeasonalProducts.css';
 
-const SEASON_ORDER = ['Winter', 'Spring', 'Summer', 'Autumn'] as const;
-type Season = typeof SEASON_ORDER[number];
-
-function getSeasonProducts(region: RegionId, season: Season): string[] {
-  const seen = new Set<string>();
-  const products: string[] = [];
-  for (const entry of Object.values(seasonalDataByRegion[region])) {
-    if (entry.season === season) {
-      for (const p of entry.products) {
-        if (!seen.has(p)) { seen.add(p); products.push(p); }
-      }
-    }
-  }
-  return products;
-}
-
 export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
   const { t, i18n } = useTranslation();
-  const currentMonth = new Date().getMonth() + 1;
+  const now = new Date();
+  const currentMonth = now.getMonth() + 1;
+  const currentYear = now.getFullYear();
 
   const [selectedRegion, setSelectedRegion] = useState<RegionId>(() => {
     return (localStorage.getItem('seasonal-region') as RegionId) || 'france';
   });
-
-  useEffect(() => {
-    localStorage.setItem('seasonal-region', selectedRegion);
-  }, [selectedRegion]);
-
-  const currentSeasonName = seasonalDataByRegion[selectedRegion][currentMonth].season as Season;
-  const [selectedSeason, setSelectedSeason] = useState<Season>(currentSeasonName);
-
-  useEffect(() => {
-    if (isActive) setSelectedSeason(currentSeasonName);
-  }, [isActive]);
+  const [selectedMonth, setSelectedMonth] = useState(currentMonth);
+  const [selectedYear, setSelectedYear] = useState(currentYear);
+  const [detecting, setDetecting] = useState(false);
 
   const [funFactProduct, setFunFactProduct] = useState<string | null>(null);
   const [funFacts, setFunFacts] = useState<string[]>([]);
   const [loadingFunFacts, setLoadingFunFacts] = useState(false);
   const aiEnabled = import.meta.env.VITE_AI_ENABLED === 'true';
+
+  useEffect(() => {
+    localStorage.setItem('seasonal-region', selectedRegion);
+  }, [selectedRegion]);
+
+  useEffect(() => {
+    if (isActive) {
+      setSelectedMonth(currentMonth);
+      setSelectedYear(currentYear);
+    }
+  }, [isActive]);
+
+  const prevMonth = () => {
+    if (selectedMonth === 1) { setSelectedMonth(12); setSelectedYear(y => y - 1); }
+    else setSelectedMonth(m => m - 1);
+  };
+
+  const nextMonth = () => {
+    if (selectedMonth === 12) { setSelectedMonth(1); setSelectedYear(y => y + 1); }
+    else setSelectedMonth(m => m + 1);
+  };
+
+  const handleDetectRegion = () => {
+    if (!navigator.geolocation) return;
+    setDetecting(true);
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        setSelectedRegion(getNearestRegion(coords.latitude, coords.longitude));
+        setDetecting(false);
+      },
+      () => setDetecting(false),
+      { timeout: 8000 }
+    );
+  };
 
   const handleProductClick = async (product: string) => {
     if (!aiEnabled) return;
@@ -54,11 +66,11 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
     setLoadingFunFacts(false);
   };
 
-  const monthName = t(`seasonal.months.${currentMonth}`);
-
-  const products = getSeasonProducts(selectedRegion, selectedSeason);
+  const entry = seasonalDataByRegion[selectedRegion][selectedMonth];
+  const products = entry.products;
   const fruits = products.filter(p => FRUITS.has(p));
   const vegetables = products.filter(p => !FRUITS.has(p));
+  const seasonName = entry.season.toLowerCase();
 
   const renderProductCard = (product: string, index: number) => (
     <div
@@ -76,9 +88,6 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
     <div className="seasonal-products">
       <div className="seasonal-header">
         <h2>{t('seasonal.title')}</h2>
-        <p className="seasonal-subtitle">
-          {t('seasonal.recommendedFor', { month: monthName, season: t(`seasonal.season.${currentSeasonName.toLowerCase()}`) })}
-        </p>
       </div>
 
       <div className="region-selector">
@@ -92,26 +101,32 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
             <span>{region.name}</span>
           </button>
         ))}
+        <button
+          className={`region-btn detect-btn${detecting ? ' detect-btn-loading' : ''}`}
+          onClick={handleDetectRegion}
+          disabled={detecting || !navigator.geolocation}
+          aria-label={t('seasonal.detectRegion')}
+          title={t('seasonal.detectRegion')}
+        >
+          {detecting ? '⋯' : '📍'}
+        </button>
+      </div>
+
+      <div className="month-nav">
+        <button className="month-nav-btn" onClick={prevMonth} aria-label="prev">‹</button>
+        <div className="month-nav-center">
+          <span className="month-nav-label">
+            {t(`seasonal.months.${selectedMonth}`)}
+            {selectedYear !== currentYear ? ` ${selectedYear}` : ''}
+          </span>
+          <span className={`season-indicator season-indicator-${seasonName}`}>
+            {t(`seasonal.season.${seasonName}`)}
+          </span>
+        </div>
+        <button className="month-nav-btn" onClick={nextMonth} aria-label="next">›</button>
       </div>
 
       <div className="seasonal-content">
-        <div className="season-tabs">
-          {SEASON_ORDER.map(season => (
-            <button
-              key={season}
-              onClick={() => setSelectedSeason(season)}
-              className={[
-                'season-badge',
-                `season-badge-${season.toLowerCase()}`,
-                season !== currentSeasonName ? 'season-badge-inactive' : '',
-                selectedSeason === season ? 'season-badge-selected' : '',
-              ].join(' ')}
-            >
-              {t(`seasonal.season.${season.toLowerCase()}`)}
-            </button>
-          ))}
-        </div>
-
         {vegetables.length > 0 && (
           <div className="products-section">
             <h3 className="products-section-title">{t('seasonal.vegetables')}</h3>
@@ -120,7 +135,6 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
             </div>
           </div>
         )}
-
         {fruits.length > 0 && (
           <div className="products-section">
             <h3 className="products-section-title">{t('seasonal.fruits')}</h3>
