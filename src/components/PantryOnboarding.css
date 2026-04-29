@@ -140,7 +140,7 @@
   padding: 0.3rem 0.75rem;
   border-radius: 20px;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  transition: none;
   -webkit-tap-highlight-color: transparent;
 }
 
