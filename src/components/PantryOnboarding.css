@@ -172,18 +172,8 @@
   opacity: 0.88;
 }
 
-/* Optimistic active states: preview the toggled result on press */
-.pantry-chip.active:active {
-  background: var(--bg-surface);
-  color: var(--text-secondary);
-  border-color: var(--border);
-  opacity: 1;
-}
-
-.pantry-chip:not(.active):active {
-  background: var(--accent);
-  color: #fff;
-  border-color: var(--accent);
+.pantry-chip:active {
+  opacity: 0.7;
 }
 
 /* ── Custom tags ── */
