@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Product, ProductCategory } from '../types/Product';
 import { guessCategory } from '../utils/categoryMapping';
 import { getDefaultExpirationDateType } from '../utils/expirationDateType';
-import { estimateExpirationDate, estimateExpirationFromOpenDate, isProductRecognized } from '../utils/shelfLife';
+import { estimateExpirationDate, estimateExpirationFromOpenDate } from '../utils/shelfLife';
 import { lookupBarcode, FoodFactsResult } from '../utils/foodFactsApi';
 import { BarcodeScanner } from './BarcodeScanner';
 import './AddProductForm.css';
@@ -125,8 +125,6 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [prefill]);
 
-  const recognized = isProductRecognized(name);
-
   const handleBarcodeDetected = useCallback(async (barcode: string) => {
     setIsScanning(false);
 
@@ -159,8 +157,12 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
     const isSauceOpened = isOpenableCategory(category) && isOpened;
     const finalExpirationDate = isSauceOpened
       ? estimateExpirationFromOpenDate(name, sauceOpenedDate)
-      : (unknownExpiration && recognized)
-        ? estimateExpirationDate(name, purchaseDate || undefined)
+      : unknownExpiration
+        ? (estimateExpirationDate(name, purchaseDate || undefined) ?? (() => {
+            const d = new Date(purchaseDate || new Date());
+            d.setDate(d.getDate() + 30);
+            return d.toISOString().split('T')[0];
+          })())
         : expirationDate;
     if (!name || !finalExpirationDate) {
       if (!finalExpirationDate) setDateError(true);
@@ -180,7 +182,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
       expirationDate: finalExpirationDate,
       quantity: quantityNum,
       unit,
-      isEstimatedExpiration: isSauceOpened || (unknownExpiration && recognized),
+      isEstimatedExpiration: isSauceOpened || unknownExpiration,
       expirationDateType,
       openedDate: isSauceOpened ? sauceOpenedDate : undefined,
     });
@@ -420,7 +422,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
               </div>
             )}
           </div>
-        ) : recognized ? (
+        ) : (
           <div className="form-group">
             <label className="checkbox-label">
               <input
@@ -431,11 +433,11 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
               {t('form.unknownExpiration')}
             </label>
           </div>
-        ) : null}
+        )}
 
         {/* ── Date d'expiration ── */}
         {!(isOpenableCategory(category) && isOpened) && (
-          unknownExpiration && recognized ? (
+          unknownExpiration ? (
             <div className="form-group">
               <label htmlFor="purchaseDate">{t('form.whenDidYouBuy')}</label>
               <div className="purchase-date-row">
