@@ -9,6 +9,8 @@
   z-index: 400;
   padding: 1rem;
   animation: fade-in 0.2s ease;
+  touch-action: none;
+  overscroll-behavior: none;
 }
 
 .pantry-onboarding-modal {
@@ -20,6 +22,8 @@
   max-width: 500px;
   max-height: 88dvh;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
