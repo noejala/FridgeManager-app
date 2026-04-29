@@ -148,15 +148,12 @@
   outline: none;
 }
 
-.pantry-chip:focus:not(.active) {
+.pantry-chip:not(.active):focus,
+.pantry-chip:not(.active):focus-visible {
+  outline: none;
   border-color: var(--border);
   color: var(--text-secondary);
   background: var(--bg-surface);
-}
-
-.pantry-chip:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
 }
 
 .pantry-chip:hover {
