@@ -80,6 +80,11 @@ function App() {
   }, []);
 
   useEffect(() => {
+    document.documentElement.style.overflow = editingProduct ? 'hidden' : '';
+    return () => { document.documentElement.style.overflow = ''; };
+  }, [editingProduct]);
+
+  useEffect(() => {
     document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
     localStorage.setItem('theme', darkMode ? 'dark' : 'light');
     document.querySelectorAll('meta[name="theme-color"]').forEach(el => el.remove());
@@ -381,22 +386,25 @@ function App() {
           onVoiceStart={() => setIsVoiceMode(true)}
         />
       </div>
+      {editingProduct && (
+        <div className="edit-modal-backdrop" onClick={handleCancelEdit}>
+          <div className="edit-modal" onClick={(e) => e.stopPropagation()}>
+            <EditProductForm
+              product={editingProduct}
+              onSave={handleUpdateProduct}
+              onCancel={handleCancelEdit}
+            />
+          </div>
+        </div>
+      )}
       <div hidden={activeTab !== 'fridge'}>
-        {editingProduct ? (
-          <EditProductForm
-            product={editingProduct}
-            onSave={handleUpdateProduct}
-            onCancel={handleCancelEdit}
-          />
-        ) : (
-          <AddProductForm
-            onAdd={handleAddProduct}
-            isFormOpen={false}
-            onFormOpenChange={(open) => open && setActiveTab('add-product')}
-            onScanBarcode={handleFridgeBarcode}
-            onVoiceStart={() => setIsVoiceMode(true)}
-          />
-        )}
+        <AddProductForm
+          onAdd={handleAddProduct}
+          isFormOpen={false}
+          onFormOpenChange={(open) => open && setActiveTab('add-product')}
+          onScanBarcode={handleFridgeBarcode}
+          onVoiceStart={() => setIsVoiceMode(true)}
+        />
         <ProductList
           products={products}
           consumedProducts={consumedProducts}
