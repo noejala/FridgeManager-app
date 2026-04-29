@@ -15,9 +15,7 @@ const GROUP_ORDER: Group[] = ['starches', 'fats', 'condiments', 'canned', 'spice
 export const PantryOnboarding = ({ onConfirm, onSkip }: Props) => {
   const { t } = useTranslation();
 
-  const [selected, setSelected] = useState<Set<string>>(
-    new Set(['salt', 'pepper', 'olive oil', 'butter'])
-  );
+  const [selected, setSelected] = useState<Set<string>>(new Set());
   const [customInput, setCustomInput] = useState('');
   const [customItems, setCustomItems] = useState<string[]>([]);
 
