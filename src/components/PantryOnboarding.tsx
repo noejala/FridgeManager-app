@@ -26,7 +26,8 @@ export const PantryOnboarding = ({ onConfirm, onSkip }: Props) => {
     return () => { document.documentElement.style.overflow = ''; };
   }, []);
 
-  const toggle = (en: string) => {
+  const toggle = (en: string, e: React.MouseEvent<HTMLButtonElement>) => {
+    e.currentTarget.blur();
     setSelected(prev => {
       const next = new Set(prev);
       if (next.has(en)) next.delete(en);
@@ -95,7 +96,7 @@ export const PantryOnboarding = ({ onConfirm, onSkip }: Props) => {
                     key={item.key}
                     type="button"
                     className={`pantry-chip${selected.has(item.en) ? ' active' : ''}`}
-                    onClick={() => toggle(item.en)}
+                    onClick={(e) => toggle(item.en, e)}
                   >
                     {t(`pantryOnboarding.items.${item.key}`)}
                   </button>
