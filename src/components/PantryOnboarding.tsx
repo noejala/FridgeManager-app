@@ -71,16 +71,9 @@ export const PantryOnboarding = ({ onConfirm, onSkip }: Props) => {
   return (
     <div className="pantry-onboarding-overlay">
       <div className="pantry-onboarding-modal">
-        <div className="pantry-onboarding-header">
-          <div>
-            <h2 className="pantry-onboarding-title">{t('pantryOnboarding.title')}</h2>
-            <p className="pantry-onboarding-subtitle">{t('pantryOnboarding.subtitle')}</p>
-          </div>
-          <button className="pantry-onboarding-close" type="button" onClick={onSkip} aria-label="Fermer">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-            </svg>
-          </button>
+        <div>
+          <h2 className="pantry-onboarding-title">{t('pantryOnboarding.title')}</h2>
+          <p className="pantry-onboarding-subtitle">{t('pantryOnboarding.subtitle')}</p>
         </div>
 
         <div className="pantry-onboarding-select-all-row">
