@@ -31,10 +31,10 @@
   background: var(--bg-surface);
   border: 1px solid var(--border-hover);
   color: var(--text-secondary);
-  width: 36px;
-  height: 36px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  font-size: 1rem;
+  font-size: 0.75rem;
   cursor: pointer;
   display: flex;
   align-items: center;
