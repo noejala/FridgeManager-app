@@ -1,23 +1,24 @@
 .pantry-onboarding-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(3px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 200;
+  z-index: 400;
   padding: 1rem;
   animation: fade-in 0.2s ease;
 }
 
 .pantry-onboarding-modal {
   background: var(--bg-card);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-hover);
   border-radius: var(--radius);
-  padding: 2rem 1.75rem 1.5rem;
+  padding: 1.75rem 1.75rem 1.5rem;
   width: 100%;
-  max-width: 480px;
-  max-height: 90dvh;
+  max-width: 500px;
+  max-height: 88dvh;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -25,23 +26,85 @@
   animation: modal-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+/* ── Header ── */
+.pantry-onboarding-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
 .pantry-onboarding-title {
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: 400;
   font-style: italic;
   color: var(--text);
-  margin: 0;
+  margin: 0 0 0.3rem;
   line-height: 1.2;
 }
 
 .pantry-onboarding-subtitle {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--text-secondary);
   margin: 0;
   line-height: 1.5;
 }
 
+.pantry-onboarding-close {
+  flex-shrink: 0;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: color 0.15s, border-color 0.15s;
+  margin-top: 0.1rem;
+}
+
+.pantry-onboarding-close:hover {
+  color: var(--text);
+  border-color: var(--border-hover);
+}
+
+/* ── Select all row ── */
+.pantry-onboarding-select-all-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  background: var(--bg-surface);
+  border-radius: calc(var(--radius) - 4px);
+}
+
+.pantry-onboarding-count {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.pantry-onboarding-toggle-all {
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--accent);
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.15s;
+}
+
+.pantry-onboarding-toggle-all:hover {
+  opacity: 0.75;
+}
+
+/* ── Groups ── */
 .pantry-onboarding-groups {
   display: flex;
   flex-direction: column;
@@ -92,6 +155,7 @@
   font-weight: 500;
 }
 
+/* ── Custom tags ── */
 .pantry-onboarding-custom-tags {
   display: flex;
   flex-wrap: wrap;
@@ -127,6 +191,7 @@
   opacity: 1;
 }
 
+/* ── Add row ── */
 .pantry-onboarding-add-row {
   display: flex;
   gap: 0.5rem;
@@ -175,12 +240,14 @@
   cursor: default;
 }
 
+/* ── Actions ── */
 .pantry-onboarding-actions {
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 0.75rem;
   padding-top: 0.25rem;
+  border-top: 1px solid var(--border);
 }
 
 .pantry-onboarding-skip {
@@ -213,4 +280,20 @@
 
 .pantry-onboarding-confirm:hover {
   opacity: 0.88;
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  .pantry-onboarding-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .pantry-onboarding-modal {
+    max-width: 100%;
+    max-height: 92dvh;
+    border-radius: var(--radius) var(--radius) 0 0;
+    border-bottom: none;
+    padding: 1.5rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom));
+  }
 }
