@@ -141,10 +141,17 @@
   border-radius: 20px;
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s, color 0.15s;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .pantry-chip:focus {
   outline: none;
+}
+
+.pantry-chip:focus:not(.active) {
+  border-color: var(--border);
+  color: var(--text-secondary);
+  background: var(--bg-surface);
 }
 
 .pantry-chip:focus-visible {
