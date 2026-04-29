@@ -156,16 +156,20 @@
   background: var(--bg-surface);
 }
 
-.pantry-chip:hover {
-  border-color: var(--accent);
-  color: var(--accent);
+.pantry-chip:not(.active):hover {
+  border-color: var(--border-hover);
+  color: var(--text);
 }
 
 .pantry-chip.active {
-  background: var(--accent-bg);
+  background: var(--accent);
   border-color: var(--accent);
-  color: var(--accent);
+  color: #fff;
   font-weight: 500;
+}
+
+.pantry-chip.active:hover {
+  opacity: 0.88;
 }
 
 /* ── Custom tags ── */
