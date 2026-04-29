@@ -143,6 +143,15 @@
   transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 
+.pantry-chip:focus {
+  outline: none;
+}
+
+.pantry-chip:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .pantry-chip:hover {
   border-color: var(--accent);
   color: var(--accent);
