@@ -340,9 +340,12 @@ function App() {
     if (!user) return;
     setPantryStaples(staples);
     const profile = await fetchUserProfile();
-    if (profile) {
-      await saveUserProfile({ ...profile, pantryStaples: staples });
-    }
+    await saveUserProfile({
+      country: null, gender: null, age: null,
+      dietaryPreferences: [], dislikedIngredients: [], customPreferences: '',
+      ...profile,
+      pantryStaples: staples,
+    });
     dismissPantryOnboarding(user.id);
   };
 
