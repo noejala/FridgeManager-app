@@ -31,9 +31,10 @@ interface Props {
   onDislikedIngredientsChange?: (items: string[]) => void;
   onCustomPreferencesChange?: (value: string) => void;
   onPantryStaplesChange?: (items: string[]) => void;
+  pantryStaples?: string[];
 }
 
-export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPreferencesChange, onDislikedIngredientsChange, onCustomPreferencesChange, onPantryStaplesChange }: Props) => {
+export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPreferencesChange, onDislikedIngredientsChange, onCustomPreferencesChange, onPantryStaplesChange, pantryStaples: externalPantryStaples }: Props) => {
   const { t, i18n } = useTranslation();
 
   const [activeTab, setActiveTab] = useState<SettingsTab>('profile');
@@ -72,6 +73,14 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
       setLoading(false);
     });
   }, []);
+
+  useEffect(() => {
+    if (!loading && externalPantryStaples && !pantryDirty) {
+      setPantryDraft(externalPantryStaples);
+      setProfile(prev => ({ ...prev, pantryStaples: externalPantryStaples }));
+      setDraft(prev => ({ ...prev, pantryStaples: externalPantryStaples }));
+    }
+  }, [externalPantryStaples]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSave = async () => {
     setSaving(true);

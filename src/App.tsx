@@ -453,6 +453,7 @@ function App() {
           onDislikedIngredientsChange={setDislikedIngredients}
           onCustomPreferencesChange={setCustomPreferences}
           onPantryStaplesChange={setPantryStaples}
+          pantryStaples={pantryStaples}
         />
       </div>
     </>
