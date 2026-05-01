@@ -324,6 +324,7 @@ interface LocationPoint {
 
 const LOCATION_CENTROIDS: LocationPoint[] = [
   { lat: 48.5,  lng:  2.5,  country: 'france',        region: 'france_north' },
+  { lat: 45.5,  lng: -0.5,  country: 'france',        region: 'france_south' },
   { lat: 43.5,  lng:  5.5,  country: 'france',        region: 'france_south' },
   { lat: 16.25, lng: -61.5, country: 'france_domtom', region: 'guadeloupe'   },
   { lat: 14.65, lng: -61.0, country: 'france_domtom', region: 'martinique'   },

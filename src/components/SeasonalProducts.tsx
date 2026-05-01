@@ -25,6 +25,44 @@ function ProductIllustration({ product, size }: { product: string; size: number 
   );
 }
 
+function LocationDropdown<T extends string>({
+  value, options, onChange, grow = false,
+}: {
+  value: T;
+  options: { id: T; label: string; flag?: string }[];
+  onChange: (v: T) => void;
+  grow?: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const current = options.find(o => o.id === value);
+  return (
+    <div className={`loc-dropdown${grow ? ' loc-dropdown--grow' : ''}`}>
+      <button className="loc-dropdown-btn" onClick={() => setOpen(o => !o)}>
+        {current?.flag && <span>{current.flag}</span>}
+        <span className="loc-dropdown-label">{current?.label}</span>
+        <span className="dropdown-chevron">▾</span>
+      </button>
+      {open && (
+        <>
+          <div className="dropdown-backdrop" onClick={() => setOpen(false)} />
+          <div className="loc-dropdown-menu">
+            {options.map(o => (
+              <button
+                key={o.id}
+                className={`loc-dropdown-item${value === o.id ? ' active' : ''}`}
+                onClick={() => { onChange(o.id); setOpen(false); }}
+              >
+                {o.flag && <span>{o.flag}</span>}
+                <span>{o.label}</span>
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 function getInitialSelection(): { country: CountryId; region: RegionId } {
   const storedCountry = localStorage.getItem('seasonal-country') as CountryId | null;
   const storedRegion = localStorage.getItem('seasonal-region') as string | null;
@@ -170,41 +208,30 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
       </div>
 
       <div className="location-selector">
-        <div className="location-country-row">
-          <button
-            className={`location-detect-btn${detecting ? ' location-detect-btn--loading' : ''}`}
-            onClick={handleDetectLocation}
-            disabled={detecting || !navigator.geolocation}
-            aria-label={t('seasonal.detectLocation')}
-            title={t('seasonal.detectLocation')}
-          >
-            {detecting ? '⋯' : '📍'}
-          </button>
-          <select
-            className="country-select"
-            value={selectedCountry}
-            onChange={(e) => handleCountryChange(e.target.value as CountryId)}
-          >
-            {COUNTRIES.map((country) => (
-              <option key={country.id} value={country.id}>
-                {country.flag} {country.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
+        <button
+          className={`location-detect-btn${detecting ? ' location-detect-btn--loading' : ''}`}
+          onClick={handleDetectLocation}
+          disabled={detecting || !navigator.geolocation}
+          aria-label={t('seasonal.detectLocation')}
+          title={t('seasonal.detectLocation')}
+        >
+          {detecting ? '⋯' : '📍'}
+        </button>
+        <LocationDropdown
+          grow
+          value={selectedCountry}
+          options={COUNTRIES.map(c => ({ id: c.id, label: c.name, flag: c.flag }))}
+          onChange={handleCountryChange}
+        />
         {countryConfig.hasRegions && (
-          <div className="location-region-row">
-            {countryConfig.regions.map((region) => (
-              <button
-                key={region.id}
-                className={`location-region-btn${selectedRegion === region.id ? ' location-region-btn--active' : ''}`}
-                onClick={() => handleRegionChange(region.id as RegionId)}
-              >
-                {region.name}
-              </button>
-            ))}
-          </div>
+          <>
+            <span className="location-separator" />
+            <LocationDropdown
+              value={selectedRegion}
+              options={countryConfig.regions.map(r => ({ id: r.id as RegionId, label: r.name, flag: r.flag }))}
+              onChange={handleRegionChange}
+            />
+          </>
         )}
       </div>
 
