@@ -170,16 +170,6 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
       </div>
 
       <div className="country-selector">
-        {COUNTRIES.map((country) => (
-          <button
-            key={country.id}
-            className={`region-btn${selectedCountry === country.id ? ' region-btn-active' : ''}`}
-            onClick={() => handleCountryChange(country.id)}
-          >
-            <span>{country.flag}</span>
-            <span>{country.name}</span>
-          </button>
-        ))}
         <button
           className={`region-btn detect-btn${detecting ? ' detect-btn-loading' : ''}`}
           onClick={handleDetectLocation}
@@ -189,6 +179,17 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
         >
           {detecting ? '⋯' : '📍'}
         </button>
+        <select
+          className="country-select"
+          value={selectedCountry}
+          onChange={(e) => handleCountryChange(e.target.value as CountryId)}
+        >
+          {COUNTRIES.map((country) => (
+            <option key={country.id} value={country.id}>
+              {country.flag} {country.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       {countryConfig.hasRegions && (
