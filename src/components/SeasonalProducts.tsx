@@ -201,8 +201,7 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
                 className={`location-region-btn${selectedRegion === region.id ? ' location-region-btn--active' : ''}`}
                 onClick={() => handleRegionChange(region.id as RegionId)}
               >
-                <span>{region.flag}</span>
-                <span>{region.name}</span>
+                {region.name}
               </button>
             ))}
           </div>

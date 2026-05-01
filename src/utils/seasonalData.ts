@@ -15,7 +15,7 @@ export type CountryConfig =
 
 export const COUNTRIES: Array<{ id: CountryId; name: string; flag: string }> = [
   { id: 'france',        name: 'France',       flag: '🇫🇷' },
-  { id: 'france_domtom', name: 'DOM-TOM',       flag: '🏝️' },
+  { id: 'france_domtom', name: 'France - DOM-TOM', flag: '🏝️' },
   { id: 'belgium',       name: 'Belgique',      flag: '🇧🇪' },
   { id: 'denmark',       name: 'Danemark',      flag: '🇩🇰' },
   { id: 'germany',       name: 'Allemagne',     flag: '🇩🇪' },
