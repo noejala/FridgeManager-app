@@ -1,6 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { REGIONS, seasonalDataByRegion, productEmojiMap, productIllustrationMap, FRUITS, getNearestRegion, type RegionId } from '../utils/seasonalData';
+import {
+  COUNTRIES, seasonalData, productEmojiMap, productIllustrationMap, FRUITS,
+  getNearestLocation,
+  type CountryId, type RegionId,
+} from '../utils/seasonalData';
 import { fetchProductFunFacts } from '../utils/mistralApi';
 import './SeasonalProducts.css';
 
@@ -21,17 +25,47 @@ function ProductIllustration({ product, size }: { product: string; size: number 
   );
 }
 
+function getInitialSelection(): { country: CountryId; region: RegionId } {
+  const storedCountry = localStorage.getItem('seasonal-country') as CountryId | null;
+  const storedRegion = localStorage.getItem('seasonal-region') as string | null;
+
+  // Migration from old single-key format
+  if (!storedCountry) {
+    if (storedRegion === 'france_north' || storedRegion === 'france_south') {
+      localStorage.setItem('seasonal-country', 'france');
+      return { country: 'france', region: storedRegion as RegionId };
+    }
+    if (storedRegion === 'dom_tom') {
+      localStorage.setItem('seasonal-country', 'france_domtom');
+      localStorage.setItem('seasonal-region', 'martinique');
+      return { country: 'france_domtom', region: 'martinique' };
+    }
+    return { country: 'france', region: 'france_north' };
+  }
+
+  const config = seasonalData[storedCountry];
+  if (!config) return { country: 'france', region: 'france_north' };
+
+  if (config.hasRegions) {
+    const validRegions = config.regions.map(r => r.id as RegionId);
+    const region = validRegions.includes(storedRegion as RegionId)
+      ? (storedRegion as RegionId)
+      : config.regions[0].id as RegionId;
+    return { country: storedCountry, region };
+  }
+
+  return { country: storedCountry, region: 'france_north' };
+}
+
 export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
   const { t, i18n } = useTranslation();
   const now = new Date();
   const currentMonth = now.getMonth() + 1;
   const currentYear = now.getFullYear();
 
-  const [selectedRegion, setSelectedRegion] = useState<RegionId>(() => {
-    const stored = localStorage.getItem('seasonal-region') as RegionId;
-    const valid: RegionId[] = ['france_north', 'france_south', 'dom_tom'];
-    return valid.includes(stored) ? stored : 'france_north';
-  });
+  const initial = useRef(getInitialSelection());
+  const [selectedCountry, setSelectedCountry] = useState<CountryId>(initial.current.country);
+  const [selectedRegion, setSelectedRegion] = useState<RegionId>(initial.current.region);
   const [selectedMonth, setSelectedMonth] = useState(currentMonth);
   const [selectedYear, setSelectedYear] = useState(currentYear);
   const [detecting, setDetecting] = useState(false);
@@ -42,15 +76,29 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
   const aiEnabled = import.meta.env.VITE_AI_ENABLED === 'true';
 
   useEffect(() => {
-    localStorage.setItem('seasonal-region', selectedRegion);
-  }, [selectedRegion]);
-
-  useEffect(() => {
     if (isActive) {
       setSelectedMonth(currentMonth);
       setSelectedYear(currentYear);
     }
   }, [isActive]);
+
+  const handleCountryChange = (countryId: CountryId) => {
+    setSelectedCountry(countryId);
+    localStorage.setItem('seasonal-country', countryId);
+    const config = seasonalData[countryId];
+    if (config.hasRegions) {
+      const firstRegion = config.regions[0].id as RegionId;
+      const validRegions = config.regions.map(r => r.id as RegionId);
+      const next = validRegions.includes(selectedRegion) ? selectedRegion : firstRegion;
+      setSelectedRegion(next);
+      localStorage.setItem('seasonal-region', next);
+    }
+  };
+
+  const handleRegionChange = (regionId: RegionId) => {
+    setSelectedRegion(regionId);
+    localStorage.setItem('seasonal-region', regionId);
+  };
 
   const prevMonth = () => {
     if (selectedMonth === 1) { setSelectedMonth(12); setSelectedYear(y => y - 1); }
@@ -62,12 +110,18 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
     else setSelectedMonth(m => m + 1);
   };
 
-  const handleDetectRegion = () => {
+  const handleDetectLocation = () => {
     if (!navigator.geolocation) return;
     setDetecting(true);
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
-        setSelectedRegion(getNearestRegion(coords.latitude, coords.longitude));
+        const { country, region } = getNearestLocation(coords.latitude, coords.longitude);
+        setSelectedCountry(country);
+        localStorage.setItem('seasonal-country', country);
+        if (region) {
+          setSelectedRegion(region);
+          localStorage.setItem('seasonal-region', region);
+        }
         setDetecting(false);
       },
       () => setDetecting(false),
@@ -85,11 +139,15 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
     setLoadingFunFacts(false);
   };
 
-  const entry = seasonalDataByRegion[selectedRegion][selectedMonth];
-  const products = entry.products;
+  const countryConfig = seasonalData[selectedCountry];
+  const entry = countryConfig.hasRegions
+    ? countryConfig.data[selectedRegion]?.[selectedMonth]
+    : (countryConfig.data as Record<number, { season: string; products: string[] }>)[selectedMonth];
+
+  const products = entry?.products ?? [];
   const fruits = products.filter(p => FRUITS.has(p));
   const vegetables = products.filter(p => !FRUITS.has(p));
-  const seasonName = entry.season.toLowerCase();
+  const seasonName = (entry?.season ?? 'winter').toLowerCase();
 
   const renderProductCard = (product: string, index: number) => (
     <div
@@ -111,27 +169,42 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
         <h2>{t('seasonal.title')}</h2>
       </div>
 
-      <div className="region-selector">
-        {REGIONS.map((region) => (
+      <div className="country-selector">
+        {COUNTRIES.map((country) => (
           <button
-            key={region.id}
-            className={`region-btn${selectedRegion === region.id ? ' region-btn-active' : ''}`}
-            onClick={() => setSelectedRegion(region.id)}
+            key={country.id}
+            className={`region-btn${selectedCountry === country.id ? ' region-btn-active' : ''}`}
+            onClick={() => handleCountryChange(country.id)}
           >
-            <span>{region.flag}</span>
-            <span>{region.name}</span>
+            <span>{country.flag}</span>
+            <span>{country.name}</span>
           </button>
         ))}
         <button
           className={`region-btn detect-btn${detecting ? ' detect-btn-loading' : ''}`}
-          onClick={handleDetectRegion}
+          onClick={handleDetectLocation}
           disabled={detecting || !navigator.geolocation}
-          aria-label={t('seasonal.detectRegion')}
-          title={t('seasonal.detectRegion')}
+          aria-label={t('seasonal.detectLocation')}
+          title={t('seasonal.detectLocation')}
         >
           {detecting ? '⋯' : '📍'}
         </button>
       </div>
+
+      {countryConfig.hasRegions && (
+        <div className="region-selector">
+          {countryConfig.regions.map((region) => (
+            <button
+              key={region.id}
+              className={`region-btn region-btn-sub${selectedRegion === region.id ? ' region-btn-active' : ''}`}
+              onClick={() => handleRegionChange(region.id as RegionId)}
+            >
+              <span>{region.flag}</span>
+              <span>{region.name}</span>
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="month-nav">
         <button className="month-nav-btn" onClick={prevMonth} aria-label="prev">‹</button>
@@ -172,8 +245,8 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
             <button className="modal-close" onClick={() => setFunFactProduct(null)}>✕</button>
             <div className="funfact-header">
               <div className="funfact-emoji">
-              <ProductIllustration product={funFactProduct} size={60} />
-            </div>
+                <ProductIllustration product={funFactProduct} size={60} />
+              </div>
               <h2>{t(`seasonal.products.${funFactProduct}`, { defaultValue: funFactProduct })}</h2>
             </div>
             <p className="funfact-label">{t('seasonal.funFactLabel')}</p>

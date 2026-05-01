@@ -415,7 +415,7 @@
     "fruits": "Fruits",
     "funFactLabel": "Le saviez-vous ?",
     "funFactError": "Impossible de charger les informations.",
-    "detectRegion": "Détecter ma région",
+    "detectLocation": "Détecter ma position",
     "season": {
       "winter": "Hiver",
       "spring": "Printemps",
