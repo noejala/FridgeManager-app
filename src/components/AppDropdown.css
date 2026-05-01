@@ -1,0 +1,103 @@
+.app-dropdown {
+  position: relative;
+  width: 100%;
+}
+
+.app-dropdown-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.7rem 0.875rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.app-dropdown-btn--open {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+  outline: none;
+}
+
+.app-dropdown-btn:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
+.app-dropdown-value {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-dropdown-value--placeholder {
+  color: var(--text-muted);
+}
+
+.app-dropdown-chevron {
+  flex-shrink: 0;
+  margin-left: 0.5rem;
+  color: var(--text-muted);
+  transition: transform 0.15s;
+}
+
+.app-dropdown-btn--open .app-dropdown-chevron {
+  transform: rotate(180deg);
+}
+
+.app-dropdown-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 499;
+}
+
+.app-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-hover);
+  border-radius: 10px;
+  padding: 0.25rem;
+  z-index: 100;
+  max-height: 220px;
+  overflow-y: auto;
+  box-shadow: var(--shadow);
+  animation: fade-in 0.15s ease;
+}
+
+.app-dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 0.45rem 0.75rem;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s, color 0.12s;
+}
+
+.app-dropdown-item:hover {
+  background: var(--bg-card);
+  color: var(--text);
+}
+
+.app-dropdown-item.active {
+  color: var(--accent);
+  font-weight: 500;
+}
