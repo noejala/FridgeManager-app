@@ -4,6 +4,8 @@ import { Product, ProductCategory } from '../types/Product';
 import { guessCategory } from '../utils/categoryMapping';
 import { getDefaultExpirationDateType } from '../utils/expirationDateType';
 import { estimateExpirationDate, isProductRecognized } from '../utils/shelfLife';
+import { AppDropdown } from './AppDropdown';
+import { DatePicker } from './DatePicker';
 import './AddProductForm.css';
 
 interface EditProductFormProps {
@@ -103,15 +105,12 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
       <div className="form-row">
         <div className="form-group">
           <label htmlFor="edit-category">{t('form.category')}</label>
-          <select
+          <AppDropdown
             id="edit-category"
             value={category}
-            onChange={(e) => setCategory(e.target.value as ProductCategory)}
-          >
-            {CATEGORIES.map(cat => (
-              <option key={cat} value={cat}>{t(`categories.${cat}`)}</option>
-            ))}
-          </select>
+            options={CATEGORIES.map(cat => ({ value: cat, label: t(`categories.${cat}`) }))}
+            onChange={(v) => setCategory(v as ProductCategory)}
+          />
         </div>
 
         <div className="form-group">
@@ -135,18 +134,19 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
 
         <div className="form-group">
           <label htmlFor="edit-unit">{t('form.unit')}</label>
-          <select
+          <AppDropdown
             id="edit-unit"
             value={unit}
-            onChange={(e) => setUnit(e.target.value)}
-          >
-            <option value="unit">unit</option>
-            <option value="kg">kg</option>
-            <option value="g">g</option>
-            <option value="L">L</option>
-            <option value="mL">mL</option>
-            <option value="pack">pack</option>
-          </select>
+            options={[
+              { value: 'unit', label: 'unit' },
+              { value: 'kg', label: 'kg' },
+              { value: 'g', label: 'g' },
+              { value: 'L', label: 'L' },
+              { value: 'mL', label: 'mL' },
+              { value: 'pack', label: 'pack' },
+            ]}
+            onChange={setUnit}
+          />
         </div>
       </div>
 
@@ -187,11 +187,10 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
         <div className="form-group">
           <label htmlFor="edit-purchaseDate">{t('form.whenDidYouBuy')}</label>
           <div className="purchase-date-row">
-            <input
+            <DatePicker
               id="edit-purchaseDate"
-              type="date"
               value={purchaseDate}
-              onChange={(e) => setPurchaseDate(e.target.value)}
+              onChange={setPurchaseDate}
               max={minDate}
             />
             <button
@@ -207,25 +206,21 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
         <div className="form-group">
           <p className="unknown-product-warning">{t('form.unknownProductWarning')}</p>
           <label htmlFor="edit-expirationDate">{t('form.expirationDate')}</label>
-          <input
+          <DatePicker
             id="edit-expirationDate"
-            type="date"
             value={expirationDate}
-            onChange={(e) => setExpirationDate(e.target.value)}
+            onChange={setExpirationDate}
             min={minDate}
-            required
           />
         </div>
       ) : (
         <div className="form-group">
           <label htmlFor="edit-expirationDate">{t('form.expirationDate')}</label>
-          <input
+          <DatePicker
             id="edit-expirationDate"
-            type="date"
             value={expirationDate}
-            onChange={(e) => setExpirationDate(e.target.value)}
+            onChange={setExpirationDate}
             min={minDate}
-            required
           />
         </div>
       )}

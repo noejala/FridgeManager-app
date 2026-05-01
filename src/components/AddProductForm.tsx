@@ -6,6 +6,8 @@ import { getDefaultExpirationDateType } from '../utils/expirationDateType';
 import { estimateExpirationDate, estimateExpirationFromOpenDate, isProductRecognized } from '../utils/shelfLife';
 import { lookupBarcode, FoodFactsResult } from '../utils/foodFactsApi';
 import { BarcodeScanner } from './BarcodeScanner';
+import { AppDropdown } from './AppDropdown';
+import { DatePicker } from './DatePicker';
 import './AddProductForm.css';
 
 interface AddProductFormProps {
@@ -88,29 +90,6 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
   const [purchaseDate, setPurchaseDate] = useState('');
   const [isOpened, setIsOpened] = useState(false);
   const [sauceOpenedDate, setSauceOpenedDate] = useState(new Date().toISOString().split('T')[0]);
-  const [expDay, setExpDay] = useState('');
-  const [expMonth, setExpMonth] = useState('');
-  const [expYear, setExpYear] = useState('');
-  const currentYear = new Date().getFullYear();
-  const YEARS = Array.from({ length: 6 }, (_, i) => currentYear + i);
-  const daysInSelectedMonth = expYear && expMonth
-    ? new Date(parseInt(expYear), parseInt(expMonth), 0).getDate()
-    : 31;
-
-  const handleDatePart = (part: 'day' | 'month' | 'year', val: string) => {
-    const newDay   = part === 'day'   ? val : expDay;
-    const newMonth = part === 'month' ? val : expMonth;
-    const newYear  = part === 'year'  ? val : expYear;
-    if (part === 'day')   setExpDay(val);
-    if (part === 'month') setExpMonth(val);
-    if (part === 'year')  setExpYear(val);
-    if (newDay && newMonth && newYear) {
-      setExpirationDate(`${newYear}-${newMonth.padStart(2, '0')}-${newDay.padStart(2, '0')}`);
-      setDateError(false);
-    } else {
-      setExpirationDate('');
-    }
-  };
 
   useEffect(() => {
     if (!prefill) return;
@@ -196,9 +175,6 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
     setPurchaseDate('');
     setIsOpened(false);
     setSauceOpenedDate(new Date().toISOString().split('T')[0]);
-    setExpDay('');
-    setExpMonth('');
-    setExpYear('');
     setShowDetails(false);
     onFormOpenChange(false);
   };
@@ -397,10 +373,9 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
             </label>
             {isOpened && (
               <div className="purchase-date-row" style={{ marginTop: '0.5rem' }}>
-                <input
-                  type="date"
+                <DatePicker
                   value={sauceOpenedDate}
-                  onChange={(e) => setSauceOpenedDate(e.target.value)}
+                  onChange={setSauceOpenedDate}
                   max={minDate}
                 />
                 <button
@@ -439,11 +414,10 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
             <div className="form-group">
               <label htmlFor="purchaseDate">{t('form.whenDidYouBuy')}</label>
               <div className="purchase-date-row">
-                <input
+                <DatePicker
                   id="purchaseDate"
-                  type="date"
                   value={purchaseDate}
-                  onChange={(e) => setPurchaseDate(e.target.value)}
+                  onChange={setPurchaseDate}
                   max={minDate}
                 />
                 <button
@@ -458,43 +432,11 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
           ) : (
             <div className="form-group">
               <label>{t('form.expirationDate')}</label>
-              <input
-                className="date-input-desktop"
-                type="date"
+              <DatePicker
                 value={expirationDate}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setExpirationDate(val);
-                  if (val) {
-                    const [y, m, d] = val.split('-');
-                    setExpYear(y); setExpMonth(m); setExpDay(d);
-                    setDateError(false);
-                  } else {
-                    setExpYear(''); setExpMonth(''); setExpDay('');
-                  }
-                }}
+                onChange={(val) => { setExpirationDate(val); if (val) setDateError(false); }}
                 min={minDate}
               />
-              <div className="date-selects">
-                <select value={expDay} onChange={(e) => handleDatePart('day', e.target.value)}>
-                  <option value="">Jour</option>
-                  {Array.from({ length: daysInSelectedMonth }, (_, i) => i + 1).map(d => (
-                    <option key={d} value={String(d)}>{d}</option>
-                  ))}
-                </select>
-                <select value={expMonth} onChange={(e) => handleDatePart('month', e.target.value)}>
-                  <option value="">Mois</option>
-                  {Array.from({ length: 12 }, (_, i) => (
-                    <option key={i} value={String(i + 1)}>{String(i + 1).padStart(2, '0')}</option>
-                  ))}
-                </select>
-                <select value={expYear} onChange={(e) => handleDatePart('year', e.target.value)}>
-                  <option value="">Année</option>
-                  {YEARS.map(y => (
-                    <option key={y} value={String(y)}>{y}</option>
-                  ))}
-                </select>
-              </div>
             </div>
           )
         )}
@@ -523,19 +465,16 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
           <div className="form-details">
             <div className="form-group">
               <label htmlFor="category">{t('form.category')}</label>
-              <select
+              <AppDropdown
                 id="category"
                 value={category}
-                onChange={(e) => {
-                  const cat = e.target.value as ProductCategory;
+                options={CATEGORIES.map(cat => ({ value: cat, label: t(`categories.${cat}`) }))}
+                onChange={(v) => {
+                  const cat = v as ProductCategory;
                   setCategory(cat);
                   setExpirationDateType(getDefaultExpirationDateType(cat));
                 }}
-              >
-                {CATEGORIES.map(cat => (
-                  <option key={cat} value={cat}>{t(`categories.${cat}`)}</option>
-                ))}
-              </select>
+              />
             </div>
 
             <div className="form-row">
@@ -560,18 +499,19 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
 
               <div className="form-group">
                 <label htmlFor="unit">{t('form.unit')}</label>
-                <select
+                <AppDropdown
                   id="unit"
                   value={unit}
-                  onChange={(e) => setUnit(e.target.value)}
-                >
-                  <option value="unit">unit</option>
-                  <option value="kg">kg</option>
-                  <option value="g">g</option>
-                  <option value="L">L</option>
-                  <option value="mL">mL</option>
-                  <option value="pack">pack</option>
-                </select>
+                  options={[
+                    { value: 'unit', label: 'unit' },
+                    { value: 'kg', label: 'kg' },
+                    { value: 'g', label: 'g' },
+                    { value: 'L', label: 'L' },
+                    { value: 'mL', label: 'mL' },
+                    { value: 'pack', label: 'pack' },
+                  ]}
+                  onChange={setUnit}
+                />
               </div>
             </div>
 
@@ -608,7 +548,6 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
             setExpirationDateType('ddm');
             setPurchaseDate(''); setIsOpened(false);
             setSauceOpenedDate(new Date().toISOString().split('T')[0]);
-            setExpDay(''); setExpMonth(''); setExpYear('');
             setLookupError(null);
             setShowDetails(false);
             onFormOpenChange(false);

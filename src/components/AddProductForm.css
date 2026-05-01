@@ -156,8 +156,7 @@
   text-transform: uppercase;
 }
 
-.form-group input,
-.form-group select {
+.form-group input {
   width: 100%;
   padding: 0.7rem 0.875rem;
   background: var(--bg-input);
@@ -170,8 +169,7 @@
   box-sizing: border-box;
 }
 
-.form-group input:focus,
-.form-group select:focus {
+.form-group input:focus {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-bg);
@@ -195,10 +193,6 @@
   transition: background-color 5000s ease-in-out 0s;
 }
 
-.form-group select option {
-  background: var(--bg-surface);
-  color: var(--text);
-}
 
 .form-row {
   display: grid;
@@ -562,25 +556,6 @@
 }
 
 
-.date-input-desktop {
-  display: block;
-}
-
-.date-selects {
-  display: none;
-  grid-template-columns: 1fr 2fr 1.5fr;
-  gap: 0.5rem;
-}
-
-@media (max-width: 768px) {
-  .date-input-desktop {
-    display: none;
-  }
-  .date-selects {
-    display: grid;
-  }
-}
-
 
 /* ── Mobile full-screen form ───────────────────────────── */
 @media (max-width: 768px) {
@@ -614,8 +589,7 @@
     margin-bottom: 0.3rem;
   }
 
-  .form-group input:not([type="checkbox"]),
-  .form-group select {
+  .form-group input:not([type="checkbox"]) {
     min-height: 48px;
     padding: 0.75rem 1rem;
     font-size: 1rem;
@@ -627,21 +601,6 @@
     gap: 0.625rem;
   }
 
-.date-selects {
-    gap: 0.5rem;
-    grid-template-columns: 1.5fr 2fr 1.5fr;
-  }
-
-  .date-selects select {
-    min-height: 48px;
-    padding: 0.75rem 0.5rem;
-    font-size: 1rem;
-  }
-
-  .form-group:has(.date-selects) {
-    border-top: 1px solid var(--border);
-    padding-top: 0.75rem;
-  }
 
   .form-actions {
     margin-top: auto;
