@@ -169,43 +169,45 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
         <h2>{t('seasonal.title')}</h2>
       </div>
 
-      <div className="country-selector">
-        <button
-          className={`region-btn detect-btn${detecting ? ' detect-btn-loading' : ''}`}
-          onClick={handleDetectLocation}
-          disabled={detecting || !navigator.geolocation}
-          aria-label={t('seasonal.detectLocation')}
-          title={t('seasonal.detectLocation')}
-        >
-          {detecting ? '⋯' : '📍'}
-        </button>
-        <select
-          className="country-select"
-          value={selectedCountry}
-          onChange={(e) => handleCountryChange(e.target.value as CountryId)}
-        >
-          {COUNTRIES.map((country) => (
-            <option key={country.id} value={country.id}>
-              {country.flag} {country.name}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {countryConfig.hasRegions && (
-        <div className="region-selector">
-          {countryConfig.regions.map((region) => (
-            <button
-              key={region.id}
-              className={`region-btn region-btn-sub${selectedRegion === region.id ? ' region-btn-active' : ''}`}
-              onClick={() => handleRegionChange(region.id as RegionId)}
-            >
-              <span>{region.flag}</span>
-              <span>{region.name}</span>
-            </button>
-          ))}
+      <div className="location-selector">
+        <div className="location-country-row">
+          <button
+            className={`location-detect-btn${detecting ? ' location-detect-btn--loading' : ''}`}
+            onClick={handleDetectLocation}
+            disabled={detecting || !navigator.geolocation}
+            aria-label={t('seasonal.detectLocation')}
+            title={t('seasonal.detectLocation')}
+          >
+            {detecting ? '⋯' : '📍'}
+          </button>
+          <select
+            className="country-select"
+            value={selectedCountry}
+            onChange={(e) => handleCountryChange(e.target.value as CountryId)}
+          >
+            {COUNTRIES.map((country) => (
+              <option key={country.id} value={country.id}>
+                {country.flag} {country.name}
+              </option>
+            ))}
+          </select>
         </div>
-      )}
+
+        {countryConfig.hasRegions && (
+          <div className="location-region-row">
+            {countryConfig.regions.map((region) => (
+              <button
+                key={region.id}
+                className={`location-region-btn${selectedRegion === region.id ? ' location-region-btn--active' : ''}`}
+                onClick={() => handleRegionChange(region.id as RegionId)}
+              >
+                <span>{region.flag}</span>
+                <span>{region.name}</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
 
       <div className="month-nav">
         <button className="month-nav-btn" onClick={prevMonth} aria-label="prev">‹</button>
