@@ -152,7 +152,7 @@
 
 .voice-draft-row-bottom {
   display: grid;
-  grid-template-columns: minmax(0, 95px) auto auto auto;
+  grid-template-columns: minmax(0, 1fr) 44px 72px 104px;
   gap: 0.4rem;
   align-items: center;
 }
@@ -166,7 +166,8 @@
   font-size: 0.8rem;
   color: var(--text);
   transition: border-color 0.15s;
-  width: 52px;
+  width: 100%;
+  box-sizing: border-box;
   text-align: right;
 }
 
@@ -176,9 +177,6 @@
   box-shadow: 0 0 0 2px var(--accent-bg);
 }
 
-.voice-draft-unit {
-  min-width: 80px;
-}
 
 
 .voice-draft-row-bottom .app-dropdown-btn,
@@ -276,8 +274,3 @@
   cursor: not-allowed;
 }
 
-@media (max-width: 480px) {
-  .voice-draft-row-bottom {
-    grid-template-columns: 1fr auto auto 1fr;
-  }
-}
