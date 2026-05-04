@@ -18,6 +18,7 @@ interface AddProductFormProps {
   onPrefillApplied?: () => void;
   onScanBarcode?: (barcode: string) => void;
   onVoiceStart?: () => void;
+  voiceTried?: boolean;
 }
 
 const CATEGORIES: ProductCategory[] = [
@@ -42,11 +43,10 @@ const isOpenableCategory = (cat: ProductCategory) =>
 
 
 
-export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, onPrefillApplied, onScanBarcode, onVoiceStart }: AddProductFormProps) => {
+export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, onPrefillApplied, onScanBarcode, onVoiceStart, voiceTried = false }: AddProductFormProps) => {
   const { t } = useTranslation();
   const [fabOpen, setFabOpen] = useState(false);
   const [fabVisible, setFabVisible] = useState(true);
-  const [voiceTried, setVoiceTried] = useState(() => localStorage.getItem('voice-tried') === '1');
   const lastScrollY = useRef(0);
 
   useEffect(() => {
@@ -310,13 +310,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
           <button
             type="button"
             className="voice-mic-fab"
-            onClick={() => {
-              onVoiceStart();
-              if (!voiceTried) {
-                setVoiceTried(true);
-                localStorage.setItem('voice-tried', '1');
-              }
-            }}
+            onClick={onVoiceStart}
             title="Dicter"
           >
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

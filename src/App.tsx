@@ -66,6 +66,7 @@ function App() {
   const [scanPrefill, setScanPrefill] = useState<FoodFactsResult | null>(null);
   const [isVoiceMode, setIsVoiceMode] = useState(false);
   const [voiceDraft, setVoiceDraft] = useState<DraftProduct[] | null>(null);
+  const [voiceTried, setVoiceTried] = useState(() => localStorage.getItem('voice-tried') === '1');
   const [scrolledDown, setScrolledDown] = useState(false);
   const lastScrollY = useRef(0);
 
@@ -398,6 +399,7 @@ function App() {
           prefill={scanPrefill}
           onPrefillApplied={() => setScanPrefill(null)}
           onVoiceStart={() => setIsVoiceMode(true)}
+          voiceTried={voiceTried}
         />
       </div>
       {editingProduct && (
@@ -418,6 +420,7 @@ function App() {
           onFormOpenChange={(open) => open && setActiveTab('add-product')}
           onScanBarcode={handleFridgeBarcode}
           onVoiceStart={() => setIsVoiceMode(true)}
+          voiceTried={voiceTried}
         />
         <ProductList
           products={products}
@@ -522,7 +525,11 @@ function App() {
       )}
       {isVoiceMode && (
         <VoiceInput
-          onDraftReady={(drafts) => { setIsVoiceMode(false); setVoiceDraft(drafts); }}
+          onDraftReady={(drafts) => {
+            setIsVoiceMode(false);
+            setVoiceDraft(drafts);
+            if (!voiceTried) { setVoiceTried(true); localStorage.setItem('voice-tried', '1'); }
+          }}
           onClose={() => setIsVoiceMode(false)}
         />
       )}
