@@ -1,4 +1,4 @@
-import { useState, useRef, CSSProperties } from 'react';
+import { useState, useRef, useEffect, CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
 import './DatePicker.css';
 
@@ -29,11 +29,22 @@ function todayStr() {
   return toDateStr(t.getFullYear(), t.getMonth() + 1, t.getDate());
 }
 
+let _dpId = 0;
+
 export function DatePicker({ value, onChange, min, max, placeholder = 'JJ/MM/AAAA', id, className }: DatePickerProps) {
   const [open, setOpen] = useState(false);
   const [panelStyle, setPanelStyle] = useState<CSSProperties>({});
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const uid = useRef(`dp-${++_dpId}`);
   const today = todayStr();
+
+  useEffect(() => {
+    const close = (e: Event) => {
+      if ((e as CustomEvent).detail?.uid !== uid.current) setOpen(false);
+    };
+    window.addEventListener('app-dropdown-open', close);
+    return () => window.removeEventListener('app-dropdown-open', close);
+  }, []);
 
   const initView = () => {
     const base = value || today;
@@ -58,6 +69,7 @@ export function DatePicker({ value, onChange, min, max, placeholder = 'JJ/MM/AAA
     const base = value || today;
     setViewYear(parseInt(base.split('-')[0]));
     setViewMonth(parseInt(base.split('-')[1]));
+    window.dispatchEvent(new CustomEvent('app-dropdown-open', { detail: { uid: uid.current } }));
     setOpen(true);
   };
 
