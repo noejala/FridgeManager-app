@@ -303,7 +303,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
         <div className="voice-mic-fab-wrap">
           {!voiceTried && (
             <div className="voice-mic-bubble">
-              Try it, talking is faster!
+              {t('voice.nudge')}
               <span className="voice-mic-bubble-arrow" />
             </div>
           )}

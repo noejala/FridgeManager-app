@@ -401,6 +401,7 @@
     "reviewTitle_one": "{{count}} produit détecté",
     "reviewTitle_other": "{{count}} produits détectés",
     "reviewSubtitle": "Vérifiez et corrigez avant d'ajouter au frigo",
+    "nudge": "Essaye, dicter c'est plus rapide !",
     "dateRequired": "Date requise",
     "reviewEmpty": "Tous les produits ont été supprimés",
     "addToFridge_one": "Ajouter {{count}} produit",

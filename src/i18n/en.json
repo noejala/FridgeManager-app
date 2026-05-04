@@ -401,6 +401,7 @@
     "reviewTitle_one": "{{count}} product detected",
     "reviewTitle_other": "{{count}} products detected",
     "reviewSubtitle": "Review and correct before adding to your fridge",
+    "nudge": "Try it, talking is faster!",
     "dateRequired": "Date required",
     "reviewEmpty": "All products have been removed",
     "addToFridge_one": "Add {{count}} product",
