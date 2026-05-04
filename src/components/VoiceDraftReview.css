@@ -177,7 +177,20 @@
 }
 
 .voice-draft-unit {
-  min-width: 68px;
+  min-width: 80px;
+}
+
+.voice-draft-row-bottom .app-dropdown-btn,
+.voice-draft-row-bottom .date-picker .app-dropdown-btn {
+  padding: 0.45rem 0.55rem;
+  font-size: 0.82rem;
+}
+
+.voice-draft-row-bottom .app-dropdown-chevron,
+.voice-draft-row-bottom .dp-cal-icon {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
 }
 
 .voice-draft-date--required .app-dropdown-btn {

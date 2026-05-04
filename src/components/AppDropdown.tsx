@@ -16,11 +16,14 @@ interface AppDropdownProps {
   className?: string;
 }
 
+const dropdownId = (() => { let n = 0; return () => `dd-${++n}`; })();
+
 export function AppDropdown({ value, options, onChange, placeholder, id, className }: AppDropdownProps) {
   const [open, setOpen] = useState(false);
   const [panelStyle, setPanelStyle] = useState<CSSProperties>({});
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const uid = useRef(dropdownId());
   const current = options.find(o => o.value === value);
 
   useEffect(() => {
@@ -29,6 +32,14 @@ export function AppDropdown({ value, options, onChange, placeholder, id, classNa
       active?.scrollIntoView({ block: 'nearest' });
     }
   }, [open]);
+
+  useEffect(() => {
+    const close = (e: Event) => {
+      if ((e as CustomEvent).detail?.uid !== uid.current) setOpen(false);
+    };
+    window.addEventListener('app-dropdown-open', close);
+    return () => window.removeEventListener('app-dropdown-open', close);
+  }, []);
 
   const handleOpen = () => {
     if (triggerRef.current) {
@@ -43,7 +54,10 @@ export function AppDropdown({ value, options, onChange, placeholder, id, classNa
         : rect.top - panelHeight - 4;
       setPanelStyle({ top, left: Math.max(8, left), width: panelWidth });
     }
-    setOpen(o => !o);
+    setOpen(o => {
+      if (!o) window.dispatchEvent(new CustomEvent('app-dropdown-open', { detail: { uid: uid.current } }));
+      return !o;
+    });
   };
 
   return (
