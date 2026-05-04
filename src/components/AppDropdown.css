@@ -58,7 +58,7 @@
 .app-dropdown-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 499;
+  z-index: 510;
 }
 
 .app-dropdown-menu {

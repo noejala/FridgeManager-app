@@ -60,11 +60,20 @@ export function DatePicker({ value, onChange, min, max, placeholder = 'JJ/MM/AAA
       const panelHeight = 340;
       let left = rect.left;
       if (left + panelWidth > window.innerWidth - 8) left = rect.right - panelWidth;
-      const spaceBelow = window.innerHeight - rect.bottom;
-      const top = spaceBelow >= panelHeight || spaceBelow >= rect.top
-        ? rect.bottom + 4
-        : rect.top - panelHeight - 4;
-      setPanelStyle({ top, left: Math.max(8, left) });
+      const spaceBelow = window.innerHeight - rect.bottom - 8;
+      const spaceAbove = rect.top - 8;
+      let top: number;
+      let maxHeight: number | undefined;
+      if (spaceBelow >= panelHeight) {
+        top = rect.bottom + 4;
+      } else if (spaceAbove >= spaceBelow) {
+        top = Math.max(8, rect.top - panelHeight - 4);
+        maxHeight = spaceAbove;
+      } else {
+        top = rect.bottom + 4;
+        maxHeight = spaceBelow;
+      }
+      setPanelStyle({ top, left: Math.max(8, left), ...(maxHeight ? { maxHeight, overflowY: 'auto' } : {}) });
     }
     const base = value || today;
     setViewYear(parseInt(base.split('-')[0]));
@@ -135,7 +144,7 @@ export function DatePicker({ value, onChange, min, max, placeholder = 'JJ/MM/AAA
       {open && createPortal(
         <>
           <div className="app-dropdown-backdrop" onClick={() => setOpen(false)} />
-          <div className="dp-panel" style={{ position: 'fixed', zIndex: 500, ...panelStyle }}>
+          <div className="dp-panel" style={{ position: 'fixed', zIndex: 511, ...panelStyle }}>
             <div className="dp-header">
               <button type="button" className="dp-nav-btn" onClick={prevMonth}>‹</button>
               <span className="dp-month-label">{MONTHS_FR[viewMonth - 1]} {viewYear}</span>

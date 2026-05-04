@@ -79,7 +79,7 @@ export function AppDropdown({ value, options, onChange, placeholder, id, classNa
       {open && createPortal(
         <>
           <div className="app-dropdown-backdrop" onClick={() => setOpen(false)} />
-          <div className="app-dropdown-menu" ref={menuRef} style={{ position: 'fixed', zIndex: 500, ...panelStyle }}>
+          <div className="app-dropdown-menu" ref={menuRef} style={{ position: 'fixed', zIndex: 511, ...panelStyle }}>
             {placeholder && (
               <button
                 type="button"
