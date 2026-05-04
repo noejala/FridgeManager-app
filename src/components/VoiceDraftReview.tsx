@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DraftProduct } from '../utils/voiceParser';
 import { ProductCategory } from '../types/Product';
+import { AppDropdown } from './AppDropdown';
+import { DatePicker } from './DatePicker';
 import './VoiceDraftReview.css';
 
 const CATEGORIES: ProductCategory[] = [
@@ -86,16 +88,12 @@ export const VoiceDraftReview = ({ drafts: initialDrafts, onConfirm, onCancel }:
               </div>
 
               <div className="voice-draft-row-bottom">
-                <select
+                <AppDropdown
                   className="voice-draft-category"
                   value={draft.category}
-                  onChange={e => update(draft._draftId, { category: e.target.value as ProductCategory })}
-                  disabled={isAdding}
-                >
-                  {CATEGORIES.map(cat => (
-                    <option key={cat} value={cat}>{t(`categories.${cat}`)}</option>
-                  ))}
-                </select>
+                  options={CATEGORIES.map(cat => ({ value: cat, label: t(`categories.${cat}`) }))}
+                  onChange={v => update(draft._draftId, { category: v as ProductCategory })}
+                />
 
                 <input
                   className="voice-draft-qty"
@@ -107,25 +105,21 @@ export const VoiceDraftReview = ({ drafts: initialDrafts, onConfirm, onCancel }:
                   disabled={isAdding}
                 />
 
-                <select
+                <AppDropdown
                   className="voice-draft-unit"
                   value={draft.unit}
-                  onChange={e => update(draft._draftId, { unit: e.target.value })}
-                  disabled={isAdding}
-                >
-                  {UNITS.map(u => <option key={u} value={u}>{u}</option>)}
-                </select>
+                  options={UNITS.map(u => ({ value: u, label: u }))}
+                  onChange={v => update(draft._draftId, { unit: v })}
+                />
 
-                <input
+                <DatePicker
                   className={`voice-draft-date${!draft.expirationDate ? ' voice-draft-date--required' : ''}`}
-                  type="date"
                   value={draft.expirationDate ?? ''}
                   min={today}
-                  onChange={e => update(draft._draftId, {
-                    expirationDate: e.target.value || null,
+                  onChange={v => update(draft._draftId, {
+                    expirationDate: v || null,
                     isEstimatedExpiration: false,
                   })}
-                  disabled={isAdding}
                 />
               </div>
 
