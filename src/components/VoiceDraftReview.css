@@ -152,7 +152,7 @@
 
 .voice-draft-row-bottom {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto auto;
+  grid-template-columns: minmax(0, 95px) auto auto auto;
   gap: 0.4rem;
   align-items: center;
 }
@@ -180,9 +180,6 @@
   min-width: 80px;
 }
 
-.voice-draft-date {
-  min-width: 118px;
-}
 
 .voice-draft-row-bottom .app-dropdown-btn,
 .voice-draft-row-bottom .date-picker .app-dropdown-btn {
