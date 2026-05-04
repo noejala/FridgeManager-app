@@ -22,7 +22,6 @@ export type ProductCategory =
   | 'Cheese'
   | 'Butter'
   | 'Beverages'
-  | 'Frozen'
   | 'Sauces'
   | 'Milk'
   | 'Juice'

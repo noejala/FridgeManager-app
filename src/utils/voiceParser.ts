@@ -25,7 +25,7 @@ interface MistralRawProduct {
 
 const VALID_CATEGORIES: ProductCategory[] = [
   'Fruits', 'Vegetables', 'Meat', 'Fish', 'Dairy', 'Cheese', 'Butter',
-  'Beverages', 'Frozen', 'Sauces', 'Milk', 'Juice', 'Cream', 'Other',
+  'Beverages', 'Sauces', 'Milk', 'Juice', 'Cream', 'Other',
 ];
 
 // Default shelf life in days per category — aligned with PRODUCT_SHELF_LIFE in shelfLife.ts
@@ -41,7 +41,6 @@ const CATEGORY_DEFAULT_DAYS: Partial<Record<ProductCategory, number>> = {
   Vegetables: 7,
   Juice: 14,
   Sauces: 180,
-  Frozen: 180,
   Beverages: 365,
   Other: 14,
 };

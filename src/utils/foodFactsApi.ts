@@ -51,8 +51,6 @@ const CATEGORY_TAG_MAP: { tag: string; category: ProductCategory }[] = [
   { tag: 'en:beers', category: 'Beverages' },
   { tag: 'en:wines', category: 'Beverages' },
   { tag: 'en:sodas', category: 'Beverages' },
-  // Frozen
-  { tag: 'en:frozen-foods', category: 'Frozen' },
 ];
 
 // Normalizes unit strings from the API to our unit values

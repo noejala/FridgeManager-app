@@ -8,7 +8,7 @@ import './VoiceDraftReview.css';
 
 const CATEGORIES: ProductCategory[] = [
   'Fruits', 'Vegetables', 'Meat', 'Fish', 'Dairy', 'Cheese', 'Butter',
-  'Milk', 'Cream', 'Juice', 'Beverages', 'Frozen', 'Sauces', 'Other',
+  'Milk', 'Cream', 'Juice', 'Beverages', 'Sauces', 'Other',
 ];
 
 const UNITS = ['unit', 'kg', 'g', 'L', 'cl', 'ml', 'pack'];

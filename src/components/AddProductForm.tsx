@@ -32,7 +32,6 @@ const CATEGORIES: ProductCategory[] = [
   'Cream',
   'Juice',
   'Beverages',
-  'Frozen',
   'Sauces',
   'Other'
 ];

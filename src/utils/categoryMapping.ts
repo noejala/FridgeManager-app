@@ -113,13 +113,6 @@ const CATEGORY_KEYWORDS: Record<Exclude<ProductCategory, 'Other'>, string[]> = {
     // French
     'eau', 'bière', 'vin', 'café', 'thé', 'limonade', 'cidre',
   ],
-  Frozen: [
-    // English
-    'ice cream', 'frozen', 'sorbet', 'gelato', 'popsicle', 'frozen pizza',
-    'frozen vegetables', 'frozen fruit',
-    // French
-    'glace', 'surgelé', 'eskimo',
-  ],
 };
 
 function stripAccents(str: string): string {
