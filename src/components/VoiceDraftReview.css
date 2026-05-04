@@ -180,6 +180,10 @@
   min-width: 80px;
 }
 
+.voice-draft-date {
+  min-width: 118px;
+}
+
 .voice-draft-row-bottom .app-dropdown-btn,
 .voice-draft-row-bottom .date-picker .app-dropdown-btn {
   padding: 0.45rem 0.55rem;
