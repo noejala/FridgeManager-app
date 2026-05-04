@@ -152,7 +152,7 @@
 
 .voice-draft-row-bottom {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 44px 72px 104px;
+  grid-template-columns: minmax(0, 1fr) 42px 64px 116px;
   gap: 0.4rem;
   align-items: center;
 }
