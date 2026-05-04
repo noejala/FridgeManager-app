@@ -23,6 +23,7 @@ export type ProductCategory =
   | 'Butter'
   | 'Beverages'
   | 'Sauces'
+  | 'Prepared'
   | 'Milk'
   | 'Juice'
   | 'Cream'

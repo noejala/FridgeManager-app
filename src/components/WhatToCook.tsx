@@ -312,8 +312,9 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
     setAiOverloaded(false);
 
     try {
-      const fridgeNames = products.map((p) => toEnglishIngredient(p.name));
-      const urgentFridgeNames = products
+      const cookableProducts = products.filter(p => p.category !== 'Prepared');
+      const fridgeNames = cookableProducts.map((p) => toEnglishIngredient(p.name));
+      const urgentFridgeNames = cookableProducts
         .filter((p) => getDaysUntilExpiration(p.expirationDate) <= 3)
         .map((p) => toEnglishIngredient(p.name));
 

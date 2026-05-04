@@ -113,6 +113,15 @@ const CATEGORY_KEYWORDS: Record<Exclude<ProductCategory, 'Other'>, string[]> = {
     // French
     'eau', 'bière', 'vin', 'café', 'thé', 'limonade', 'cidre',
   ],
+  Prepared: [
+    // English
+    'ready meal', 'prepared meal', 'ready to eat', 'meal kit',
+    'frozen meal', 'tv dinner', 'ready-made',
+    // French
+    'plat préparé', 'plat cuisiné', 'sodebo', 'salade composée',
+    'pizza fraîche', 'quiche', 'taboulé', 'sushi', 'maki', 'wrap',
+    'sandwich', 'croque', 'panini', 'burger', 'nuggets',
+  ],
 };
 
 function stripAccents(str: string): string {

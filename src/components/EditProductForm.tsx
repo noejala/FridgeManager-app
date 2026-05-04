@@ -23,6 +23,8 @@ const CATEGORIES: ProductCategory[] = [
   'Cheese',
   'Butter',
   'Beverages',
+  'Sauces',
+  'Prepared',
   'Other'
 ];
 

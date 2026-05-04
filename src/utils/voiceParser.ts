@@ -25,7 +25,7 @@ interface MistralRawProduct {
 
 const VALID_CATEGORIES: ProductCategory[] = [
   'Fruits', 'Vegetables', 'Meat', 'Fish', 'Dairy', 'Cheese', 'Butter',
-  'Beverages', 'Sauces', 'Milk', 'Juice', 'Cream', 'Other',
+  'Beverages', 'Sauces', 'Prepared', 'Milk', 'Juice', 'Cream', 'Other',
 ];
 
 // Default shelf life in days per category — aligned with PRODUCT_SHELF_LIFE in shelfLife.ts
