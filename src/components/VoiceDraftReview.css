@@ -180,7 +180,8 @@
 
 
 .voice-draft-row-bottom .app-dropdown-btn,
-.voice-draft-row-bottom .date-picker .app-dropdown-btn {
+.voice-draft-row-bottom .date-picker .app-dropdown-btn,
+.voice-draft-row-bottom .dp-native {
   padding: 0.45rem 0.55rem;
   font-size: 0.82rem;
 }
