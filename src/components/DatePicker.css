@@ -19,8 +19,6 @@
   font-size: 0.9rem;
   color: var(--text);
   cursor: pointer;
-  -webkit-appearance: none;
-  appearance: none;
   text-align: center;
   box-sizing: border-box;
   transition: border-color 0.2s, box-shadow 0.2s;
