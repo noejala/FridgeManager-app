@@ -116,6 +116,7 @@ export const VoiceDraftReview = ({ drafts: initialDrafts, onConfirm, onCancel }:
                   className={`voice-draft-date${!draft.expirationDate ? ' voice-draft-date--required' : ''}`}
                   value={draft.expirationDate ?? ''}
                   min={today}
+                  alwaysCalendar
                   onChange={v => update(draft._draftId, {
                     expirationDate: v || null,
                     isEstimatedExpiration: false,
