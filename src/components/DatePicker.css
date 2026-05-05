@@ -11,17 +11,20 @@
 .dp-select {
   flex: 1;
   min-width: 0;
-  padding: 0.7rem 0.4rem;
+  padding: 0.7rem 0.5rem;
   background: var(--bg-input);
   border: 1px solid var(--border);
   border-radius: 8px;
   font-family: var(--font-body);
   font-size: 0.9rem;
+  font-weight: 500;
   color: var(--text);
   cursor: pointer;
   text-align: center;
   box-sizing: border-box;
   transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .dp-select:focus {
@@ -32,6 +35,7 @@
 
 [data-theme="dark"] .dp-select {
   color-scheme: dark;
+  -webkit-text-fill-color: var(--text);
 }
 
 .dp-cal-icon {
