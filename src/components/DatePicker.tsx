@@ -5,10 +5,6 @@ import './DatePicker.css';
 const MONTHS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
 const DAYS_SHORT = ['L','M','M','J','V','S','D'];
 
-const MONTHS_SELECT = [
-  'Jan','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov','Déc',
-];
-
 interface DatePickerProps {
   value: string;
   onChange: (v: string) => void;
@@ -36,7 +32,7 @@ function todayStr() {
 
 let _dpId = 0;
 
-export function DatePicker({ value, onChange, min, max, placeholder = 'JJ/MM/AAAA', id, className, alwaysCalendar = false }: DatePickerProps) {
+export function DatePicker({ value, onChange, min, max, placeholder = 'JJ/MM/AAAA', id, className }: DatePickerProps) {
   const [open, setOpen] = useState(false);
   const [panelStyle, setPanelStyle] = useState<CSSProperties>({});
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -97,64 +93,6 @@ export function DatePicker({ value, onChange, min, max, placeholder = 'JJ/MM/AAA
   };
 
   const isDisabled = (ds: string) => (min && ds < min) || (max && ds > max) || false;
-
-  const isMobile = !alwaysCalendar && window.matchMedia('(max-width: 768px)').matches;
-  if (isMobile) {
-    const parts = value ? value.split('-') : ['', '', ''];
-    const selDay = parts[2] ? String(parseInt(parts[2])) : '';
-    const selMonth = parts[1] ? String(parseInt(parts[1])) : '';
-    const selYear = parts[0] || '';
-
-    const currentYear = new Date().getFullYear();
-    const years = Array.from({ length: 6 }, (_, i) => currentYear + i);
-    const daysCount = (selYear && selMonth)
-      ? new Date(parseInt(selYear), parseInt(selMonth), 0).getDate()
-      : 31;
-    const days = Array.from({ length: daysCount }, (_, i) => i + 1);
-
-    const emit = (d: string, m: string, y: string) => {
-      if (d && m && y) {
-        onChange(`${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`);
-      }
-    };
-
-    return (
-      <div className={`date-picker date-picker--mobile${className ? ` ${className}` : ''}`} id={id}>
-        <div className="dp-select-wrap">
-          <select
-            className="dp-select"
-            value={selDay}
-            onChange={e => emit(e.target.value, selMonth, selYear)}
-          >
-            <option value="" disabled>J</option>
-            {days.map(d => <option key={d} value={String(d)}>{d}</option>)}
-          </select>
-        </div>
-        <div className="dp-select-wrap">
-          <select
-            className="dp-select"
-            value={selMonth}
-            onChange={e => emit(selDay, e.target.value, selYear)}
-          >
-            <option value="" disabled>M</option>
-            {MONTHS_SELECT.map((name, i) => (
-              <option key={i + 1} value={String(i + 1)}>{name}</option>
-            ))}
-          </select>
-        </div>
-        <div className="dp-select-wrap">
-          <select
-            className="dp-select"
-            value={selYear}
-            onChange={e => emit(selDay, selMonth, e.target.value)}
-          >
-            <option value="" disabled>A</option>
-            {years.map(y => <option key={y} value={String(y)}>{y}</option>)}
-          </select>
-        </div>
-      </div>
-    );
-  }
 
   // Build calendar cells
   const daysInMonth = new Date(viewYear, viewMonth, 0).getDate();

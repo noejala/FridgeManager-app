@@ -3,59 +3,6 @@
   width: 100%;
 }
 
-.date-picker--mobile {
-  display: flex;
-  gap: 0.4rem;
-}
-
-.dp-select-wrap {
-  flex: 1;
-  min-width: 0;
-  position: relative;
-}
-
-.dp-select-wrap::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 22px;
-  background: var(--bg-input);
-  pointer-events: none;
-  border-radius: 0 8px 8px 0;
-}
-
-.dp-select {
-  width: 100%;
-  padding: 0.7rem 0.5rem;
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--text);
-  cursor: pointer;
-  text-align: center;
-  box-sizing: border-box;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.dp-select:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-bg);
-}
-
-[data-theme="dark"] .dp-select {
-  color-scheme: dark;
-  -webkit-text-fill-color: var(--text);
-}
-
-[data-theme="dark"] .dp-select-wrap::after {
-  background: var(--bg-input);
-}
 
 .dp-cal-icon {
   flex-shrink: 0;
