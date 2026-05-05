@@ -3,33 +3,6 @@
   width: 100%;
 }
 
-.dp-native {
-  width: 100%;
-  padding: 0.7rem 0.875rem;
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  color: var(--text);
-  -webkit-appearance: none;
-  appearance: none;
-  box-sizing: border-box;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  cursor: pointer;
-}
-
-.dp-native:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-bg);
-}
-
-[data-theme="dark"] .dp-native {
-  color-scheme: dark;
-  -webkit-text-fill-color: var(--text);
-}
-
 .dp-cal-icon {
   flex-shrink: 0;
   margin-left: 0.5rem;

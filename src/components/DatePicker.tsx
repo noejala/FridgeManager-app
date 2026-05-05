@@ -93,23 +93,6 @@ export function DatePicker({ value, onChange, min, max, placeholder = 'JJ/MM/AAA
 
   const isDisabled = (ds: string) => (min && ds < min) || (max && ds > max) || false;
 
-  const isMobile = window.matchMedia('(max-width: 768px)').matches;
-  if (isMobile) {
-    return (
-      <div className={`date-picker${className ? ` ${className}` : ''}`}>
-        <input
-          type="date"
-          className="dp-native"
-          id={id}
-          value={value}
-          min={min}
-          max={max}
-          onChange={e => onChange(e.target.value)}
-        />
-      </div>
-    );
-  }
-
   // Build calendar cells
   const daysInMonth = new Date(viewYear, viewMonth, 0).getDate();
   const firstDow = (new Date(viewYear, viewMonth - 1, 1).getDay() + 6) % 7;
