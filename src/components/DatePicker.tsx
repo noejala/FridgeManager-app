@@ -120,32 +120,38 @@ export function DatePicker({ value, onChange, min, max, placeholder = 'JJ/MM/AAA
 
     return (
       <div className={`date-picker date-picker--mobile${className ? ` ${className}` : ''}`} id={id}>
-        <select
-          className="dp-select"
-          value={selDay}
-          onChange={e => emit(e.target.value, selMonth, selYear)}
-        >
-          <option value="" disabled>J</option>
-          {days.map(d => <option key={d} value={String(d)}>{d}</option>)}
-        </select>
-        <select
-          className="dp-select"
-          value={selMonth}
-          onChange={e => emit(selDay, e.target.value, selYear)}
-        >
-          <option value="" disabled>M</option>
-          {MONTHS_SELECT.map((name, i) => (
-            <option key={i + 1} value={String(i + 1)}>{name}</option>
-          ))}
-        </select>
-        <select
-          className="dp-select"
-          value={selYear}
-          onChange={e => emit(selDay, selMonth, e.target.value)}
-        >
-          <option value="" disabled>A</option>
-          {years.map(y => <option key={y} value={String(y)}>{y}</option>)}
-        </select>
+        <div className="dp-select-wrap">
+          <select
+            className="dp-select"
+            value={selDay}
+            onChange={e => emit(e.target.value, selMonth, selYear)}
+          >
+            <option value="" disabled>J</option>
+            {days.map(d => <option key={d} value={String(d)}>{d}</option>)}
+          </select>
+        </div>
+        <div className="dp-select-wrap">
+          <select
+            className="dp-select"
+            value={selMonth}
+            onChange={e => emit(selDay, e.target.value, selYear)}
+          >
+            <option value="" disabled>M</option>
+            {MONTHS_SELECT.map((name, i) => (
+              <option key={i + 1} value={String(i + 1)}>{name}</option>
+            ))}
+          </select>
+        </div>
+        <div className="dp-select-wrap">
+          <select
+            className="dp-select"
+            value={selYear}
+            onChange={e => emit(selDay, selMonth, e.target.value)}
+          >
+            <option value="" disabled>A</option>
+            {years.map(y => <option key={y} value={String(y)}>{y}</option>)}
+          </select>
+        </div>
       </div>
     );
   }
