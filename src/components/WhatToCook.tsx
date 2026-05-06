@@ -168,17 +168,22 @@ function matchIngredients(
   const missing: { name: string; measure: string }[] = [];
   const pantry: { name: string; measure: string }[] = [];
 
+  const ingredientMatches = (ing: string, candidate: string): boolean => {
+    if (ing === candidate) return true;
+    if (candidate.includes(ing)) return true; // "chicken breast" in fridge matches "chicken" in recipe
+    if (candidate.includes(' ') && ing.includes(candidate)) return true; // multi-word candidate matches longer ingredient
+    return false;
+  };
+
   for (const ing of meal.ingredients) {
     const ingSingular = singularize(ing.name);
-    const inFridge = fridgeSingular.some(
-      (f) => ingSingular.includes(f) || f.includes(ingSingular)
-    );
+    const inFridge = fridgeSingular.some(f => ingredientMatches(ingSingular, f));
     if (inFridge) {
       available.push(ing);
     } else if (
       PANTRY_STAPLES.has(ingSingular) ||
       PANTRY_STAPLES.has(ing.name.toLowerCase()) ||
-      userPantrySingular.some(s => ingSingular.includes(s) || s.includes(ingSingular))
+      userPantrySingular.some(s => ingredientMatches(ingSingular, s))
     ) {
       pantry.push(ing);
     } else {
@@ -188,7 +193,7 @@ function matchIngredients(
 
   const urgentAvailableCount = available.filter((ing) => {
     const ingSingular = singularize(ing.name);
-    return urgentSingular.some((u) => ingSingular.includes(u) || u.includes(ingSingular));
+    return urgentSingular.some(u => ingredientMatches(ingSingular, u));
   }).length;
 
   return { available, missing, pantry, urgentAvailableCount };
