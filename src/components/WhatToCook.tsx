@@ -7,7 +7,7 @@ import { fetchAiRecipes, CookingMode, CourseSelection } from '../utils/mistralAp
 import { fetchSavedRecipes, saveRecipe, unsaveRecipe, SavedRecipe } from '../utils/savedRecipeService';
 import { CookingSession } from './CookingSession';
 import { toEnglishIngredient } from '../utils/ingredientTranslation';
-import { getDaysUntilExpiration } from '../utils/storage';
+import { getDaysUntilExpiration, isExpired } from '../utils/storage';
 import './WhatToCook.css';
 
 
@@ -318,7 +318,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
     setAiOverloaded(false);
 
     try {
-      const cookableProducts = products.filter(p => p.category !== 'Prepared');
+      const cookableProducts = products.filter(p => p.category !== 'Prepared' && !isExpired(p.expirationDate));
       const originalNames = cookableProducts.map(p => p.name.toLowerCase().trim());
       const fridgeNames = cookableProducts.map((p) => toEnglishIngredient(p.name));
       const urgentFridgeNames = cookableProducts
