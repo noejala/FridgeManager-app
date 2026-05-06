@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Product } from '../types/Product';
 import { DietaryPreference } from '../types/UserProfile';
-import { searchByIngredient, getMealDetails, MealDetails, singularize } from '../utils/mealApi';
+import { MealDetails, singularize } from '../utils/mealApi';
+import { getAllMeals } from '../utils/mealDbCache';
 import { fetchAiRecipes, CookingMode, CourseSelection } from '../utils/mistralApi';
 import { fetchSavedRecipes, saveRecipe, unsaveRecipe, SavedRecipe } from '../utils/savedRecipeService';
 import { CookingSession } from './CookingSession';
@@ -187,27 +188,6 @@ function matchIngredients(
   return { available, missing, pantry, urgentAvailableCount };
 }
 
-async function fetchMealDbMeals(fridgeNames: string[], originalNames?: string[]): Promise<(MealDetails | null)[]> {
-  // Prefer ingredients that were actually translated to English — TheMealDB only understands English
-  let candidates = fridgeNames;
-  if (originalNames) {
-    const translated = fridgeNames.filter((en, i) => en.toLowerCase() !== (originalNames[i] || '').toLowerCase());
-    if (translated.length >= 2) candidates = translated;
-  }
-  const ingredientNames = candidates.slice(0, 10);
-  const searchResults = await Promise.all(ingredientNames.map((name) => searchByIngredient(name)));
-  const mealHits = new Map<string, number>();
-  for (const meals of searchResults) {
-    for (const meal of meals) {
-      mealHits.set(meal.id, (mealHits.get(meal.id) || 0) + 1);
-    }
-  }
-  const ids = [...mealHits.entries()]
-    .sort((a, b) => b[1] - a[1])
-    .map(([id]) => id)
-    .slice(0, 30);
-  return Promise.all(ids.map((id) => getMealDetails(id)));
-}
 
 const DIFFICULTY_RANK: Record<string, number> = {
   facile: 1, easy: 1,
@@ -319,7 +299,6 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
 
     try {
       const cookableProducts = products.filter(p => p.category !== 'Prepared' && !isExpired(p.expirationDate));
-      const originalNames = cookableProducts.map(p => p.name.toLowerCase().trim());
       const fridgeNames = cookableProducts.map((p) => toEnglishIngredient(p.name));
       const urgentFridgeNames = cookableProducts
         .filter((p) => getDaysUntilExpiration(p.expirationDate) <= 3)
@@ -336,19 +315,19 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
             isAiMode = true;
             setAiFallback(false);
           } else {
-            meals = await fetchMealDbMeals(fridgeNames, originalNames);
+            meals = await getAllMeals();
             setAiFallback(true);
           }
         } catch (e) {
           const msg = e instanceof Error ? e.message : '';
-          meals = await fetchMealDbMeals(fridgeNames, originalNames);
+          meals = await getAllMeals();
           setAiFallback(true);
           if (msg === 'ai_unavailable') {
             setAiOverloaded(true);
           }
         }
       } else {
-        meals = await fetchMealDbMeals(fridgeNames, originalNames);
+        meals = await getAllMeals();
         setAiFallback(false);
       }
 
