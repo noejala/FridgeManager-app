@@ -187,8 +187,14 @@ function matchIngredients(
   return { available, missing, pantry, urgentAvailableCount };
 }
 
-async function fetchMealDbMeals(fridgeNames: string[]): Promise<(MealDetails | null)[]> {
-  const ingredientNames = fridgeNames.slice(0, 5);
+async function fetchMealDbMeals(fridgeNames: string[], originalNames?: string[]): Promise<(MealDetails | null)[]> {
+  // Prefer ingredients that were actually translated to English — TheMealDB only understands English
+  let candidates = fridgeNames;
+  if (originalNames) {
+    const translated = fridgeNames.filter((en, i) => en.toLowerCase() !== (originalNames[i] || '').toLowerCase());
+    if (translated.length >= 2) candidates = translated;
+  }
+  const ingredientNames = candidates.slice(0, 10);
   const searchResults = await Promise.all(ingredientNames.map((name) => searchByIngredient(name)));
   const mealHits = new Map<string, number>();
   for (const meals of searchResults) {
@@ -248,7 +254,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
   const [selectedRecipe, setSelectedRecipe] = useState<RecipeMatch | null>(null);
   const [courseFilter, setCourseFilter] = useState<CourseFilter>('all');
   const [courseDropdownOpen, setCourseDropdownOpen] = useState(false);
-  const [sortMode, setSortMode] = useState<SortMode>('smart');
+  const [sortMode, setSortMode] = useState<SortMode>('available');
   const [servings, setServings] = useState(DEFAULT_SERVINGS);
   const [aiFallback, setAiFallback] = useState(false);
   const [aiOverloaded, setAiOverloaded] = useState(false);
@@ -313,6 +319,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
 
     try {
       const cookableProducts = products.filter(p => p.category !== 'Prepared');
+      const originalNames = cookableProducts.map(p => p.name.toLowerCase().trim());
       const fridgeNames = cookableProducts.map((p) => toEnglishIngredient(p.name));
       const urgentFridgeNames = cookableProducts
         .filter((p) => getDaysUntilExpiration(p.expirationDate) <= 3)
@@ -329,19 +336,19 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
             isAiMode = true;
             setAiFallback(false);
           } else {
-            meals = await fetchMealDbMeals(fridgeNames);
+            meals = await fetchMealDbMeals(fridgeNames, originalNames);
             setAiFallback(true);
           }
         } catch (e) {
           const msg = e instanceof Error ? e.message : '';
-          meals = await fetchMealDbMeals(fridgeNames);
+          meals = await fetchMealDbMeals(fridgeNames, originalNames);
           setAiFallback(true);
           if (msg === 'ai_unavailable') {
             setAiOverloaded(true);
           }
         }
       } else {
-        meals = await fetchMealDbMeals(fridgeNames);
+        meals = await fetchMealDbMeals(fridgeNames, originalNames);
         setAiFallback(false);
       }
 
@@ -927,7 +934,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
                 <>
                   <div className="filter-divider" />
                   <div className="sort-control">
-                    {(['smart', 'available'] as SortMode[]).map((mode) => (
+                    {(['available', 'smart'] as SortMode[]).map((mode) => (
                       <button
                         key={mode}
                         className={`sort-btn${sortMode === mode ? ' active' : ''}`}
