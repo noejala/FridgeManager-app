@@ -158,10 +158,12 @@ export interface RecipeMatch {
 function matchIngredients(
   meal: MealDetails,
   fridgeNames: string[],
-  urgentFridgeNames: string[]
+  urgentFridgeNames: string[],
+  userPantryStaples: string[] = []
 ): { available: { name: string; measure: string }[]; missing: { name: string; measure: string }[]; pantry: { name: string; measure: string }[]; urgentAvailableCount: number } {
   const fridgeSingular = fridgeNames.map((n) => singularize(n));
   const urgentSingular = urgentFridgeNames.map((n) => singularize(n));
+  const userPantrySingular = userPantryStaples.map(s => singularize(s.toLowerCase().trim()));
   const available: { name: string; measure: string }[] = [];
   const missing: { name: string; measure: string }[] = [];
   const pantry: { name: string; measure: string }[] = [];
@@ -173,7 +175,11 @@ function matchIngredients(
     );
     if (inFridge) {
       available.push(ing);
-    } else if (PANTRY_STAPLES.has(ingSingular) || PANTRY_STAPLES.has(ing.name.toLowerCase())) {
+    } else if (
+      PANTRY_STAPLES.has(ingSingular) ||
+      PANTRY_STAPLES.has(ing.name.toLowerCase()) ||
+      userPantrySingular.some(s => ingSingular.includes(s) || s.includes(ingSingular))
+    ) {
       pantry.push(ing);
     } else {
       missing.push(ing);
@@ -354,7 +360,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
           missing = [];
           urgentAvailableCount = 0;
         } else {
-          ({ available, missing, pantry, urgentAvailableCount } = matchIngredients(meal, fridgeNames, urgentFridgeNames));
+          ({ available, missing, pantry, urgentAvailableCount } = matchIngredients(meal, fridgeNames, urgentFridgeNames, pantryStaples));
         }
 
         if (missing.length <= MAX_MISSING) {
@@ -525,9 +531,9 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
         const available = meal.ingredients.filter(ing => !pantry.includes(ing));
         return { meal, available, missing: [], pantry, urgentAvailableCount: 0 };
       }
-      return { meal, ...matchIngredients(meal, fridgeNames, urgentFridgeNames) };
+      return { meal, ...matchIngredients(meal, fridgeNames, urgentFridgeNames, pantryStaples) };
     });
-  }, [savedRecipes, products]);
+  }, [savedRecipes, products, pantryStaples]);
 
   const renderCard = (recipe: RecipeMatch, index: number) => (
     <div
