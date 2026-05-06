@@ -1,0 +1,338 @@
+.fridge-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.fridge-settings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.fridge-settings-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.fridge-settings-item:hover {
+  border-color: var(--border-hover);
+}
+
+.fridge-settings-item.active {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+
+.fridge-settings-item-icon {
+  font-size: 1rem;
+}
+
+.fridge-settings-item-name {
+  flex: 1;
+  font-weight: 500;
+}
+
+.fridge-settings-item-badge {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  background: var(--bg-surface);
+  border-radius: 1rem;
+  padding: 0.15rem 0.5rem;
+}
+
+.fridge-settings-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.fridge-settings-section {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.fridge-settings-section:last-child {
+  border-bottom: none;
+}
+
+.fridge-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.fridge-settings-name {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+}
+
+.fridge-settings-link {
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: var(--accent);
+  cursor: pointer;
+  padding: 0;
+}
+
+.fridge-rename-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.fridge-rename-input {
+  flex: 1;
+  padding: 0.4rem 0.6rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) / 2);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--text);
+  outline: none;
+}
+
+.fridge-rename-input:focus {
+  border-color: var(--accent);
+}
+
+.fridge-rename-confirm {
+  padding: 0.4rem 0.75rem;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: calc(var(--radius) / 2);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.fridge-rename-cancel {
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.fridge-settings-label {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin: 0 0 0.75rem;
+}
+
+.fridge-members-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.fridge-member-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.fridge-member-row--pending {
+  opacity: 0.65;
+}
+
+.fridge-member-email {
+  flex: 1;
+  font-size: 0.88rem;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fridge-member-role {
+  padding: 0.25rem 0.5rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) / 2);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.fridge-member-role-badge {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.fridge-member-pending {
+  font-size: 0.75rem;
+  color: var(--amber);
+}
+
+.fridge-member-remove {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0 0.25rem;
+  line-height: 1;
+}
+
+.fridge-member-remove:hover {
+  color: var(--red);
+}
+
+.fridge-members-loading {
+  height: 2rem;
+  border-radius: var(--radius);
+  background: var(--bg-surface);
+  animation: pulse 1.2s ease infinite;
+}
+
+.fridge-invite-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.fridge-invite-input {
+  flex: 1;
+  min-width: 160px;
+  padding: 0.4rem 0.6rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) / 2);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--text);
+  outline: none;
+}
+
+.fridge-invite-input:focus {
+  border-color: var(--accent);
+}
+
+.fridge-invite-role {
+  padding: 0.4rem 0.5rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) / 2);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.fridge-invite-btn {
+  padding: 0.4rem 0.9rem;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: calc(var(--radius) / 2);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.fridge-invite-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.fridge-invite-hint {
+  margin: 0.5rem 0 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.fridge-settings-danger {
+  background: none;
+}
+
+.fridge-danger-btn {
+  background: none;
+  border: 1px solid var(--red);
+  color: var(--red);
+  padding: 0.4rem 0.9rem;
+  border-radius: calc(var(--radius) / 2);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.fridge-danger-btn:hover {
+  background: var(--red-bg);
+}
+
+.fridge-confirm-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.fridge-confirm-text {
+  flex: 1;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.fridge-confirm-yes {
+  padding: 0.35rem 0.75rem;
+  background: var(--red);
+  color: #fff;
+  border: none;
+  border-radius: calc(var(--radius) / 2);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.fridge-confirm-no {
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}

@@ -1,0 +1,139 @@
+.fridge-switcher {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 0.75rem;
+}
+
+.fridge-switcher-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 2rem;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.fridge-switcher-btn:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-surface);
+}
+
+.fridge-switcher-icon {
+  font-size: 0.9rem;
+}
+
+.fridge-switcher-name {
+  font-weight: 500;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fridge-switcher-chevron {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.fridge-switcher-dropdown {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  left: 0;
+  min-width: 200px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  z-index: 200;
+  overflow: hidden;
+  animation: fade-in 0.12s ease;
+}
+
+.fridge-switcher-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.65rem 1rem;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.fridge-switcher-item:hover {
+  background: var(--bg-surface);
+}
+
+.fridge-switcher-item.active {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.fridge-switcher-item--new {
+  color: var(--accent);
+  font-size: 0.85rem;
+}
+
+.fridge-switcher-check {
+  font-size: 0.75rem;
+  color: var(--accent);
+  width: 14px;
+  flex-shrink: 0;
+}
+
+.fridge-switcher-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0.25rem 0;
+}
+
+.fridge-switcher-create {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.fridge-switcher-input {
+  flex: 1;
+  padding: 0.35rem 0.6rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) / 2);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--text);
+  outline: none;
+}
+
+.fridge-switcher-input:focus {
+  border-color: var(--accent);
+}
+
+.fridge-switcher-create-btn {
+  padding: 0.35rem 0.7rem;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: calc(var(--radius) / 2);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.fridge-switcher-create-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

@@ -2,8 +2,10 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { User } from '@supabase/supabase-js';
 import { Product } from './types/Product';
+import { Fridge } from './types/Fridge';
 import { supabase } from './lib/supabase';
 import { fetchProducts, fetchRecentlyConsumed, insertProduct, updateProduct, deleteProduct, deleteAllProducts, consumeProduct, restoreProduct } from './utils/productService';
+import { fetchFridges, createFridge, acceptFridgeInvite } from './utils/fridgeService';
 import { lookupBarcode, FoodFactsResult } from './utils/foodFactsApi';
 import { fetchUserProfile, saveUserProfile } from './utils/userProfileService';
 import { DietaryPreference } from './types/UserProfile';
@@ -25,11 +27,13 @@ import { NotifPermissionModal } from './components/NotifPermissionModal';
 import { PantryOnboarding } from './components/PantryOnboarding';
 import { VoiceInput } from './components/VoiceInput';
 import { VoiceDraftReview } from './components/VoiceDraftReview';
+import { FridgeSwitcher } from './components/FridgeSwitcher';
 import { DraftProduct } from './utils/voiceParser';
 import './App.css';
 
 const TAB_STORAGE_KEY = 'lastActiveTab';
 const TAB_EXPIRY_MS = 30 * 60 * 1000; // 30 minutes
+const ACTIVE_FRIDGE_KEY = 'active-fridge-id';
 
 function getSavedTab(): string {
   try {
@@ -49,6 +53,8 @@ function App() {
   const [user, setUser] = useState<User | null>(null);
   const [modalKey, setModalKey] = useState(0);
   const [authLoading, setAuthLoading] = useState(true);
+  const [fridges, setFridges] = useState<Fridge[]>([]);
+  const [activeFridgeId, setActiveFridgeId] = useState<string>('');
   const [products, setProducts] = useState<Product[]>([]);
   const [consumedProducts, setConsumedProducts] = useState<Product[]>([]);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -69,6 +75,18 @@ function App() {
   const [voiceTried, setVoiceTried] = useState(() => localStorage.getItem('voice-tried') === '1');
   const [scrolledDown, setScrolledDown] = useState(false);
   const lastScrollY = useRef(0);
+
+  // Capture invite token from URL on mount before anything else
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('invite');
+    if (token) {
+      sessionStorage.setItem('pending-invite-token', token);
+      const url = new URL(window.location.href);
+      url.searchParams.delete('invite');
+      window.history.replaceState({}, '', url.toString());
+    }
+  }, []);
 
   useEffect(() => {
     const onScroll = () => {
@@ -106,11 +124,47 @@ function App() {
     document.head.appendChild(meta);
   }, [darkMode]);
 
-  const loadUserProducts = useCallback(async (userId?: string) => {
+  const showNotification = useCallback((msg: string, durationMs = 4000) => {
+    setNotification(msg);
+    setTimeout(() => setNotification(null), durationMs);
+  }, []);
+
+  const loadUserData = useCallback(async (userId?: string) => {
     try {
+      // Process pending invite first so the new fridge appears in the list
+      const inviteToken = sessionStorage.getItem('pending-invite-token');
+      let inviteSuccess: string | null = null;
+      if (inviteToken) {
+        sessionStorage.removeItem('pending-invite-token');
+        try {
+          const { fridgeName } = await acceptFridgeInvite(inviteToken);
+          inviteSuccess = fridgeName;
+        } catch {
+          showNotification(t('fridges.inviteInvalid'));
+        }
+      }
+
+      let fridgeList = await fetchFridges();
+
+      if (fridgeList.length === 0) {
+        const defaultFridge = await createFridge('Mon frigo');
+        fridgeList = [defaultFridge];
+      }
+
+      setFridges(fridgeList);
+
+      const savedId = localStorage.getItem(ACTIVE_FRIDGE_KEY);
+      const resolvedId = fridgeList.find(f => f.id === savedId)?.id ?? fridgeList[0].id;
+      setActiveFridgeId(resolvedId);
+      localStorage.setItem(ACTIVE_FRIDGE_KEY, resolvedId);
+
+      if (inviteSuccess) {
+        showNotification(t('fridges.inviteAccepted', { name: inviteSuccess }));
+      }
+
       const [data, consumed, profile] = await Promise.all([
-        fetchProducts(),
-        fetchRecentlyConsumed(),
+        fetchProducts(resolvedId),
+        fetchRecentlyConsumed(resolvedId),
         fetchUserProfile(),
       ]);
       setProducts(data);
@@ -120,7 +174,6 @@ function App() {
       setCustomPreferences(profile?.customPreferences ?? '');
       const staples = profile?.pantryStaples ?? [];
       setPantryStaples(staples);
-      // Show onboarding if staples never set and user hasn't dismissed it
       if (staples.length === 0 && userId) {
         const key = `pantry-onboarding-seen-${userId}`;
         if (!localStorage.getItem(key)) {
@@ -129,9 +182,9 @@ function App() {
       }
       checkAndNotify(data, t);
     } catch (err) {
-      console.error('Failed to load products:', err);
+      console.error('Failed to load data:', err);
     }
-  }, [checkAndNotify, t]);
+  }, [checkAndNotify, t, showNotification]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -142,7 +195,6 @@ function App() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
       if (event === 'SIGNED_IN') {
-        // Only clear snooze on login — "never" persists across sessions
         localStorage.removeItem('notif-permission-snoozed-until');
         setModalKey(k => k + 1);
       }
@@ -153,12 +205,14 @@ function App() {
 
   useEffect(() => {
     if (user) {
-      loadUserProducts(user.id);
+      loadUserData(user.id);
       setActiveTab(getSavedTab());
     } else {
       setProducts([]);
+      setFridges([]);
+      setActiveFridgeId('');
     }
-  }, [user, loadUserProducts]);
+  }, [user, loadUserData]);
 
   useEffect(() => {
     if (user) {
@@ -166,15 +220,46 @@ function App() {
     }
   }, [activeTab, user]);
 
+  const handleActiveFridgeChange = async (fridgeId: string) => {
+    setActiveFridgeId(fridgeId);
+    localStorage.setItem(ACTIVE_FRIDGE_KEY, fridgeId);
+    try {
+      const [data, consumed] = await Promise.all([
+        fetchProducts(fridgeId),
+        fetchRecentlyConsumed(fridgeId),
+      ]);
+      setProducts(data);
+      setConsumedProducts(consumed);
+    } catch (err) {
+      console.error('Failed to load fridge products:', err);
+    }
+  };
+
+  const handleFridgesChange = async () => {
+    try {
+      const updated = await fetchFridges();
+      setFridges(updated);
+    } catch (err) {
+      console.error('Failed to reload fridges:', err);
+    }
+  };
+
+  const handleCreateFridge = async (name: string) => {
+    const newFridge = await createFridge(name);
+    const updated = await fetchFridges();
+    setFridges(updated);
+    await handleActiveFridgeChange(newFridge.id);
+  };
+
   const doInsertProduct = async (productData: Omit<Product, 'id' | 'addedDate'>) => {
-    if (!user) return;
+    if (!user || !activeFridgeId) return;
     const fridgeZone = getFridgeZone(productData.name, productData.category);
     const productWithMeta = {
       ...productData,
       addedDate: new Date().toISOString().split('T')[0],
       fridgeZone,
     };
-    const saved = await insertProduct(productWithMeta, user.id);
+    const saved = await insertProduct(productWithMeta, user.id, activeFridgeId);
     setProducts(prev => [saved, ...prev]);
     setNotification(t('app.placeIn', { name: productData.name, zone: fridgeZone }));
     setTimeout(() => setNotification(null), 4000);
@@ -312,7 +397,6 @@ function App() {
     const product = products.find(p => p.id === id);
     if (!product) return;
     const computed = estimateExpirationFromOpenDate(product.name, openedDate);
-    // The label on the jar is always the upper bound
     const newExpiration = computed < product.expirationDate ? computed : product.expirationDate;
     const updatedProduct: Product = {
       ...product,
@@ -324,8 +408,9 @@ function App() {
   };
 
   const handleClearFridge = async () => {
+    if (!activeFridgeId) return;
     try {
-      await deleteAllProducts();
+      await deleteAllProducts(activeFridgeId);
       setProducts([]);
     } catch (err) {
       console.error('Failed to clear fridge:', err);
@@ -367,7 +452,7 @@ function App() {
   }, []);
 
   const handleVoiceConfirm = async (drafts: Array<Omit<DraftProduct, '_draftId'>>) => {
-    if (!user) return;
+    if (!user || !activeFridgeId) return;
     try {
       const added: Product[] = [];
       for (const draft of drafts) {
@@ -377,7 +462,7 @@ function App() {
           expirationDate: draft.expirationDate!,
           addedDate: new Date().toISOString().split('T')[0],
           fridgeZone,
-        }, user.id);
+        }, user.id, activeFridgeId);
         added.push(saved);
       }
       setProducts(prev => [...added, ...prev]);
@@ -414,6 +499,12 @@ function App() {
         </div>
       )}
       <div hidden={activeTab !== 'fridge'}>
+        <FridgeSwitcher
+          fridges={fridges}
+          activeFridgeId={activeFridgeId}
+          onSwitch={handleActiveFridgeChange}
+          onCreateFridge={handleCreateFridge}
+        />
         <AddProductForm
           onAdd={handleAddProduct}
           isFormOpen={false}
@@ -457,6 +548,11 @@ function App() {
           onCustomPreferencesChange={setCustomPreferences}
           onPantryStaplesChange={setPantryStaples}
           pantryStaples={pantryStaples}
+          fridges={fridges}
+          activeFridgeId={activeFridgeId}
+          currentUserId={user?.id ?? ''}
+          onFridgesChange={handleFridgesChange}
+          onActiveFridgeChange={handleActiveFridgeChange}
         />
       </div>
     </>

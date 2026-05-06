@@ -374,7 +374,8 @@
     "tabs": {
       "profile": "My profile",
       "preferences": "Preferences",
-      "pantry": "My pantry"
+      "pantry": "My pantry",
+      "fridges": "Fridges"
     },
     "dietary": {
       "vegetarian": "Vegetarian",
@@ -426,9 +427,49 @@
       "wet": "Wet season"
     },
     "months": {
-      "1": "January", "2": "February", "3": "March", "4": "April",
-      "5": "May", "6": "June", "7": "July", "8": "August",
-      "9": "September", "10": "October", "11": "November", "12": "December"
+      "1": "January",
+      "2": "February",
+      "3": "March",
+      "4": "April",
+      "5": "May",
+      "6": "June",
+      "7": "July",
+      "8": "August",
+      "9": "September",
+      "10": "October",
+      "11": "November",
+      "12": "December"
     }
+  },
+  "fridges": {
+    "myFridges": "My fridges",
+    "newFridge": "New fridge",
+    "namePlaceholder": "Fridge name…",
+    "create": "Create",
+    "rename": "Rename",
+    "delete": "Delete fridge",
+    "leave": "Leave fridge",
+    "deleteConfirm": "Permanently delete this fridge and all its products?",
+    "leaveConfirm": "Leave this fridge?",
+    "members": "Members",
+    "inviteByEmail": "Invite by email",
+    "emailPlaceholder": "email@example.com",
+    "invite": "Invite",
+    "inviteCopied": "Link copied!",
+    "pendingInvite": "Pending invite",
+    "roles": {
+      "owner": "Owner",
+      "editor": "Editor",
+      "viewer": "Viewer"
+    },
+    "roleDesc": {
+      "editor": "Can add, edit and delete products",
+      "viewer": "Can only view the fridge"
+    },
+    "removeFromFridge": "Remove from fridge",
+    "switchFridge": "Switch fridge",
+    "inviteAccepted": "You joined the fridge \"{{name}}\"!",
+    "inviteInvalid": "This invite link is invalid or expired.",
+    "tabs": "Fridges"
   }
 }

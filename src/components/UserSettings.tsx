@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { UserProfile, DietaryPreference } from '../types/UserProfile';
 import { fetchUserProfile, saveUserProfile } from '../utils/userProfileService';
 import { PANTRY_PRESET_ITEMS, PRESET_EN_SET } from '../utils/pantryPresets';
+import { Fridge } from '../types/Fridge';
+import { FridgeSettings } from './FridgeSettings';
 import './UserSettings.css';
 
 const DIETARY_RESTRICTIONS: DietaryPreference[] = ['gluten_free', 'lactose_free', 'halal', 'kosher'];
@@ -21,7 +23,7 @@ const EMPTY_PROFILE: UserProfile = {
 type PantryGroup = 'starches' | 'fats' | 'condiments' | 'canned' | 'spices';
 const PANTRY_GROUP_ORDER: PantryGroup[] = ['starches', 'fats', 'condiments', 'canned', 'spices'];
 
-type SettingsTab = 'profile' | 'preferences' | 'pantry';
+type SettingsTab = 'profile' | 'preferences' | 'pantry' | 'fridges';
 
 interface Props {
   darkMode: boolean;
@@ -32,9 +34,14 @@ interface Props {
   onCustomPreferencesChange?: (value: string) => void;
   onPantryStaplesChange?: (items: string[]) => void;
   pantryStaples?: string[];
+  fridges?: Fridge[];
+  activeFridgeId?: string;
+  currentUserId?: string;
+  onFridgesChange?: () => void;
+  onActiveFridgeChange?: (id: string) => void;
 }
 
-export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPreferencesChange, onDislikedIngredientsChange, onCustomPreferencesChange, onPantryStaplesChange, pantryStaples: externalPantryStaples }: Props) => {
+export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPreferencesChange, onDislikedIngredientsChange, onCustomPreferencesChange, onPantryStaplesChange, pantryStaples: externalPantryStaples, fridges = [], activeFridgeId = '', currentUserId = '', onFridgesChange, onActiveFridgeChange }: Props) => {
   const { t, i18n } = useTranslation();
 
   const [activeTab, setActiveTab] = useState<SettingsTab>('profile');
@@ -171,6 +178,7 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
     { id: 'profile', label: t('settings.tabs.profile') },
     { id: 'preferences', label: t('settings.tabs.preferences') },
     { id: 'pantry', label: t('settings.tabs.pantry') },
+    { id: 'fridges', label: t('settings.tabs.fridges') },
   ];
 
   return (
@@ -485,6 +493,19 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
               </button>
             </div>
           </div>
+        </section>
+      )}
+
+      {/* Mes frigos */}
+      {activeTab === 'fridges' && (
+        <section className="settings-section">
+          <FridgeSettings
+            fridges={fridges}
+            activeFridgeId={activeFridgeId}
+            currentUserId={currentUserId}
+            onFridgesChange={onFridgesChange ?? (() => {})}
+            onActiveFridgeChange={onActiveFridgeChange ?? (() => {})}
+          />
         </section>
       )}
 

@@ -374,7 +374,8 @@
     "tabs": {
       "profile": "Mon profil",
       "preferences": "Préférences",
-      "pantry": "Mon placard"
+      "pantry": "Mon placard",
+      "fridges": "Frigos"
     },
     "dietary": {
       "vegetarian": "Végétarien",
@@ -426,9 +427,18 @@
       "wet": "Saison des pluies"
     },
     "months": {
-      "1": "Janvier", "2": "Février", "3": "Mars", "4": "Avril",
-      "5": "Mai", "6": "Juin", "7": "Juillet", "8": "Août",
-      "9": "Septembre", "10": "Octobre", "11": "Novembre", "12": "Décembre"
+      "1": "Janvier",
+      "2": "Février",
+      "3": "Mars",
+      "4": "Avril",
+      "5": "Mai",
+      "6": "Juin",
+      "7": "Juillet",
+      "8": "Août",
+      "9": "Septembre",
+      "10": "Octobre",
+      "11": "Novembre",
+      "12": "Décembre"
     },
     "products": {
       "Apples": "Pommes",
@@ -506,5 +516,36 @@
       "Cassava": "Manioc",
       "Pomelo": "Pomelos"
     }
+  },
+  "fridges": {
+    "myFridges": "Mes frigos",
+    "newFridge": "Nouveau frigo",
+    "namePlaceholder": "Nom du frigo…",
+    "create": "Créer",
+    "rename": "Renommer",
+    "delete": "Supprimer le frigo",
+    "leave": "Quitter le frigo",
+    "deleteConfirm": "Supprimer définitivement ce frigo et tous ses produits ?",
+    "leaveConfirm": "Quitter ce frigo ?",
+    "members": "Membres",
+    "inviteByEmail": "Inviter par email",
+    "emailPlaceholder": "email@exemple.com",
+    "invite": "Inviter",
+    "inviteCopied": "Lien copié !",
+    "pendingInvite": "Invitation en attente",
+    "roles": {
+      "owner": "Propriétaire",
+      "editor": "Éditeur",
+      "viewer": "Lecteur"
+    },
+    "roleDesc": {
+      "editor": "Peut ajouter, modifier et supprimer des produits",
+      "viewer": "Peut seulement consulter le frigo"
+    },
+    "removeFromFridge": "Retirer du frigo",
+    "switchFridge": "Changer de frigo",
+    "inviteAccepted": "Tu as rejoint le frigo \"{{name}}\" !",
+    "inviteInvalid": "Ce lien d'invitation est invalide ou expiré.",
+    "tabs": "Frigos"
   }
 }

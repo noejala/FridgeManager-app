@@ -4,6 +4,7 @@ import { Product } from '../types/Product';
 interface ProductRow {
   id: string;
   user_id: string;
+  fridge_id: string;
   name: string;
   category: string;
   expiration_date: string;
@@ -51,10 +52,11 @@ function productToInsert(product: Omit<Product, 'id'>, userId: string) {
   };
 }
 
-export async function fetchProducts(): Promise<Product[]> {
+export async function fetchProducts(fridgeId: string): Promise<Product[]> {
   const { data, error } = await supabase
     .from('products')
     .select('*')
+    .eq('fridge_id', fridgeId)
     .is('consumed_at', null)
     .order('created_at', { ascending: false });
 
@@ -62,11 +64,12 @@ export async function fetchProducts(): Promise<Product[]> {
   return (data as ProductRow[]).map(rowToProduct);
 }
 
-export async function fetchRecentlyConsumed(): Promise<Product[]> {
+export async function fetchRecentlyConsumed(fridgeId: string): Promise<Product[]> {
   const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
   const { data, error } = await supabase
     .from('products')
     .select('*')
+    .eq('fridge_id', fridgeId)
     .not('consumed_at', 'is', null)
     .gte('consumed_at', since)
     .order('consumed_at', { ascending: false });
@@ -95,11 +98,12 @@ export async function restoreProduct(id: string): Promise<void> {
 
 export async function insertProduct(
   product: Omit<Product, 'id'>,
-  userId: string
+  userId: string,
+  fridgeId: string
 ): Promise<Product> {
   const { data, error } = await supabase
     .from('products')
-    .insert(productToInsert(product, userId))
+    .insert({ ...productToInsert(product, userId), fridge_id: fridgeId })
     .select()
     .single();
 
@@ -136,13 +140,11 @@ export async function deleteProduct(id: string): Promise<void> {
   if (error) throw error;
 }
 
-export async function deleteAllProducts(): Promise<void> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Not authenticated');
+export async function deleteAllProducts(fridgeId: string): Promise<void> {
   const { error } = await supabase
     .from('products')
     .delete()
-    .eq('user_id', user.id);
+    .eq('fridge_id', fridgeId);
 
   if (error) throw error;
 }
