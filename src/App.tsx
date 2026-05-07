@@ -22,6 +22,7 @@ import { WhatToCook } from './components/WhatToCook';
 import { SeasonalProducts } from './components/SeasonalProducts';
 import { UserSettings } from './components/UserSettings';
 import { Auth } from './components/Auth';
+import { UsernameSetup } from './components/UsernameSetup';
 import { InstallBanner } from './components/InstallBanner';
 import { NotifPermissionModal } from './components/NotifPermissionModal';
 import { PantryOnboarding } from './components/PantryOnboarding';
@@ -68,6 +69,7 @@ function App() {
   const [dislikedIngredients, setDislikedIngredients] = useState<string[]>([]);
   const [customPreferences, setCustomPreferences] = useState<string>('');
   const [pantryStaples, setPantryStaples] = useState<string[]>([]);
+  const [displayName, setDisplayName] = useState<string | null | undefined>(undefined);
   const [showPantryOnboarding, setShowPantryOnboarding] = useState(false);
   const [scanPrefill, setScanPrefill] = useState<FoodFactsResult | null>(null);
   const [isVoiceMode, setIsVoiceMode] = useState(false);
@@ -169,6 +171,7 @@ function App() {
       ]);
       setProducts(data);
       setConsumedProducts(consumed);
+      setDisplayName(profile?.displayName ?? null);
       setDietaryPreferences(profile?.dietaryPreferences ?? []);
       setDislikedIngredients(profile?.dislikedIngredients ?? []);
       setCustomPreferences(profile?.customPreferences ?? '');
@@ -211,6 +214,7 @@ function App() {
       setProducts([]);
       setFridges([]);
       setActiveFridgeId('');
+      setDisplayName(undefined);
     }
   }, [user, loadUserData]);
 
@@ -427,6 +431,7 @@ function App() {
     setPantryStaples(staples);
     const profile = await fetchUserProfile();
     await saveUserProfile({
+      displayName: null, friendCode: null,
       country: null, gender: null, age: null,
       dietaryPreferences: [], dislikedIngredients: [], customPreferences: '',
       ...profile,
@@ -558,9 +563,17 @@ function App() {
     </>
   );
 
-  if (authLoading) return null;
+  if (authLoading || displayName === undefined) return null;
 
   if (!user) return <Auth darkMode={darkMode} onToggleDarkMode={() => setDarkMode(prev => !prev)} />;
+
+  if (displayName === null) return (
+    <UsernameSetup
+      onComplete={name => setDisplayName(name)}
+      darkMode={darkMode}
+      onToggleDarkMode={() => setDarkMode(prev => !prev)}
+    />
+  );
 
   return (
     <div className="app">

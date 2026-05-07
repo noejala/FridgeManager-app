@@ -8,6 +8,8 @@ export type DietaryPreference =
   | 'pescatarian';
 
 export interface UserProfile {
+  displayName: string | null;
+  friendCode: string | null;
   country: string | null;
   gender: 'male' | 'female' | 'other' | 'prefer_not_to_say' | null;
   age: number | null;

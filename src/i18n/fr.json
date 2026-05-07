@@ -22,7 +22,15 @@
     "alreadyAccount": "Déjà un compte ?",
     "anErrorOccurred": "Une erreur est survenue",
     "orContinueWith": "Ou continuer avec",
-    "continueWithGoogle": "Continuer avec Google"
+    "continueWithGoogle": "Continuer avec Google",
+    "username": "Pseudo",
+    "usernamePlaceholder": "Ex : marie_j, tom2024…",
+    "usernameHint": "3 à 20 caractères, lettres, chiffres et _ uniquement.",
+    "usernameTaken": "Ce pseudo est déjà pris",
+    "usernameInvalid": "Pseudo invalide (3 à 20 caractères, lettres, chiffres et _)",
+    "usernameSetupTitle": "Choisis ton pseudo",
+    "usernameSetupSubtitle": "Il servira à t'identifier sur Fridge Manager",
+    "usernameSetupConfirm": "Continuer"
   },
   "tabs": {
     "fridge": "Mon frigo",
@@ -375,7 +383,8 @@
       "profile": "Mon profil",
       "preferences": "Préférences",
       "pantry": "Mon placard",
-      "fridges": "Frigos"
+      "fridges": "Frigos",
+      "friends": "Amis"
     },
     "dietary": {
       "vegetarian": "Végétarien",
@@ -516,6 +525,31 @@
       "Cassava": "Manioc",
       "Pomelo": "Pomelos"
     }
+  },
+  "friends": {
+    "username": "Pseudo",
+    "friendCode": "Code ami",
+    "copyCode": "Copier",
+    "codeCopied": "Copié !",
+    "addFriend": "Ajouter un ami",
+    "searchPlaceholder": "Pseudo ou code ami…",
+    "noResults": "Aucun utilisateur trouvé",
+    "sendRequest": "Ajouter",
+    "alreadyAdded": "Déjà ajouté",
+    "pendingRequests": "Demandes en attente",
+    "incoming": "Reçue",
+    "outgoing": "Envoyée",
+    "accept": "Accepter",
+    "decline": "Refuser",
+    "cancel": "Annuler",
+    "friendsList": "Mes amis",
+    "noFriends": "Aucun ami pour le moment. Cherche quelqu'un par pseudo !",
+    "remove": "Retirer",
+    "addToFridge": "Ajouter un ami au frigo",
+    "pickFriend": "Choisir un ami…",
+    "noFriendsYet": "Ajoute des amis dans l'onglet Amis pour les inviter ici.",
+    "me": "Moi",
+    "noIdentityYet": "Erreur de chargement du profil."
   },
   "fridges": {
     "myFridges": "Mes frigos",

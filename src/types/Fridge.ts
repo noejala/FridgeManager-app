@@ -15,4 +15,5 @@ export interface FridgeMember {
   invitedEmail: string | null;
   inviteAcceptedAt: string | null;
   createdAt: string;
+  displayName: string | null;
 }

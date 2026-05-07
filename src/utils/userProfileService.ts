@@ -10,6 +10,8 @@ export async function fetchUserProfile(): Promise<UserProfile | null> {
   if (error || !data) return null;
 
   return {
+    displayName: data.display_name ?? null,
+    friendCode: data.friend_code ?? null,
     country: data.country ?? null,
     gender: data.gender ?? null,
     age: data.age ?? null,
@@ -35,4 +37,10 @@ export async function saveUserProfile(profile: UserProfile): Promise<void> {
     pantry_staples: profile.pantryStaples,
     updated_at: new Date().toISOString(),
   });
+}
+
+export async function setupUserIdentity(displayName: string): Promise<string> {
+  const { data, error } = await supabase.rpc('setup_user_identity', { p_display_name: displayName });
+  if (error) throw error;
+  return data as string;
 }

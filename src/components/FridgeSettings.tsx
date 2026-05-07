@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Fridge, FridgeMember, FridgeMemberRole } from '../types/Fridge';
 import {
-  fetchFridgeMembers, inviteMember, updateMemberRole,
-  removeMember, updateFridgeName, deleteFridge, leaveFridge,
+  fetchFridgeMembers, updateMemberRole,
+  removeMember, updateFridgeName, deleteFridge, leaveFridge, addFriendToFridge,
 } from '../utils/fridgeService';
+import { fetchFriendships, Friend } from '../utils/friendService';
 import './FridgeSettings.css';
 
 interface Props {
@@ -20,10 +21,11 @@ export const FridgeSettings = ({ fridges, activeFridgeId, currentUserId, onFridg
   const [selectedFridgeId, setSelectedFridgeId] = useState(activeFridgeId);
   const [members, setMembers] = useState<FridgeMember[]>([]);
   const [loadingMembers, setLoadingMembers] = useState(false);
-  const [inviteEmail, setInviteEmail] = useState('');
+  const [friends, setFriends] = useState<Friend[]>([]);
+  const [selectedFriendId, setSelectedFriendId] = useState('');
   const [inviteRole, setInviteRole] = useState<FridgeMemberRole>('editor');
   const [inviting, setInviting] = useState(false);
-  const [copiedLink, setCopiedLink] = useState(false);
+  const [inviteSuccess, setInviteSuccess] = useState(false);
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState('');
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
@@ -41,15 +43,21 @@ export const FridgeSettings = ({ fridges, activeFridgeId, currentUserId, onFridg
       .finally(() => setLoadingMembers(false));
   }, [selectedFridgeId]);
 
-  const handleInvite = async () => {
-    if (!inviteEmail.trim() || !selectedFridgeId) return;
+  useEffect(() => {
+    if (!isOwner) return;
+    fetchFriendships()
+      .then(({ friends: f }) => setFriends(f))
+      .catch(() => {});
+  }, [isOwner, selectedFridgeId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleAddFriend = async () => {
+    if (!selectedFriendId || !selectedFridgeId) return;
     setInviting(true);
     try {
-      const link = await inviteMember(selectedFridgeId, inviteEmail.trim(), inviteRole);
-      await navigator.clipboard.writeText(link);
-      setCopiedLink(true);
-      setTimeout(() => setCopiedLink(false), 3000);
-      setInviteEmail('');
+      await addFriendToFridge(selectedFridgeId, selectedFriendId, inviteRole);
+      setSelectedFriendId('');
+      setInviteSuccess(true);
+      setTimeout(() => setInviteSuccess(false), 2500);
       const updated = await fetchFridgeMembers(selectedFridgeId);
       setMembers(updated);
     } catch {
@@ -169,7 +177,9 @@ export const FridgeSettings = ({ fridges, activeFridgeId, currentUserId, onFridg
                 {members.filter(m => m.inviteAcceptedAt).map(m => (
                   <li key={m.id} className="fridge-member-row">
                     <span className="fridge-member-email">
-                      {m.userId === currentUserId ? '👤 Moi' : (m.invitedEmail ?? m.userId?.slice(0, 8))}
+                      {m.userId === currentUserId
+                        ? t('friends.me')
+                        : (m.displayName ? `@${m.displayName}` : (m.invitedEmail ?? m.userId?.slice(0, 8)))}
                     </span>
                     {isOwner && m.userId !== currentUserId ? (
                       <>
@@ -208,36 +218,45 @@ export const FridgeSettings = ({ fridges, activeFridgeId, currentUserId, onFridg
             )}
           </div>
 
-          {/* Invite */}
+          {/* Add friend to fridge */}
           {isOwner && (
             <div className="fridge-settings-section">
-              <h4 className="fridge-settings-label">{t('fridges.inviteByEmail')}</h4>
-              <div className="fridge-invite-row">
-                <input
-                  className="fridge-invite-input"
-                  type="email"
-                  value={inviteEmail}
-                  onChange={e => setInviteEmail(e.target.value)}
-                  placeholder={t('fridges.emailPlaceholder')}
-                  onKeyDown={e => e.key === 'Enter' && handleInvite()}
-                />
-                <select
-                  className="fridge-invite-role"
-                  value={inviteRole}
-                  onChange={e => setInviteRole(e.target.value as FridgeMemberRole)}
-                >
-                  <option value="editor">{t('fridges.roles.editor')}</option>
-                  <option value="viewer">{t('fridges.roles.viewer')}</option>
-                </select>
-                <button
-                  className="fridge-invite-btn"
-                  onClick={handleInvite}
-                  disabled={!inviteEmail.trim() || inviting}
-                >
-                  {copiedLink ? t('fridges.inviteCopied') : t('fridges.invite')}
-                </button>
-              </div>
-              <p className="fridge-invite-hint">Le lien d'invitation sera copié dans ton presse-papiers.</p>
+              <h4 className="fridge-settings-label">{t('friends.addToFridge')}</h4>
+              {friends.length === 0 ? (
+                <p className="fridge-invite-hint">{t('friends.noFriendsYet')}</p>
+              ) : (
+                <>
+                  <div className="fridge-invite-row">
+                    <select
+                      className="fridge-invite-input"
+                      value={selectedFriendId}
+                      onChange={e => setSelectedFriendId(e.target.value)}
+                    >
+                      <option value="">{t('friends.pickFriend')}</option>
+                      {friends
+                        .filter(f => !members.some(m => m.userId === f.userId))
+                        .map(f => (
+                          <option key={f.userId} value={f.userId}>@{f.displayName}</option>
+                        ))}
+                    </select>
+                    <select
+                      className="fridge-invite-role"
+                      value={inviteRole}
+                      onChange={e => setInviteRole(e.target.value as FridgeMemberRole)}
+                    >
+                      <option value="editor">{t('fridges.roles.editor')}</option>
+                      <option value="viewer">{t('fridges.roles.viewer')}</option>
+                    </select>
+                    <button
+                      className="fridge-invite-btn"
+                      onClick={handleAddFriend}
+                      disabled={!selectedFriendId || inviting}
+                    >
+                      {inviteSuccess ? '✓' : t('fridges.invite')}
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           )}
 

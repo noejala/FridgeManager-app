@@ -1,0 +1,143 @@
+.username-setup-container {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  padding: 1.5rem;
+}
+
+.username-setup-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) * 2);
+  padding: 2.5rem 2rem;
+  position: relative;
+  box-shadow: var(--shadow);
+  animation: fade-in 0.3s ease;
+}
+
+.username-setup-theme {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 0.25rem;
+  line-height: 1;
+}
+
+.username-setup-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 1.75rem;
+  letter-spacing: -0.02em;
+}
+
+.username-setup-title span {
+  color: var(--accent);
+}
+
+.username-setup-heading {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 0.4rem;
+}
+
+.username-setup-subtitle {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0 0 1.75rem;
+}
+
+.username-setup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.username-setup-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.username-setup-field label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.username-setup-input-row {
+  display: flex;
+  align-items: center;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+
+.username-setup-input-row:focus-within {
+  border-color: var(--accent);
+}
+
+.username-setup-at {
+  padding: 0 0.5rem 0 0.875rem;
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  user-select: none;
+}
+
+.username-setup-input-row input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 0.6875rem 0.875rem 0.6875rem 0.25rem;
+  font-size: 0.9375rem;
+  color: var(--text);
+  outline: none;
+  font-family: var(--font-body);
+}
+
+.username-setup-hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.username-setup-error {
+  font-size: 0.8125rem;
+  color: var(--red);
+  margin: 0;
+  background: var(--red-bg);
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius);
+}
+
+.username-setup-submit {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.username-setup-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

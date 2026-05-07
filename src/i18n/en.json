@@ -22,7 +22,15 @@
     "alreadyAccount": "Already have an account?",
     "anErrorOccurred": "An error occurred",
     "orContinueWith": "Or continue with",
-    "continueWithGoogle": "Continue with Google"
+    "continueWithGoogle": "Continue with Google",
+    "username": "Username",
+    "usernamePlaceholder": "E.g. marie_j, tom2024…",
+    "usernameHint": "3 to 20 characters, letters, numbers and _ only.",
+    "usernameTaken": "This username is already taken",
+    "usernameInvalid": "Invalid username (3 to 20 characters, letters, numbers and _)",
+    "usernameSetupTitle": "Choose your username",
+    "usernameSetupSubtitle": "It will identify you on Fridge Manager",
+    "usernameSetupConfirm": "Continue"
   },
   "tabs": {
     "fridge": "In my fridge",
@@ -375,7 +383,8 @@
       "profile": "My profile",
       "preferences": "Preferences",
       "pantry": "My pantry",
-      "fridges": "Fridges"
+      "fridges": "Fridges",
+      "friends": "Friends"
     },
     "dietary": {
       "vegetarian": "Vegetarian",
@@ -440,6 +449,31 @@
       "11": "November",
       "12": "December"
     }
+  },
+  "friends": {
+    "username": "Username",
+    "friendCode": "Friend code",
+    "copyCode": "Copy",
+    "codeCopied": "Copied!",
+    "addFriend": "Add a friend",
+    "searchPlaceholder": "Username or friend code…",
+    "noResults": "No user found",
+    "sendRequest": "Add",
+    "alreadyAdded": "Already added",
+    "pendingRequests": "Pending requests",
+    "incoming": "Received",
+    "outgoing": "Sent",
+    "accept": "Accept",
+    "decline": "Decline",
+    "cancel": "Cancel",
+    "friendsList": "My friends",
+    "noFriends": "No friends yet. Search for someone by username!",
+    "remove": "Remove",
+    "addToFridge": "Add a friend to fridge",
+    "pickFriend": "Pick a friend…",
+    "noFriendsYet": "Add friends in the Friends tab to invite them here.",
+    "me": "Me",
+    "noIdentityYet": "Profile loading error."
   },
   "fridges": {
     "myFridges": "My fridges",

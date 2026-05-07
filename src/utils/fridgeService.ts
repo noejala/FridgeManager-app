@@ -31,6 +31,7 @@ function rowToMember(row: FridgeMemberRow): FridgeMember {
     invitedEmail: row.invited_email,
     inviteAcceptedAt: row.invite_accepted_at,
     createdAt: row.created_at,
+    displayName: null,
   };
 }
 
@@ -79,7 +80,33 @@ export async function fetchFridgeMembers(fridgeId: string): Promise<FridgeMember
     .eq('fridge_id', fridgeId)
     .order('created_at', { ascending: true });
   if (error) throw error;
-  return (data as FridgeMemberRow[]).map(rowToMember);
+
+  const rows = data as FridgeMemberRow[];
+  const userIds = rows.map(r => r.user_id).filter(Boolean) as string[];
+
+  let profileMap: Map<string, string> = new Map();
+  if (userIds.length > 0) {
+    const { data: profiles } = await supabase.rpc('get_user_profiles', { user_ids: userIds });
+    if (profiles) {
+      profileMap = new Map(
+        (profiles as { user_id: string; display_name: string }[]).map(p => [p.user_id, p.display_name])
+      );
+    }
+  }
+
+  return rows.map(row => ({
+    ...rowToMember(row),
+    displayName: row.user_id ? (profileMap.get(row.user_id) ?? null) : null,
+  }));
+}
+
+export async function addFriendToFridge(fridgeId: string, friendUserId: string, role: FridgeMemberRole): Promise<void> {
+  const { error } = await supabase.rpc('add_friend_to_fridge', {
+    p_fridge_id: fridgeId,
+    p_friend_user_id: friendUserId,
+    p_role: role,
+  });
+  if (error) throw error;
 }
 
 export async function inviteMember(fridgeId: string, email: string, role: FridgeMemberRole): Promise<string> {
