@@ -1,0 +1,52 @@
+.sharing-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.sharing-segmented {
+  display: flex;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.25rem;
+  gap: 0.25rem;
+}
+
+.sharing-seg-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background: transparent;
+  border: none;
+  border-radius: calc(var(--radius) - 2px);
+  padding: 0.55rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.sharing-seg-btn.active {
+  background: var(--bg-card);
+  color: var(--text);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.sharing-seg-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--red);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 700;
+  border-radius: 99px;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 3px;
+}

@@ -24,6 +24,15 @@ const SeasonalIcon = () => (
   </svg>
 );
 
+const SharingIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+    <circle cx="9" cy="7" r="4"/>
+    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+  </svg>
+);
+
 const SettingsIcon = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="12" cy="12" r="3"/>
@@ -36,16 +45,18 @@ interface TabsProps {
   onTabChange: (tab: string) => void;
   children: ReactNode;
   urgentCount?: number;
+  pendingFriendCount?: number;
   scrolledDown?: boolean;
 }
 
-export const Tabs = ({ activeTab, onTabChange, children, urgentCount = 0, scrolledDown = false }: TabsProps) => {
+export const Tabs = ({ activeTab, onTabChange, children, urgentCount = 0, pendingFriendCount = 0, scrolledDown = false }: TabsProps) => {
   const { t } = useTranslation();
 
   const tabs = [
     { id: 'fridge', label: t('tabs.fridge'), icon: <FridgeIcon /> },
     { id: 'cook', label: t('tabs.cook'), icon: <CookIcon /> },
     { id: 'seasonal', label: t('tabs.seasonal'), icon: <SeasonalIcon /> },
+    { id: 'sharing', label: t('tabs.sharing'), icon: <SharingIcon />, badge: pendingFriendCount },
     { id: 'settings', label: t('tabs.settings'), icon: <SettingsIcon /> },
   ];
 
@@ -63,6 +74,9 @@ export const Tabs = ({ activeTab, onTabChange, children, urgentCount = 0, scroll
               <span className="tab-icon">{tab.icon}</span>
               {tab.id === 'fridge' && urgentCount > 0 && (
                 <span className="tab-badge">{urgentCount > 99 ? '99+' : urgentCount}</span>
+              )}
+              {'badge' in tab && tab.badge != null && tab.badge > 0 && (
+                <span className="tab-badge">{tab.badge}</span>
               )}
             </span>
             <span className="tab-label">{tab.label}</span>

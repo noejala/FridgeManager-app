@@ -3,10 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { UserProfile, DietaryPreference } from '../types/UserProfile';
 import { fetchUserProfile, saveUserProfile } from '../utils/userProfileService';
 import { PANTRY_PRESET_ITEMS, PRESET_EN_SET } from '../utils/pantryPresets';
-import { Fridge } from '../types/Fridge';
-import { FridgeSettings } from './FridgeSettings';
-import { FriendsPanel } from './FriendsPanel';
-import { fetchPendingIncomingCount } from '../utils/friendService';
 import './UserSettings.css';
 
 const DIETARY_RESTRICTIONS: DietaryPreference[] = ['gluten_free', 'lactose_free', 'halal', 'kosher'];
@@ -27,7 +23,7 @@ const EMPTY_PROFILE: UserProfile = {
 type PantryGroup = 'starches' | 'fats' | 'condiments' | 'canned' | 'spices';
 const PANTRY_GROUP_ORDER: PantryGroup[] = ['starches', 'fats', 'condiments', 'canned', 'spices'];
 
-type SettingsTab = 'profile' | 'preferences' | 'pantry' | 'fridges' | 'friends';
+type SettingsTab = 'profile' | 'preferences' | 'pantry';
 
 interface Props {
   darkMode: boolean;
@@ -38,14 +34,9 @@ interface Props {
   onCustomPreferencesChange?: (value: string) => void;
   onPantryStaplesChange?: (items: string[]) => void;
   pantryStaples?: string[];
-  fridges?: Fridge[];
-  activeFridgeId?: string;
-  currentUserId?: string;
-  onFridgesChange?: () => void;
-  onActiveFridgeChange?: (id: string) => void;
 }
 
-export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPreferencesChange, onDislikedIngredientsChange, onCustomPreferencesChange, onPantryStaplesChange, pantryStaples: externalPantryStaples, fridges = [], activeFridgeId = '', currentUserId = '', onFridgesChange, onActiveFridgeChange }: Props) => {
+export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPreferencesChange, onDislikedIngredientsChange, onCustomPreferencesChange, onPantryStaplesChange, pantryStaples: externalPantryStaples }: Props) => {
   const { t, i18n } = useTranslation();
 
   const [activeTab, setActiveTab] = useState<SettingsTab>('profile');
@@ -66,7 +57,6 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
   const [pantryDraft, setPantryDraft] = useState<string[]>([]);
   const [pantrySaving, setPantrySaving] = useState(false);
   const [pantrySaved, setPantrySaved] = useState(false);
-  const [pendingFriendCount, setPendingFriendCount] = useState(0);
 
   const hasProfileData = (p: UserProfile) => p.country || p.age;
 
@@ -84,7 +74,6 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
       setEditing(!hasProfileData(p));
       setLoading(false);
     });
-    fetchPendingIncomingCount().then(setPendingFriendCount).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -180,12 +169,10 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
 
   if (loading) return <div className="settings-loading" />;
 
-  const TABS: { id: SettingsTab; label: string; badge?: number }[] = [
+  const TABS: { id: SettingsTab; label: string }[] = [
     { id: 'profile', label: t('settings.tabs.profile') },
     { id: 'preferences', label: t('settings.tabs.preferences') },
     { id: 'pantry', label: t('settings.tabs.pantry') },
-    { id: 'fridges', label: t('settings.tabs.fridges') },
-    { id: 'friends', label: t('settings.tabs.friends'), badge: pendingFriendCount },
   ];
 
   return (
@@ -199,9 +186,6 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
             onClick={() => setActiveTab(tab.id)}
           >
             {tab.label}
-            {tab.badge != null && tab.badge > 0 && (
-              <span className="settings-tab-badge">{tab.badge}</span>
-            )}
           </button>
         ))}
       </div>
@@ -509,33 +493,6 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
               </button>
             </div>
           </div>
-        </section>
-      )}
-
-      {/* Mes frigos */}
-      {activeTab === 'fridges' && (
-        <section className="settings-section">
-          <FridgeSettings
-            fridges={fridges}
-            activeFridgeId={activeFridgeId}
-            currentUserId={currentUserId}
-            onFridgesChange={onFridgesChange ?? (() => {})}
-            onActiveFridgeChange={onActiveFridgeChange ?? (() => {})}
-          />
-        </section>
-      )}
-
-      {/* Amis */}
-      {activeTab === 'friends' && (
-        <section className="settings-section">
-          {profile.displayName && profile.friendCode ? (
-            <FriendsPanel
-              displayName={profile.displayName}
-              friendCode={profile.friendCode}
-            />
-          ) : (
-            <p className="settings-empty">{t('friends.noIdentityYet')}</p>
-          )}
         </section>
       )}
 

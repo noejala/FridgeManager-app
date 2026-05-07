@@ -6,6 +6,7 @@ import { Fridge } from './types/Fridge';
 import { supabase } from './lib/supabase';
 import { fetchProducts, fetchRecentlyConsumed, insertProduct, updateProduct, deleteProduct, deleteAllProducts, consumeProduct, restoreProduct } from './utils/productService';
 import { fetchFridges, createFridge, acceptFridgeInvite } from './utils/fridgeService';
+import { fetchPendingIncomingCount } from './utils/friendService';
 import { lookupBarcode, FoodFactsResult } from './utils/foodFactsApi';
 import { fetchUserProfile, saveUserProfile } from './utils/userProfileService';
 import { DietaryPreference } from './types/UserProfile';
@@ -23,6 +24,7 @@ import { SeasonalProducts } from './components/SeasonalProducts';
 import { UserSettings } from './components/UserSettings';
 import { Auth } from './components/Auth';
 import { UsernameSetup } from './components/UsernameSetup';
+import { SharingTab } from './components/SharingTab';
 import { InstallBanner } from './components/InstallBanner';
 import { NotifPermissionModal } from './components/NotifPermissionModal';
 import { PantryOnboarding } from './components/PantryOnboarding';
@@ -70,6 +72,8 @@ function App() {
   const [customPreferences, setCustomPreferences] = useState<string>('');
   const [pantryStaples, setPantryStaples] = useState<string[]>([]);
   const [displayName, setDisplayName] = useState<string | null | undefined>(undefined);
+  const [friendCode, setFriendCode] = useState<string>('');
+  const [pendingFriendCount, setPendingFriendCount] = useState(0);
   const [showPantryOnboarding, setShowPantryOnboarding] = useState(false);
   const [scanPrefill, setScanPrefill] = useState<FoodFactsResult | null>(null);
   const [isVoiceMode, setIsVoiceMode] = useState(false);
@@ -172,6 +176,7 @@ function App() {
       setProducts(data);
       setConsumedProducts(consumed);
       setDisplayName(profile?.displayName ?? null);
+      setFriendCode(profile?.friendCode ?? '');
       setDietaryPreferences(profile?.dietaryPreferences ?? []);
       setDislikedIngredients(profile?.dislikedIngredients ?? []);
       setCustomPreferences(profile?.customPreferences ?? '');
@@ -210,11 +215,13 @@ function App() {
     if (user) {
       loadUserData(user.id);
       setActiveTab(getSavedTab());
+      fetchPendingIncomingCount().then(setPendingFriendCount).catch(() => {});
     } else {
       setProducts([]);
       setFridges([]);
       setActiveFridgeId('');
       setDisplayName(undefined);
+      setPendingFriendCount(0);
     }
   }, [user, loadUserData]);
 
@@ -543,6 +550,20 @@ function App() {
       <div hidden={activeTab !== 'seasonal'}>
         <SeasonalProducts isActive={activeTab === 'seasonal'} />
       </div>
+      <div hidden={activeTab !== 'sharing'}>
+        {displayName && (
+          <SharingTab
+            displayName={displayName}
+            friendCode={friendCode}
+            fridges={fridges}
+            activeFridgeId={activeFridgeId}
+            currentUserId={user?.id ?? ''}
+            onFridgesChange={handleFridgesChange}
+            onActiveFridgeChange={handleActiveFridgeChange}
+            pendingFriendCount={pendingFriendCount}
+          />
+        )}
+      </div>
       <div hidden={activeTab !== 'settings'}>
         <UserSettings
           darkMode={darkMode}
@@ -553,11 +574,6 @@ function App() {
           onCustomPreferencesChange={setCustomPreferences}
           onPantryStaplesChange={setPantryStaples}
           pantryStaples={pantryStaples}
-          fridges={fridges}
-          activeFridgeId={activeFridgeId}
-          currentUserId={user?.id ?? ''}
-          onFridgesChange={handleFridgesChange}
-          onActiveFridgeChange={handleActiveFridgeChange}
         />
       </div>
     </>
@@ -604,6 +620,7 @@ function App() {
           activeTab={activeTab}
           onTabChange={(tab) => setActiveTab(tab)}
           urgentCount={products.filter(p => isExpired(p.expirationDate) || isExpiringSoon(p.expirationDate)).length}
+          pendingFriendCount={pendingFriendCount}
           scrolledDown={scrolledDown}
         >
           {renderTabContent()}

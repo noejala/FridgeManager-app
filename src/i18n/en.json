@@ -36,6 +36,7 @@
     "fridge": "In my fridge",
     "cook": "What to cook",
     "seasonal": "Seasonal",
+    "sharing": "Sharing",
     "settings": "Settings"
   },
   "productList": {
@@ -449,6 +450,10 @@
       "11": "November",
       "12": "December"
     }
+  },
+  "sharing": {
+    "friends": "Friends",
+    "fridges": "Fridges"
   },
   "friends": {
     "username": "Username",

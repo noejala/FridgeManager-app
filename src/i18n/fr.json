@@ -36,6 +36,7 @@
     "fridge": "Mon frigo",
     "cook": "Que cuisiner",
     "seasonal": "De saison",
+    "sharing": "Partage",
     "settings": "Réglages"
   },
   "productList": {
@@ -525,6 +526,10 @@
       "Cassava": "Manioc",
       "Pomelo": "Pomelos"
     }
+  },
+  "sharing": {
+    "friends": "Amis",
+    "fridges": "Frigos"
   },
   "friends": {
     "username": "Pseudo",

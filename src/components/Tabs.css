@@ -100,7 +100,7 @@
     padding: 0.3rem;
     margin-bottom: 0;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     align-items: center;
     box-shadow: var(--shadow);
     width: min(calc(100vw - 2rem), 400px);
