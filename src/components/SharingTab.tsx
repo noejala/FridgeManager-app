@@ -25,11 +25,17 @@ export function SharingTab({
   pendingFriendCount,
 }: Props) {
   const { t } = useTranslation();
-  const [section, setSection] = useState<SharingSection>('friends');
+  const [section, setSection] = useState<SharingSection>('fridges');
 
   return (
     <div className="sharing-tab">
       <div className="sharing-segmented">
+        <button
+          className={`sharing-seg-btn${section === 'fridges' ? ' active' : ''}`}
+          onClick={() => setSection('fridges')}
+        >
+          {t('sharing.fridges')}
+        </button>
         <button
           className={`sharing-seg-btn${section === 'friends' ? ' active' : ''}`}
           onClick={() => setSection('friends')}
@@ -38,12 +44,6 @@ export function SharingTab({
           {pendingFriendCount > 0 && (
             <span className="sharing-seg-badge">{pendingFriendCount}</span>
           )}
-        </button>
-        <button
-          className={`sharing-seg-btn${section === 'fridges' ? ' active' : ''}`}
-          onClick={() => setSection('fridges')}
-        >
-          {t('sharing.fridges')}
         </button>
       </div>
 
