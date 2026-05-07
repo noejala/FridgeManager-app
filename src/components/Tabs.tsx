@@ -55,8 +55,8 @@ export const Tabs = ({ activeTab, onTabChange, children, urgentCount = 0, pendin
   const tabs = [
     { id: 'fridge', label: t('tabs.fridge'), icon: <FridgeIcon /> },
     { id: 'cook', label: t('tabs.cook'), icon: <CookIcon /> },
-    { id: 'seasonal', label: t('tabs.seasonal'), icon: <SeasonalIcon /> },
     { id: 'sharing', label: t('tabs.sharing'), icon: <SharingIcon />, badge: pendingFriendCount },
+    { id: 'seasonal', label: t('tabs.seasonal'), icon: <SeasonalIcon /> },
     { id: 'settings', label: t('tabs.settings'), icon: <SettingsIcon /> },
   ];
 
