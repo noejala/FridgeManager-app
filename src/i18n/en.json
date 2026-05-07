@@ -491,11 +491,7 @@
     "deleteConfirm": "Permanently delete this fridge and all its products?",
     "leaveConfirm": "Leave this fridge?",
     "members": "Members",
-    "inviteByEmail": "Invite by email",
-    "emailPlaceholder": "email@example.com",
     "invite": "Invite",
-    "inviteCopied": "Link copied!",
-    "pendingInvite": "Pending invite",
     "roles": {
       "owner": "Owner",
       "editor": "Editor",

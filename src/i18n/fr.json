@@ -567,11 +567,7 @@
     "deleteConfirm": "Supprimer définitivement ce frigo et tous ses produits ?",
     "leaveConfirm": "Quitter ce frigo ?",
     "members": "Membres",
-    "inviteByEmail": "Inviter par email",
-    "emailPlaceholder": "email@exemple.com",
     "invite": "Inviter",
-    "inviteCopied": "Lien copié !",
-    "pendingInvite": "Invitation en attente",
     "roles": {
       "owner": "Propriétaire",
       "editor": "Éditeur",

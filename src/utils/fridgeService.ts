@@ -109,14 +109,6 @@ export async function addFriendToFridge(fridgeId: string, friendUserId: string, 
   if (error) throw error;
 }
 
-export async function inviteMember(fridgeId: string, email: string, role: FridgeMemberRole): Promise<string> {
-  const token = crypto.randomUUID();
-  const { error } = await supabase
-    .from('fridge_members')
-    .insert({ fridge_id: fridgeId, invited_email: email, role, invite_token: token });
-  if (error) throw error;
-  return `${window.location.origin}?invite=${token}`;
-}
 
 export async function updateMemberRole(memberId: string, role: FridgeMemberRole): Promise<void> {
   const { error } = await supabase.from('fridge_members').update({ role }).eq('id', memberId);
