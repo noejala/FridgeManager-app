@@ -17,6 +17,7 @@ export function NewFridgeModal({ onClose, onCreate, onDone }: Props) {
   const [friends, setFriends] = useState<Friend[]>([]);
   const [selected, setSelected] = useState<Record<string, FridgeMemberRole | null>>({});
   const [creating, setCreating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchFriendships()
@@ -35,23 +36,23 @@ export function NewFridgeModal({ onClose, onCreate, onDone }: Props) {
   const handleCreate = async () => {
     if (!name.trim() || creating) return;
     setCreating(true);
+    setError(null);
     try {
       const fridge = await onCreate(name.trim());
       const toAdd = Object.entries(selected).filter((entry): entry is [string, FridgeMemberRole] => entry[1] != null);
       await Promise.all(toAdd.map(([userId, role]) => addFriendToFridge(fridge.id, userId, role)));
       onDone();
+    } catch (err) {
+      console.error('Failed to create fridge:', err);
+      setError(err instanceof Error ? err.message : 'Erreur lors de la création');
     } finally {
       setCreating(false);
     }
   };
 
   return (
-    <div
-      className="nfm-overlay"
-      onClick={onClose}
-      onPointerDown={e => { if (e.target === e.currentTarget) onClose(); }}
-    >
-      <div className="nfm-modal" onClick={e => e.stopPropagation()} onPointerDown={e => e.stopPropagation()}>
+    <div className="nfm-overlay" onClick={onClose}>
+      <div className="nfm-modal" onClick={e => e.stopPropagation()}>
         <h3 className="nfm-title">{t('fridges.newFridge')}</h3>
 
         <input
@@ -97,19 +98,16 @@ export function NewFridgeModal({ onClose, onCreate, onDone }: Props) {
           </div>
         )}
 
+        {error && <p className="nfm-error">{error}</p>}
+
         <button
           className="nfm-create-btn"
           onClick={handleCreate}
-          onPointerDown={e => { if (e.pointerType !== 'mouse') { e.preventDefault(); handleCreate(); } }}
           disabled={!name.trim() || creating}
         >
           {creating ? '…' : t('fridges.create')}
         </button>
-        <button
-          className="nfm-cancel"
-          onClick={onClose}
-          onPointerDown={e => { if (e.pointerType !== 'mouse') { e.preventDefault(); onClose(); } }}
-        >
+        <button className="nfm-cancel" onClick={onClose}>
           {t('settings.cancel')}
         </button>
       </div>

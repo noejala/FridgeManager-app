@@ -156,6 +156,15 @@
   cursor: default;
 }
 
+.nfm-error {
+  font-size: 0.82rem;
+  color: var(--red);
+  margin: 0 0 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--red-bg);
+  border-radius: calc(var(--radius) / 2);
+}
+
 .nfm-cancel {
   display: block;
   width: 100%;
