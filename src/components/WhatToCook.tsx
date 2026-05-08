@@ -544,6 +544,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
     <div
       key={recipe.meal.id}
       className="recipe-card"
+      onPointerDown={(e) => { if (e.pointerType !== 'mouse') { e.preventDefault(); setSelectedRecipe(recipe); } }}
       onClick={() => setSelectedRecipe(recipe)}
       style={{ '--index': index } as React.CSSProperties}
     >
@@ -553,6 +554,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       }
       <button
         className={`recipe-save-btn${savedMap.has(recipe.meal.name.toLowerCase()) ? ' saved' : ''}`}
+        onPointerDown={(e) => e.stopPropagation()}
         onClick={(e) => toggleSave(e, recipe.meal)}
         aria-label={savedMap.has(recipe.meal.name.toLowerCase()) ? t('cook.unsaveRecipe') : t('cook.saveRecipe')}
       >
@@ -560,6 +562,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       </button>
       <button
         className={`recipe-cook-btn${cookingRecipes.some(r => r.meal.id === recipe.meal.id) ? ' active' : ''}`}
+        onPointerDown={(e) => e.stopPropagation()}
         onClick={(e) => addToCooking(e, recipe)}
         aria-label={cookingRecipes.some(r => r.meal.id === recipe.meal.id) ? t('cook.session.removeRecipe') : t('cook.cookNow')}
         title={cookingRecipes.some(r => r.meal.id === recipe.meal.id) ? t('cook.session.removeRecipe') : t('cook.cookNow')}
@@ -626,12 +629,14 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
             <div className="mode-toggle">
               <button
                 className={`mode-btn${recipeMode === 'api' && !savedView ? ' active' : ''}`}
+                onPointerDown={(e) => { if (e.pointerType !== 'mouse') { e.preventDefault(); setRecipeMode('api'); setSavedView(false); } }}
                 onClick={() => { setRecipeMode('api'); setSavedView(false); }}
               >
                 {t('cook.modeApi')}
               </button>
               <button
                 className={`mode-btn mode-btn-ai${recipeMode === 'ai' && !savedView ? ' active' : ''}`}
+                onPointerDown={(e) => { if (e.pointerType !== 'mouse') { e.preventDefault(); setRecipeMode('ai'); setSavedView(false); } }}
                 onClick={() => { setRecipeMode('ai'); setSavedView(false); }}
               >
                 {t('cook.modeAi')}
@@ -640,6 +645,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
           )}
           <button
             className={`saved-toggle-btn${savedView ? ' active' : ''}`}
+            onPointerDown={(e) => { if (e.pointerType !== 'mouse') { e.preventDefault(); setSavedView(v => !v); } }}
             onClick={() => setSavedView(v => !v)}
           >
             ♡
@@ -730,6 +736,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
                 className="cooking-mode-card cooking-mode-card--custom"
                 role="button"
                 tabIndex={0}
+                onPointerDown={(e) => { if (e.pointerType !== 'mouse' && !(e.target as HTMLElement).closest('button')) { e.preventDefault(); setSelectedCookingMode('custom'); setSelectedCustomModeText(mode.prompt); setSelectedCustomModeTitle(mode.title); } }}
                 onClick={() => { setSelectedCookingMode('custom'); setSelectedCustomModeText(mode.prompt); setSelectedCustomModeTitle(mode.title); }}
                 onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setSelectedCookingMode('custom'); setSelectedCustomModeText(mode.prompt); setSelectedCustomModeTitle(mode.title); } }}
               >
@@ -955,7 +962,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       {selectedRecipe && (
         <div className="modal-overlay" onClick={closeDetails}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={closeDetails}>✕</button>
+            <button className="modal-close" onPointerDown={(e) => { if (e.pointerType !== 'mouse') { e.preventDefault(); closeDetails(); } }} onClick={closeDetails}>✕</button>
             {selectedRecipe.meal.thumbnail
               ? <img src={selectedRecipe.meal.thumbnail} alt={selectedRecipe.meal.name} className="modal-image" />
               : <div className="modal-thumbnail-placeholder" aria-hidden="true" />
