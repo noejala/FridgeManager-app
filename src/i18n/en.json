@@ -42,10 +42,10 @@
   "productList": {
     "nothingHereYet": "Nothing here yet",
     "startAdding": "Start by adding what's in your fridge",
-    "expiredProduct_one": "⚠️ {{count}} expired product",
-    "expiredProduct_other": "⚠️ {{count}} expired products",
-    "expiringSoon_one": "⏰ {{count}} product expiring soon",
-    "expiringSoon_other": "⏰ {{count}} products expiring soon",
+    "expiredProduct_one": "{{count}} expired product",
+    "expiredProduct_other": "{{count}} expired products",
+    "expiringSoon_one": "{{count}} product expiring soon",
+    "expiringSoon_other": "{{count}} products expiring soon",
     "clearFridge": "Clear my fridge",
     "clearConfirmTitle": "Clear my fridge?",
     "clearConfirmMessage_one": "This will permanently delete {{count}} product from your fridge. This cannot be undone.",
@@ -204,8 +204,8 @@
     "session": {
       "title_one": "Cooking ({{count}} recipe)",
       "title_other": "Cooking ({{count}} recipes)",
-      "badge_one": "🍳 {{count}} recipe in progress",
-      "badge_other": "🍳 {{count}} recipes in progress",
+      "badge_one": "{{count}} recipe in progress",
+      "badge_other": "{{count}} recipes in progress",
       "removeRecipe": "Remove this recipe",
       "done": "I'm done cooking",
       "back": "Back",
@@ -293,9 +293,9 @@
     "installBtn": "Install the app",
     "later": "Maybe later",
     "never": "Don't show again",
-    "bannerIos": "💡 Add the app: ... → Share → Add to Home Screen",
-    "bannerAndroid": "💡 Install the app for quick access from your home screen",
-    "bannerAndroidManual": "💡 Add the app to your home screen via your browser menu"
+    "bannerIos": "Add the app: ... → Share → Add to Home Screen",
+    "bannerAndroid": "Install the app for quick access from your home screen",
+    "bannerAndroidManual": "Add the app to your home screen via your browser menu"
   },
   "notifications": {
     "enable": "Enable notifications",

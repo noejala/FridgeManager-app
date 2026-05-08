@@ -804,7 +804,8 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
 
       {!savedView && recipeMode === 'ai' && aiFallback && !loading && (
         <div className="ai-fallback-notice">
-          ⚠️ {aiOverloaded ? t('cook.aiFallbackUnavailable') : t('cook.aiFallback')}
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink: 0}} aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span>{aiOverloaded ? t('cook.aiFallbackUnavailable') : t('cook.aiFallback')}</span>
           <button onClick={fetchRecipes}>{t('cook.retry')}</button>
         </div>
       )}
@@ -825,14 +826,14 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
 
       {!savedView && !loading && !error && recipes.length === 0 && !(recipeMode === 'ai' && (!selectedCookingMode || !selectedCourse)) && (
         <div className="empty-suggestions">
-          <div className="empty-icon">🔍</div>
+          <div className="empty-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
           <p>{t('cook.noRecipes')}</p>
         </div>
       )}
 
       {!savedView && !loading && !error && recipes.length > 0 && recipes.filter(r => meetsPreferences(r, dietaryPreferences) && meetsDislikedFilter(r, dislikedIngredients)).length === 0 && (
         <div className="empty-suggestions">
-          <div className="empty-icon">🥗</div>
+          <div className="empty-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
           <p>{t('cook.noRecipesDietary')}</p>
         </div>
       )}
@@ -947,7 +948,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
 
             {filteredRecipes.length === 0 ? (
               <div className="empty-suggestions">
-                <div className="empty-icon">🔍</div>
+                <div className="empty-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
                 <p>{t('cook.noRecipesInCategory')}</p>
               </div>
             ) : (
@@ -1033,7 +1034,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
             >
               {cookingRecipes.some(r => r.meal.id === selectedRecipe.meal.id)
                 ? `✓ ${t('cook.cookNow')}`
-                : `🍳 ${t('cook.cookNow')}`
+                : t('cook.cookNow')
               }
             </button>
 

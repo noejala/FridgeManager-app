@@ -42,10 +42,10 @@
   "productList": {
     "nothingHereYet": "Rien ici pour le moment",
     "startAdding": "Commencez par ajouter ce qui est dans votre frigo",
-    "expiredProduct_one": "⚠️ {{count}} produit expiré",
-    "expiredProduct_other": "⚠️ {{count}} produits expirés",
-    "expiringSoon_one": "⏰ {{count}} produit expire bientôt",
-    "expiringSoon_other": "⏰ {{count}} produits expirent bientôt",
+    "expiredProduct_one": "{{count}} produit expiré",
+    "expiredProduct_other": "{{count}} produits expirés",
+    "expiringSoon_one": "{{count}} produit expire bientôt",
+    "expiringSoon_other": "{{count}} produits expirent bientôt",
     "clearFridge": "Vider mon frigo",
     "clearConfirmTitle": "Vider mon frigo ?",
     "clearConfirmMessage_one": "Cela supprimera définitivement {{count}} produit de votre frigo. Cette action est irréversible.",
@@ -204,8 +204,8 @@
     "session": {
       "title_one": "En cuisine ({{count}} recette)",
       "title_other": "En cuisine ({{count}} recettes)",
-      "badge_one": "🍳 {{count}} recette en cours",
-      "badge_other": "🍳 {{count}} recettes en cours",
+      "badge_one": "{{count}} recette en cours",
+      "badge_other": "{{count}} recettes en cours",
       "removeRecipe": "Retirer cette recette",
       "done": "J'ai terminé",
       "back": "Retour",
@@ -293,9 +293,9 @@
     "installBtn": "Installer l'app",
     "later": "Plus tard",
     "never": "Ne plus me montrer",
-    "bannerIos": "💡 Ajoutez l'app : ... → Partager → Sur l'écran d'accueil",
-    "bannerAndroid": "💡 Installez l'app pour un accès rapide depuis votre écran d'accueil",
-    "bannerAndroidManual": "💡 Ajoutez l'app à votre écran d'accueil via le menu de votre navigateur"
+    "bannerIos": "Ajoutez l'app : ... → Partager → Sur l'écran d'accueil",
+    "bannerAndroid": "Installez l'app pour un accès rapide depuis votre écran d'accueil",
+    "bannerAndroidManual": "Ajoutez l'app à votre écran d'accueil via le menu de votre navigateur"
   },
   "notifications": {
     "enable": "Activer les notifications",
