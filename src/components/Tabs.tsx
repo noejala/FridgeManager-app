@@ -68,6 +68,12 @@ export const Tabs = ({ activeTab, onTabChange, children, urgentCount = 0, pendin
           <button
             key={tab.id}
             className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
+            onPointerDown={(e) => {
+              if (e.pointerType !== 'mouse') {
+                e.preventDefault();
+                onTabChange(tab.id);
+              }
+            }}
             onClick={() => onTabChange(tab.id)}
           >
             <span className="tab-icon-wrapper">
