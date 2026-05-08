@@ -42,6 +42,9 @@
   "productList": {
     "nothingHereYet": "Nothing here yet",
     "startAdding": "Start by adding what's in your fridge",
+    "sectionExpired": "Expired",
+    "sectionExpiringSoon": "Expiring soon",
+    "sectionFresh": "Still fresh",
     "expiredProduct_one": "{{count}} expired product",
     "expiredProduct_other": "{{count}} expired products",
     "expiringSoon_one": "{{count}} product expiring soon",

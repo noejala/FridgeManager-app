@@ -23,7 +23,6 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
   const daysUntil = getDaysUntilExpiration(product.expirationDate);
   const expired = isExpired(product.expirationDate);
   const expiringSoon = isExpiringSoon(product.expirationDate);
-
   const isDDM = product.expirationDateType === 'ddm';
 
   const getStatusClass = () => {
@@ -56,113 +55,93 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
 
   return (
     <div className={cardClass} style={{ '--index': index } as React.CSSProperties}>
-      <div className="product-header">
-        <h3>{product.name}</h3>
-        <div className="product-actions">
-          {confirmingDelete ? (
-            <>
-              <button className="delete-cancel-btn" onClick={() => setConfirmingDelete(false)}>
-                {t('form.cancel')}
-              </button>
-              <button className="delete-confirm-btn" onClick={() => onDelete(product.id)}>
-                {t('productCard.delete')}
-              </button>
-            </>
-          ) : confirmingConsume ? (
-            <>
-              <button className="consume-cancel-btn" onClick={() => setConfirmingConsume(false)}>
-                {t('form.cancel')}
-              </button>
-              <button className="consume-confirm-btn" onClick={() => onConsume(product.id)}>
-                {t('productCard.consumed')}
-              </button>
-            </>
-          ) : confirmingOpen ? (
-            <>
-              <button className="consume-cancel-btn" onClick={() => setConfirmingOpen(false)}>
-                {t('form.cancel')}
-              </button>
-              <button
-                className="consume-confirm-btn"
-                onClick={() => { onOpenSauce?.(product.id, today); setConfirmingOpen(false); }}
-              >
-                {t('productCard.confirmOpen')}
-              </button>
-            </>
-          ) : (
-            <>
-              {isOpenableProduct(product.name, product.category) && !product.openedDate && (
-                <button
-                  className="open-sauce-btn"
-                  onClick={() => setConfirmingOpen(true)}
-                  aria-label={t('productCard.markOpened')}
-                  data-tooltip={t('productCard.sauceUnopened')}
-                >
-                  🔓
-                </button>
-              )}
-              <button
-                className="consume-btn"
-                onClick={() => setConfirmingConsume(true)}
-                aria-label={t('productCard.consume')}
-                title={t('productCard.consume')}
-              >
-                ✓
-              </button>
-              <button
-                className="edit-btn"
-                onClick={() => onEdit(product)}
-                aria-label={t('productCard.edit')}
-                title={t('productCard.edit')}
-              >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-              </button>
-              <button
-                className="delete-btn"
-                onClick={() => setConfirmingDelete(true)}
-                aria-label={t('productCard.delete')}
-                title={t('productCard.delete')}
-              >
-                ×
-              </button>
-            </>
-          )}
-        </div>
-      </div>
-      <div className="product-info">
-        <span className="category">{t(`categories.${product.category}`)}</span>
-        {product.fridgeZone && (
-          <span className="fridge-zone-badge" data-tooltip={t(`zoneExplanations.${product.fridgeZone}`)}>{t(`zones.${product.fridgeZone}`)}</span>
-        )}
-        <span className="quantity">
-          {product.quantity} {product.unit}
-        </span>
-      </div>
-      <div className="product-dates">
-        <div className="date-info">
-          <span className="label">{t('productCard.added')}</span>
-          <span>{new Date(product.addedDate).toLocaleDateString(locale)}</span>
-        </div>
-        {product.openedDate && (
-          <div className="date-info">
-            <span className="label">{t('productCard.opened')}</span>
-            <span>{new Date(product.openedDate).toLocaleDateString(locale)}</span>
-          </div>
-        )}
-        <div className="date-info">
-          <span className="label">{isDDM ? t('productCard.bestBefore') : t('productCard.expires')}</span>
-          <span>
-            {product.isEstimatedExpiration ? '~' : ''}
-            {new Date(product.expirationDate).toLocaleDateString(locale)}
-            {product.isEstimatedExpiration ? ` ${t('productCard.estimated')}` : ''}
-          </span>
-        </div>
-      </div>
+      <h3 className="product-name">{product.name}</h3>
       <div
         className={`status-badge ${getStatusClass()}${showSensoryHint ? ' estimated-hint' : ''}`}
         data-tooltip={showSensoryHint ? t('productCard.estimatedCheckTooltip') : undefined}
       >
         {getStatusText()}
+      </div>
+      <div className="product-meta">
+        <span className="product-qty">{product.quantity} {product.unit}</span>
+        <span className="product-category-chip">{t(`categories.${product.category}`)}</span>
+      </div>
+      <div className="product-exp">
+        <span className="label">{isDDM ? t('productCard.bestBefore') : t('productCard.expires')}</span>
+        <span>
+          {product.isEstimatedExpiration ? '~' : ''}
+          {new Date(product.expirationDate).toLocaleDateString(locale)}
+        </span>
+      </div>
+      <div className="product-card-footer">
+        {confirmingDelete ? (
+          <div className="product-confirm-row">
+            <button className="consume-cancel-btn" onClick={() => setConfirmingDelete(false)}>
+              {t('form.cancel')}
+            </button>
+            <button className="delete-confirm-btn" onClick={() => onDelete(product.id)}>
+              {t('productCard.delete')}
+            </button>
+          </div>
+        ) : confirmingConsume ? (
+          <div className="product-confirm-row">
+            <button className="consume-cancel-btn" onClick={() => setConfirmingConsume(false)}>
+              {t('form.cancel')}
+            </button>
+            <button className="consume-confirm-btn" onClick={() => onConsume(product.id)}>
+              {t('productCard.consumed')}
+            </button>
+          </div>
+        ) : confirmingOpen ? (
+          <div className="product-confirm-row">
+            <button className="consume-cancel-btn" onClick={() => setConfirmingOpen(false)}>
+              {t('form.cancel')}
+            </button>
+            <button
+              className="consume-confirm-btn"
+              onClick={() => { onOpenSauce?.(product.id, today); setConfirmingOpen(false); }}
+            >
+              {t('productCard.confirmOpen')}
+            </button>
+          </div>
+        ) : (
+          <div className="product-actions">
+            {isOpenableProduct(product.name, product.category) && !product.openedDate && (
+              <button
+                className="open-sauce-btn"
+                onClick={() => setConfirmingOpen(true)}
+                aria-label={t('productCard.markOpened')}
+                data-tooltip={t('productCard.sauceUnopened')}
+              >
+                🔓
+              </button>
+            )}
+            <button
+              className="consume-btn"
+              onClick={() => setConfirmingConsume(true)}
+              aria-label={t('productCard.consume')}
+              title={t('productCard.consume')}
+            >
+              ✓
+            </button>
+            <button
+              className="edit-btn"
+              onClick={() => onEdit(product)}
+              aria-label={t('productCard.edit')}
+              title={t('productCard.edit')}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button
+              className="delete-btn"
+              onClick={() => setConfirmingDelete(true)}
+              aria-label={t('productCard.delete')}
+              title={t('productCard.delete')}
+            >
+              ×
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

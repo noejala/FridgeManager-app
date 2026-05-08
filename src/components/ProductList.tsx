@@ -39,22 +39,12 @@ export const ProductList = ({ products, consumedProducts, onDelete, onConsume, o
     setShowClearModal(false);
   };
 
-  const sortedProducts = [...products].sort((a, b) => {
-    const aExpired = isExpired(a.expirationDate);
-    const bExpired = isExpired(b.expirationDate);
-    const aExpiringSoon = isExpiringSoon(a.expirationDate);
-    const bExpiringSoon = isExpiringSoon(b.expirationDate);
+  const byDate = (a: Product, b: Product) =>
+    new Date(a.expirationDate).getTime() - new Date(b.expirationDate).getTime();
 
-    if (aExpired && !bExpired) return -1;
-    if (!aExpired && bExpired) return 1;
-    if (aExpiringSoon && !bExpiringSoon && !aExpired) return -1;
-    if (!aExpiringSoon && bExpiringSoon && !bExpired) return 1;
-
-    return new Date(a.expirationDate).getTime() - new Date(b.expirationDate).getTime();
-  });
-
-  const expiredCount = products.filter(p => isExpired(p.expirationDate)).length;
-  const expiringSoonCount = products.filter(p => isExpiringSoon(p.expirationDate) && !isExpired(p.expirationDate)).length;
+  const expiredProducts = products.filter(p => isExpired(p.expirationDate)).sort(byDate);
+  const expiringSoonProducts = products.filter(p => !isExpired(p.expirationDate) && isExpiringSoon(p.expirationDate)).sort(byDate);
+  const freshProducts = products.filter(p => !isExpired(p.expirationDate) && !isExpiringSoon(p.expirationDate)).sort(byDate);
 
   return (
     <div className="product-list-container">
@@ -73,34 +63,50 @@ export const ProductList = ({ products, consumedProducts, onDelete, onConsume, o
         </div>
       ) : (
         <>
-          {(expiredCount > 0 || expiringSoonCount > 0) && (
-            <div className="alerts-summary">
-              {expiredCount > 0 && (
-                <div className="alert alert-expired">
-                  {t('productList.expiredProduct', { count: expiredCount })}
-                </div>
-              )}
-              {expiringSoonCount > 0 && (
-                <div className="alert alert-expiring">
-                  {t('productList.expiringSoon', { count: expiringSoonCount })}
-                </div>
-              )}
+          {expiredProducts.length > 0 && (
+            <div className="product-section product-section--expired">
+              <div className="product-section-header">
+                <span className="product-section-label">{t('productList.sectionExpired')}</span>
+                <span className="product-section-line" />
+                <span className="product-section-count">{expiredProducts.length}</span>
+              </div>
+              <div className="product-grid">
+                {expiredProducts.map((product, index) => (
+                  <ProductCard key={product.id} product={product} onDelete={onDelete} onConsume={onConsume} onEdit={onEdit} onOpenSauce={onOpenSauce} index={index} />
+                ))}
+              </div>
             </div>
           )}
 
-          <div className="product-grid">
-            {sortedProducts.map((product, index) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onDelete={onDelete}
-                onConsume={onConsume}
-                onEdit={onEdit}
-                onOpenSauce={onOpenSauce}
-                index={index}
-              />
-            ))}
-          </div>
+          {expiringSoonProducts.length > 0 && (
+            <div className="product-section product-section--expiring">
+              <div className="product-section-header">
+                <span className="product-section-label">{t('productList.sectionExpiringSoon')}</span>
+                <span className="product-section-line" />
+                <span className="product-section-count">{expiringSoonProducts.length}</span>
+              </div>
+              <div className="product-grid">
+                {expiringSoonProducts.map((product, index) => (
+                  <ProductCard key={product.id} product={product} onDelete={onDelete} onConsume={onConsume} onEdit={onEdit} onOpenSauce={onOpenSauce} index={index} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {freshProducts.length > 0 && (
+            <div className="product-section">
+              <div className="product-section-header">
+                <span className="product-section-label">{t('productList.sectionFresh')}</span>
+                <span className="product-section-line" />
+                <span className="product-section-count">{freshProducts.length}</span>
+              </div>
+              <div className="product-grid">
+                {freshProducts.map((product, index) => (
+                  <ProductCard key={product.id} product={product} onDelete={onDelete} onConsume={onConsume} onEdit={onEdit} onOpenSauce={onOpenSauce} index={index} />
+                ))}
+              </div>
+            </div>
+          )}
         </>
       )}
 

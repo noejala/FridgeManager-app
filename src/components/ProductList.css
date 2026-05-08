@@ -2,45 +2,66 @@
   width: 100%;
 }
 
-.alerts-summary {
+.product-section {
+  margin-bottom: 1.75rem;
+}
+
+.product-section:last-child {
+  margin-bottom: 0;
+}
+
+.product-section-header {
   display: flex;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.75rem;
 }
 
-.alert {
-  padding: 0.75rem 1.25rem;
-  border-radius: var(--radius);
-  font-size: 0.82rem;
-  font-weight: 500;
+.product-section-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.product-section-line {
   flex: 1;
-  min-width: 180px;
-  border: 1px solid;
+  height: 1px;
+  background: var(--border);
 }
 
-.alert-expired {
-  background: var(--red-bg);
+.product-section-count {
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 40px;
+  padding: 0.1rem 0.45rem;
+}
+
+.product-section--expired .product-section-label {
   color: var(--red);
-  border-color: rgba(220, 38, 38, 0.2);
 }
 
-.alert-expiring {
-  background: var(--amber-bg);
+.product-section--expired .product-section-line {
+  background: rgba(220, 38, 38, 0.2);
+}
+
+.product-section--expiring .product-section-label {
   color: var(--amber);
-  border-color: rgba(201, 168, 0, 0.25);
+}
+
+.product-section--expiring .product-section-line {
+  background: rgba(201, 168, 0, 0.2);
 }
 
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-  gap: 1rem;
-}
-
-@media (max-width: 768px) {
-  .product-grid {
-    grid-template-columns: 1fr;
-  }
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
 }
 
 .empty-state {
