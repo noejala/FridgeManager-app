@@ -46,8 +46,12 @@ export function NewFridgeModal({ onClose, onCreate, onDone }: Props) {
   };
 
   return (
-    <div className="nfm-overlay" onClick={onClose}>
-      <div className="nfm-modal" onClick={e => e.stopPropagation()}>
+    <div
+      className="nfm-overlay"
+      onClick={onClose}
+      onPointerDown={e => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div className="nfm-modal" onClick={e => e.stopPropagation()} onPointerDown={e => e.stopPropagation()}>
         <h3 className="nfm-title">{t('fridges.newFridge')}</h3>
 
         <input
@@ -93,10 +97,21 @@ export function NewFridgeModal({ onClose, onCreate, onDone }: Props) {
           </div>
         )}
 
-        <button className="nfm-create-btn" onClick={handleCreate} disabled={!name.trim() || creating}>
+        <button
+          className="nfm-create-btn"
+          onClick={handleCreate}
+          onPointerDown={e => { if (e.pointerType !== 'mouse') { e.preventDefault(); handleCreate(); } }}
+          disabled={!name.trim() || creating}
+        >
           {creating ? '…' : t('fridges.create')}
         </button>
-        <button className="nfm-cancel" onClick={onClose}>{t('settings.cancel')}</button>
+        <button
+          className="nfm-cancel"
+          onClick={onClose}
+          onPointerDown={e => { if (e.pointerType !== 'mouse') { e.preventDefault(); onClose(); } }}
+        >
+          {t('settings.cancel')}
+        </button>
       </div>
     </div>
   );
