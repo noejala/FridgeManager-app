@@ -45,22 +45,10 @@ export async function fetchFridges(): Promise<Fridge[]> {
 }
 
 export async function createFridge(name: string): Promise<Fridge> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Not authenticated');
-
-  const { data: fridge, error: fridgeError } = await supabase
-    .from('fridges')
-    .insert({ name, owner_id: user.id })
-    .select()
-    .single();
-  if (fridgeError) throw fridgeError;
-
-  const { error: memberError } = await supabase
-    .from('fridge_members')
-    .insert({ fridge_id: fridge.id, user_id: user.id, role: 'owner', invite_accepted_at: new Date().toISOString() });
-  if (memberError) throw memberError;
-
-  return rowToFridge(fridge as FridgeRow);
+  const { data, error } = await supabase.rpc('create_fridge', { fridge_name: name });
+  if (error) throw error;
+  const row = data as { id: string; name: string; owner_id: string; created_at: string };
+  return { id: row.id, name: row.name, ownerId: row.owner_id, createdAt: row.created_at };
 }
 
 export async function updateFridgeName(id: string, name: string): Promise<void> {
