@@ -12,7 +12,7 @@ interface Props {
   currentUserId: string;
   onFridgesChange: () => void;
   onActiveFridgeChange: (id: string) => void;
-  onCreateFridge: (name: string) => Promise<Fridge>;
+  onCreateFridge: (name: string, emoji?: string) => Promise<Fridge>;
   pendingFriendCount: number;
 }
 

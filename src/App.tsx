@@ -272,8 +272,8 @@ function App() {
     }
   };
 
-  const handleCreateFridge = async (name: string): Promise<Fridge> => {
-    const newFridge = await createFridge(name);
+  const handleCreateFridge = async (name: string, emoji = '🧊'): Promise<Fridge> => {
+    const newFridge = await createFridge(name, emoji);
     const updated = await fetchFridges();
     setFridges(updated);
     await handleActiveFridgeChange(newFridge.id);

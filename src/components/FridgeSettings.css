@@ -94,10 +94,118 @@
   flex-direction: column;
 }
 
+.fridge-accordion.is-expanded {
+  border: 1.5px solid var(--accent);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.fridge-accordion.is-expanded .fridge-settings-item--open {
+  border: none;
+  border-radius: 0;
+  border-bottom: 1px solid var(--border);
+}
+
 .fridge-accordion .fridge-settings-panel {
   border-top: none;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
+  border: none;
+}
+
+/* Inline editable header when expanded */
+.fridge-settings-item--open {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 0.75rem;
+  background: var(--bg-card);
+  cursor: default;
+}
+
+.fridge-emoji-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.fridge-emoji-btn {
+  background: none;
+  border: none;
+  font-size: 1.15rem;
+  cursor: pointer;
+  padding: 0.2rem;
+  border-radius: calc(var(--radius) / 2);
+  line-height: 1;
+  transition: background 0.15s;
+  touch-action: manipulation;
+}
+
+.fridge-emoji-btn:hover:not(:disabled) {
+  background: var(--bg-surface);
+}
+
+.fridge-emoji-btn:disabled {
+  cursor: default;
+}
+
+.fridge-emoji-picker {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.25rem;
+  z-index: 50;
+  animation: fade-in 0.1s ease;
+}
+
+.fridge-emoji-option {
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  padding: 0.3rem;
+  border-radius: calc(var(--radius) / 2);
+  cursor: pointer;
+  line-height: 1;
+  transition: background 0.1s;
+  touch-action: manipulation;
+}
+
+.fridge-emoji-option:hover {
+  background: var(--bg-surface);
+}
+
+.fridge-header-name-input {
+  flex: 1;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text);
+  outline: none;
+  padding: 0;
+  min-width: 0;
+}
+
+.fridge-header-name-input:read-only {
+  cursor: default;
+}
+
+.fridge-chevron-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.4rem;
+  display: flex;
+  align-items: center;
+  touch-action: manipulation;
+  flex-shrink: 0;
 }
 
 .fridge-settings-add-btn {

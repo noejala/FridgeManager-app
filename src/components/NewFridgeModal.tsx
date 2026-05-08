@@ -5,15 +5,18 @@ import { fetchFriendships, Friend } from '../utils/friendService';
 import { addFriendToFridge } from '../utils/fridgeService';
 import './NewFridgeModal.css';
 
+const FRIDGE_EMOJIS = ['🧊', '❄️', '🍎', '🥦', '🥩', '🍷', '🫙', '🌿', '🍕', '🥗', '⭐', '🏡'];
+
 interface Props {
   onClose: () => void;
-  onCreate: (name: string) => Promise<Fridge>;
+  onCreate: (name: string, emoji?: string) => Promise<Fridge>;
   onDone: () => void;
 }
 
 export function NewFridgeModal({ onClose, onCreate, onDone }: Props) {
   const { t } = useTranslation();
   const [name, setName] = useState('');
+  const [emoji, setEmoji] = useState('🧊');
   const [friends, setFriends] = useState<Friend[]>([]);
   const [selected, setSelected] = useState<Record<string, FridgeMemberRole | null>>({});
   const [creating, setCreating] = useState(false);
@@ -38,7 +41,7 @@ export function NewFridgeModal({ onClose, onCreate, onDone }: Props) {
     setCreating(true);
     setError(null);
     try {
-      const fridge = await onCreate(name.trim());
+      const fridge = await onCreate(name.trim(), emoji);
       const toAdd = Object.entries(selected).filter((entry): entry is [string, FridgeMemberRole] => entry[1] != null);
       await Promise.all(toAdd.map(([userId, role]) => addFriendToFridge(fridge.id, userId, role)));
       onDone();
@@ -60,18 +63,32 @@ export function NewFridgeModal({ onClose, onCreate, onDone }: Props) {
       <div className="nfm-modal" onClick={e => e.stopPropagation()}>
         <h3 className="nfm-title">{t('fridges.newFridge')}</h3>
 
-        <input
-          autoFocus
-          className="nfm-input"
-          value={name}
-          onChange={e => setName(e.target.value)}
-          onKeyDown={e => {
-            if (e.key === 'Enter') handleCreate();
-            if (e.key === 'Escape') onClose();
-          }}
-          placeholder={t('fridges.namePlaceholder')}
-          maxLength={40}
-        />
+        <div className="nfm-name-row">
+          <div className="nfm-emoji-grid">
+            {FRIDGE_EMOJIS.map(e => (
+              <button
+                key={e}
+                className={`nfm-emoji-option${e === emoji ? ' selected' : ''}`}
+                onClick={() => setEmoji(e)}
+                type="button"
+              >
+                {e}
+              </button>
+            ))}
+          </div>
+          <input
+            autoFocus
+            className="nfm-input"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === 'Enter') handleCreate();
+              if (e.key === 'Escape') onClose();
+            }}
+            placeholder={t('fridges.namePlaceholder')}
+            maxLength={40}
+          />
+        </div>
 
         {friends.length > 0 && (
           <div className="nfm-friends">

@@ -4,6 +4,7 @@ import { Fridge, FridgeMember, FridgeMemberRole } from '../types/Fridge';
 interface FridgeRow {
   id: string;
   name: string;
+  emoji: string;
   owner_id: string;
   created_at: string;
 }
@@ -19,7 +20,7 @@ interface FridgeMemberRow {
 }
 
 function rowToFridge(row: FridgeRow): Fridge {
-  return { id: row.id, name: row.name, ownerId: row.owner_id, createdAt: row.created_at };
+  return { id: row.id, name: row.name, emoji: row.emoji ?? '🧊', ownerId: row.owner_id, createdAt: row.created_at };
 }
 
 function rowToMember(row: FridgeMemberRow): FridgeMember {
@@ -44,15 +45,15 @@ export async function fetchFridges(): Promise<Fridge[]> {
   return (data as FridgeRow[]).map(rowToFridge);
 }
 
-export async function createFridge(name: string): Promise<Fridge> {
-  const { data, error } = await supabase.rpc('create_fridge', { fridge_name: name });
+export async function createFridge(name: string, emoji = '🧊'): Promise<Fridge> {
+  const { data, error } = await supabase.rpc('create_fridge', { fridge_name: name, fridge_emoji: emoji });
   if (error) throw error;
-  const row = data as { id: string; name: string; owner_id: string; created_at: string };
-  return { id: row.id, name: row.name, ownerId: row.owner_id, createdAt: row.created_at };
+  const row = data as { id: string; name: string; emoji: string; owner_id: string; created_at: string };
+  return { id: row.id, name: row.name, emoji: row.emoji ?? '🧊', ownerId: row.owner_id, createdAt: row.created_at };
 }
 
-export async function updateFridgeName(id: string, name: string): Promise<void> {
-  const { error } = await supabase.from('fridges').update({ name }).eq('id', id);
+export async function updateFridge(id: string, updates: { name?: string; emoji?: string }): Promise<void> {
+  const { error } = await supabase.from('fridges').update(updates).eq('id', id);
   if (error) throw error;
 }
 

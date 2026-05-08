@@ -30,6 +30,41 @@
   margin: 0 0 1.25rem;
 }
 
+.nfm-name-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.nfm-emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.25rem;
+}
+
+.nfm-emoji-option {
+  background: none;
+  border: 1.5px solid transparent;
+  font-size: 1.4rem;
+  padding: 0.35rem;
+  border-radius: calc(var(--radius) / 2);
+  cursor: pointer;
+  line-height: 1;
+  text-align: center;
+  transition: background 0.1s, border-color 0.1s;
+  touch-action: manipulation;
+}
+
+.nfm-emoji-option:hover {
+  background: var(--bg-surface);
+}
+
+.nfm-emoji-option.selected {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+
 .nfm-input {
   width: 100%;
   padding: 0.75rem 1rem;
@@ -41,7 +76,6 @@
   color: var(--text);
   outline: none;
   box-sizing: border-box;
-  margin-bottom: 1.5rem;
 }
 
 .nfm-input:focus {
