@@ -163,28 +163,34 @@ function App() {
         }
       }
 
-      let fridgeList = await fetchFridges();
+      const [fetchedFridges, profile] = await Promise.all([
+        fetchFridges(),
+        fetchUserProfile(),
+      ]);
 
-      if (fridgeList.length === 0) {
-        const defaultFridge = await createFridge('Mon frigo');
+      let fridgeList = fetchedFridges;
+      if (fridgeList.length === 0 && profile?.displayName) {
+        const defaultFridge = await createFridge(`Frigo de ${profile.displayName}`);
         fridgeList = [defaultFridge];
       }
+      // If fridgeList is still empty: new user without a username yet — fridge created after UsernameSetup
 
       setFridges(fridgeList);
 
       const savedId = localStorage.getItem(ACTIVE_FRIDGE_KEY);
-      const resolvedId = fridgeList.find(f => f.id === savedId)?.id ?? fridgeList[0].id;
-      setActiveFridgeId(resolvedId);
-      localStorage.setItem(ACTIVE_FRIDGE_KEY, resolvedId);
+      const resolvedId = fridgeList.find(f => f.id === savedId)?.id ?? fridgeList[0]?.id ?? '';
+      if (resolvedId) {
+        setActiveFridgeId(resolvedId);
+        localStorage.setItem(ACTIVE_FRIDGE_KEY, resolvedId);
+      }
 
       if (inviteSuccess) {
         showNotification(t('fridges.inviteAccepted', { name: inviteSuccess }));
       }
 
-      const [data, consumed, profile] = await Promise.all([
-        fetchProducts(resolvedId),
-        fetchRecentlyConsumed(resolvedId),
-        fetchUserProfile(),
+      const [data, consumed] = await Promise.all([
+        resolvedId ? fetchProducts(resolvedId) : Promise.resolve([] as Product[]),
+        resolvedId ? fetchRecentlyConsumed(resolvedId) : Promise.resolve([] as Product[]),
       ]);
       setProducts(data);
       setConsumedProducts(consumed);
@@ -598,7 +604,13 @@ function App() {
 
   if (displayName === null) return (
     <UsernameSetup
-      onComplete={name => setDisplayName(name)}
+      onComplete={async (name) => {
+        const defaultFridge = await createFridge(`Frigo de ${name}`);
+        setFridges([defaultFridge]);
+        setActiveFridgeId(defaultFridge.id);
+        localStorage.setItem(ACTIVE_FRIDGE_KEY, defaultFridge.id);
+        setDisplayName(name);
+      }}
       darkMode={darkMode}
       onToggleDarkMode={() => setDarkMode(prev => !prev)}
     />
