@@ -595,9 +595,11 @@ function App() {
     </>
   );
 
-  if (authLoading || displayName === undefined) return null;
+  if (authLoading) return null;
 
   if (!user) return <Auth darkMode={darkMode} onToggleDarkMode={() => setDarkMode(prev => !prev)} />;
+
+  if (displayName === undefined) return null;
 
   if (displayName === null) return (
     <UsernameSetup
