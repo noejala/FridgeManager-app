@@ -35,6 +35,12 @@
   background: var(--accent-bg);
 }
 
+.fridge-settings-item.expanded {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-color: transparent;
+}
+
 .fridge-settings-item-icon {
   font-size: 1rem;
 }
@@ -44,12 +50,37 @@
   font-weight: 500;
 }
 
+.fridge-settings-item-chevron {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid var(--text-muted);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.fridge-settings-item-chevron.open {
+  transform: rotate(180deg);
+}
+
 .fridge-settings-item-badge {
   font-size: 0.75rem;
   color: var(--text-muted);
   background: var(--bg-surface);
   border-radius: 1rem;
   padding: 0.15rem 0.5rem;
+}
+
+.fridge-accordion {
+  display: flex;
+  flex-direction: column;
+}
+
+.fridge-accordion .fridge-settings-panel {
+  border-top: none;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }
 
 .fridge-settings-add-btn {
