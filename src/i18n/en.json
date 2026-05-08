@@ -351,6 +351,8 @@
   },
   "settings": {
     "profile": "My profile",
+    "firstName": "First name",
+    "firstNamePlaceholder": "Your first name (optional)",
     "country": "Country",
     "countryPlaceholder": "E.g. France, Canada…",
     "gender": "Gender",
@@ -457,11 +459,8 @@
   },
   "friends": {
     "username": "Username",
-    "friendCode": "Friend code",
-    "copyCode": "Copy",
-    "codeCopied": "Copied!",
     "addFriend": "Add a friend",
-    "searchPlaceholder": "Username or friend code…",
+    "searchPlaceholder": "Username or first name…",
     "noResults": "No user found",
     "sendRequest": "Add",
     "alreadyAdded": "Already added",
@@ -472,13 +471,18 @@
     "decline": "Decline",
     "cancel": "Cancel",
     "friendsList": "My friends",
-    "noFriends": "No friends yet. Search for someone by username!",
+    "noFriends": "No friends yet. Search by username or first name!",
     "remove": "Remove",
     "addToFridge": "Add a friend to fridge",
     "pickFriend": "Pick a friend…",
     "noFriendsYet": "Add friends in the Friends tab to invite them here.",
     "me": "Me",
-    "noIdentityYet": "Profile loading error."
+    "noIdentityYet": "Profile loading error.",
+    "inviteTitle": "Invite a friend",
+    "inviteHint": "Your friend doesn't have the app yet? Send them a link.",
+    "inviteAction": "Share the app",
+    "inviteCopied": "Link copied!",
+    "inviteShareText": "Join me on Fridge Manager! {{url}}"
   },
   "fridges": {
     "myFridges": "My fridges",

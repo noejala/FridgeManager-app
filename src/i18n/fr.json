@@ -351,6 +351,8 @@
   },
   "settings": {
     "profile": "Mon profil",
+    "firstName": "Prénom",
+    "firstNamePlaceholder": "Ton prénom (optionnel)",
     "country": "Pays",
     "countryPlaceholder": "Ex : France, Belgique…",
     "gender": "Genre",
@@ -533,11 +535,8 @@
   },
   "friends": {
     "username": "Pseudo",
-    "friendCode": "Code ami",
-    "copyCode": "Copier",
-    "codeCopied": "Copié !",
     "addFriend": "Ajouter un ami",
-    "searchPlaceholder": "Pseudo ou code ami…",
+    "searchPlaceholder": "Pseudo ou prénom…",
     "noResults": "Aucun utilisateur trouvé",
     "sendRequest": "Ajouter",
     "alreadyAdded": "Déjà ajouté",
@@ -548,13 +547,18 @@
     "decline": "Refuser",
     "cancel": "Annuler",
     "friendsList": "Mes amis",
-    "noFriends": "Aucun ami pour le moment. Cherche quelqu'un par pseudo !",
+    "noFriends": "Aucun ami pour le moment. Cherche quelqu'un par pseudo ou prénom !",
     "remove": "Retirer",
     "addToFridge": "Ajouter un ami au frigo",
     "pickFriend": "Choisir un ami…",
     "noFriendsYet": "Ajoute des amis dans l'onglet Amis pour les inviter ici.",
     "me": "Moi",
-    "noIdentityYet": "Erreur de chargement du profil."
+    "noIdentityYet": "Erreur de chargement du profil.",
+    "inviteTitle": "Inviter un ami",
+    "inviteHint": "Ton ami n'a pas encore l'appli ? Envoie-lui un lien.",
+    "inviteAction": "Partager l'appli",
+    "inviteCopied": "Lien copié !",
+    "inviteShareText": "Rejoins-moi sur Fridge Manager ! {{url}}"
   },
   "fridges": {
     "myFridges": "Mes frigos",

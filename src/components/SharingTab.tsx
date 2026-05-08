@@ -7,7 +7,6 @@ import './SharingTab.css';
 
 interface Props {
   displayName: string;
-  friendCode: string;
   fridges: Fridge[];
   activeFridgeId: string;
   currentUserId: string;
@@ -19,7 +18,7 @@ interface Props {
 type SharingSection = 'friends' | 'fridges';
 
 export function SharingTab({
-  displayName, friendCode,
+  displayName,
   fridges, activeFridgeId, currentUserId,
   onFridgesChange, onActiveFridgeChange,
   pendingFriendCount,
@@ -48,7 +47,7 @@ export function SharingTab({
       </div>
 
       {section === 'friends' && (
-        <FriendsPanel displayName={displayName} friendCode={friendCode} />
+        <FriendsPanel displayName={displayName} />
       )}
 
       {section === 'fridges' && (

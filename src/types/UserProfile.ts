@@ -9,7 +9,7 @@ export type DietaryPreference =
 
 export interface UserProfile {
   displayName: string | null;
-  friendCode: string | null;
+  firstName: string | null;
   country: string | null;
   gender: 'male' | 'female' | 'other' | 'prefer_not_to_say' | null;
   age: number | null;

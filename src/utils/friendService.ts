@@ -4,7 +4,7 @@ export interface Friend {
   friendshipId: string;
   userId: string;
   displayName: string;
-  friendCode: string;
+  firstName: string | null;
   since: string;
 }
 
@@ -19,7 +19,7 @@ export interface FriendRequest {
 export interface UserSearchResult {
   userId: string;
   displayName: string;
-  friendCode: string;
+  firstName: string | null;
 }
 
 interface FriendshipRow {
@@ -34,10 +34,10 @@ export async function searchUsers(query: string): Promise<UserSearchResult[]> {
   if (!query.trim()) return [];
   const { data, error } = await supabase.rpc('search_users', { query: query.trim() });
   if (error) throw error;
-  return (data ?? []).map((r: { user_id: string; display_name: string; friend_code: string }) => ({
+  return (data ?? []).map((r: { user_id: string; display_name: string; first_name: string | null }) => ({
     userId: r.user_id,
     displayName: r.display_name,
-    friendCode: r.friend_code,
+    firstName: r.first_name ?? null,
   }));
 }
 
@@ -51,12 +51,15 @@ export async function fetchFriendships(): Promise<{ friends: Friend[]; pending: 
   const rows = (data ?? []) as FriendshipRow[];
   const otherIds = rows.map(r => r.requester_id === user.id ? r.addressee_id : r.requester_id);
 
-  let profileMap: Map<string, string> = new Map();
+  let profileMap: Map<string, { displayName: string; firstName: string | null }> = new Map();
   if (otherIds.length > 0) {
     const { data: profiles } = await supabase.rpc('get_user_profiles', { user_ids: otherIds });
     if (profiles) {
       profileMap = new Map(
-        (profiles as { user_id: string; display_name: string }[]).map(p => [p.user_id, p.display_name])
+        (profiles as { user_id: string; display_name: string; first_name: string | null }[]).map(p => [
+          p.user_id,
+          { displayName: p.display_name, firstName: p.first_name ?? null },
+        ])
       );
     }
   }
@@ -66,10 +69,12 @@ export async function fetchFriendships(): Promise<{ friends: Friend[]; pending: 
 
   for (const row of rows) {
     const otherId = row.requester_id === user.id ? row.addressee_id : row.requester_id;
-    const displayName = profileMap.get(otherId) ?? '?';
+    const profile = profileMap.get(otherId);
+    const displayName = profile?.displayName ?? '?';
+    const firstName = profile?.firstName ?? null;
 
     if (row.status === 'accepted') {
-      friends.push({ friendshipId: row.id, userId: otherId, displayName, friendCode: '', since: row.created_at });
+      friends.push({ friendshipId: row.id, userId: otherId, displayName, firstName, since: row.created_at });
     } else {
       pending.push({
         friendshipId: row.id,

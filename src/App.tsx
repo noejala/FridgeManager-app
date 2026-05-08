@@ -72,7 +72,6 @@ function App() {
   const [customPreferences, setCustomPreferences] = useState<string>('');
   const [pantryStaples, setPantryStaples] = useState<string[]>([]);
   const [displayName, setDisplayName] = useState<string | null | undefined>(undefined);
-  const [friendCode, setFriendCode] = useState<string>('');
   const [pendingFriendCount, setPendingFriendCount] = useState(0);
   const [showPantryOnboarding, setShowPantryOnboarding] = useState(false);
   const [scanPrefill, setScanPrefill] = useState<FoodFactsResult | null>(null);
@@ -195,7 +194,6 @@ function App() {
       setProducts(data);
       setConsumedProducts(consumed);
       setDisplayName(profile?.displayName ?? null);
-      setFriendCode(profile?.friendCode ?? '');
       setDietaryPreferences(profile?.dietaryPreferences ?? []);
       setDislikedIngredients(profile?.dislikedIngredients ?? []);
       setCustomPreferences(profile?.customPreferences ?? '');
@@ -457,7 +455,7 @@ function App() {
     setPantryStaples(staples);
     const profile = await fetchUserProfile();
     await saveUserProfile({
-      displayName: null, friendCode: null,
+      displayName: null, firstName: null,
       country: null, gender: null, age: null,
       dietaryPreferences: [], dislikedIngredients: [], customPreferences: '',
       ...profile,
@@ -573,7 +571,6 @@ function App() {
         {displayName && (
           <SharingTab
             displayName={displayName}
-            friendCode={friendCode}
             fridges={fridges}
             activeFridgeId={activeFridgeId}
             currentUserId={user?.id ?? ''}

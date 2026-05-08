@@ -11,7 +11,7 @@ export async function fetchUserProfile(): Promise<UserProfile | null> {
 
   return {
     displayName: data.display_name ?? null,
-    friendCode: data.friend_code ?? null,
+    firstName: data.first_name ?? null,
     country: data.country ?? null,
     gender: data.gender ?? null,
     age: data.age ?? null,
@@ -28,6 +28,7 @@ export async function saveUserProfile(profile: UserProfile): Promise<void> {
 
   await supabase.from('user_profiles').upsert({
     user_id: user.id,
+    first_name: profile.firstName,
     country: profile.country,
     gender: profile.gender,
     age: profile.age,

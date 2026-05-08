@@ -10,7 +10,7 @@ const DIETARY_PREFERENCES: DietaryPreference[] = ['vegetarian', 'vegan', 'pescat
 
 const EMPTY_PROFILE: UserProfile = {
   displayName: null,
-  friendCode: null,
+  firstName: null,
   country: null,
   gender: null,
   age: null,
@@ -207,6 +207,17 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
               {editing ? (
                 <>
                   <div className="settings-field">
+                    <label className="settings-label">{t('settings.firstName')}</label>
+                    <input
+                      type="text"
+                      className="settings-input"
+                      placeholder={t('settings.firstNamePlaceholder')}
+                      value={draft.firstName ?? ''}
+                      onChange={e => setDraft(prev => ({ ...prev, firstName: e.target.value || null }))}
+                    />
+                  </div>
+
+                  <div className="settings-field">
                     <label className="settings-label">{t('settings.country')}</label>
                     <input
                       type="text"
@@ -252,6 +263,10 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
                       <span className="settings-view-value">@{profile.displayName}</span>
                     </div>
                   )}
+                  <div className="settings-view-row">
+                    <span className="settings-view-label">{t('settings.firstName')}</span>
+                    <span className="settings-view-value">{profile.firstName ?? '—'}</span>
+                  </div>
                   <div className="settings-view-row">
                     <span className="settings-view-label">{t('settings.country')}</span>
                     <span className="settings-view-value">{profile.country ?? '—'}</span>

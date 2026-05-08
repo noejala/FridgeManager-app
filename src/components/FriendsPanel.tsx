@@ -7,16 +7,13 @@ import {
 } from '../utils/friendService';
 import './FriendsPanel.css';
 
+const APP_URL = 'https://fridgemanager.vercel.app';
+
 interface Props {
   displayName: string;
-  friendCode: string;
 }
 
-function formatCode(code: string) {
-  return code.length === 8 ? `${code.slice(0, 4)}-${code.slice(4)}` : code;
-}
-
-export function FriendsPanel({ displayName, friendCode }: Props) {
+export function FriendsPanel({ displayName }: Props) {
   const { t } = useTranslation();
   const [friends, setFriends] = useState<Friend[]>([]);
   const [pending, setPending] = useState<FriendRequest[]>([]);
@@ -24,7 +21,7 @@ export function FriendsPanel({ displayName, friendCode }: Props) {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<UserSearchResult[]>([]);
   const [searching, setSearching] = useState(false);
-  const [codeCopied, setCodeCopied] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -63,13 +60,10 @@ export function FriendsPanel({ displayName, friendCode }: Props) {
   const handleSendRequest = async (userId: string) => {
     setActionLoading(userId);
     try {
-      const result = await sendFriendRequest(userId);
+      await sendFriendRequest(userId);
       await reload();
       setSearchResults([]);
       setSearchQuery('');
-      if (result === 'accepted') {
-        // friend request was mutual, now accepted
-      }
     } catch {
       // ignore
     } finally {
@@ -110,15 +104,26 @@ export function FriendsPanel({ displayName, friendCode }: Props) {
     }
   };
 
-  const handleCopyCode = () => {
-    navigator.clipboard.writeText(formatCode(friendCode)).then(() => {
-      setCodeCopied(true);
-      setTimeout(() => setCodeCopied(false), 2000);
-    });
+  const handleInvite = async () => {
+    const shareText = t('friends.inviteShareText', { url: APP_URL });
+    if (navigator.share) {
+      try {
+        await navigator.share({ text: shareText, url: APP_URL });
+      } catch {
+        // user dismissed share sheet — ignore
+      }
+    } else {
+      await navigator.clipboard.writeText(APP_URL);
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
+    }
   };
 
   const incomingRequests = pending.filter(p => p.direction === 'incoming');
   const outgoingRequests = pending.filter(p => p.direction === 'outgoing');
+
+  const displayLabel = (displayName: string, firstName: string | null) =>
+    firstName ? `${firstName} (@${displayName})` : `@${displayName}`;
 
   return (
     <div className="friends-panel">
@@ -129,13 +134,15 @@ export function FriendsPanel({ displayName, friendCode }: Props) {
           <span className="friends-identity-label">{t('friends.username')}</span>
           <span className="friends-identity-value">@{displayName}</span>
         </div>
-        <div className="friends-identity-row">
-          <span className="friends-identity-label">{t('friends.friendCode')}</span>
-          <span className="friends-identity-code">{formatCode(friendCode)}</span>
-          <button className="friends-copy-btn" onClick={handleCopyCode}>
-            {codeCopied ? t('friends.codeCopied') : t('friends.copyCode')}
-          </button>
-        </div>
+      </div>
+
+      {/* Invite a friend */}
+      <div className="friends-invite-section">
+        <h4 className="friends-section-title">{t('friends.inviteTitle')}</h4>
+        <p className="friends-invite-hint">{t('friends.inviteHint')}</p>
+        <button className="friends-invite-btn" onClick={handleInvite}>
+          {linkCopied ? t('friends.inviteCopied') : t('friends.inviteAction')}
+        </button>
       </div>
 
       {/* Search */}
@@ -162,8 +169,8 @@ export function FriendsPanel({ displayName, friendCode }: Props) {
               return (
                 <div key={r.userId} className="friends-search-result">
                   <div className="friends-result-info">
+                    {r.firstName && <span className="friends-result-firstname">{r.firstName}</span>}
                     <span className="friends-result-name">@{r.displayName}</span>
-                    <span className="friends-result-code">{formatCode(r.friendCode)}</span>
                   </div>
                   <button
                     className="friends-add-btn"
@@ -231,7 +238,7 @@ export function FriendsPanel({ displayName, friendCode }: Props) {
           <ul className="friends-list">
             {friends.map(f => (
               <li key={f.friendshipId} className="friends-list-item">
-                <span className="friends-list-name">@{f.displayName}</span>
+                <span className="friends-list-name">{displayLabel(f.displayName, f.firstName)}</span>
                 <button
                   className="friends-remove-btn"
                   disabled={actionLoading === f.friendshipId}
