@@ -130,22 +130,19 @@ export const FridgeSettings = ({ fridges, activeFridgeId, currentUserId, onFridg
     onFridgesChange();
   };
 
-  return (
-    <div className="fridge-settings">
-      <div className="fridge-settings-list">
-        {fridges.map(f => (
-          <div key={f.id} className="fridge-accordion">
-            <button
-              className={`fridge-settings-item${f.id === activeFridgeId ? ' active' : ''}${f.id === expandedFridgeId ? ' expanded' : ''}`}
-              onClick={() => handleToggle(f.id)}
-            >
-              <span className="fridge-settings-item-icon">🧊</span>
-              <span className="fridge-settings-item-name">{f.name}</span>
-              {f.ownerId !== currentUserId && (
-                <span className="fridge-settings-item-badge">{t('fridges.roles.editor')}</span>
-              )}
-              <span className={`fridge-settings-item-chevron${f.id === expandedFridgeId ? ' open' : ''}`} />
-            </button>
+  const ownedFridges = fridges.filter(f => f.ownerId === currentUserId);
+  const sharedFridges = fridges.filter(f => f.ownerId !== currentUserId);
+
+  const renderAccordionItem = (f: Fridge) => (
+    <div key={f.id} className="fridge-accordion">
+      <button
+        className={`fridge-settings-item${f.id === activeFridgeId ? ' active' : ''}${f.id === expandedFridgeId ? ' expanded' : ''}`}
+        onClick={() => handleToggle(f.id)}
+      >
+        <span className="fridge-settings-item-icon">🧊</span>
+        <span className="fridge-settings-item-name">{f.name}</span>
+        <span className={`fridge-settings-item-chevron${f.id === expandedFridgeId ? ' open' : ''}`} />
+      </button>
 
             {f.id === expandedFridgeId && expandedFridge && (
               <div className="fridge-settings-panel">
@@ -318,35 +315,53 @@ export const FridgeSettings = ({ fridges, activeFridgeId, currentUserId, onFridg
               </div>
             )}
           </div>
-        ))}
+    );
 
-        {isCreating ? (
-          <div className="fridge-rename-row">
-            <input
-              autoFocus
-              className="fridge-rename-input"
-              value={newFridgeName}
-              onChange={e => setNewFridgeName(e.target.value)}
-              onKeyDown={e => {
-                if (e.key === 'Enter') handleCreate();
-                if (e.key === 'Escape') { setIsCreating(false); setNewFridgeName(''); }
-              }}
-              placeholder={t('fridges.namePlaceholder')}
-              maxLength={40}
-            />
-            <button className="fridge-rename-confirm" onClick={handleCreate} disabled={!newFridgeName.trim() || creating}>
-              {t('fridges.create')}
-            </button>
-            <button className="fridge-rename-cancel" onClick={() => { setIsCreating(false); setNewFridgeName(''); }}>
-              {t('settings.cancel')}
-            </button>
-          </div>
-        ) : (
-          <button className="fridge-settings-add-btn" onClick={() => setIsCreating(true)}>
-            + {t('fridges.newFridge')}
-          </button>
-        )}
+  const createRow = isCreating ? (
+    <div className="fridge-rename-row">
+      <input
+        autoFocus
+        className="fridge-rename-input"
+        value={newFridgeName}
+        onChange={e => setNewFridgeName(e.target.value)}
+        onKeyDown={e => {
+          if (e.key === 'Enter') handleCreate();
+          if (e.key === 'Escape') { setIsCreating(false); setNewFridgeName(''); }
+        }}
+        placeholder={t('fridges.namePlaceholder')}
+        maxLength={40}
+      />
+      <button className="fridge-rename-confirm" onClick={handleCreate} disabled={!newFridgeName.trim() || creating}>
+        {t('fridges.create')}
+      </button>
+      <button className="fridge-rename-cancel" onClick={() => { setIsCreating(false); setNewFridgeName(''); }}>
+        {t('settings.cancel')}
+      </button>
+    </div>
+  ) : (
+    <button className="fridge-settings-add-btn" onClick={() => setIsCreating(true)}>
+      + {t('fridges.newFridge')}
+    </button>
+  );
+
+  return (
+    <div className="fridge-settings">
+      <div className="fridge-settings-group">
+        <h4 className="fridge-settings-group-label">{t('fridges.myFridges')}</h4>
+        <div className="fridge-settings-list">
+          {ownedFridges.map(renderAccordionItem)}
+          {createRow}
+        </div>
       </div>
+
+      {sharedFridges.length > 0 && (
+        <div className="fridge-settings-group">
+          <h4 className="fridge-settings-group-label">{t('fridges.sharedFridges')}</h4>
+          <div className="fridge-settings-list">
+            {sharedFridges.map(renderAccordionItem)}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

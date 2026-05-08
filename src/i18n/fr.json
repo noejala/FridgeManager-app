@@ -562,6 +562,7 @@
   },
   "fridges": {
     "myFridges": "Mes frigos",
+    "sharedFridges": "Partagés avec moi",
     "newFridge": "Nouveau frigo",
     "namePlaceholder": "Nom du frigo…",
     "create": "Créer",
