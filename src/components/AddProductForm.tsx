@@ -48,17 +48,24 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
   const [fabOpen, setFabOpen] = useState(false);
   const [fabVisible, setFabVisible] = useState(true);
   const lastScrollY = useRef(0);
+  const fabScrollAccumulator = useRef(0);
 
   useEffect(() => {
     const onScroll = () => {
       const current = window.scrollY;
-      if (current > lastScrollY.current && current > 60) {
-        setFabVisible(false);
-        setFabOpen(false);
-      } else {
-        setFabVisible(true);
-      }
+      const delta = current - lastScrollY.current;
       lastScrollY.current = current;
+
+      if (current <= 60 || delta < 0) {
+        fabScrollAccumulator.current = 0;
+        setFabVisible(true);
+      } else {
+        fabScrollAccumulator.current += delta;
+        if (fabScrollAccumulator.current > 30) {
+          setFabVisible(false);
+          setFabOpen(false);
+        }
+      }
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
@@ -241,6 +248,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
                 <span className="fab-action-label">{t('voice.dictate')}</span>
                 <button
                   className="fab-action-btn"
+                  onPointerDown={(e) => { if (e.pointerType !== 'mouse') { e.preventDefault(); setFabOpen(false); onVoiceStart(); } }}
                   onClick={() => { setFabOpen(false); onVoiceStart(); }}
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -256,6 +264,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
               <span className="fab-action-label">Scanner</span>
               <button
                 className="fab-action-btn"
+                onPointerDown={(e) => { if (e.pointerType !== 'mouse') { e.preventDefault(); setFabOpen(false); setIsScanning(true); } }}
                 onClick={() => { setFabOpen(false); setIsScanning(true); }}
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -271,6 +280,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
               <span className="fab-action-label">{t('form.addProduct')}</span>
               <button
                 className="fab-action-btn"
+                onPointerDown={(e) => { if (e.pointerType !== 'mouse') { e.preventDefault(); setFabOpen(false); onFormOpenChange(true); } }}
                 onClick={() => { setFabOpen(false); onFormOpenChange(true); }}
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -280,7 +290,11 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
               </button>
             </div>
           </div>
-          <button className="fab-main" onClick={() => setFabOpen(prev => !prev)}>
+          <button
+            className="fab-main"
+            onPointerDown={(e) => { if (e.pointerType !== 'mouse') { e.preventDefault(); setFabOpen(prev => !prev); } }}
+            onClick={() => setFabOpen(prev => !prev)}
+          >
             <svg className="fab-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"/>
               <line x1="5" y1="12" x2="19" y2="12"/>
