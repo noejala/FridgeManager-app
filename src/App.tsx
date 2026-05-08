@@ -81,6 +81,7 @@ function App() {
   const [voiceTried, setVoiceTried] = useState(() => localStorage.getItem('voice-tried') === '1');
   const [scrolledDown, setScrolledDown] = useState(false);
   const lastScrollY = useRef(0);
+  const scrollAccumulator = useRef(0);
 
   // Capture invite token from URL on mount before anything else
   useEffect(() => {
@@ -97,8 +98,20 @@ function App() {
   useEffect(() => {
     const onScroll = () => {
       const current = window.scrollY;
-      setScrolledDown(current > lastScrollY.current && current > 60);
+      const delta = current - lastScrollY.current;
       lastScrollY.current = current;
+
+      if (current <= 60 || delta < 0) {
+        // Near top or scrolling up: show immediately
+        scrollAccumulator.current = 0;
+        setScrolledDown(false);
+      } else {
+        // Scrolling down: require 30px accumulated before hiding
+        scrollAccumulator.current += delta;
+        if (scrollAccumulator.current > 30) {
+          setScrolledDown(true);
+        }
+      }
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);

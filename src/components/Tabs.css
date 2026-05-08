@@ -139,6 +139,8 @@
     background: transparent;
     color: var(--text-muted);
     transition: color 0.2s, background 0.2s;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .tab-button:hover {
