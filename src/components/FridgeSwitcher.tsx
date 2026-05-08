@@ -7,7 +7,7 @@ interface Props {
   fridges: Fridge[];
   activeFridgeId: string;
   onSwitch: (fridgeId: string) => void;
-  onCreateFridge: (name: string) => Promise<void>;
+  onCreateFridge: (name: string) => Promise<unknown>;
 }
 
 export const FridgeSwitcher = ({ fridges, activeFridgeId, onSwitch, onCreateFridge }: Props) => {

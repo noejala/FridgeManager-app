@@ -272,11 +272,12 @@ function App() {
     }
   };
 
-  const handleCreateFridge = async (name: string) => {
+  const handleCreateFridge = async (name: string): Promise<Fridge> => {
     const newFridge = await createFridge(name);
     const updated = await fetchFridges();
     setFridges(updated);
     await handleActiveFridgeChange(newFridge.id);
+    return newFridge;
   };
 
   const doInsertProduct = async (productData: Omit<Product, 'id' | 'addedDate'>) => {

@@ -6,18 +6,18 @@ import {
   removeMember, updateFridgeName, deleteFridge, leaveFridge, addFriendToFridge,
 } from '../utils/fridgeService';
 import { fetchFriendships, Friend } from '../utils/friendService';
+import { NewFridgeModal } from './NewFridgeModal';
 import './FridgeSettings.css';
 
 interface Props {
   fridges: Fridge[];
-  activeFridgeId: string;
   currentUserId: string;
   onFridgesChange: () => void;
   onActiveFridgeChange: (id: string) => void;
-  onCreateFridge: (name: string) => Promise<void>;
+  onCreateFridge: (name: string) => Promise<Fridge>;
 }
 
-export const FridgeSettings = ({ fridges, activeFridgeId, currentUserId, onFridgesChange, onActiveFridgeChange, onCreateFridge }: Props) => {
+export const FridgeSettings = ({ fridges, currentUserId, onFridgesChange, onActiveFridgeChange, onCreateFridge }: Props) => {
   const { t } = useTranslation();
   const [expandedFridgeId, setExpandedFridgeId] = useState<string | null>(null);
   const [members, setMembers] = useState<FridgeMember[]>([]);
@@ -31,9 +31,7 @@ export const FridgeSettings = ({ fridges, activeFridgeId, currentUserId, onFridg
   const [renameValue, setRenameValue] = useState('');
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [confirmLeaveId, setConfirmLeaveId] = useState<string | null>(null);
-  const [isCreating, setIsCreating] = useState(false);
-  const [newFridgeName, setNewFridgeName] = useState('');
-  const [creating, setCreating] = useState(false);
+  const [showNewFridgeModal, setShowNewFridgeModal] = useState(false);
 
   const expandedFridge = fridges.find(f => f.id === expandedFridgeId);
   const isOwner = expandedFridge?.ownerId === currentUserId;
@@ -60,18 +58,6 @@ export const FridgeSettings = ({ fridges, activeFridgeId, currentUserId, onFridg
     setConfirmDeleteId(null);
     setConfirmLeaveId(null);
     setSelectedFriendId('');
-  };
-
-  const handleCreate = async () => {
-    if (!newFridgeName.trim() || creating) return;
-    setCreating(true);
-    try {
-      await onCreateFridge(newFridgeName.trim());
-      setIsCreating(false);
-      setNewFridgeName('');
-    } finally {
-      setCreating(false);
-    }
   };
 
   const handleAddFriend = async () => {
@@ -317,51 +303,39 @@ export const FridgeSettings = ({ fridges, activeFridgeId, currentUserId, onFridg
           </div>
     );
 
-  const createRow = isCreating ? (
-    <div className="fridge-rename-row">
-      <input
-        autoFocus
-        className="fridge-rename-input"
-        value={newFridgeName}
-        onChange={e => setNewFridgeName(e.target.value)}
-        onKeyDown={e => {
-          if (e.key === 'Enter') handleCreate();
-          if (e.key === 'Escape') { setIsCreating(false); setNewFridgeName(''); }
-        }}
-        placeholder={t('fridges.namePlaceholder')}
-        maxLength={40}
-      />
-      <button className="fridge-rename-confirm" onClick={handleCreate} disabled={!newFridgeName.trim() || creating}>
-        {t('fridges.create')}
-      </button>
-      <button className="fridge-rename-cancel" onClick={() => { setIsCreating(false); setNewFridgeName(''); }}>
-        {t('settings.cancel')}
-      </button>
-    </div>
-  ) : (
-    <button className="fridge-settings-add-btn" onClick={() => setIsCreating(true)}>
-      + {t('fridges.newFridge')}
-    </button>
-  );
-
   return (
-    <div className="fridge-settings">
-      <div className="fridge-settings-group">
-        <h4 className="fridge-settings-group-label">{t('fridges.myFridges')}</h4>
-        <div className="fridge-settings-list">
-          {ownedFridges.map(renderAccordionItem)}
-          {createRow}
-        </div>
-      </div>
-
-      {sharedFridges.length > 0 && (
+    <>
+      <div className="fridge-settings">
         <div className="fridge-settings-group">
-          <h4 className="fridge-settings-group-label">{t('fridges.sharedFridges')}</h4>
+          <h4 className="fridge-settings-group-label">{t('fridges.myFridges')}</h4>
           <div className="fridge-settings-list">
-            {sharedFridges.map(renderAccordionItem)}
+            {ownedFridges.map(renderAccordionItem)}
+            <button className="fridge-settings-add-btn" onClick={() => setShowNewFridgeModal(true)}>
+              + {t('fridges.newFridge')}
+            </button>
           </div>
         </div>
+
+        {sharedFridges.length > 0 && (
+          <div className="fridge-settings-group">
+            <h4 className="fridge-settings-group-label">{t('fridges.sharedFridges')}</h4>
+            <div className="fridge-settings-list">
+              {sharedFridges.map(renderAccordionItem)}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {showNewFridgeModal && (
+        <NewFridgeModal
+          onClose={() => setShowNewFridgeModal(false)}
+          onCreate={onCreateFridge}
+          onDone={() => {
+            setShowNewFridgeModal(false);
+            onFridgesChange();
+          }}
+        />
       )}
-    </div>
+    </>
   );
 };

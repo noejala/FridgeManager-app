@@ -486,6 +486,7 @@
   },
   "fridges": {
     "myFridges": "My fridges",
+    "addFriendsOptional": "Invite friends (optional)",
     "sharedFridges": "Shared with me",
     "newFridge": "New fridge",
     "namePlaceholder": "Fridge name…",
