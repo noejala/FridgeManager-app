@@ -44,7 +44,12 @@ export function NewFridgeModal({ onClose, onCreate, onDone }: Props) {
       onDone();
     } catch (err) {
       console.error('Failed to create fridge:', err);
-      setError(err instanceof Error ? err.message : 'Erreur lors de la création');
+      const msg = err instanceof Error
+        ? err.message
+        : (err != null && typeof err === 'object' && 'message' in err)
+          ? String((err as { message: unknown }).message)
+          : JSON.stringify(err);
+      setError(msg);
     } finally {
       setCreating(false);
     }
