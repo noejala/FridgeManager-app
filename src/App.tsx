@@ -604,11 +604,16 @@ function App() {
   if (displayName === null) return (
     <UsernameSetup
       onComplete={async (name) => {
-        const defaultFridge = await createFridge(`Frigo de ${name}`);
-        setFridges([defaultFridge]);
-        setActiveFridgeId(defaultFridge.id);
-        localStorage.setItem(ACTIVE_FRIDGE_KEY, defaultFridge.id);
-        setDisplayName(name);
+        setDisplayName(name); // transition immediately — don't block on fridge creation
+        try {
+          const defaultFridge = await createFridge(`Frigo de ${name}`);
+          setFridges([defaultFridge]);
+          setActiveFridgeId(defaultFridge.id);
+          localStorage.setItem(ACTIVE_FRIDGE_KEY, defaultFridge.id);
+        } catch {
+          // Fridge creation failed — loadUserData will retry on next mount
+          if (user) loadUserData(user.id);
+        }
       }}
       darkMode={darkMode}
       onToggleDarkMode={() => setDarkMode(prev => !prev)}
