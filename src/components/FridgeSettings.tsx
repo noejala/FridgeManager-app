@@ -136,7 +136,7 @@ export const FridgeSettings = ({ fridges, activeFridgeId, currentUserId, onFridg
   const renderAccordionItem = (f: Fridge) => (
     <div key={f.id} className="fridge-accordion">
       <button
-        className={`fridge-settings-item${f.id === activeFridgeId ? ' active' : ''}${f.id === expandedFridgeId ? ' expanded' : ''}`}
+        className={`fridge-settings-item${f.id === expandedFridgeId ? ' expanded' : ''}`}
         onClick={() => handleToggle(f.id)}
       >
         <span className="fridge-settings-item-icon">🧊</span>
