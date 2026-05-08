@@ -14,9 +14,10 @@ interface Props {
   currentUserId: string;
   onFridgesChange: () => void;
   onActiveFridgeChange: (id: string) => void;
+  onCreateFridge: (name: string) => Promise<void>;
 }
 
-export const FridgeSettings = ({ fridges, activeFridgeId, currentUserId, onFridgesChange, onActiveFridgeChange }: Props) => {
+export const FridgeSettings = ({ fridges, activeFridgeId, currentUserId, onFridgesChange, onActiveFridgeChange, onCreateFridge }: Props) => {
   const { t } = useTranslation();
   const [selectedFridgeId, setSelectedFridgeId] = useState(activeFridgeId);
   const [members, setMembers] = useState<FridgeMember[]>([]);
@@ -30,6 +31,9 @@ export const FridgeSettings = ({ fridges, activeFridgeId, currentUserId, onFridg
   const [renameValue, setRenameValue] = useState('');
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [confirmLeaveId, setConfirmLeaveId] = useState<string | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const [newFridgeName, setNewFridgeName] = useState('');
+  const [creating, setCreating] = useState(false);
 
   const selectedFridge = fridges.find(f => f.id === selectedFridgeId) ?? fridges[0];
   const isOwner = selectedFridge?.ownerId === currentUserId;
@@ -75,6 +79,18 @@ export const FridgeSettings = ({ fridges, activeFridgeId, currentUserId, onFridg
   const handleRemoveMember = async (memberId: string) => {
     await removeMember(memberId);
     setMembers(prev => prev.filter(m => m.id !== memberId));
+  };
+
+  const handleCreate = async () => {
+    if (!newFridgeName.trim() || creating) return;
+    setCreating(true);
+    try {
+      await onCreateFridge(newFridgeName.trim());
+      setIsCreating(false);
+      setNewFridgeName('');
+    } finally {
+      setCreating(false);
+    }
   };
 
   const handleRename = async (fridgeId: string) => {
@@ -125,6 +141,32 @@ export const FridgeSettings = ({ fridges, activeFridgeId, currentUserId, onFridg
             )}
           </button>
         ))}
+        {isCreating ? (
+          <div className="fridge-rename-row">
+            <input
+              autoFocus
+              className="fridge-rename-input"
+              value={newFridgeName}
+              onChange={e => setNewFridgeName(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === 'Enter') handleCreate();
+                if (e.key === 'Escape') { setIsCreating(false); setNewFridgeName(''); }
+              }}
+              placeholder={t('fridges.namePlaceholder')}
+              maxLength={40}
+            />
+            <button className="fridge-rename-confirm" onClick={handleCreate} disabled={!newFridgeName.trim() || creating}>
+              {t('fridges.create')}
+            </button>
+            <button className="fridge-rename-cancel" onClick={() => { setIsCreating(false); setNewFridgeName(''); }}>
+              {t('settings.cancel')}
+            </button>
+          </div>
+        ) : (
+          <button className="fridge-settings-add-btn" onClick={() => setIsCreating(true)}>
+            + {t('fridges.newFridge')}
+          </button>
+        )}
       </div>
 
       {selectedFridge && (

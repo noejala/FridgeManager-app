@@ -12,6 +12,7 @@ interface Props {
   currentUserId: string;
   onFridgesChange: () => void;
   onActiveFridgeChange: (id: string) => void;
+  onCreateFridge: (name: string) => Promise<void>;
   pendingFriendCount: number;
 }
 
@@ -20,7 +21,7 @@ type SharingSection = 'friends' | 'fridges';
 export function SharingTab({
   displayName,
   fridges, activeFridgeId, currentUserId,
-  onFridgesChange, onActiveFridgeChange,
+  onFridgesChange, onActiveFridgeChange, onCreateFridge,
   pendingFriendCount,
 }: Props) {
   const { t } = useTranslation();
@@ -57,6 +58,7 @@ export function SharingTab({
           currentUserId={currentUserId}
           onFridgesChange={onFridgesChange}
           onActiveFridgeChange={onActiveFridgeChange}
+          onCreateFridge={onCreateFridge}
         />
       )}
     </div>

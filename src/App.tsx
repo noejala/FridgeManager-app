@@ -576,6 +576,7 @@ function App() {
             currentUserId={user?.id ?? ''}
             onFridgesChange={handleFridgesChange}
             onActiveFridgeChange={handleActiveFridgeChange}
+            onCreateFridge={handleCreateFridge}
             pendingFriendCount={pendingFriendCount}
           />
         )}
