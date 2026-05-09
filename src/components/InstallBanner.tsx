@@ -11,7 +11,7 @@ export function InstallBanner() {
       <div className="install-overlay" onClick={dismissModal}>
         <div className="install-modal" onClick={e => e.stopPropagation()}>
           <button className="install-close" onClick={dismissModal} aria-label="Fermer">×</button>
-          <div className="install-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18" strokeWidth="2.5"/></svg></div>
+          <div className="install-icon">📱</div>
           <h2 className="install-title">{t('install.modalTitle')}</h2>
           <p className="install-desc">{t('install.modalDesc')}</p>
 
