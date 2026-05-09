@@ -65,16 +65,15 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
   return (
     <div className={cardClass} style={{ '--index': index } as React.CSSProperties}>
       <div className="product-card-toggle" onClick={() => setExpanded(p => !p)}>
-        <span className="product-img-wrap" aria-hidden="true">
-          {!imgHidden && (
-            <img
-              className="product-img"
-              src={ingredientImg}
-              alt=""
-              onError={() => setImgHidden(true)}
-            />
-          )}
-        </span>
+        {!imgHidden && (
+          <img
+            className="product-img"
+            src={ingredientImg}
+            alt=""
+            aria-hidden="true"
+            onError={() => setImgHidden(true)}
+          />
+        )}
         <h3 className="product-name">{product.name}</h3>
         <span className="product-qty-inline">{product.quantity} {product.unit}</span>
         <span className={`product-chevron${isExpanded ? ' open' : ''}`} />

@@ -50,15 +50,6 @@
   opacity: 0.75;
 }
 
-.product-img-wrap {
-  width: 28px;
-  height: 28px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .product-img {
   width: 28px;
   height: 28px;
