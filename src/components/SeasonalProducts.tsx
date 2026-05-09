@@ -6,21 +6,37 @@ import {
   type CountryId, type RegionId,
 } from '../utils/seasonalData';
 import { fetchProductFunFacts } from '../utils/mistralApi';
+import { singularize } from '../utils/mealApi';
 import './SeasonalProducts.css';
 
+type ImgStage = 'mealdb' | 'svg' | 'emoji';
+
 function ProductIllustration({ product, size }: { product: string; size: number }) {
-  const [failed, setFailed] = useState(false);
+  const [stage, setStage] = useState<ImgStage>('mealdb');
   const icon = productIllustrationMap[product] ?? 'herb';
-  if (failed) {
+
+  if (stage === 'emoji') {
     return <span style={{ fontSize: size * 0.55 }}>{productEmojiMap[product] ?? '🥬'}</span>;
+  }
+  if (stage === 'svg') {
+    return (
+      <img
+        src={`/illustrations/seasonal/${icon}.svg`}
+        width={size}
+        height={size}
+        alt=""
+        onError={() => setStage('emoji')}
+      />
+    );
   }
   return (
     <img
-      src={`/illustrations/seasonal/${icon}.svg`}
+      src={`https://www.themealdb.com/images/ingredients/${encodeURIComponent(singularize(product))}-Small.png`}
       width={size}
       height={size}
       alt=""
-      onError={() => setFailed(true)}
+      style={{ borderRadius: '50%', objectFit: 'cover' }}
+      onError={() => setStage('svg')}
     />
   );
 }
