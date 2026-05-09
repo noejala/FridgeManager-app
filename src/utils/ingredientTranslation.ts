@@ -140,10 +140,20 @@ const FR_TO_EN: Record<string, string> = {
   'sirop': 'syrup',
 };
 
+function frSingularize(word: string): string {
+  if (word.endsWith('aux')) return word.slice(0, -3) + 'al';
+  if (word.endsWith('s') || word.endsWith('x')) return word.slice(0, -1);
+  return word;
+}
+
 export function toEnglishIngredient(name: string): string {
   const normalized = name.toLowerCase().trim();
 
   if (FR_TO_EN[normalized]) return FR_TO_EN[normalized];
+
+  // Try French-singularized form ("bananes" → "banane", "légaux" → "légal")
+  const singular = frSingularize(normalized);
+  if (singular !== normalized && FR_TO_EN[singular]) return FR_TO_EN[singular];
 
   // Partial match — handles "blanc de poulet" → "chicken", etc.
   // Uses word boundaries to avoid false matches ("barista" matching "bar", etc.)

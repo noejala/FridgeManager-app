@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Product } from '../types/Product';
 import { getDaysUntilExpiration, isExpired, isExpiringSoon } from '../utils/storage';
 import { isOpenableProduct } from '../utils/shelfLife';
+import { singularize } from '../utils/mealApi';
 import { toEnglishIngredient } from '../utils/ingredientTranslation';
 import './ProductCard.css';
 
@@ -47,7 +48,7 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
   };
 
   const locale = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
-  const ingredientImg = `https://www.themealdb.com/images/ingredients/${encodeURIComponent(toEnglishIngredient(product.name))}-Small.png`;
+  const ingredientImg = `https://www.themealdb.com/images/ingredients/${encodeURIComponent(singularize(toEnglishIngredient(product.name)))}-Small.png`;
   const isConfirming = confirmingDelete || confirmingConsume || confirmingOpen;
   const isExpanded = expanded || isConfirming;
 
