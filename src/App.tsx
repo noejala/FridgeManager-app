@@ -589,12 +589,15 @@ function App() {
       </div>
       <div hidden={activeTab !== 'cook'}>
         <WhatToCook
+          key={activeFridgeId}
           products={products}
           dietaryPreferences={dietaryPreferences}
           dislikedIngredients={dislikedIngredients}
           customPreferences={customPreferences}
           pantryStaples={fridges.find(f => f.id === activeFridgeId)?.pantryStaples ?? []}
           onConsumeProducts={(ids) => ids.forEach(id => handleConsumeProduct(id))}
+          fridgeEmoji={fridges.find(f => f.id === activeFridgeId)?.emoji}
+          fridgeName={fridges.find(f => f.id === activeFridgeId)?.name}
         />
       </div>
       <div hidden={activeTab !== 'seasonal'}>

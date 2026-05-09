@@ -35,6 +35,8 @@ interface WhatToCookProps {
   customPreferences?: string;
   pantryStaples?: string[];
   onConsumeProducts?: (ids: string[]) => void;
+  fridgeEmoji?: string;
+  fridgeName?: string;
 }
 
 const MAX_MISSING = 4;
@@ -239,7 +241,7 @@ function applySort(recipes: RecipeMatch[], mode: SortMode): RecipeMatch[] {
 
 const aiEnabled = import.meta.env.VITE_AI_ENABLED === 'true';
 
-export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredients = [], customPreferences = '', pantryStaples = [], onConsumeProducts }: WhatToCookProps) => {
+export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredients = [], customPreferences = '', pantryStaples = [], onConsumeProducts, fridgeEmoji, fridgeName }: WhatToCookProps) => {
   const { t, i18n } = useTranslation();
   const [recipes, setRecipes] = useState<RecipeMatch[]>([]);
   const [loading, setLoading] = useState(false);
@@ -682,6 +684,9 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
         <div className="cook-subtitle-row">
           {!(recipeMode === 'ai' && selectedCookingMode && selectedCourse) && (
             <p className="cook-subtitle">
+              {fridgeEmoji && fridgeName && (
+                <span className="cook-fridge-tag">{fridgeEmoji} {fridgeName}</span>
+              )}
               {t('cook.recipesBasedOn', { count: products.length })}
             </p>
           )}
