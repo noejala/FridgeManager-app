@@ -1,18 +1,31 @@
 import { useState, useRef } from 'react';
 
-const spoonacularCache = new Map<string, string | null>();
+const SPOON_CACHE_KEY = 'spoonacular_img_cache';
+const spoonacularMemCache = new Map<string, string | null>();
+
+function readSpoonCache(): Record<string, string | null> {
+  try { return JSON.parse(localStorage.getItem(SPOON_CACHE_KEY) ?? '{}'); } catch { return {}; }
+}
+
+function writeSpoonCache(cache: Record<string, string | null>) {
+  try { localStorage.setItem(SPOON_CACHE_KEY, JSON.stringify(cache)); } catch {}
+}
 
 async function fetchSpoonacularImage(query: string): Promise<string | null> {
-  if (spoonacularCache.has(query)) return spoonacularCache.get(query)!;
+  if (spoonacularMemCache.has(query)) return spoonacularMemCache.get(query)!;
+  const stored = readSpoonCache();
+  if (query in stored) { spoonacularMemCache.set(query, stored[query]); return stored[query]; }
   try {
     const res = await fetch(`/api/spoonacular?query=${encodeURIComponent(query)}`);
-    if (!res.ok) { spoonacularCache.set(query, null); return null; }
+    if (!res.ok) { spoonacularMemCache.set(query, null); stored[query] = null; writeSpoonCache(stored); return null; }
     const data = await res.json() as { imageUrl?: string };
     const url = data.imageUrl ?? null;
-    spoonacularCache.set(query, url);
+    spoonacularMemCache.set(query, url);
+    stored[query] = url;
+    writeSpoonCache(stored);
     return url;
   } catch {
-    spoonacularCache.set(query, null);
+    spoonacularMemCache.set(query, null);
     return null;
   }
 }
