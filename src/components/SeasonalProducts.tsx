@@ -11,8 +11,11 @@ import './SeasonalProducts.css';
 
 type ImgStage = 'mealdb' | 'svg' | 'emoji';
 
+// Products where TheMealDB returns wrong images (spice jar, unrelated item)
+const SKIP_MEALDB = new Set(['Peppers', 'Fennel', 'Peas', 'Leeks']);
+
 function ProductIllustration({ product, size }: { product: string; size: number }) {
-  const [stage, setStage] = useState<ImgStage>('mealdb');
+  const [stage, setStage] = useState<ImgStage>(SKIP_MEALDB.has(product) ? 'svg' : 'mealdb');
   const icon = productIllustrationMap[product] ?? 'herb';
 
   if (stage === 'emoji') {
@@ -205,7 +208,7 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
 
   const renderProductCard = (product: string, index: number) => (
     <div
-      key={product}
+      key={`${selectedMonth}-${product}`}
       className={`seasonal-product-card${aiEnabled ? ' seasonal-product-card--clickable' : ''}`}
       style={{ '--index': index } as React.CSSProperties}
       onClick={() => handleProductClick(product)}

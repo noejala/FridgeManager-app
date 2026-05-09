@@ -425,7 +425,7 @@ export const productIllustrationMap: Record<string, string> = {
   'Pomegranates': 'grapes',
   'Quince': 'pear',
   'Radishes': 'hot-pepper',
-  'Raspberries': 'strawberry',
+  'Raspberries': 'blueberries',
   'Rhubarb': 'herb',
   'Runner beans': 'beans',
   'Soursop': 'green-apple',
