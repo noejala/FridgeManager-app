@@ -38,6 +38,7 @@ const FR_TO_EN: Record<string, string> = {
   'veau': 'veal',
   'canard': 'duck',
   'lapin': 'rabbit',
+  'steak': 'beef',
   'steak haché': 'ground beef',
   'boulette': 'meatball',
   'chorizo': 'chorizo',
