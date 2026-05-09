@@ -206,6 +206,8 @@ const DIFFICULTY_RANK: Record<string, number> = {
   difficile: 3, hard: 3,
 };
 
+let _cardPointerStart: { x: number; y: number } | null = null;
+
 function parsePrepMinutes(area: string): number {
   const h = area.match(/(\d+)\s*h/i);
   const m = area.match(/(\d+)\s*m/i);
@@ -544,8 +546,14 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
     <div
       key={recipe.meal.id}
       className="recipe-card"
-      onPointerDown={(e) => { if (e.pointerType !== 'mouse') { e.preventDefault(); setSelectedRecipe(recipe); } }}
-      onClick={() => setSelectedRecipe(recipe)}
+      onPointerDown={(e) => { _cardPointerStart = { x: e.clientX, y: e.clientY }; }}
+      onPointerUp={(e) => {
+        if (!_cardPointerStart) return;
+        const moved = Math.abs(e.clientX - _cardPointerStart.x) + Math.abs(e.clientY - _cardPointerStart.y);
+        _cardPointerStart = null;
+        if (moved < 10) setSelectedRecipe(recipe);
+      }}
+      onClick={(e) => { if ((e.nativeEvent as PointerEvent).pointerType === 'mouse') setSelectedRecipe(recipe); }}
       style={{ '--index': index } as React.CSSProperties}
     >
       {recipe.meal.thumbnail
@@ -555,6 +563,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       <button
         className={`recipe-save-btn${savedMap.has(recipe.meal.name.toLowerCase()) ? ' saved' : ''}`}
         onPointerDown={(e) => e.stopPropagation()}
+        onPointerUp={(e) => e.stopPropagation()}
         onClick={(e) => toggleSave(e, recipe.meal)}
         aria-label={savedMap.has(recipe.meal.name.toLowerCase()) ? t('cook.unsaveRecipe') : t('cook.saveRecipe')}
       >
@@ -563,6 +572,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       <button
         className={`recipe-cook-btn${cookingRecipes.some(r => r.meal.id === recipe.meal.id) ? ' active' : ''}`}
         onPointerDown={(e) => e.stopPropagation()}
+        onPointerUp={(e) => e.stopPropagation()}
         onClick={(e) => addToCooking(e, recipe)}
         aria-label={cookingRecipes.some(r => r.meal.id === recipe.meal.id) ? t('cook.session.removeRecipe') : t('cook.cookNow')}
         title={cookingRecipes.some(r => r.meal.id === recipe.meal.id) ? t('cook.session.removeRecipe') : t('cook.cookNow')}
