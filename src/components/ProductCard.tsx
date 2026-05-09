@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Product } from '../types/Product';
 import { getDaysUntilExpiration, isExpired, isExpiringSoon } from '../utils/storage';
@@ -48,8 +48,26 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
   };
 
   const locale = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
-  const ingredientImg = `https://www.themealdb.com/images/ingredients/${encodeURIComponent(singularize(toEnglishIngredient(product.name)))}-Small.png`;
+  const englishName = singularize(toEnglishIngredient(product.name));
+  const ingredientImg = `https://www.themealdb.com/images/ingredients/${encodeURIComponent(englishName)}-Small.png`;
+  const [imgSrc, setImgSrc] = useState(ingredientImg);
   const [imgHidden, setImgHidden] = useState(false);
+  const wikiTriedRef = useRef(false);
+
+  const handleImgError = async () => {
+    if (wikiTriedRef.current) { setImgHidden(true); return; }
+    wikiTriedRef.current = true;
+    try {
+      const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(englishName)}`);
+      if (!res.ok) { setImgHidden(true); return; }
+      const data = await res.json();
+      const url: string | undefined = data.thumbnail?.source;
+      if (url) setImgSrc(url);
+      else setImgHidden(true);
+    } catch {
+      setImgHidden(true);
+    }
+  };
 
   const isConfirming = confirmingDelete || confirmingConsume || confirmingOpen;
   const isExpanded = expanded || isConfirming;
@@ -68,10 +86,10 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
         {!imgHidden && (
           <img
             className="product-img"
-            src={ingredientImg}
+            src={imgSrc}
             alt=""
             aria-hidden="true"
-            onError={() => setImgHidden(true)}
+            onError={handleImgError}
           />
         )}
         <h3 className="product-name">{product.name}</h3>
