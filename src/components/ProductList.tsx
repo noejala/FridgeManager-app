@@ -45,6 +45,7 @@ export const ProductList = ({ products, consumedProducts, onDelete, onConsume, o
   const expiredProducts = products.filter(p => isExpired(p.expirationDate)).sort(byDate);
   const expiringSoonProducts = products.filter(p => !isExpired(p.expirationDate) && isExpiringSoon(p.expirationDate)).sort(byDate);
   const freshProducts = products.filter(p => !isExpired(p.expirationDate) && !isExpiringSoon(p.expirationDate)).sort(byDate);
+  const gridClass = `product-grid${products.length >= 11 ? ' product-grid--compact' : ''}`;
 
   return (
     <div className="product-list-container">
@@ -70,7 +71,7 @@ export const ProductList = ({ products, consumedProducts, onDelete, onConsume, o
                 <span className="product-section-line" />
                 <span className="product-section-count">{expiredProducts.length}</span>
               </div>
-              <div className="product-grid">
+              <div className={gridClass}>
                 {expiredProducts.map((product, index) => (
                   <ProductCard key={product.id} product={product} onDelete={onDelete} onConsume={onConsume} onEdit={onEdit} onOpenSauce={onOpenSauce} index={index} />
                 ))}
@@ -85,7 +86,7 @@ export const ProductList = ({ products, consumedProducts, onDelete, onConsume, o
                 <span className="product-section-line" />
                 <span className="product-section-count">{expiringSoonProducts.length}</span>
               </div>
-              <div className="product-grid">
+              <div className={gridClass}>
                 {expiringSoonProducts.map((product, index) => (
                   <ProductCard key={product.id} product={product} onDelete={onDelete} onConsume={onConsume} onEdit={onEdit} onOpenSauce={onOpenSauce} index={index} />
                 ))}
@@ -100,7 +101,7 @@ export const ProductList = ({ products, consumedProducts, onDelete, onConsume, o
                 <span className="product-section-line" />
                 <span className="product-section-count">{freshProducts.length}</span>
               </div>
-              <div className="product-grid">
+              <div className={gridClass}>
                 {freshProducts.map((product, index) => (
                   <ProductCard key={product.id} product={product} onDelete={onDelete} onConsume={onConsume} onEdit={onEdit} onOpenSauce={onOpenSauce} index={index} />
                 ))}
