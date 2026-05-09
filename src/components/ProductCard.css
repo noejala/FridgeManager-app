@@ -143,18 +143,6 @@
   color: var(--text-muted);
 }
 
-.product-category-chip {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  color: var(--text-muted);
-  padding: 0.1rem 0.45rem;
-  border-radius: 40px;
-  font-size: 0.6rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-weight: 500;
-}
-
 .product-exp {
   display: flex;
   gap: 0.35rem;

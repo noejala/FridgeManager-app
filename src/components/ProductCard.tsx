@@ -74,7 +74,6 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
           </div>
           <div className="product-meta">
             <span className="product-qty">{product.quantity} {product.unit}</span>
-            <span className="product-category-chip">{t(`categories.${product.category}`)}</span>
           </div>
           <div className="product-exp">
             <span className="label">{isDDM ? t('productCard.bestBefore') : t('productCard.expires')}</span>
