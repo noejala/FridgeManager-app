@@ -1,4 +1,21 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+
+const spoonacularCache = new Map<string, string | null>();
+
+async function fetchSpoonacularImage(query: string): Promise<string | null> {
+  if (spoonacularCache.has(query)) return spoonacularCache.get(query)!;
+  try {
+    const res = await fetch(`/api/spoonacular?query=${encodeURIComponent(query)}`);
+    if (!res.ok) { spoonacularCache.set(query, null); return null; }
+    const data = await res.json() as { imageUrl?: string };
+    const url = data.imageUrl ?? null;
+    spoonacularCache.set(query, url);
+    return url;
+  } catch {
+    spoonacularCache.set(query, null);
+    return null;
+  }
+}
 import { useTranslation } from 'react-i18next';
 import { Product } from '../types/Product';
 import { getDaysUntilExpiration, isExpired, isExpiringSoon } from '../utils/storage';
@@ -50,7 +67,17 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
   const locale = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
   const englishName = singularize(toEnglishIngredient(product.name));
   const ingredientImg = `https://www.themealdb.com/images/ingredients/${encodeURIComponent(englishName)}-Small.png`;
+  const [imgSrc, setImgSrc] = useState(ingredientImg);
   const [imgHidden, setImgHidden] = useState(false);
+  const spoonTriedRef = useRef(false);
+
+  const handleImgError = async () => {
+    if (spoonTriedRef.current) { setImgHidden(true); return; }
+    spoonTriedRef.current = true;
+    const url = await fetchSpoonacularImage(englishName);
+    if (url) setImgSrc(url);
+    else setImgHidden(true);
+  };
 
   const isConfirming = confirmingDelete || confirmingConsume || confirmingOpen;
   const isExpanded = expanded || isConfirming;
@@ -69,10 +96,10 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
         {!imgHidden && (
           <img
             className="product-img"
-            src={ingredientImg}
+            src={imgSrc}
             alt=""
             aria-hidden="true"
-            onError={() => setImgHidden(true)}
+            onError={handleImgError}
           />
         )}
         <h3 className="product-name">{product.name}</h3>
