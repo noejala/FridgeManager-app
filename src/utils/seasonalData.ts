@@ -7,7 +7,7 @@ export type RegionId = 'france_north' | 'france_south' | 'guadeloupe' | 'martini
 
 export type SeasonalEntry = { season: string; products: string[] };
 
-interface RegionMeta { id: RegionId; name: string; flag: string }
+interface RegionMeta { id: RegionId; name: string; flag?: string }
 
 export type CountryConfig =
   | { hasRegions: true; regions: RegionMeta[]; data: Record<string, Record<number, SeasonalEntry>> }
