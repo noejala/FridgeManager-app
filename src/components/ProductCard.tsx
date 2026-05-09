@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Product } from '../types/Product';
 import { getDaysUntilExpiration, isExpired, isExpiringSoon } from '../utils/storage';
@@ -49,25 +49,7 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
 
   const locale = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
   const ingredientImg = `https://www.themealdb.com/images/ingredients/${encodeURIComponent(singularize(toEnglishIngredient(product.name)))}-Small.png`;
-  const [imgSrc, setImgSrc] = useState(ingredientImg);
   const [imgHidden, setImgHidden] = useState(false);
-  const offTriedRef = useRef(false);
-
-  const handleImgError = async () => {
-    if (offTriedRef.current) { setImgHidden(true); return; }
-    offTriedRef.current = true;
-    try {
-      const res = await fetch(
-        `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(product.name)}&search_simple=1&action=process&json=1&page_size=1&fields=image_front_small_url`
-      );
-      const data = await res.json();
-      const url: string | undefined = data.products?.[0]?.image_front_small_url;
-      if (url) setImgSrc(url);
-      else setImgHidden(true);
-    } catch {
-      setImgHidden(true);
-    }
-  };
 
   const isConfirming = confirmingDelete || confirmingConsume || confirmingOpen;
   const isExpanded = expanded || isConfirming;
@@ -83,15 +65,16 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
   return (
     <div className={cardClass} style={{ '--index': index } as React.CSSProperties}>
       <div className="product-card-toggle" onClick={() => setExpanded(p => !p)}>
-        {!imgHidden && (
-          <img
-            className="product-img"
-            src={imgSrc}
-            alt=""
-            aria-hidden="true"
-            onError={handleImgError}
-          />
-        )}
+        <span className="product-img-wrap" aria-hidden="true">
+          {!imgHidden && (
+            <img
+              className="product-img"
+              src={ingredientImg}
+              alt=""
+              onError={() => setImgHidden(true)}
+            />
+          )}
+        </span>
         <h3 className="product-name">{product.name}</h3>
         <span className="product-qty-inline">{product.quantity} {product.unit}</span>
         <span className={`product-chevron${isExpanded ? ' open' : ''}`} />

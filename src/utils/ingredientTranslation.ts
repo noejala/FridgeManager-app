@@ -1,4 +1,29 @@
 const FR_TO_EN: Record<string, string> = {
+  // Condiments & sauces (avant les mots courts pour priorité au match partiel)
+  'mayonnaise': 'mayonnaise',
+  'ketchup': 'ketchup',
+  'moutarde': 'mustard',
+  'sauce soja': 'soy sauce',
+  'sauce tomate': 'tomato puree',
+  'vinaigre': 'vinegar',
+  'huile': 'oil',
+  'huile d\'olive': 'olive oil',
+
+  // Féculents & produits secs
+  'riz': 'rice',
+  'pâtes': 'pasta',
+  'pate': 'pasta',
+  'farine': 'flour',
+  'pain': 'bread',
+  'pizza': 'pizza',
+  'pepperoni': 'pepperoni',
+  'ravioli': 'pasta',
+  'gnocchi': 'gnocchi',
+  'quinoa': 'quinoa',
+  'semoule': 'semolina',
+  'lentille': 'lentils',
+  'pois chiche': 'chickpeas',
+
   // Viandes
   'poulet': 'chicken',
   'bœuf': 'beef',
@@ -83,6 +108,8 @@ const FR_TO_EN: Record<string, string> = {
   'chou': 'cabbage',
   'ail': 'garlic',
   'champignon': 'mushroom',
+  'pleurote': 'oyster mushroom',
+  'girofle': 'clove',
   'maïs': 'corn',
   'petit pois': 'pea',
   'haricot': 'bean',
@@ -143,6 +170,12 @@ const FR_TO_EN: Record<string, string> = {
 function frSingularize(word: string): string {
   if (word.endsWith('aux')) return word.slice(0, -3) + 'al';
   if (word.endsWith('s') || word.endsWith('x')) return word.slice(0, -1);
+  // Multi-word: singularize first word ("pommes de terre" → "pomme de terre")
+  const spaceIdx = word.indexOf(' ');
+  if (spaceIdx > 0) {
+    const first = frSingularize(word.slice(0, spaceIdx));
+    if (first !== word.slice(0, spaceIdx)) return first + word.slice(spaceIdx);
+  }
   return word;
 }
 
