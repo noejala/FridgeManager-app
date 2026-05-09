@@ -6,7 +6,6 @@ import {
   type CountryId, type RegionId,
 } from '../utils/seasonalData';
 import { fetchProductFunFacts } from '../utils/mistralApi';
-import { singularize } from '../utils/mealApi';
 import './SeasonalProducts.css';
 
 type ImgStage = 'mealdb' | 'svg' | 'emoji';
@@ -31,7 +30,7 @@ function ProductIllustration({ product, size }: { product: string; size: number 
   }
   return (
     <img
-      src={`https://www.themealdb.com/images/ingredients/${encodeURIComponent(singularize(product))}-Small.png`}
+      src={`https://www.themealdb.com/images/ingredients/${encodeURIComponent(product)}-Small.png`}
       width={size}
       height={size}
       alt=""
