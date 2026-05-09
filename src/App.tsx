@@ -540,7 +540,7 @@ function App() {
             className={`pantry-toggle-btn${showPantry ? ' active' : ''}`}
             onClick={() => setShowPantry(p => !p)}
           >
-            🧴 Placard
+            Placard
           </button>
         </div>
         {showPantry && activeFridgeId && (
