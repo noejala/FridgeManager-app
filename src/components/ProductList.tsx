@@ -45,7 +45,35 @@ export const ProductList = ({ products, consumedProducts, onDelete, onConsume, o
   const expiredProducts = products.filter(p => isExpired(p.expirationDate)).sort(byDate);
   const expiringSoonProducts = products.filter(p => !isExpired(p.expirationDate) && isExpiringSoon(p.expirationDate)).sort(byDate);
   const freshProducts = products.filter(p => !isExpired(p.expirationDate) && !isExpiringSoon(p.expirationDate)).sort(byDate);
-  const gridClass = `product-grid${products.length >= 11 ? ' product-grid--compact' : ''}`;
+  const compact = products.length >= 11;
+
+  const renderGrid = (items: Product[]) => {
+    if (!compact) {
+      return (
+        <div className="product-grid">
+          {items.map((product, index) => (
+            <ProductCard key={product.id} product={product} onDelete={onDelete} onConsume={onConsume} onEdit={onEdit} onOpenSauce={onOpenSauce} index={index} />
+          ))}
+        </div>
+      );
+    }
+    const left = items.filter((_, i) => i % 2 === 0);
+    const right = items.filter((_, i) => i % 2 === 1);
+    return (
+      <div className="product-grid product-grid--compact">
+        <div className="product-col">
+          {left.map((product, i) => (
+            <ProductCard key={product.id} product={product} onDelete={onDelete} onConsume={onConsume} onEdit={onEdit} onOpenSauce={onOpenSauce} index={i * 2} />
+          ))}
+        </div>
+        <div className="product-col">
+          {right.map((product, i) => (
+            <ProductCard key={product.id} product={product} onDelete={onDelete} onConsume={onConsume} onEdit={onEdit} onOpenSauce={onOpenSauce} index={i * 2 + 1} />
+          ))}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="product-list-container">
@@ -71,11 +99,7 @@ export const ProductList = ({ products, consumedProducts, onDelete, onConsume, o
                 <span className="product-section-line" />
                 <span className="product-section-count">{expiredProducts.length}</span>
               </div>
-              <div className={gridClass}>
-                {expiredProducts.map((product, index) => (
-                  <ProductCard key={product.id} product={product} onDelete={onDelete} onConsume={onConsume} onEdit={onEdit} onOpenSauce={onOpenSauce} index={index} />
-                ))}
-              </div>
+              {renderGrid(expiredProducts)}
             </div>
           )}
 
@@ -86,11 +110,7 @@ export const ProductList = ({ products, consumedProducts, onDelete, onConsume, o
                 <span className="product-section-line" />
                 <span className="product-section-count">{expiringSoonProducts.length}</span>
               </div>
-              <div className={gridClass}>
-                {expiringSoonProducts.map((product, index) => (
-                  <ProductCard key={product.id} product={product} onDelete={onDelete} onConsume={onConsume} onEdit={onEdit} onOpenSauce={onOpenSauce} index={index} />
-                ))}
-              </div>
+              {renderGrid(expiringSoonProducts)}
             </div>
           )}
 
@@ -101,11 +121,7 @@ export const ProductList = ({ products, consumedProducts, onDelete, onConsume, o
                 <span className="product-section-line" />
                 <span className="product-section-count">{freshProducts.length}</span>
               </div>
-              <div className={gridClass}>
-                {freshProducts.map((product, index) => (
-                  <ProductCard key={product.id} product={product} onDelete={onDelete} onConsume={onConsume} onEdit={onEdit} onOpenSauce={onOpenSauce} index={index} />
-                ))}
-              </div>
+              {renderGrid(freshProducts)}
             </div>
           )}
         </>
