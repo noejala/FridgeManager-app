@@ -674,7 +674,7 @@ function App() {
             </button>
           )}
         </div>
-        <h1>Fridge <span>Manager</span></h1>
+        <h1>Free<span>go</span></h1>
         <div className="app-header-rule" />
         <p>{t('app.subtitle')}</p>
       </header>

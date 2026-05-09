@@ -29,7 +29,7 @@
     "usernameTaken": "This username is already taken",
     "usernameInvalid": "Invalid username (3 to 20 characters, letters, numbers and _)",
     "usernameSetupTitle": "Choose your username",
-    "usernameSetupSubtitle": "It will identify you on Fridge Manager",
+    "usernameSetupSubtitle": "It will identify you on Freego",
     "usernameSetupConfirm": "Continue"
   },
   "tabs": {
@@ -287,7 +287,7 @@
   },
   "install": {
     "modalTitle": "Better experience on mobile",
-    "modalDesc": "Add FridgeManager to your home screen for quick access, even offline.",
+    "modalDesc": "Add Freego to your home screen for quick access, even offline.",
     "iosStep1": "Tap <strong>...</strong> at the bottom of Safari",
     "iosStep2": "Then tap <strong>Share</strong>",
     "iosStep3": "Then tap \"Add to Home Screen\"",
@@ -485,7 +485,7 @@
     "inviteHint": "Your friend doesn't have the app yet? Send them a link.",
     "inviteAction": "Share the app",
     "inviteCopied": "Link copied!",
-    "inviteShareText": "Join me on Fridge Manager! {{url}}"
+    "inviteShareText": "Join me on Freego! {{url}}"
   },
   "fridges": {
     "myFridges": "My fridges",
