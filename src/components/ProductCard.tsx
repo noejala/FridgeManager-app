@@ -61,6 +61,7 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
     <div className={cardClass} style={{ '--index': index } as React.CSSProperties}>
       <div className="product-card-toggle" onClick={() => setExpanded(p => !p)}>
         <h3 className="product-name">{product.name}</h3>
+        <span className="product-qty-inline">{product.quantity} {product.unit}</span>
         <span className={`product-chevron${isExpanded ? ' open' : ''}`} />
       </div>
 
@@ -71,9 +72,6 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
             data-tooltip={showSensoryHint ? t('productCard.estimatedCheckTooltip') : undefined}
           >
             {getStatusText()}
-          </div>
-          <div className="product-meta">
-            <span className="product-qty">{product.quantity} {product.unit}</span>
           </div>
           <div className="product-exp">
             <span className="label">{isDDM ? t('productCard.bestBefore') : t('productCard.expires')}</span>

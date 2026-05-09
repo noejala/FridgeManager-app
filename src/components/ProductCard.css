@@ -64,6 +64,14 @@
   min-width: 0;
 }
 
+.product-qty-inline {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
 .product-chevron {
   width: 0;
   height: 0;
@@ -132,16 +140,6 @@
   white-space: normal;
 }
 
-.product-meta {
-  display: flex;
-  gap: 0.4rem;
-  align-items: center;
-}
-
-.product-qty {
-  font-size: 0.73rem;
-  color: var(--text-muted);
-}
 
 .product-exp {
   display: flex;
