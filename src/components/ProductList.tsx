@@ -48,7 +48,7 @@ export const ProductList = ({ products, consumedProducts, onDelete, onConsume, o
   const compact = products.length >= 11;
 
   const renderGrid = (items: Product[]) => {
-    if (!compact) {
+    if (!compact || items.length <= 3) {
       return (
         <div className="product-grid">
           {items.map((product, index) => (
