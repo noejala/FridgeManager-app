@@ -26,6 +26,10 @@
   box-shadow: var(--shadow);
 }
 
+.product-card.is-expanded {
+  z-index: 1;
+}
+
 .product-card.status-expiring::before { background: var(--amber); }
 .product-card.status-expired::before  { background: var(--red); }
 .product-card.status-expired-ddm::before { background: var(--amber); }
@@ -71,6 +75,12 @@
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
+}
+
+.product-card.is-expanded .product-name {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
 }
 
 .product-qty-inline {
