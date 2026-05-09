@@ -35,6 +35,7 @@ export const FridgeSettings = ({ fridges, currentUserId, onFridgesChange, onActi
   const [editingNames, setEditingNames] = useState<Record<string, string>>({});
   const [emojiPickerFor, setEmojiPickerFor] = useState<string | null>(null);
   const emojiPickerRef = useRef<HTMLDivElement>(null);
+  const expandedRef = useRef<HTMLDivElement>(null);
 
   const expandedFridge = fridges.find(f => f.id === expandedFridgeId);
   const isOwner = expandedFridge?.ownerId === currentUserId;
@@ -65,6 +66,17 @@ export const FridgeSettings = ({ fridges, currentUserId, onFridgesChange, onActi
     document.addEventListener('pointerdown', handleClick);
     return () => document.removeEventListener('pointerdown', handleClick);
   }, [emojiPickerFor]);
+
+  useEffect(() => {
+    if (!expandedFridgeId) return;
+    const handleClick = (e: MouseEvent) => {
+      if (expandedRef.current && !expandedRef.current.contains(e.target as Node)) {
+        setExpandedFridgeId(null);
+      }
+    };
+    document.addEventListener('pointerdown', handleClick);
+    return () => document.removeEventListener('pointerdown', handleClick);
+  }, [expandedFridgeId]);
 
   const handleToggle = (fridgeId: string) => {
     const next = expandedFridgeId === fridgeId ? null : fridgeId;
@@ -146,7 +158,7 @@ export const FridgeSettings = ({ fridges, currentUserId, onFridgesChange, onActi
     const isMine = f.ownerId === currentUserId;
 
     return (
-      <div key={f.id} className={`fridge-accordion${isExpanded ? ' is-expanded' : ''}`}>
+      <div key={f.id} ref={isExpanded ? expandedRef : null} className={`fridge-accordion${isExpanded ? ' is-expanded' : ''}`}>
         {isExpanded ? (
           <div className="fridge-settings-item fridge-settings-item--open">
             <div className="fridge-emoji-wrap">
