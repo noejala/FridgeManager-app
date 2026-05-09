@@ -41,6 +41,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.7rem 0.85rem;
+  min-height: calc(28px + 1.4rem);
   cursor: pointer;
   touch-action: manipulation;
   user-select: none;
