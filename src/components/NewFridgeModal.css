@@ -65,6 +65,30 @@
   background: var(--accent-bg);
 }
 
+.nfm-emoji-custom {
+  color: var(--text-muted);
+  font-size: 1rem;
+  border-style: dashed;
+  border-color: var(--border-hover);
+  position: relative;
+  overflow: hidden;
+}
+
+.nfm-emoji-custom-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 1.4rem;
+  text-align: center;
+  color: var(--text);
+  padding: 0;
+  cursor: text;
+}
+
 .nfm-input {
   width: 100%;
   padding: 0.75rem 1rem;

@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Fridge, FridgeMemberRole } from '../types/Fridge';
 import { fetchFriendships, Friend } from '../utils/friendService';
 import { addFriendToFridge } from '../utils/fridgeService';
 import './NewFridgeModal.css';
 
-const FRIDGE_EMOJIS = ['🧊', '❄️', '🍎', '🥦', '🥩', '🍷', '🫙', '🌿', '🍕', '🥗', '⭐', '🏡'];
+const FRIDGE_EMOJIS = ['🧊', '❄️', '🍎', '🥦', '🥩', '🍷', '🫙', '🌿', '🍕', '🥗', '⭐'];
 
 interface Props {
   onClose: () => void;
@@ -17,6 +17,9 @@ export function NewFridgeModal({ onClose, onCreate, onDone }: Props) {
   const { t } = useTranslation();
   const [name, setName] = useState('');
   const [emoji, setEmoji] = useState('🧊');
+  const [customEmoji, setCustomEmoji] = useState('');
+  const [editingCustom, setEditingCustom] = useState(false);
+  const customInputRef = useRef<HTMLInputElement>(null);
   const [friends, setFriends] = useState<Friend[]>([]);
   const [selected, setSelected] = useState<Record<string, FridgeMemberRole | null>>({});
   const [creating, setCreating] = useState(false);
@@ -69,12 +72,33 @@ export function NewFridgeModal({ onClose, onCreate, onDone }: Props) {
               <button
                 key={e}
                 className={`nfm-emoji-option${e === emoji ? ' selected' : ''}`}
-                onClick={() => setEmoji(e)}
+                onClick={() => { setEmoji(e); setCustomEmoji(''); }}
                 type="button"
               >
                 {e}
               </button>
             ))}
+            <button
+              className={`nfm-emoji-option nfm-emoji-custom${customEmoji && emoji === customEmoji ? ' selected' : ''}`}
+              onClick={() => { setEditingCustom(true); setTimeout(() => customInputRef.current?.focus(), 0); }}
+              type="button"
+            >
+              {editingCustom ? (
+                <input
+                  ref={customInputRef}
+                  className="nfm-emoji-custom-input"
+                  value={customEmoji}
+                  onChange={e => {
+                    const val = [...e.target.value].slice(0, 2).join('');
+                    setCustomEmoji(val);
+                    if (val) setEmoji(val);
+                  }}
+                  onBlur={() => setEditingCustom(false)}
+                  onKeyDown={e => { if (e.key === 'Enter' || e.key === 'Escape') { e.preventDefault(); setEditingCustom(false); }}}
+                  maxLength={8}
+                />
+              ) : customEmoji ? customEmoji : '＋'}
+            </button>
           </div>
           <input
             autoFocus
