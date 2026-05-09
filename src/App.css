@@ -62,6 +62,11 @@ button {
   touch-action: manipulation;
 }
 
+/* Prevents iOS Safari from auto-zooming on input focus (zoom triggers when font-size < 16px) */
+input, select, textarea {
+  font-size: max(16px, 1em);
+}
+
 html {
   background-color: var(--bg);
 }
