@@ -169,6 +169,24 @@
   margin-bottom: 1.5rem;
 }
 
+.nfm-friend-search {
+  width: 100%;
+  padding: 0.45rem 0.7rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) / 2);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--text);
+  outline: none;
+  box-sizing: border-box;
+  margin-bottom: 0.4rem;
+}
+
+.nfm-friend-search:focus {
+  border-color: var(--accent);
+}
+
 .nfm-friends-label {
   font-size: 0.73rem;
   font-weight: 600;

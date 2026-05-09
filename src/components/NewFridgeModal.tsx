@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Fridge, FridgeMemberRole } from '../types/Fridge';
-import { fetchFriendships, Friend } from '../utils/friendService';
+import { fetchFriendships, fetchFriendFridgeCounts, Friend } from '../utils/friendService';
 import { addFriendToFridge } from '../utils/fridgeService';
 import './NewFridgeModal.css';
 
@@ -84,14 +84,21 @@ export function NewFridgeModal({ onClose, onCreate, onDone }: Props) {
   const pickerRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const [friends, setFriends] = useState<Friend[]>([]);
+  const [friendSearch, setFriendSearch] = useState('');
   const [selected, setSelected] = useState<Record<string, FridgeMemberRole | null>>({});
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchFriendships()
-      .then(({ friends: f }) => setFriends(f))
-      .catch(() => {});
+    fetchFriendships().then(async ({ friends: f }) => {
+      const counts = await fetchFriendFridgeCounts(f.map(fr => fr.userId)).catch(() => new Map<string, number>());
+      const sorted = [...f].sort((a, b) => {
+        const diff = (counts.get(b.userId) ?? 0) - (counts.get(a.userId) ?? 0);
+        if (diff !== 0) return diff;
+        return new Date(b.since).getTime() - new Date(a.since).getTime();
+      });
+      setFriends(sorted);
+    }).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -214,7 +221,16 @@ export function NewFridgeModal({ onClose, onCreate, onDone }: Props) {
         {friends.length > 0 && (
           <div className="nfm-friends">
             <p className="nfm-friends-label">{t('fridges.addFriendsOptional')}</p>
-            {friends.map(f => {
+            <input
+              className="nfm-friend-search"
+              value={friendSearch}
+              onChange={e => setFriendSearch(e.target.value)}
+              placeholder={t('fridges.friendSearch')}
+            />
+            {friends.filter(f => {
+              const q = friendSearch.toLowerCase();
+              return !q || f.displayName.toLowerCase().includes(q) || (f.firstName ?? '').toLowerCase().includes(q);
+            }).map(f => {
               const isOn = selected[f.userId] != null;
               return (
                 <div key={f.userId} className={`nfm-friend-row${isOn ? ' on' : ''}`}>

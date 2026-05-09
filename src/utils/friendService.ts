@@ -128,6 +128,16 @@ export async function removeFriend(friendshipId: string): Promise<void> {
   if (error) throw error;
 }
 
+export async function fetchFriendFridgeCounts(userIds: string[]): Promise<Map<string, number>> {
+  if (userIds.length === 0) return new Map();
+  const { data } = await supabase.from('fridge_members').select('user_id').in('user_id', userIds);
+  const counts = new Map<string, number>();
+  for (const row of (data ?? []) as { user_id: string }[]) {
+    counts.set(row.user_id, (counts.get(row.user_id) ?? 0) + 1);
+  }
+  return counts;
+}
+
 export async function fetchPendingIncomingCount(): Promise<number> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return 0;
