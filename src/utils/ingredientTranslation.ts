@@ -166,6 +166,21 @@ const FR_TO_EN: Record<string, string> = {
   'limonade': 'lemonade',
   'cidre': 'cider',
   'sirop': 'syrup',
+
+  // Divers
+  'confiture': 'jam',
+  'miel': 'honey',
+  'sucre': 'sugar',
+  'sel': 'salt',
+  'poivre': 'pepper',
+  'cannelle': 'cinnamon',
+  'vanille': 'vanilla',
+  'levure': 'yeast',
+  'chocolat': 'chocolate',
+  'cacao': 'cocoa powder',
+  'noix': 'walnut',
+  'amande': 'almond',
+  'noisette': 'hazelnut',
 };
 
 function frSingularize(word: string): string {
@@ -189,12 +204,12 @@ export function toEnglishIngredient(name: string): string {
   const singular = frSingularize(normalized);
   if (singular !== normalized && FR_TO_EN[singular]) return FR_TO_EN[singular];
 
-  // Partial match — handles "blanc de poulet" → "chicken", etc.
-  // Uses word boundaries to avoid false matches ("barista" matching "bar", etc.)
+  // Partial match — test both original and singularized form so "carottes pour…" finds "carotte"
+  const candidates = singular !== normalized ? [normalized, singular] : [normalized];
   for (const [fr, en] of Object.entries(FR_TO_EN)) {
     const escaped = fr.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const regex = new RegExp(`(?:^|[^a-zA-ZàâäéèêëïîôùûüçÀÂÄÉÈÊËÏÎÔÙÛÜÇ])${escaped}(?:$|[^a-zA-ZàâäéèêëïîôùûüçÀÂÄÉÈÊËÏÎÔÙÛÜÇ])`, 'i');
-    if (regex.test(normalized)) return en;
+    if (candidates.some(c => regex.test(c))) return en;
   }
 
   return name;
