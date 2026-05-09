@@ -1,4 +1,11 @@
 import { useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Product } from '../types/Product';
+import { getDaysUntilExpiration, isExpired, isExpiringSoon } from '../utils/storage';
+import { isOpenableProduct } from '../utils/shelfLife';
+import { singularize } from '../utils/mealApi';
+import { toEnglishIngredient } from '../utils/ingredientTranslation';
+import './ProductCard.css';
 
 const SPOON_CACHE_KEY = 'spoonacular_img_cache';
 const spoonacularMemCache = new Map<string, string | null>();
@@ -29,13 +36,6 @@ async function fetchSpoonacularImage(query: string): Promise<string | null> {
     return null;
   }
 }
-import { useTranslation } from 'react-i18next';
-import { Product } from '../types/Product';
-import { getDaysUntilExpiration, isExpired, isExpiringSoon } from '../utils/storage';
-import { isOpenableProduct } from '../utils/shelfLife';
-import { singularize } from '../utils/mealApi';
-import { toEnglishIngredient } from '../utils/ingredientTranslation';
-import './ProductCard.css';
 
 interface ProductCardProps {
   product: Product;
@@ -57,6 +57,12 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
   const expired = isExpired(product.expirationDate);
   const expiringSoon = isExpiringSoon(product.expirationDate);
   const isDDM = product.expirationDateType === 'ddm';
+  const locale = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
+  const englishName = singularize(toEnglishIngredient(product.name));
+  const ingredientImg = `https://www.themealdb.com/images/ingredients/${encodeURIComponent(englishName)}-Small.png`;
+  const [imgSrc, setImgSrc] = useState(ingredientImg);
+  const [imgHidden, setImgHidden] = useState(false);
+  const spoonTriedRef = useRef(false);
 
   const getStatusClass = () => {
     if (expired) return isDDM ? 'status-expired-ddm' : 'status-expired';
@@ -76,13 +82,6 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
     if (daysUntil >= 14) return t('productCard.expiresInWeeks', { count: Math.round(daysUntil / 7) });
     return t('productCard.expiresIn', { count: daysUntil });
   };
-
-  const locale = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
-  const englishName = singularize(toEnglishIngredient(product.name));
-  const ingredientImg = `https://www.themealdb.com/images/ingredients/${encodeURIComponent(englishName)}-Small.png`;
-  const [imgSrc, setImgSrc] = useState(ingredientImg);
-  const [imgHidden, setImgHidden] = useState(false);
-  const spoonTriedRef = useRef(false);
 
   const handleImgError = async () => {
     if (spoonTriedRef.current) { setImgHidden(true); return; }
