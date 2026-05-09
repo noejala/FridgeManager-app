@@ -55,7 +55,7 @@ export const FridgeSwitcher = ({ fridges, activeFridgeId, onSwitch, onCreateFrid
         className="fridge-switcher-btn"
         onClick={() => setOpen(o => !o)}
       >
-        <span className="fridge-switcher-icon">🧊</span>
+        <span className="fridge-switcher-icon">{activeFridge?.emoji ?? '🧊'}</span>
         <span className="fridge-switcher-name">{activeFridge?.name ?? '…'}</span>
         <span className="fridge-switcher-chevron">▾</span>
       </button>
@@ -69,6 +69,7 @@ export const FridgeSwitcher = ({ fridges, activeFridgeId, onSwitch, onCreateFrid
               onClick={() => { onSwitch(f.id); setOpen(false); }}
             >
               {f.id === activeFridgeId && <span className="fridge-switcher-check">✓</span>}
+              <span className="fridge-switcher-item-emoji">{f.emoji ?? '🧊'}</span>
               {f.name}
             </button>
           ))}

@@ -85,6 +85,11 @@
   font-size: 0.85rem;
 }
 
+.fridge-switcher-item-emoji {
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
 .fridge-switcher-check {
   font-size: 0.75rem;
   color: var(--accent);
