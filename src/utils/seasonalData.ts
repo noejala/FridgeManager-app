@@ -34,8 +34,8 @@ export const seasonalData: Record<CountryId, CountryConfig> = {
   france: {
     hasRegions: true,
     regions: [
-      { id: 'france_north', name: 'Nord', flag: '🇫🇷' },
-      { id: 'france_south', name: 'Sud',  flag: '☀️' },
+      { id: 'france_north', name: 'Nord' },
+      { id: 'france_south', name: 'Sud' },
     ],
     data: {
       france_north: {
