@@ -322,6 +322,44 @@ body::after {
   }
 }
 
+/* ── Fridge top row (switcher + pantry button) ─────────── */
+.fridge-top-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.pantry-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 2rem;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+  touch-action: manipulation;
+  white-space: nowrap;
+}
+
+.pantry-toggle-btn:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-surface);
+}
+
+.pantry-toggle-btn.active {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
 /* ── Edit product modal ────────────────────────────────── */
 .edit-modal-backdrop {
   position: fixed;

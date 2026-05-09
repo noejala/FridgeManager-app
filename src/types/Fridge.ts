@@ -4,6 +4,7 @@ export interface Fridge {
   emoji: string;
   ownerId: string;
   createdAt: string;
+  pantryStaples: string[];
 }
 
 export type FridgeMemberRole = 'owner' | 'editor' | 'viewer';

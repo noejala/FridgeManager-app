@@ -5,10 +5,10 @@ import { Product } from './types/Product';
 import { Fridge } from './types/Fridge';
 import { supabase } from './lib/supabase';
 import { fetchProducts, fetchRecentlyConsumed, insertProduct, updateProduct, deleteProduct, deleteAllProducts, consumeProduct, restoreProduct } from './utils/productService';
-import { fetchFridges, createFridge, acceptFridgeInvite } from './utils/fridgeService';
+import { fetchFridges, createFridge, acceptFridgeInvite, updateFridgePantry } from './utils/fridgeService';
 import { fetchPendingIncomingCount } from './utils/friendService';
 import { lookupBarcode, FoodFactsResult } from './utils/foodFactsApi';
-import { fetchUserProfile, saveUserProfile } from './utils/userProfileService';
+import { fetchUserProfile } from './utils/userProfileService';
 import { DietaryPreference } from './types/UserProfile';
 import { isExpired, isExpiringSoon } from './utils/storage';
 import { getFridgeZone } from './utils/fridgePlacement';
@@ -31,6 +31,7 @@ import { PantryOnboarding } from './components/PantryOnboarding';
 import { VoiceInput } from './components/VoiceInput';
 import { VoiceDraftReview } from './components/VoiceDraftReview';
 import { FridgeSwitcher } from './components/FridgeSwitcher';
+import { PantryPanel } from './components/PantryPanel';
 import { DraftProduct } from './utils/voiceParser';
 import './App.css';
 
@@ -70,7 +71,7 @@ function App() {
   const [dietaryPreferences, setDietaryPreferences] = useState<DietaryPreference[]>([]);
   const [dislikedIngredients, setDislikedIngredients] = useState<string[]>([]);
   const [customPreferences, setCustomPreferences] = useState<string>('');
-  const [pantryStaples, setPantryStaples] = useState<string[]>([]);
+  const [showPantry, setShowPantry] = useState(false);
   const [displayName, setDisplayName] = useState<string | null | undefined>(undefined);
   const [pendingFriendCount, setPendingFriendCount] = useState(0);
   const [showPantryOnboarding, setShowPantryOnboarding] = useState(false);
@@ -197,12 +198,13 @@ function App() {
       setDietaryPreferences(profile?.dietaryPreferences ?? []);
       setDislikedIngredients(profile?.dislikedIngredients ?? []);
       setCustomPreferences(profile?.customPreferences ?? '');
-      const staples = profile?.pantryStaples ?? [];
-      setPantryStaples(staples);
-      if (staples.length === 0 && userId) {
-        const key = `pantry-onboarding-seen-${userId}`;
-        if (!localStorage.getItem(key)) {
-          setShowPantryOnboarding(true);
+      if (resolvedId && userId) {
+        const activeFridge = fridgeList.find(f => f.id === resolvedId);
+        if ((activeFridge?.pantryStaples ?? []).length === 0) {
+          const key = `pantry-onboarding-seen-${userId}`;
+          if (!localStorage.getItem(key)) {
+            setShowPantryOnboarding(true);
+          }
         }
       }
       checkAndNotify(data, t);
@@ -452,17 +454,15 @@ function App() {
   };
 
   const handlePantryOnboardingConfirm = async (staples: string[]) => {
-    if (!user) return;
-    setPantryStaples(staples);
-    const profile = await fetchUserProfile();
-    await saveUserProfile({
-      displayName: null, firstName: null,
-      country: null, gender: null, age: null,
-      dietaryPreferences: [], dislikedIngredients: [], customPreferences: '',
-      ...profile,
-      pantryStaples: staples,
-    });
+    if (!user || !activeFridgeId) return;
+    await updateFridgePantry(activeFridgeId, staples);
+    setFridges(prev => prev.map(f => f.id === activeFridgeId ? { ...f, pantryStaples: staples } : f));
     dismissPantryOnboarding(user.id);
+  };
+
+  const handlePantryChange = async (fridgeId: string, staples: string[]) => {
+    await updateFridgePantry(fridgeId, staples);
+    setFridges(prev => prev.map(f => f.id === fridgeId ? { ...f, pantryStaples: staples } : f));
   };
 
   const handlePantryOnboardingSkip = () => {
@@ -529,12 +529,28 @@ function App() {
         </div>
       )}
       <div hidden={activeTab !== 'fridge'}>
-        <FridgeSwitcher
-          fridges={fridges}
-          activeFridgeId={activeFridgeId}
-          onSwitch={handleActiveFridgeChange}
-          onCreateFridge={handleCreateFridge}
-        />
+        <div className="fridge-top-row">
+          <FridgeSwitcher
+            fridges={fridges}
+            activeFridgeId={activeFridgeId}
+            onSwitch={handleActiveFridgeChange}
+            onCreateFridge={handleCreateFridge}
+          />
+          <button
+            className={`pantry-toggle-btn${showPantry ? ' active' : ''}`}
+            onClick={() => setShowPantry(p => !p)}
+          >
+            🧴 Placard
+          </button>
+        </div>
+        {showPantry && activeFridgeId && (
+          <PantryPanel
+            fridgeId={activeFridgeId}
+            staples={fridges.find(f => f.id === activeFridgeId)?.pantryStaples ?? []}
+            onSave={handlePantryChange}
+            onClose={() => setShowPantry(false)}
+          />
+        )}
         <AddProductForm
           onAdd={handleAddProduct}
           isFormOpen={false}
@@ -561,7 +577,7 @@ function App() {
           dietaryPreferences={dietaryPreferences}
           dislikedIngredients={dislikedIngredients}
           customPreferences={customPreferences}
-          pantryStaples={pantryStaples}
+          pantryStaples={fridges.find(f => f.id === activeFridgeId)?.pantryStaples ?? []}
           onConsumeProducts={(ids) => ids.forEach(id => handleConsumeProduct(id))}
         />
       </div>
@@ -590,8 +606,6 @@ function App() {
           onDietaryPreferencesChange={setDietaryPreferences}
           onDislikedIngredientsChange={setDislikedIngredients}
           onCustomPreferencesChange={setCustomPreferences}
-          onPantryStaplesChange={setPantryStaples}
-          pantryStaples={pantryStaples}
         />
       </div>
     </>
