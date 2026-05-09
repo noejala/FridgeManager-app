@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Product } from '../types/Product';
 import { getDaysUntilExpiration, isExpired, isExpiringSoon } from '../utils/storage';
@@ -7,35 +7,6 @@ import { singularize } from '../utils/mealApi';
 import { toEnglishIngredient } from '../utils/ingredientTranslation';
 import './ProductCard.css';
 
-const SPOON_CACHE_KEY = 'spoonacular_img_cache';
-const spoonacularMemCache = new Map<string, string | null>();
-
-function readSpoonCache(): Record<string, string | null> {
-  try { return JSON.parse(localStorage.getItem(SPOON_CACHE_KEY) ?? '{}'); } catch { return {}; }
-}
-
-function writeSpoonCache(cache: Record<string, string | null>) {
-  try { localStorage.setItem(SPOON_CACHE_KEY, JSON.stringify(cache)); } catch {}
-}
-
-async function fetchSpoonacularImage(query: string): Promise<string | null> {
-  if (spoonacularMemCache.has(query)) return spoonacularMemCache.get(query)!;
-  const stored = readSpoonCache();
-  if (query in stored) { spoonacularMemCache.set(query, stored[query]); return stored[query]; }
-  try {
-    const res = await fetch(`/api/spoonacular?query=${encodeURIComponent(query)}`);
-    if (!res.ok) { spoonacularMemCache.set(query, null); stored[query] = null; writeSpoonCache(stored); return null; }
-    const data = await res.json() as { imageUrl?: string };
-    const url = data.imageUrl ?? null;
-    spoonacularMemCache.set(query, url);
-    stored[query] = url;
-    writeSpoonCache(stored);
-    return url;
-  } catch {
-    spoonacularMemCache.set(query, null);
-    return null;
-  }
-}
 
 interface ProductCardProps {
   product: Product;
@@ -60,9 +31,7 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
   const locale = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
   const englishName = singularize(toEnglishIngredient(product.name));
   const ingredientImg = `https://www.themealdb.com/images/ingredients/${encodeURIComponent(englishName)}-Small.png`;
-  const [imgSrc, setImgSrc] = useState(ingredientImg);
   const [imgHidden, setImgHidden] = useState(false);
-  const spoonTriedRef = useRef(false);
 
   const getStatusClass = () => {
     if (expired) return isDDM ? 'status-expired-ddm' : 'status-expired';
@@ -83,14 +52,6 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
     return t('productCard.expiresIn', { count: daysUntil });
   };
 
-  const handleImgError = async () => {
-    if (spoonTriedRef.current) { setImgHidden(true); return; }
-    spoonTriedRef.current = true;
-    const url = await fetchSpoonacularImage(englishName);
-    if (url) setImgSrc(url);
-    else setImgHidden(true);
-  };
-
   const isConfirming = confirmingDelete || confirmingConsume || confirmingOpen;
   const isExpanded = expanded || isConfirming;
 
@@ -108,10 +69,10 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
         {!imgHidden && (
           <img
             className="product-img"
-            src={imgSrc}
+            src={ingredientImg}
             alt=""
             aria-hidden="true"
-            onError={handleImgError}
+            onError={() => setImgHidden(true)}
           />
         )}
         <h3 className="product-name">{product.name}</h3>
