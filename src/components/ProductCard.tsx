@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Product } from '../types/Product';
 import { getDaysUntilExpiration, isExpired, isExpiringSoon } from '../utils/storage';
 import { isOpenableProduct } from '../utils/shelfLife';
+import { toEnglishIngredient } from '../utils/ingredientTranslation';
 import './ProductCard.css';
 
 interface ProductCardProps {
@@ -46,6 +47,7 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
   };
 
   const locale = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
+  const ingredientImg = `https://www.themealdb.com/images/ingredients/${encodeURIComponent(toEnglishIngredient(product.name))}-Small.png`;
   const isConfirming = confirmingDelete || confirmingConsume || confirmingOpen;
   const isExpanded = expanded || isConfirming;
 
@@ -60,6 +62,13 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
   return (
     <div className={cardClass} style={{ '--index': index } as React.CSSProperties}>
       <div className="product-card-toggle" onClick={() => setExpanded(p => !p)}>
+        <img
+          className="product-img"
+          src={ingredientImg}
+          alt=""
+          aria-hidden="true"
+          onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+        />
         <h3 className="product-name">{product.name}</h3>
         <span className="product-qty-inline">{product.quantity} {product.unit}</span>
         <span className={`product-chevron${isExpanded ? ' open' : ''}`} />
