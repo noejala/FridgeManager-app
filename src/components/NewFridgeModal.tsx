@@ -7,6 +7,15 @@ import './NewFridgeModal.css';
 
 const FRIDGE_EMOJIS = ['🧊', '❄️', '🍎', '🥦', '🥩', '🍷', '🫙', '🌿', '🍕', '🥗', '⭐'];
 
+const EXTRA_EMOJIS = [
+  '🍔', '🌮', '🌯', '🍜', '🍣', '🥘', '🫕', '🥩', '🍗', '🥓',
+  '🧀', '🥚', '🍳', '🥕', '🍅', '🌽', '🧅', '🧄', '🥫', '🍞',
+  '🥐', '🧁', '🍰', '🍫', '🍬', '☕', '🫖', '🧃', '🥛', '🍺',
+  '🍓', '🫐', '🍊', '🍋', '🍇', '🍌', '🍉', '🥝', '🍑', '🍒',
+  '🌱', '🌸', '🌻', '🌙', '☀️', '🌈', '🏡', '🏠', '🪴', '🐄',
+  '🐓', '🐟', '🦐', '🦞', '🧑‍🍳', '🍽️', '🥄', '🔪', '🫙', '🎉',
+];
+
 interface Props {
   onClose: () => void;
   onCreate: (name: string, emoji?: string) => Promise<Fridge>;
@@ -17,9 +26,8 @@ export function NewFridgeModal({ onClose, onCreate, onDone }: Props) {
   const { t } = useTranslation();
   const [name, setName] = useState('');
   const [emoji, setEmoji] = useState('🧊');
-  const [customEmoji, setCustomEmoji] = useState('');
-  const [editingCustom, setEditingCustom] = useState(false);
-  const customInputRef = useRef<HTMLInputElement>(null);
+  const [showPicker, setShowPicker] = useState(false);
+  const pickerRef = useRef<HTMLDivElement>(null);
   const [friends, setFriends] = useState<Friend[]>([]);
   const [selected, setSelected] = useState<Record<string, FridgeMemberRole | null>>({});
   const [creating, setCreating] = useState(false);
@@ -30,6 +38,17 @@ export function NewFridgeModal({ onClose, onCreate, onDone }: Props) {
       .then(({ friends: f }) => setFriends(f))
       .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (!showPicker) return;
+    const handler = (e: MouseEvent) => {
+      if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
+        setShowPicker(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [showPicker]);
 
   const toggleFriend = (userId: string) => {
     setSelected(prev => ({ ...prev, [userId]: prev[userId] != null ? null : 'editor' }));
@@ -61,45 +80,51 @@ export function NewFridgeModal({ onClose, onCreate, onDone }: Props) {
     }
   };
 
+  const isCustomEmoji = !FRIDGE_EMOJIS.includes(emoji);
+
   return (
     <div className="nfm-overlay" onClick={onClose}>
       <div className="nfm-modal" onClick={e => e.stopPropagation()}>
         <h3 className="nfm-title">{t('fridges.newFridge')}</h3>
 
         <div className="nfm-name-row">
-          <div className="nfm-emoji-grid">
-            {FRIDGE_EMOJIS.map(e => (
+          <div className="nfm-emoji-grid-wrap">
+            <div className="nfm-emoji-grid">
+              {FRIDGE_EMOJIS.map(e => (
+                <button
+                  key={e}
+                  className={`nfm-emoji-option${e === emoji ? ' selected' : ''}`}
+                  onClick={() => { setEmoji(e); setShowPicker(false); }}
+                  type="button"
+                >
+                  {e}
+                </button>
+              ))}
               <button
-                key={e}
-                className={`nfm-emoji-option${e === emoji ? ' selected' : ''}`}
-                onClick={() => { setEmoji(e); setCustomEmoji(''); }}
+                className={`nfm-emoji-option nfm-emoji-more${isCustomEmoji ? ' selected' : ''}`}
+                onClick={() => setShowPicker(p => !p)}
                 type="button"
               >
-                {e}
+                {isCustomEmoji ? emoji : '＋'}
               </button>
-            ))}
-            <button
-              className={`nfm-emoji-option nfm-emoji-custom${customEmoji && emoji === customEmoji ? ' selected' : ''}`}
-              onClick={() => { setEditingCustom(true); setTimeout(() => customInputRef.current?.focus(), 0); }}
-              type="button"
-            >
-              {editingCustom ? (
-                <input
-                  ref={customInputRef}
-                  className="nfm-emoji-custom-input"
-                  value={customEmoji}
-                  onChange={e => {
-                    const val = [...e.target.value].slice(0, 2).join('');
-                    setCustomEmoji(val);
-                    if (val) setEmoji(val);
-                  }}
-                  onBlur={() => setEditingCustom(false)}
-                  onKeyDown={e => { if (e.key === 'Enter' || e.key === 'Escape') { e.preventDefault(); setEditingCustom(false); }}}
-                  maxLength={8}
-                />
-              ) : customEmoji ? customEmoji : '＋'}
-            </button>
+            </div>
+
+            {showPicker && (
+              <div className="nfm-emoji-picker" ref={pickerRef}>
+                {EXTRA_EMOJIS.map(e => (
+                  <button
+                    key={e}
+                    className={`nfm-picker-option${e === emoji ? ' selected' : ''}`}
+                    onClick={() => { setEmoji(e); setShowPicker(false); }}
+                    type="button"
+                  >
+                    {e}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
+
           <input
             autoFocus
             className="nfm-input"
