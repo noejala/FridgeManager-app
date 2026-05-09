@@ -82,6 +82,7 @@ function App() {
   const [scrolledDown, setScrolledDown] = useState(false);
   const lastScrollY = useRef(0);
   const scrollAccumulator = useRef(0);
+  const pantryAreaRef = useRef<HTMLDivElement>(null);
 
   // Capture invite token from URL on mount before anything else
   useEffect(() => {
@@ -249,6 +250,17 @@ function App() {
       localStorage.setItem(TAB_STORAGE_KEY, JSON.stringify({ tab: activeTab, timestamp: Date.now() }));
     }
   }, [activeTab, user]);
+
+  useEffect(() => {
+    if (!showPantry) return;
+    const handler = (e: MouseEvent) => {
+      if (pantryAreaRef.current && !pantryAreaRef.current.contains(e.target as Node)) {
+        setShowPantry(false);
+      }
+    };
+    document.addEventListener('pointerdown', handler);
+    return () => document.removeEventListener('pointerdown', handler);
+  }, [showPantry]);
 
   const handleActiveFridgeChange = async (fridgeId: string) => {
     setActiveFridgeId(fridgeId);
@@ -529,28 +541,30 @@ function App() {
         </div>
       )}
       <div hidden={activeTab !== 'fridge'}>
-        <div className="fridge-top-row">
-          <FridgeSwitcher
-            fridges={fridges}
-            activeFridgeId={activeFridgeId}
-            onSwitch={handleActiveFridgeChange}
-            onCreateFridge={handleCreateFridge}
-          />
-          <button
-            className={`pantry-toggle-btn${showPantry ? ' active' : ''}`}
-            onClick={() => setShowPantry(p => !p)}
-          >
-            Placard
-          </button>
+        <div ref={pantryAreaRef}>
+          <div className="fridge-top-row">
+            <FridgeSwitcher
+              fridges={fridges}
+              activeFridgeId={activeFridgeId}
+              onSwitch={handleActiveFridgeChange}
+              onCreateFridge={handleCreateFridge}
+            />
+            <button
+              className={`pantry-toggle-btn${showPantry ? ' active' : ''}`}
+              onClick={() => setShowPantry(p => !p)}
+            >
+              Placard
+            </button>
+          </div>
+          {showPantry && activeFridgeId && (
+            <PantryPanel
+              fridgeId={activeFridgeId}
+              staples={fridges.find(f => f.id === activeFridgeId)?.pantryStaples ?? []}
+              onSave={handlePantryChange}
+              onClose={() => setShowPantry(false)}
+            />
+          )}
         </div>
-        {showPantry && activeFridgeId && (
-          <PantryPanel
-            fridgeId={activeFridgeId}
-            staples={fridges.find(f => f.id === activeFridgeId)?.pantryStaples ?? []}
-            onSave={handlePantryChange}
-            onClose={() => setShowPantry(false)}
-          />
-        )}
         <AddProductForm
           onAdd={handleAddProduct}
           isFormOpen={false}
