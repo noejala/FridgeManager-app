@@ -493,6 +493,8 @@
     "sharedFridges": "Shared with me",
     "newFridge": "New fridge",
     "namePlaceholder": "Fridge name…",
+    "emojiSearch": "Search an emoji…",
+    "emojiNoResult": "No results",
     "create": "Create",
     "rename": "Rename",
     "delete": "Delete fridge",

@@ -86,13 +86,36 @@
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 0.5rem;
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  gap: 0.15rem;
   z-index: 10;
   animation: fade-in 0.12s ease;
-  max-height: 180px;
+  overflow: hidden;
+}
+
+.nfm-picker-search {
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) / 2);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--text);
+  outline: none;
+  box-sizing: border-box;
+  margin-bottom: 0.4rem;
+}
+
+.nfm-picker-search:focus {
+  border-color: var(--accent);
+}
+
+.nfm-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 0.15rem;
+  max-height: 160px;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .nfm-picker-option {
@@ -115,6 +138,14 @@
 .nfm-picker-option.selected {
   border-color: var(--accent);
   background: var(--accent-bg);
+}
+
+.nfm-picker-empty {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 0.75rem 0;
+  grid-column: 1 / -1;
 }
 
 .nfm-input {

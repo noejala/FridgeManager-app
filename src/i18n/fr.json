@@ -569,6 +569,8 @@
     "sharedFridges": "Partagés avec moi",
     "newFridge": "Nouveau frigo",
     "namePlaceholder": "Nom du frigo…",
+    "emojiSearch": "Rechercher un emoji…",
+    "emojiNoResult": "Aucun résultat",
     "create": "Créer",
     "rename": "Renommer",
     "delete": "Supprimer le frigo",

@@ -7,13 +7,66 @@ import './NewFridgeModal.css';
 
 const FRIDGE_EMOJIS = ['🧊', '❄️', '🍎', '🥦', '🥩', '🍷', '🫙', '🌿', '🍕', '🥗', '⭐'];
 
-const EXTRA_EMOJIS = [
-  '🍔', '🌮', '🌯', '🍜', '🍣', '🥘', '🫕', '🥩', '🍗', '🥓',
-  '🧀', '🥚', '🍳', '🥕', '🍅', '🌽', '🧅', '🧄', '🥫', '🍞',
-  '🥐', '🧁', '🍰', '🍫', '🍬', '☕', '🫖', '🧃', '🥛', '🍺',
-  '🍓', '🫐', '🍊', '🍋', '🍇', '🍌', '🍉', '🥝', '🍑', '🍒',
-  '🌱', '🌸', '🌻', '🌙', '☀️', '🌈', '🏡', '🏠', '🪴', '🐄',
-  '🐓', '🐟', '🦐', '🦞', '🧑‍🍳', '🍽️', '🥄', '🔪', '🫙', '🎉',
+const EMOJI_DATA: { emoji: string; keywords: string[] }[] = [
+  { emoji: '🍔', keywords: ['burger', 'hamburger', 'viande'] },
+  { emoji: '🌮', keywords: ['taco', 'mexicain'] },
+  { emoji: '🌯', keywords: ['wrap', 'sandwich'] },
+  { emoji: '🍜', keywords: ['nouilles', 'ramen', 'soupe', 'asiatique'] },
+  { emoji: '🍣', keywords: ['sushi', 'japonais', 'poisson'] },
+  { emoji: '🥘', keywords: ['plat', 'ragout', 'casserole'] },
+  { emoji: '🫕', keywords: ['fondue', 'pot', 'raclette'] },
+  { emoji: '🍗', keywords: ['poulet', 'volaille', 'chicken'] },
+  { emoji: '🥓', keywords: ['bacon', 'lardons', 'porc'] },
+  { emoji: '🧀', keywords: ['fromage', 'cheese'] },
+  { emoji: '🥚', keywords: ['oeuf', 'egg'] },
+  { emoji: '🍳', keywords: ['poele', 'oeuf', 'cuire'] },
+  { emoji: '🥕', keywords: ['carotte', 'legume'] },
+  { emoji: '🍅', keywords: ['tomate', 'legume'] },
+  { emoji: '🌽', keywords: ['mais', 'legume'] },
+  { emoji: '🧅', keywords: ['oignon', 'legume'] },
+  { emoji: '🧄', keywords: ['ail', 'legume'] },
+  { emoji: '🥫', keywords: ['conserve', 'boite', 'can'] },
+  { emoji: '🍞', keywords: ['pain', 'bread'] },
+  { emoji: '🥐', keywords: ['croissant', 'viennoiserie', 'pain'] },
+  { emoji: '🧁', keywords: ['cupcake', 'gateau', 'dessert'] },
+  { emoji: '🍰', keywords: ['gateau', 'dessert', 'cake'] },
+  { emoji: '🍫', keywords: ['chocolat', 'chocolate', 'dessert'] },
+  { emoji: '🍬', keywords: ['bonbon', 'sucre', 'candy'] },
+  { emoji: '☕', keywords: ['cafe', 'coffee', 'boisson'] },
+  { emoji: '🫖', keywords: ['the', 'tea', 'boisson'] },
+  { emoji: '🧃', keywords: ['jus', 'juice', 'boisson'] },
+  { emoji: '🥛', keywords: ['lait', 'milk', 'boisson'] },
+  { emoji: '🍺', keywords: ['biere', 'beer', 'boisson'] },
+  { emoji: '🍓', keywords: ['fraise', 'fruit'] },
+  { emoji: '🫐', keywords: ['myrtille', 'blueberry', 'fruit'] },
+  { emoji: '🍊', keywords: ['orange', 'fruit', 'agrume'] },
+  { emoji: '🍋', keywords: ['citron', 'lemon', 'fruit', 'agrume'] },
+  { emoji: '🍇', keywords: ['raisin', 'grape', 'fruit'] },
+  { emoji: '🍌', keywords: ['banane', 'banana', 'fruit'] },
+  { emoji: '🍉', keywords: ['pasteque', 'watermelon', 'fruit'] },
+  { emoji: '🥝', keywords: ['kiwi', 'fruit'] },
+  { emoji: '🍑', keywords: ['peche', 'peach', 'fruit'] },
+  { emoji: '🍒', keywords: ['cerise', 'cherry', 'fruit'] },
+  { emoji: '🌱', keywords: ['plante', 'nature', 'pousse'] },
+  { emoji: '🌸', keywords: ['fleur', 'flower', 'nature'] },
+  { emoji: '🌻', keywords: ['tournesol', 'soleil', 'fleur'] },
+  { emoji: '🌙', keywords: ['lune', 'moon', 'nuit'] },
+  { emoji: '☀️', keywords: ['soleil', 'sun', 'jour'] },
+  { emoji: '🌈', keywords: ['arc en ciel', 'rainbow'] },
+  { emoji: '🏡', keywords: ['maison', 'house', 'home'] },
+  { emoji: '🏠', keywords: ['maison', 'house', 'home'] },
+  { emoji: '🪴', keywords: ['plante', 'pot', 'interieur'] },
+  { emoji: '🐄', keywords: ['vache', 'cow', 'lait'] },
+  { emoji: '🐓', keywords: ['coq', 'poulet', 'volaille'] },
+  { emoji: '🐟', keywords: ['poisson', 'fish', 'mer'] },
+  { emoji: '🦐', keywords: ['crevette', 'shrimp', 'fruit de mer'] },
+  { emoji: '🦞', keywords: ['homard', 'lobster', 'fruit de mer'] },
+  { emoji: '🧑‍🍳', keywords: ['cuisinier', 'chef', 'cook'] },
+  { emoji: '🍽️', keywords: ['assiette', 'repas', 'diner'] },
+  { emoji: '🥄', keywords: ['cuillere', 'spoon', 'ustensile'] },
+  { emoji: '🔪', keywords: ['couteau', 'knife', 'ustensile'] },
+  { emoji: '🫙', keywords: ['bocal', 'jar', 'conserve'] },
+  { emoji: '🎉', keywords: ['fete', 'party', 'celebration'] },
 ];
 
 interface Props {
@@ -27,7 +80,9 @@ export function NewFridgeModal({ onClose, onCreate, onDone }: Props) {
   const [name, setName] = useState('');
   const [emoji, setEmoji] = useState('🧊');
   const [showPicker, setShowPicker] = useState(false);
+  const [search, setSearch] = useState('');
   const pickerRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
   const [friends, setFriends] = useState<Friend[]>([]);
   const [selected, setSelected] = useState<Record<string, FridgeMemberRole | null>>({});
   const [creating, setCreating] = useState(false);
@@ -40,7 +95,8 @@ export function NewFridgeModal({ onClose, onCreate, onDone }: Props) {
   }, []);
 
   useEffect(() => {
-    if (!showPicker) return;
+    if (!showPicker) { setSearch(''); return; }
+    setTimeout(() => searchRef.current?.focus(), 50);
     const handler = (e: MouseEvent) => {
       if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
         setShowPicker(false);
@@ -82,6 +138,11 @@ export function NewFridgeModal({ onClose, onCreate, onDone }: Props) {
 
   const isCustomEmoji = !FRIDGE_EMOJIS.includes(emoji);
 
+  const q = search.toLowerCase().trim();
+  const filteredEmojis = q
+    ? EMOJI_DATA.filter(d => d.keywords.some(k => k.includes(q))).map(d => d.emoji)
+    : EMOJI_DATA.map(d => d.emoji);
+
   return (
     <div className="nfm-overlay" onClick={onClose}>
       <div className="nfm-modal" onClick={e => e.stopPropagation()}>
@@ -111,16 +172,27 @@ export function NewFridgeModal({ onClose, onCreate, onDone }: Props) {
 
             {showPicker && (
               <div className="nfm-emoji-picker" ref={pickerRef}>
-                {EXTRA_EMOJIS.map(e => (
-                  <button
-                    key={e}
-                    className={`nfm-picker-option${e === emoji ? ' selected' : ''}`}
-                    onClick={() => { setEmoji(e); setShowPicker(false); }}
-                    type="button"
-                  >
-                    {e}
-                  </button>
-                ))}
+                <input
+                  ref={searchRef}
+                  className="nfm-picker-search"
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  placeholder={t('fridges.emojiSearch')}
+                />
+                <div className="nfm-picker-grid">
+                  {filteredEmojis.length > 0 ? filteredEmojis.map(e => (
+                    <button
+                      key={e}
+                      className={`nfm-picker-option${e === emoji ? ' selected' : ''}`}
+                      onClick={() => { setEmoji(e); setShowPicker(false); }}
+                      type="button"
+                    >
+                      {e}
+                    </button>
+                  )) : (
+                    <p className="nfm-picker-empty">{t('fridges.emojiNoResult')}</p>
+                  )}
+                </div>
               </div>
             )}
           </div>
