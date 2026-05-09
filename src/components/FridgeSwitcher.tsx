@@ -8,9 +8,11 @@ interface Props {
   activeFridgeId: string;
   onSwitch: (fridgeId: string) => void;
   onCreateFridge: (name: string) => Promise<unknown>;
+  onOpen?: () => void;
+  isOtherOpen?: boolean;
 }
 
-export const FridgeSwitcher = ({ fridges, activeFridgeId, onSwitch, onCreateFridge }: Props) => {
+export const FridgeSwitcher = ({ fridges, activeFridgeId, onSwitch, onCreateFridge, onOpen, isOtherOpen }: Props) => {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [creating, setCreating] = useState(false);
@@ -31,6 +33,10 @@ export const FridgeSwitcher = ({ fridges, activeFridgeId, onSwitch, onCreateFrid
     if (open) document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, [open]);
+
+  useEffect(() => {
+    if (isOtherOpen) { setOpen(false); setCreating(false); setNewName(''); }
+  }, [isOtherOpen]);
 
   const handleCreate = async () => {
     if (!newName.trim()) return;
@@ -53,7 +59,7 @@ export const FridgeSwitcher = ({ fridges, activeFridgeId, onSwitch, onCreateFrid
     <div className="fridge-switcher" ref={ref}>
       <button
         className="fridge-switcher-btn"
-        onClick={() => setOpen(o => !o)}
+        onClick={() => { const next = !open; setOpen(next); if (next) onOpen?.(); }}
       >
         <span className="fridge-switcher-icon">{activeFridge?.emoji ?? '🧊'}</span>
         <span className="fridge-switcher-name">{activeFridge?.name ?? '…'}</span>

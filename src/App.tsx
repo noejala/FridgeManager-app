@@ -548,6 +548,8 @@ function App() {
               activeFridgeId={activeFridgeId}
               onSwitch={handleActiveFridgeChange}
               onCreateFridge={handleCreateFridge}
+              onOpen={() => setShowPantry(false)}
+              isOtherOpen={showPantry}
             />
             <button
               className={`pantry-toggle-btn${showPantry ? ' active' : ''}`}
