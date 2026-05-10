@@ -5,7 +5,6 @@ import {
   getNearestLocation,
   type CountryId, type RegionId,
 } from '../utils/seasonalData';
-import { fetchProductFunFacts } from '../utils/mistralApi';
 import { singularize } from '../utils/mealApi';
 import './SeasonalProducts.css';
 
@@ -115,7 +114,7 @@ function getInitialSelection(): { country: CountryId; region: RegionId } {
 }
 
 export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const now = new Date();
   const currentMonth = now.getMonth() + 1;
   const currentYear = now.getFullYear();
@@ -128,9 +127,6 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
   const [detecting, setDetecting] = useState(false);
 
   const [funFactProduct, setFunFactProduct] = useState<string | null>(null);
-  const [funFacts, setFunFacts] = useState<string[]>([]);
-  const [loadingFunFacts, setLoadingFunFacts] = useState(false);
-  const aiEnabled = import.meta.env.VITE_AI_ENABLED === 'true';
 
   useEffect(() => {
     if (isActive) {
@@ -186,14 +182,8 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
     );
   };
 
-  const handleProductClick = async (product: string) => {
-    if (!aiEnabled) return;
+  const handleProductClick = (product: string) => {
     setFunFactProduct(product);
-    setFunFacts([]);
-    setLoadingFunFacts(true);
-    const facts = await fetchProductFunFacts(product, i18n.language);
-    setFunFacts(facts);
-    setLoadingFunFacts(false);
   };
 
   const countryConfig = seasonalData[selectedCountry];
@@ -209,7 +199,7 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
   const renderProductCard = (product: string, index: number) => (
     <div
       key={`${selectedMonth}-${product}`}
-      className={`seasonal-product-card${aiEnabled ? ' seasonal-product-card--clickable' : ''}`}
+      className="seasonal-product-card seasonal-product-card--clickable"
       style={{ '--index': index } as React.CSSProperties}
       onClick={() => handleProductClick(product)}
     >
@@ -298,24 +288,21 @@ export const SeasonalProducts = ({ isActive }: { isActive: boolean }) => {
               <h2>{t(`seasonal.products.${funFactProduct}`, { defaultValue: funFactProduct })}</h2>
             </div>
             <p className="funfact-label">{t('seasonal.funFactLabel')}</p>
-            {loadingFunFacts ? (
-              <div className="funfact-loading">
-                <div className="funfact-skeleton" />
-                <div className="funfact-skeleton" />
-                <div className="funfact-skeleton" />
-              </div>
-            ) : funFacts.length > 0 ? (
-              <ul className="funfact-list">
-                {funFacts.map((fact, i) => (
-                  <li key={i} className="funfact-item">
-                    <span className="funfact-bullet">✦</span>
-                    <span>{fact}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="funfact-error">{t('seasonal.funFactError')}</p>
-            )}
+            {(() => {
+              const facts = t(`seasonal.funFacts.${funFactProduct}`, { returnObjects: true, defaultValue: [] }) as string[];
+              return Array.isArray(facts) && facts.length > 0 ? (
+                <ul className="funfact-list">
+                  {facts.map((fact, i) => (
+                    <li key={i} className="funfact-item">
+                      <span className="funfact-bullet">✦</span>
+                      <span>{fact}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="funfact-error">{t('seasonal.funFactError')}</p>
+              );
+            })()}
           </div>
         </div>
       )}
