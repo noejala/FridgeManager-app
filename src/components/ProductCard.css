@@ -38,13 +38,12 @@
 }
 
 .product-card.status-ok .status-dot {
-  background: transparent;
-  border: 1.5px solid var(--text-muted);
-  opacity: 0.45;
+  background: var(--green);
+  opacity: 0.5;
 }
 
 .product-card.status-expiring .status-dot {
-  background: #444;
+  background: var(--amber);
 }
 
 .product-card.status-expired .status-dot,

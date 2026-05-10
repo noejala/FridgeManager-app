@@ -58,11 +58,26 @@
   background: rgba(201, 168, 0, 0.2);
 }
 
+.product-section--fresh .product-section-label {
+  color: var(--green);
+  opacity: 0.75;
+}
+
+.product-section--fresh .product-section-line {
+  background: rgba(34, 197, 94, 0.15);
+}
+
 .product-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
   gap: 0.5rem;
-  align-items: start;
+  align-items: flex-start;
+}
+
+.product-grid-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .empty-state {
