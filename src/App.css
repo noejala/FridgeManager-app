@@ -1,24 +1,24 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;1,400;1,500&family=Figtree:ital,wght@0,300;0,400;0,500;0,600;1,400;1,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;1,400;1,500&family=Figtree:ital,wght@0,300;0,400;0,500;0,600;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&display=swap');
 :root {
-  --bg: #f0f5fb;
+  --bg: #f5f7f8;
   --bg-card: #ffffff;
-  --bg-surface: #e4eef8;
-  --bg-input: #f5f8fd;
-  --text: #0d1f3c;
-  --text-secondary: #3b5880;
-  --text-muted: #7b95b8;
-  --accent: #2c6fe0;
-  --accent-light: #4d88f2;
-  --accent-bg: rgba(44, 111, 224, 0.08);
+  --bg-surface: #e4e0d9;
+  --bg-input: #ffffff;
+  --text: #1c1c1e;
+  --text-secondary: #6c6c70;
+  --text-muted: #aeaeb2;
+  --accent: #355a84;
+  --accent-light: #4a72a0;
+  --accent-bg: rgba(53, 90, 132, 0.08);
   --green: #16a34a;
   --green-bg: rgba(22, 163, 74, 0.08);
-  --amber: #c9a800;
-  --amber-bg: rgba(201, 168, 0, 0.09);
+  --amber: #b08800;
+  --amber-bg: rgba(176, 136, 0, 0.09);
   --red: #dc2626;
   --red-bg: rgba(220, 38, 38, 0.08);
-  --border: rgba(44, 111, 224, 0.1);
-  --border-hover: rgba(44, 111, 224, 0.22);
-  --shadow: 0 4px 20px rgba(44, 111, 224, 0.08);
+  --border: rgba(0, 0, 0, 0.07);
+  --border-hover: rgba(0, 0, 0, 0.15);
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   --radius: 12px;
   --font-display: 'Figtree', system-ui, sans-serif;
   --font-body: 'Figtree', system-ui, sans-serif;
@@ -207,9 +207,9 @@ body::after {
 }
 
 .app-header h1 {
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: 'Playfair Display', Georgia, serif;
   font-size: 4.5rem;
-  font-weight: 300;
+  font-weight: 600;
   color: var(--text);
   letter-spacing: 0.03em;
   line-height: 1;
@@ -217,7 +217,6 @@ body::after {
 
 .app-header h1 span {
   color: var(--accent);
-  font-style: italic;
 }
 
 .app-header-rule {

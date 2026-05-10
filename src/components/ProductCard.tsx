@@ -33,6 +33,74 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
   const ingredientImg = `https://www.themealdb.com/images/ingredients/${encodeURIComponent(englishName)}-Small.png`;
   const [imgHidden, setImgHidden] = useState(false);
 
+  const categoryEmoji: Record<string, string> = {
+    Fruits: '🍎', Vegetables: '🥦', Meat: '🥩', Fish: '🐟',
+    Dairy: '🧀', Cheese: '🧀', Butter: '🧈', Milk: '🥛',
+    Cream: '🫙', Juice: '🍊', Beverages: '🥤', Sauces: '🫙',
+    Prepared: '🍱', Frozen: '🧊', Other: '🛒',
+  };
+
+  const getProductEmoji = (name: string): string => {
+    const n = name.toLowerCase();
+    if (/pizza/.test(n)) return '🍕';
+    if (/ravioli|pâtes?|pasta|spaghetti|tagliatelle|fusilli|penne|lasagne|gnocchi/.test(n)) return '🍝';
+    if (/champignon|pleurote|mushroom|shiitake|portobello/.test(n)) return '🍄';
+    if (/poulet|chicken|volaille|dinde|turkey/.test(n)) return '🍗';
+    if (/saumon|salmon/.test(n)) return '🐟';
+    if (/thon|tuna|sardine|cabillaud|sole|truite/.test(n)) return '🐟';
+    if (/crevette|shrimp|prawn|homard|lobster/.test(n)) return '🦐';
+    if (/boeuf|beef|steak|viande hach|agneau|lamb|veau|porc|pork/.test(n)) return '🥩';
+    if (/jambon|ham|saucisse|sausage|merguez|chorizo/.test(n)) return '🥩';
+    if (/oeuf|egg/.test(n)) return '🥚';
+    if (/lait|milk/.test(n)) return '🥛';
+    if (/fromage|cheese|comté|brie|camembert|emmental|gruyère|parmesan/.test(n)) return '🧀';
+    if (/beurre|butter/.test(n)) return '🧈';
+    if (/yaourt|yogourt|yogurt/.test(n)) return '🥛';
+    if (/banane|banana/.test(n)) return '🍌';
+    if (/fraise|strawberry/.test(n)) return '🍓';
+    if (/citron|lemon/.test(n)) return '🍋';
+    if (/orange|clémentine/.test(n)) return '🍊';
+    if (/raisin|grape/.test(n)) return '🍇';
+    if (/pomme(?! de terre)|apple/.test(n)) return '🍎';
+    if (/poire|pear/.test(n)) return '🍐';
+    if (/pêche|peach|abricot|apricot/.test(n)) return '🍑';
+    if (/cerise|cherry/.test(n)) return '🍒';
+    if (/ananas|pineapple/.test(n)) return '🍍';
+    if (/mangue|mango/.test(n)) return '🥭';
+    if (/pastèque|watermelon|melon/.test(n)) return '🍉';
+    if (/tomate|tomato/.test(n)) return '🍅';
+    if (/carotte|carrot/.test(n)) return '🥕';
+    if (/brocoli|broccoli/.test(n)) return '🥦';
+    if (/concombre|cucumber/.test(n)) return '🥒';
+    if (/poivron|pepper/.test(n)) return '🫑';
+    if (/courgette|zucchini/.test(n)) return '🥬';
+    if (/épinard|spinach/.test(n)) return '🥬';
+    if (/salade|lettuce/.test(n)) return '🥗';
+    if (/pomme de terre|potato|patate/.test(n)) return '🥔';
+    if (/oignon|onion/.test(n)) return '🧅';
+    if (/ail|garlic/.test(n)) return '🧄';
+    if (/avocat|avocado/.test(n)) return '🥑';
+    if (/maïs|corn/.test(n)) return '🌽';
+    if (/pain|bread|baguette/.test(n)) return '🍞';
+    if (/croissant/.test(n)) return '🥐';
+    if (/chocolat|chocolate/.test(n)) return '🍫';
+    if (/gâteau|cake|tarte|pie/.test(n)) return '🎂';
+    if (/glace|ice cream/.test(n)) return '🍦';
+    if (/riz|rice/.test(n)) return '🍚';
+    if (/soupe|soup/.test(n)) return '🍲';
+    if (/miel|honey/.test(n)) return '🍯';
+    if (/café|coffee/.test(n)) return '☕';
+    if (/thé|tea/.test(n)) return '🍵';
+    if (/bière|beer/.test(n)) return '🍺';
+    if (/vin|wine/.test(n)) return '🍷';
+    if (/eau|water/.test(n)) return '💧';
+    if (/jus|juice/.test(n)) return '🧃';
+    if (/mayonnaise|mayo|ketchup|moutarde|mustard/.test(n)) return '🫙';
+    return categoryEmoji[product.category] ?? '🛒';
+  };
+
+  const fallbackEmoji = getProductEmoji(product.name);
+
   const getStatusClass = () => {
     if (expired) return isDDM ? 'status-expired-ddm' : 'status-expired';
     if (expiringSoon) return 'status-expiring';
@@ -52,6 +120,14 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
     return t('productCard.expiresIn', { count: daysUntil });
   };
 
+  const getCompactDays = () => {
+    if (expired) return isDDM ? 'DDM' : t('productCard.expired');
+    if (daysUntil === 0) return 'Auj.';
+    if (daysUntil < 14) return `+${daysUntil}j`;
+    if (daysUntil < 60) return `+${Math.round(daysUntil / 7)}sem`;
+    return `+${Math.round(daysUntil / 30)}m`;
+  };
+
   const isConfirming = confirmingDelete || confirmingConsume || confirmingOpen;
   const isExpanded = expanded || isConfirming;
 
@@ -65,8 +141,11 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
 
   return (
     <div className={cardClass} style={{ '--index': index } as React.CSSProperties}>
+      <span className="status-dot" />
       <div className="product-card-toggle" onClick={() => setExpanded(p => !p)}>
-        {!imgHidden && (
+        {imgHidden ? (
+          <span className="product-img-fallback">{fallbackEmoji}</span>
+        ) : (
           <img
             className="product-img"
             src={ingredientImg}
@@ -76,18 +155,12 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
           />
         )}
         <h3 className="product-name">{product.name}</h3>
-        <span className="product-qty-inline">{product.quantity} {product.unit}</span>
-        <span className={`product-chevron${isExpanded ? ' open' : ''}`} />
+        <span className={`product-days ${getStatusClass()}`}>{getCompactDays()}</span>
+        <span className="product-qty-tile">{product.quantity} {product.unit}</span>
       </div>
 
       {isExpanded && (
         <div className="product-card-body">
-          <div
-            className={`status-badge ${getStatusClass()}${showSensoryHint ? ' estimated-hint' : ''}`}
-            data-tooltip={showSensoryHint ? t('productCard.estimatedCheckTooltip') : undefined}
-          >
-            {getStatusText()}
-          </div>
           <div className="product-exp">
             <span className="label">{isDDM ? t('productCard.bestBefore') : t('productCard.expires')}</span>
             <span>

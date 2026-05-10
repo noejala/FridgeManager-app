@@ -45,35 +45,13 @@ export const ProductList = ({ products, consumedProducts, onDelete, onConsume, o
   const expiredProducts = products.filter(p => isExpired(p.expirationDate)).sort(byDate);
   const expiringSoonProducts = products.filter(p => !isExpired(p.expirationDate) && isExpiringSoon(p.expirationDate)).sort(byDate);
   const freshProducts = products.filter(p => !isExpired(p.expirationDate) && !isExpiringSoon(p.expirationDate)).sort(byDate);
-  const compact = products.length >= 11;
-
-  const renderGrid = (items: Product[]) => {
-    if (!compact) {
-      return (
-        <div className="product-grid">
-          {items.map((product, index) => (
-            <ProductCard key={product.id} product={product} onDelete={onDelete} onConsume={onConsume} onEdit={onEdit} onOpenSauce={onOpenSauce} index={index} />
-          ))}
-        </div>
-      );
-    }
-    const left = items.filter((_, i) => i % 2 === 0);
-    const right = items.filter((_, i) => i % 2 === 1);
-    return (
-      <div className="product-grid product-grid--compact">
-        <div className="product-col">
-          {left.map((product, i) => (
-            <ProductCard key={product.id} product={product} onDelete={onDelete} onConsume={onConsume} onEdit={onEdit} onOpenSauce={onOpenSauce} index={i * 2} />
-          ))}
-        </div>
-        <div className="product-col">
-          {right.map((product, i) => (
-            <ProductCard key={product.id} product={product} onDelete={onDelete} onConsume={onConsume} onEdit={onEdit} onOpenSauce={onOpenSauce} index={i * 2 + 1} />
-          ))}
-        </div>
-      </div>
-    );
-  };
+  const renderGrid = (items: Product[]) => (
+    <div className="product-grid">
+      {items.map((product, index) => (
+        <ProductCard key={product.id} product={product} onDelete={onDelete} onConsume={onConsume} onEdit={onEdit} onOpenSauce={onOpenSauce} index={index} />
+      ))}
+    </div>
+  );
 
   return (
     <div className="product-list-container">
