@@ -31,6 +31,7 @@ export const ProductList = ({ products, consumedProducts, onDelete, onConsume, o
   const [showClearModal, setShowClearModal] = useState(false);
   const [clearing, setClearing] = useState(false);
   const [consumedExpanded, setConsumedExpanded] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleConfirmClear = async () => {
     setClearing(true);
@@ -42,9 +43,14 @@ export const ProductList = ({ products, consumedProducts, onDelete, onConsume, o
   const byDate = (a: Product, b: Product) =>
     new Date(a.expirationDate).getTime() - new Date(b.expirationDate).getTime();
 
-  const expiredProducts = products.filter(p => isExpired(p.expirationDate)).sort(byDate);
-  const expiringSoonProducts = products.filter(p => !isExpired(p.expirationDate) && isExpiringSoon(p.expirationDate)).sort(byDate);
-  const freshProducts = products.filter(p => !isExpired(p.expirationDate) && !isExpiringSoon(p.expirationDate)).sort(byDate);
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+  const filtered = normalizedQuery
+    ? products.filter(p => p.name.toLowerCase().includes(normalizedQuery))
+    : products;
+
+  const expiredProducts = filtered.filter(p => isExpired(p.expirationDate)).sort(byDate);
+  const expiringSoonProducts = filtered.filter(p => !isExpired(p.expirationDate) && isExpiringSoon(p.expirationDate)).sort(byDate);
+  const freshProducts = filtered.filter(p => !isExpired(p.expirationDate) && !isExpiringSoon(p.expirationDate)).sort(byDate);
   const renderGrid = (items: Product[]) => {
     const cols: Product[][] = [[], [], [], []];
     items.forEach((item, i) => cols[i % 4].push(item));
@@ -63,6 +69,25 @@ export const ProductList = ({ products, consumedProducts, onDelete, onConsume, o
 
   return (
     <div className="product-list-container">
+      {products.length >= 30 && (
+        <div className="product-search-bar">
+          <svg className="product-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            className="product-search-input"
+            type="search"
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder={t('productList.searchPlaceholder')}
+            autoComplete="off"
+          />
+          {searchQuery && (
+            <button className="product-search-clear" onClick={() => setSearchQuery('')} aria-label={t('productList.searchClear')}>×</button>
+          )}
+        </div>
+      )}
       {products.length === 0 ? (
         <div className="empty-state">
           <svg className="empty-fridge-icon" width="56" height="76" viewBox="0 0 56 76" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
@@ -75,6 +100,10 @@ export const ProductList = ({ products, consumedProducts, onDelete, onConsume, o
           </svg>
           <h3>{t('productList.nothingHereYet')}</h3>
           <p>{t('productList.startAdding')}</p>
+        </div>
+      ) : normalizedQuery && filtered.length === 0 ? (
+        <div className="product-search-empty">
+          <p>{t('productList.searchNoResults', { query: searchQuery })}</p>
         </div>
       ) : (
         <>
