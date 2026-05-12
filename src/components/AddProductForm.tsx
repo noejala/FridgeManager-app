@@ -239,7 +239,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
 
         {/* Mobile FAB speed dial */}
         {fabOpen && (
-          <div className="fab-backdrop" onClick={() => setFabOpen(false)} />
+          <div className="fab-backdrop" onPointerDown={() => setFabOpen(false)} />
         )}
         <div className={`fab-container${fabOpen ? ' fab-open' : ''}${!fabVisible || isScanning ? ' fab-hidden' : ''}`}>
           <div className="fab-actions">
@@ -292,8 +292,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
           </div>
           <button
             className="fab-main"
-            onPointerDown={(e) => { if (e.pointerType !== 'mouse') { e.preventDefault(); setFabOpen(prev => !prev); } }}
-            onClick={() => setFabOpen(prev => !prev)}
+            onPointerDown={(e) => { e.preventDefault(); setFabOpen(prev => !prev); }}
           >
             <svg className="fab-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"/>
