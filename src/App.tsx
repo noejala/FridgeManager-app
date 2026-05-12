@@ -84,6 +84,16 @@ function App() {
   const scrollAccumulator = useRef(0);
   const pantryAreaRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    if (!authLoading) {
+      const splash = document.getElementById('splash');
+      if (splash) {
+        splash.classList.add('fade-out');
+        setTimeout(() => splash.remove(), 350);
+      }
+    }
+  }, [authLoading]);
+
   // Capture invite token from URL on mount before anything else
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
