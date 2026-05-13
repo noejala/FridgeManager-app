@@ -5,6 +5,7 @@ export interface FoodFactsResult {
   category: ProductCategory;
   quantity: number;
   unit: string;
+  imageUrl?: string;
 }
 
 // Maps Open Food Facts category tags to our ProductCategory
@@ -106,7 +107,7 @@ function parseQuantity(raw: string): { quantity: number; unit: string } | null {
 }
 
 export async function lookupBarcode(barcode: string): Promise<FoodFactsResult | null> {
-  const fields = 'product_name,product_name_fr,categories_tags,quantity';
+  const fields = 'product_name,product_name_fr,categories_tags,quantity,image_front_small_url,image_url';
   const url = `https://world.openfoodfacts.org/api/v2/product/${barcode}.json?fields=${fields}`;
 
   const response = await fetch(url);
@@ -124,10 +125,14 @@ export async function lookupBarcode(barcode: string): Promise<FoodFactsResult | 
   const category = mapCategory(product.categories_tags ?? []);
   const parsed = product.quantity ? parseQuantity(product.quantity) : null;
 
+  const imageUrl: string | undefined =
+    product.image_front_small_url || product.image_url || undefined;
+
   return {
     name: name.trim(),
     category,
     quantity: parsed?.quantity ?? 1,
     unit: parsed?.unit ?? 'unit',
+    imageUrl,
   };
 }

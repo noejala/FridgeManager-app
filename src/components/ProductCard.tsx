@@ -31,6 +31,7 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
   const locale = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
   const englishName = singularize(toEnglishIngredient(product.name));
   const ingredientImg = `https://www.themealdb.com/images/ingredients/${encodeURIComponent(englishName)}-Small.png`;
+  const imgSrc = product.imageUrl ?? ingredientImg;
   const [imgHidden, setImgHidden] = useState(false);
 
   const categoryEmoji: Record<string, string> = {
@@ -135,7 +136,7 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
         ) : (
           <img
             className="product-img"
-            src={ingredientImg}
+            src={imgSrc}
             alt=""
             aria-hidden="true"
             onError={() => setImgHidden(true)}

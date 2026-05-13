@@ -104,6 +104,23 @@
   animation: spin 0.7s linear infinite;
 }
 
+/* ── Scan product photo preview ────────────────────────── */
+.scan-product-preview {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.scan-product-preview-img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  padding: 4px;
+}
+
 /* ── Lookup error banner ────────────────────────────────── */
 .lookup-error {
   font-size: 0.8rem;

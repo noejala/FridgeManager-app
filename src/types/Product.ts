@@ -11,6 +11,7 @@ export interface Product {
   fridgeZone?: string;
   consumedAt?: string; // ISO timestamp, set when product is marked as consumed
   openedDate?: string; // YYYY-MM-DD, set when a sauce/condiment is opened
+  imageUrl?: string; // product photo from Open Food Facts, stored as URL
 }
 
 export type ProductCategory =

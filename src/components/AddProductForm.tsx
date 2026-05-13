@@ -89,6 +89,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
   const [lookupError, setLookupError] = useState<string | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [name, setName] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
   const [category, setCategory] = useState<ProductCategory>('Other');
   const [expirationDateType, setExpirationDateType] = useState<'dlc' | 'ddm'>('ddm');
   const [expirationDate, setExpirationDate] = useState('');
@@ -107,6 +108,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
     setExpirationDateType(getDefaultExpirationDateType(cat));
     setQuantity(String(prefill.quantity));
     setUnit(prefill.unit);
+    if (prefill.imageUrl) setImageUrl(prefill.imageUrl);
     setShowDetails(true);
     onPrefillApplied?.();
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -133,6 +135,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
       setCategory(result.category === 'Other' ? guessCategory(result.name) : result.category);
       setQuantity(String(result.quantity));
       setUnit(result.unit);
+      if (result.imageUrl) setImageUrl(result.imageUrl);
       setShowDetails(true);
     } else {
       setLookupError('Produit non trouvé. Remplissez le formulaire manuellement.');
@@ -170,6 +173,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
       isEstimatedExpiration: isSauceOpened || (unknownExpiration && recognized),
       expirationDateType,
       openedDate: isSauceOpened ? sauceOpenedDate : undefined,
+      imageUrl: imageUrl || undefined,
     });
     setIsLoading(false);
 
@@ -183,6 +187,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
     setPurchaseDate('');
     setIsOpened(false);
     setSauceOpenedDate(new Date().toISOString().split('T')[0]);
+    setImageUrl('');
     setShowDetails(false);
     onFormOpenChange(false);
   };
@@ -359,6 +364,18 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
             {isLookingUp ? 'Recherche…' : 'Scanner'}
           </button>
         </div>
+
+        {imageUrl && (
+          <div className="scan-product-preview">
+            <img
+              src={imageUrl}
+              alt=""
+              aria-hidden="true"
+              className="scan-product-preview-img"
+              onError={() => setImageUrl('')}
+            />
+          </div>
+        )}
 
         {lookupError && (
           <div className="lookup-error">
@@ -585,6 +602,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
             setExpirationDateType('ddm');
             setPurchaseDate(''); setIsOpened(false);
             setSauceOpenedDate(new Date().toISOString().split('T')[0]);
+            setImageUrl('');
             setLookupError(null);
             setShowDetails(false);
             onFormOpenChange(false);
