@@ -598,6 +598,14 @@ function App() {
         />
       </div>
       <div hidden={activeTab !== 'cook'}>
+        <div className="fridge-top-row">
+          <FridgeSwitcher
+            fridges={fridges}
+            activeFridgeId={activeFridgeId}
+            onSwitch={handleActiveFridgeChange}
+            onCreateFridge={handleCreateFridge}
+          />
+        </div>
         <WhatToCook
           key={activeFridgeId}
           products={products}
