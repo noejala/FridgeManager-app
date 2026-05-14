@@ -598,6 +598,14 @@ function App() {
         />
       </div>
       <div hidden={activeTab !== 'cook'}>
+        <div className="fridge-top-row">
+          <FridgeSwitcher
+            fridges={fridges}
+            activeFridgeId={activeFridgeId}
+            onSwitch={handleActiveFridgeChange}
+            onCreateFridge={handleCreateFridge}
+          />
+        </div>
         <WhatToCook
           key={activeFridgeId}
           products={products}
@@ -608,10 +616,6 @@ function App() {
           onConsumeProducts={(ids) => ids.forEach(id => handleConsumeProduct(id))}
           fridgeEmoji={fridges.find(f => f.id === activeFridgeId)?.emoji}
           fridgeName={fridges.find(f => f.id === activeFridgeId)?.name}
-          fridges={fridges}
-          activeFridgeId={activeFridgeId}
-          onFridgeSwitch={handleActiveFridgeChange}
-          onCreateFridge={handleCreateFridge}
         />
       </div>
       <div hidden={activeTab !== 'seasonal'}>

@@ -343,14 +343,6 @@
   color: #fff;
 }
 
-.cook-fridge-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.75rem;
-  min-height: 2rem;
-}
-
 .cook-header-top {
   display: flex;
   align-items: center;
