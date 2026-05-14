@@ -374,6 +374,13 @@
   cursor: not-allowed;
 }
 
+.settings-save-btn.saved {
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  cursor: default;
+}
+
 /* Toggle rows */
 .settings-toggle-row {
   display: flex;

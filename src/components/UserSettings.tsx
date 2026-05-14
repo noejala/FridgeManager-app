@@ -399,15 +399,12 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
             </div>
 
             <div className="settings-save-row">
-              <span className={`settings-field-hint${nutritionSaved ? ' settings-field-hint--saved' : ''}`}>
-                {nutritionSaved ? t('settings.saved') : ''}
-              </span>
               <button
-                className="settings-save-btn"
+                className={`settings-save-btn${nutritionSaved ? ' saved' : ''}`}
                 onClick={handleSaveNutrition}
-                disabled={nutritionSaving || !nutritionDirty}
+                disabled={nutritionSaving || (!nutritionDirty && !nutritionSaved)}
               >
-                {nutritionSaving ? t('settings.saving') : t('settings.save')}
+                {nutritionSaving ? t('settings.saving') : nutritionSaved ? t('settings.saved') : t('settings.save')}
               </button>
             </div>
           </div>
@@ -438,15 +435,12 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
           </div>
 
           <div className="settings-save-row">
-            <span className={`settings-field-hint${equipmentSaved ? ' settings-field-hint--saved' : ''}`}>
-              {equipmentSaved ? t('settings.saved') : ''}
-            </span>
             <button
-              className="settings-save-btn"
+              className={`settings-save-btn${equipmentSaved ? ' saved' : ''}`}
               onClick={handleSaveEquipment}
-              disabled={equipmentSaving || !equipmentDirty}
+              disabled={equipmentSaving || (!equipmentDirty && !equipmentSaved)}
             >
-              {equipmentSaving ? t('settings.saving') : t('settings.save')}
+              {equipmentSaving ? t('settings.saving') : equipmentSaved ? t('settings.saved') : t('settings.save')}
             </button>
           </div>
         </section>
