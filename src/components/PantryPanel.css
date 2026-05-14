@@ -156,27 +156,25 @@
   border-top: 1px solid var(--border);
 }
 
-.pantry-saved-hint {
-  font-size: 0.78rem;
-  color: var(--green);
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
-.pantry-saved-hint.visible { opacity: 1; }
-
 .pantry-save-btn {
   padding: 0.4rem 1rem;
   background: var(--accent);
   color: #fff;
-  border: none;
+  border: 1px solid transparent;
   border-radius: calc(var(--radius) / 2);
   font-family: var(--font-body);
   font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.15s;
+  transition: opacity 0.15s, background 0.15s, color 0.15s, border-color 0.15s;
   touch-action: manipulation;
 }
 
 .pantry-save-btn:disabled { opacity: 0.4; cursor: default; }
+
+.pantry-save-btn.saved {
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  border-color: var(--border);
+  cursor: default;
+}

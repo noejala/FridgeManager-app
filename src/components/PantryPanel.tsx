@@ -100,13 +100,12 @@ export function PantryPanel({ fridgeId, staples, onSave, onClose }: Props) {
       </div>
 
       <div className="pantry-save-row">
-        <span className={`pantry-saved-hint${saved ? ' visible' : ''}`}>{t('settings.saved')}</span>
         <button
-          className="pantry-save-btn"
+          className={`pantry-save-btn${saved ? ' saved' : ''}`}
           onClick={handleSave}
-          disabled={saving || !dirty}
+          disabled={saving || (!dirty && !saved)}
         >
-          {saving ? t('settings.saving') : t('settings.save')}
+          {saving ? t('settings.saving') : saved ? t('settings.saved') : t('settings.save')}
         </button>
       </div>
     </div>
