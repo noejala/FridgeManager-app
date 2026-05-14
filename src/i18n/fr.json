@@ -361,7 +361,6 @@
     "firstNamePlaceholder": "Ton prénom (optionnel)",
     "country": "Pays",
     "countryPlaceholder": "Ex : France, Belgique…",
-    "gender": "Genre",
     "age": "Âge",
     "nutritionalPreferences": "Préférences nutritionnelles",
     "dietaryRestrictions": "Restrictions alimentaires",
@@ -379,12 +378,6 @@
     "appSettings": "Préférences",
     "darkMode": "Mode nuit",
     "language": "Langue",
-    "genders": {
-      "male": "Homme",
-      "female": "Femme",
-      "other": "Autre",
-      "prefer_not_to_say": "Je préfère ne pas préciser"
-    },
     "pantryStaples": "Placard de base",
     "pantryStaplesHint": "Ces produits seront considérés comme toujours disponibles par l'IA pour les recettes.",
     "pantryAddPlaceholder": "Ajouter un autre produit…",
@@ -392,9 +385,7 @@
       "profile": "Mon profil",
       "preferences": "Préférences",
       "kitchen": "Ma cuisine",
-      "pantry": "Mon placard",
-      "fridges": "Frigos",
-      "friends": "Amis"
+      "pantry": "Mon placard"
     },
     "dietary": {
       "vegetarian": "Végétarien",
@@ -412,7 +403,6 @@
       "invalid": "3 à 20 caractères, lettres, chiffres, _ ou -",
       "error": "Une erreur est survenue"
     },
-    "kitchenEquipment": "Équipements de cuisine",
     "kitchenEquipmentHint": "L'IA proposera uniquement des recettes réalisables avec vos équipements.",
     "equipment": {
       "oven": "Four",
@@ -425,17 +415,6 @@
       "steamer": "Cuiseur vapeur",
       "barbecue": "Barbecue"
     },
-    "equipmentEmoji": {
-      "oven": "🔥",
-      "microwave": "⚡",
-      "stovetop": "🍳",
-      "air_fryer": "🌀",
-      "blender": "🥤",
-      "slow_cooker": "🫕",
-      "deep_fryer": "🍟",
-      "steamer": "♨️",
-      "barbecue": "🍖"
-    }
   },
   "voice": {
     "title": "Ajouter par la voix",

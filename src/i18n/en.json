@@ -361,7 +361,6 @@
     "firstNamePlaceholder": "Your first name (optional)",
     "country": "Country",
     "countryPlaceholder": "E.g. France, Canada…",
-    "gender": "Gender",
     "age": "Age",
     "nutritionalPreferences": "Nutritional preferences",
     "dietaryRestrictions": "Dietary restrictions",
@@ -379,12 +378,6 @@
     "appSettings": "Preferences",
     "darkMode": "Dark mode",
     "language": "Language",
-    "genders": {
-      "male": "Male",
-      "female": "Female",
-      "other": "Other",
-      "prefer_not_to_say": "Prefer not to say"
-    },
     "pantryStaples": "Pantry staples",
     "pantryStaplesHint": "These items will be considered always available by the AI when suggesting recipes.",
     "pantryAddPlaceholder": "Add another item…",
@@ -392,9 +385,7 @@
       "profile": "My profile",
       "preferences": "Preferences",
       "kitchen": "My kitchen",
-      "pantry": "My pantry",
-      "fridges": "Fridges",
-      "friends": "Friends"
+      "pantry": "My pantry"
     },
     "dietary": {
       "vegetarian": "Vegetarian",
@@ -412,7 +403,6 @@
       "invalid": "3 to 20 characters, letters, numbers, _ or -",
       "error": "An error occurred"
     },
-    "kitchenEquipment": "Kitchen equipment",
     "kitchenEquipmentHint": "The AI will only suggest recipes that can be made with your equipment.",
     "equipment": {
       "oven": "Oven",
@@ -425,17 +415,6 @@
       "steamer": "Steamer",
       "barbecue": "Barbecue"
     },
-    "equipmentEmoji": {
-      "oven": "🔥",
-      "microwave": "⚡",
-      "stovetop": "🍳",
-      "air_fryer": "🌀",
-      "blender": "🥤",
-      "slow_cooker": "🫕",
-      "deep_fryer": "🍟",
-      "steamer": "♨️",
-      "barbecue": "🍖"
-    }
   },
   "voice": {
     "title": "Add by voice",
