@@ -513,45 +513,43 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.45rem;
-  padding: 1rem 0.5rem 0.85rem;
+  gap: 0.6rem;
+  padding: 1.1rem 0.5rem 0.9rem;
   border: 1.5px solid var(--border);
   border-radius: var(--radius);
   background: var(--bg-card);
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+  transition: border-color 0.15s, background 0.15s, color 0.15s, transform 0.1s;
   font-family: var(--font-body);
   text-align: center;
+  color: var(--text-muted);
 }
 
 .equipment-card:hover {
   border-color: var(--border-hover);
   background: var(--bg-surface);
+  color: var(--text-secondary);
 }
 
 .equipment-card:active {
-  transform: scale(0.97);
+  transform: scale(0.96);
 }
 
 .equipment-card.active {
   border-color: var(--accent);
   background: var(--accent-bg);
+  color: var(--accent);
 }
 
-.equipment-card-emoji {
-  font-size: 1.75rem;
-  line-height: 1;
+.equipment-card-icon {
+  flex-shrink: 0;
 }
 
 .equipment-card-label {
   font-size: 0.72rem;
   font-weight: 500;
-  color: var(--text-secondary);
   line-height: 1.2;
-}
-
-.equipment-card.active .equipment-card-label {
-  color: var(--accent);
+  color: inherit;
 }
 
 @media (max-width: 768px) {

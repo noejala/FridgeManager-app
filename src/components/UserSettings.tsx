@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UserProfile, DietaryPreference } from '../types/UserProfile';
 import { fetchUserProfile, saveUserProfile } from '../utils/userProfileService';
+import { EQUIPMENT_ICONS } from './KitchenEquipmentIcons';
 import './UserSettings.css';
 
 const DIETARY_RESTRICTIONS: DietaryPreference[] = ['gluten_free', 'lactose_free', 'halal', 'kosher'];
@@ -420,17 +421,20 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
           <p className="settings-section-hint">{t('settings.kitchenEquipmentHint')}</p>
 
           <div className="equipment-grid">
-            {KITCHEN_EQUIPMENT.map(item => (
-              <button
-                key={item}
-                type="button"
-                className={`equipment-card${equipmentDraft.includes(item) ? ' active' : ''}`}
-                onClick={(e) => { handleEquipmentToggle(item); (e.currentTarget as HTMLButtonElement).blur(); }}
-              >
-                <span className="equipment-card-emoji">{t(`settings.equipmentEmoji.${item}`)}</span>
-                <span className="equipment-card-label">{t(`settings.equipment.${item}`)}</span>
-              </button>
-            ))}
+            {KITCHEN_EQUIPMENT.map(item => {
+              const Icon = EQUIPMENT_ICONS[item];
+              return (
+                <button
+                  key={item}
+                  type="button"
+                  className={`equipment-card${equipmentDraft.includes(item) ? ' active' : ''}`}
+                  onClick={(e) => { handleEquipmentToggle(item); (e.currentTarget as HTMLButtonElement).blur(); }}
+                >
+                  {Icon && <Icon size={42} className="equipment-card-icon" />}
+                  <span className="equipment-card-label">{t(`settings.equipment.${item}`)}</span>
+                </button>
+              );
+            })}
           </div>
 
           <div className="settings-save-row">
