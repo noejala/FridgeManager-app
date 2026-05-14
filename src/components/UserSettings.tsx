@@ -21,7 +21,7 @@ const EMPTY_PROFILE: UserProfile = {
   kitchenEquipment: [],
 };
 
-type SettingsTab = 'profile' | 'preferences';
+type SettingsTab = 'profile' | 'preferences' | 'kitchen';
 
 interface Props {
   darkMode: boolean;
@@ -47,10 +47,12 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
     dietaryPreferences: DietaryPreference[];
     dislikedIngredients: string[];
     customPreferences: string;
-    kitchenEquipment: string[];
-  }>({ dietaryPreferences: [], dislikedIngredients: [], customPreferences: '', kitchenEquipment: [] });
+  }>({ dietaryPreferences: [], dislikedIngredients: [], customPreferences: '' });
   const [nutritionSaving, setNutritionSaving] = useState(false);
   const [nutritionSaved, setNutritionSaved] = useState(false);
+  const [equipmentDraft, setEquipmentDraft] = useState<string[]>([]);
+  const [equipmentSaving, setEquipmentSaving] = useState(false);
+  const [equipmentSaved, setEquipmentSaved] = useState(false);
 
   const hasProfileData = (p: UserProfile) => p.country || p.age;
 
@@ -63,8 +65,8 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
         dietaryPreferences: p.dietaryPreferences,
         dislikedIngredients: p.dislikedIngredients,
         customPreferences: p.customPreferences,
-        kitchenEquipment: p.kitchenEquipment,
       });
+      setEquipmentDraft(p.kitchenEquipment);
       setEditing(!hasProfileData(p));
       setLoading(false);
     });
@@ -104,12 +106,9 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
   };
 
   const handleEquipmentToggle = (item: string) => {
-    setNutritionDraft(prev => ({
-      ...prev,
-      kitchenEquipment: prev.kitchenEquipment.includes(item)
-        ? prev.kitchenEquipment.filter(e => e !== item)
-        : [...prev.kitchenEquipment, item],
-    }));
+    setEquipmentDraft(prev =>
+      prev.includes(item) ? prev.filter(e => e !== item) : [...prev, item]
+    );
   };
 
   const handleSaveNutrition = async () => {
@@ -121,23 +120,37 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
     onDietaryPreferencesChange?.(nutritionDraft.dietaryPreferences);
     onDislikedIngredientsChange?.(nutritionDraft.dislikedIngredients);
     onCustomPreferencesChange?.(nutritionDraft.customPreferences);
-    onKitchenEquipmentChange?.(nutritionDraft.kitchenEquipment);
     setNutritionSaving(false);
     setNutritionSaved(true);
     setTimeout(() => setNutritionSaved(false), 2000);
   };
 
+  const handleSaveEquipment = async () => {
+    setEquipmentSaving(true);
+    const updated = { ...profile, kitchenEquipment: equipmentDraft };
+    await saveUserProfile(updated);
+    setProfile(updated);
+    setDraft(updated);
+    onKitchenEquipmentChange?.(equipmentDraft);
+    setEquipmentSaving(false);
+    setEquipmentSaved(true);
+    setTimeout(() => setEquipmentSaved(false), 2000);
+  };
+
   const nutritionDirty =
     JSON.stringify([...nutritionDraft.dietaryPreferences].sort()) !== JSON.stringify([...profile.dietaryPreferences].sort()) ||
     JSON.stringify([...nutritionDraft.dislikedIngredients].sort()) !== JSON.stringify([...profile.dislikedIngredients].sort()) ||
-    nutritionDraft.customPreferences !== profile.customPreferences ||
-    JSON.stringify([...nutritionDraft.kitchenEquipment].sort()) !== JSON.stringify([...profile.kitchenEquipment].sort());
+    nutritionDraft.customPreferences !== profile.customPreferences;
+
+  const equipmentDirty =
+    JSON.stringify([...equipmentDraft].sort()) !== JSON.stringify([...profile.kitchenEquipment].sort());
 
   if (loading) return <div className="settings-loading" />;
 
   const TABS: { id: SettingsTab; label: string }[] = [
     { id: 'profile', label: t('settings.tabs.profile') },
     { id: 'preferences', label: t('settings.tabs.preferences') },
+    { id: 'kitchen', label: t('settings.tabs.kitchen') },
   ];
 
   return (
@@ -384,23 +397,6 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
               <span className="settings-field-hint">{t('settings.customPreferencesHint')}</span>
             </div>
 
-            <div className="settings-field">
-              <label className="settings-label">{t('settings.kitchenEquipment')}</label>
-              <div className="settings-chips">
-                {KITCHEN_EQUIPMENT.map(item => (
-                  <button
-                    key={item}
-                    type="button"
-                    className={`settings-chip ${nutritionDraft.kitchenEquipment.includes(item) ? 'active' : ''}`}
-                    onClick={(e) => { handleEquipmentToggle(item); (e.currentTarget as HTMLButtonElement).blur(); }}
-                  >
-                    {t(`settings.equipment.${item}`)}
-                  </button>
-                ))}
-              </div>
-              <span className="settings-field-hint">{t('settings.kitchenEquipmentHint')}</span>
-            </div>
-
             <div className="settings-save-row">
               <span className={`settings-field-hint${nutritionSaved ? ' settings-field-hint--saved' : ''}`}>
                 {nutritionSaved ? t('settings.saved') : ''}
@@ -417,6 +413,40 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
         </section>
       )}
 
+      {/* Ma cuisine */}
+      {activeTab === 'kitchen' && (
+        <section className="settings-section">
+          <h2 className="settings-section-title">{t('settings.tabs.kitchen')}</h2>
+          <p className="settings-section-hint">{t('settings.kitchenEquipmentHint')}</p>
+
+          <div className="equipment-grid">
+            {KITCHEN_EQUIPMENT.map(item => (
+              <button
+                key={item}
+                type="button"
+                className={`equipment-card${equipmentDraft.includes(item) ? ' active' : ''}`}
+                onClick={(e) => { handleEquipmentToggle(item); (e.currentTarget as HTMLButtonElement).blur(); }}
+              >
+                <span className="equipment-card-emoji">{t(`settings.equipmentEmoji.${item}`)}</span>
+                <span className="equipment-card-label">{t(`settings.equipment.${item}`)}</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="settings-save-row">
+            <span className={`settings-field-hint${equipmentSaved ? ' settings-field-hint--saved' : ''}`}>
+              {equipmentSaved ? t('settings.saved') : ''}
+            </span>
+            <button
+              className="settings-save-btn"
+              onClick={handleSaveEquipment}
+              disabled={equipmentSaving || !equipmentDirty}
+            >
+              {equipmentSaving ? t('settings.saving') : t('settings.save')}
+            </button>
+          </div>
+        </section>
+      )}
 
     </div>
   );

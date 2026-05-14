@@ -493,6 +493,67 @@
   opacity: 1;
 }
 
+.settings-section-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+  padding-left: 0.25rem;
+  line-height: 1.4;
+}
+
+/* Kitchen equipment grid */
+.equipment-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.65rem;
+  margin-bottom: 1.5rem;
+}
+
+.equipment-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 1rem 0.5rem 0.85rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+  font-family: var(--font-body);
+  text-align: center;
+}
+
+.equipment-card:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-surface);
+}
+
+.equipment-card:active {
+  transform: scale(0.97);
+}
+
+.equipment-card.active {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+
+.equipment-card-emoji {
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.equipment-card-label {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  line-height: 1.2;
+}
+
+.equipment-card.active .equipment-card-label {
+  color: var(--accent);
+}
+
 @media (max-width: 768px) {
   .settings-field-row {
     grid-template-columns: 1fr;

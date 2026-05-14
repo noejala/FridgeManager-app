@@ -391,6 +391,7 @@
     "tabs": {
       "profile": "My profile",
       "preferences": "Preferences",
+      "kitchen": "My kitchen",
       "pantry": "My pantry",
       "fridges": "Fridges",
       "friends": "Friends"
@@ -416,6 +417,17 @@
       "deep_fryer": "Deep fryer",
       "steamer": "Steamer",
       "barbecue": "Barbecue"
+    },
+    "equipmentEmoji": {
+      "oven": "🔥",
+      "microwave": "⚡",
+      "stovetop": "🍳",
+      "air_fryer": "🌀",
+      "blender": "🥤",
+      "slow_cooker": "🫕",
+      "deep_fryer": "🍟",
+      "steamer": "♨️",
+      "barbecue": "🍖"
     }
   },
   "voice": {
