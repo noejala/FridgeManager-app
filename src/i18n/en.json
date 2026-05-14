@@ -406,7 +406,8 @@
       "pescatarian": "Pescatarian"
     },
     "changeUsername": "Edit",
-    "usernameAvailableOn": "Available on {{date}}",
+    "usernameOncePerMonth": "Note: you can only change it once a month",
+    "usernameAvailableOn": "Next change available on {{date}}",
     "usernameError": {
       "taken": "This @ is already taken",
       "invalid": "3 to 20 characters, letters, numbers, _ or -",

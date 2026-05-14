@@ -238,10 +238,12 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
                           autoComplete="off"
                         />
                       </div>
-                      {!canChangeUsername(profile.usernameChangedAt) && (
+                      {canChangeUsername(profile.usernameChangedAt) ? (
+                        <span className="settings-field-hint">{t('settings.usernameOncePerMonth')}</span>
+                      ) : (
                         <span className="settings-field-hint">
                           {t('settings.usernameAvailableOn', {
-                            date: nextUsernameChangeDate(profile.usernameChangedAt)?.toLocaleDateString(i18n.language, { day: 'numeric', month: 'short' }),
+                            date: nextUsernameChangeDate(profile.usernameChangedAt)?.toLocaleDateString(i18n.language, { day: 'numeric', month: 'long' }),
                           })}
                         </span>
                       )}
