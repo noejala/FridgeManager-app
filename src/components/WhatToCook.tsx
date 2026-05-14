@@ -1,12 +1,14 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Product } from '../types/Product';
+import { Fridge } from '../types/Fridge';
 import { DietaryPreference } from '../types/UserProfile';
 import { MealDetails, singularize } from '../utils/mealApi';
 import { getAllMeals } from '../utils/mealDbCache';
 import { fetchAiRecipes, CookingMode, CourseSelection } from '../utils/mistralApi';
 import { fetchSavedRecipes, saveRecipe, unsaveRecipe, SavedRecipe } from '../utils/savedRecipeService';
 import { CookingSession } from './CookingSession';
+import { FridgeSwitcher } from './FridgeSwitcher';
 import { toEnglishIngredient } from '../utils/ingredientTranslation';
 import { getDaysUntilExpiration, isExpired } from '../utils/storage';
 import './WhatToCook.css';
@@ -37,6 +39,10 @@ interface WhatToCookProps {
   onConsumeProducts?: (ids: string[]) => void;
   fridgeEmoji?: string;
   fridgeName?: string;
+  fridges?: Fridge[];
+  activeFridgeId?: string;
+  onFridgeSwitch?: (id: string) => void;
+  onCreateFridge?: (name: string) => Promise<unknown>;
 }
 
 const MAX_MISSING = 4;
@@ -241,7 +247,7 @@ function applySort(recipes: RecipeMatch[], mode: SortMode): RecipeMatch[] {
 
 const aiEnabled = import.meta.env.VITE_AI_ENABLED === 'true';
 
-export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredients = [], customPreferences = '', pantryStaples = [], onConsumeProducts, fridgeEmoji, fridgeName }: WhatToCookProps) => {
+export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredients = [], customPreferences = '', pantryStaples = [], onConsumeProducts, fridges, activeFridgeId, onFridgeSwitch, onCreateFridge }: WhatToCookProps) => {
   const { t, i18n } = useTranslation();
   const [recipes, setRecipes] = useState<RecipeMatch[]>([]);
   const [loading, setLoading] = useState(false);
@@ -616,12 +622,27 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
   if (products.length === 0 && !savedView) {
     return (
       <div className="what-to-cook">
+        <div className="cook-fridge-row">
+          {fridges && activeFridgeId && onFridgeSwitch && onCreateFridge && (
+            <FridgeSwitcher
+              fridges={fridges}
+              activeFridgeId={activeFridgeId}
+              onSwitch={onFridgeSwitch}
+              onCreateFridge={onCreateFridge}
+            />
+          )}
+          <button
+            className={`saved-toggle-btn${savedView ? ' active' : ''}`}
+            onPointerDown={(e) => { if (e.pointerType !== 'mouse') { e.preventDefault(); setSavedView(v => !v); } }}
+            onClick={() => setSavedView(v => !v)}
+          >
+            ♡
+            {savedRecipes.length > 0 && !savedView && <span className="saved-count">{savedRecipes.length}</span>}
+          </button>
+        </div>
         <div className="cook-header">
           <div className="cook-header-top">
             <h2>{t('cook.title')}</h2>
-            <button className="saved-toggle-btn" onClick={() => setSavedView(true)}>
-              ♡{savedRecipes.length > 0 && <span className="saved-count">{savedRecipes.length}</span>}
-            </button>
           </div>
         </div>
         <div className="empty-suggestions">
@@ -634,6 +655,24 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
 
   return (
     <div className="what-to-cook">
+      <div className="cook-fridge-row">
+        {fridges && activeFridgeId && onFridgeSwitch && onCreateFridge && (
+          <FridgeSwitcher
+            fridges={fridges}
+            activeFridgeId={activeFridgeId}
+            onSwitch={onFridgeSwitch}
+            onCreateFridge={onCreateFridge}
+          />
+        )}
+        <button
+          className={`saved-toggle-btn${savedView ? ' active' : ''}`}
+          onPointerDown={(e) => { if (e.pointerType !== 'mouse') { e.preventDefault(); setSavedView(v => !v); } }}
+          onClick={() => setSavedView(v => !v)}
+        >
+          ♡
+          {savedRecipes.length > 0 && !savedView && <span className="saved-count">{savedRecipes.length}</span>}
+        </button>
+      </div>
       <div className="cook-header">
         <div className="cook-header-top">
           <h2>{t('cook.title')}</h2>
@@ -655,14 +694,6 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
               </button>
             </div>
           )}
-          <button
-            className={`saved-toggle-btn${savedView ? ' active' : ''}`}
-            onPointerDown={(e) => { if (e.pointerType !== 'mouse') { e.preventDefault(); setSavedView(v => !v); } }}
-            onClick={() => setSavedView(v => !v)}
-          >
-            ♡
-            {savedRecipes.length > 0 && !savedView && <span className="saved-count">{savedRecipes.length}</span>}
-          </button>
           {!savedView && (
             <div className="servings-stepper">
               <button
