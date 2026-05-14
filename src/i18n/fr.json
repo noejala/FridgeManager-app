@@ -405,7 +405,6 @@
       "kosher": "Casher",
       "pescatarian": "Pescétarien"
     },
-    "changeUsername": "Modifier",
     "usernameOncePerMonth": "Attention, vous ne pouvez le modifier qu'1 fois par mois",
     "usernameAvailableOn": "Modification possible le {{date}}",
     "usernameError": {

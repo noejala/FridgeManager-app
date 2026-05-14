@@ -405,7 +405,6 @@
       "kosher": "Kosher",
       "pescatarian": "Pescatarian"
     },
-    "changeUsername": "Edit",
     "usernameOncePerMonth": "Note: you can only change it once a month",
     "usernameAvailableOn": "Next change available on {{date}}",
     "usernameError": {
