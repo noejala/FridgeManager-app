@@ -684,9 +684,6 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
         <div className="cook-subtitle-row">
           {!(recipeMode === 'ai' && selectedCookingMode && selectedCourse) && (
             <p className="cook-subtitle">
-              {fridgeEmoji && fridgeName && (
-                <span className="cook-fridge-tag">{fridgeEmoji} {fridgeName}</span>
-              )}
               {t('cook.recipesBasedOn', { count: products.length })}
             </p>
           )}
