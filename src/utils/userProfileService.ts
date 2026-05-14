@@ -47,19 +47,21 @@ export async function saveUserProfile(profile: UserProfile): Promise<void> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return;
 
-  const { error } = await supabase.from('user_profiles').upsert({
-    user_id: user.id,
-    first_name: profile.firstName,
-    country: profile.country,
-    gender: profile.gender,
-    age: profile.age,
-    dietary_preferences: profile.dietaryPreferences,
-    disliked_ingredients: profile.dislikedIngredients,
-    custom_preferences: profile.customPreferences,
-    pantry_staples: profile.pantryStaples,
-    kitchen_equipment: profile.kitchenEquipment,
-    updated_at: new Date().toISOString(),
-  }, { onConflict: 'user_id' });
+  const { error } = await supabase
+    .from('user_profiles')
+    .update({
+      first_name: profile.firstName,
+      country: profile.country,
+      gender: profile.gender,
+      age: profile.age,
+      dietary_preferences: profile.dietaryPreferences,
+      disliked_ingredients: profile.dislikedIngredients,
+      custom_preferences: profile.customPreferences,
+      pantry_staples: profile.pantryStaples,
+      kitchen_equipment: profile.kitchenEquipment,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('user_id', user.id);
 
   if (error) console.error('saveUserProfile error:', error);
 }
