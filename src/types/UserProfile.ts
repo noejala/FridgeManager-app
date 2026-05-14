@@ -18,4 +18,5 @@ export interface UserProfile {
   customPreferences: string;
   pantryStaples: string[];
   kitchenEquipment: string[];
+  usernameChangedAt: string | null;
 }

@@ -20,7 +20,27 @@ export async function fetchUserProfile(): Promise<UserProfile | null> {
     customPreferences: (data.custom_preferences ?? '') as string,
     pantryStaples: (data.pantry_staples ?? []) as string[],
     kitchenEquipment: (data.kitchen_equipment ?? []) as string[],
+    usernameChangedAt: data.username_changed_at ?? null,
   };
+}
+
+export async function changeUsername(newName: string): Promise<'ok' | 'taken' | 'error'> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return 'error';
+
+  const { error } = await supabase
+    .from('user_profiles')
+    .update({
+      display_name: newName.trim().toLowerCase(),
+      username_changed_at: new Date().toISOString(),
+    })
+    .eq('user_id', user.id);
+
+  if (error) {
+    if (error.code === '23505') return 'taken';
+    return 'error';
+  }
+  return 'ok';
 }
 
 export async function saveUserProfile(profile: UserProfile): Promise<void> {

@@ -405,6 +405,13 @@
       "kosher": "Casher",
       "pescatarian": "Pescétarien"
     },
+    "changeUsername": "Modifier",
+    "usernameAvailableOn": "Disponible le {{date}}",
+    "usernameError": {
+      "taken": "Ce @ est déjà pris",
+      "invalid": "3 à 20 caractères, lettres, chiffres, _ ou -",
+      "error": "Une erreur est survenue"
+    },
     "kitchenEquipment": "Équipements de cuisine",
     "kitchenEquipmentHint": "L'IA proposera uniquement des recettes réalisables avec vos équipements.",
     "equipment": {

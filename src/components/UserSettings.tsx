@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UserProfile, DietaryPreference } from '../types/UserProfile';
-import { fetchUserProfile, saveUserProfile } from '../utils/userProfileService';
+import { fetchUserProfile, saveUserProfile, changeUsername } from '../utils/userProfileService';
 import { EQUIPMENT_ICONS } from './KitchenEquipmentIcons';
 import './UserSettings.css';
 
@@ -20,7 +20,23 @@ const EMPTY_PROFILE: UserProfile = {
   customPreferences: '',
   pantryStaples: [],
   kitchenEquipment: [],
+  usernameChangedAt: null,
 };
+
+const USERNAME_COOLDOWN_DAYS = 30;
+const USERNAME_REGEX = /^[a-zA-Z0-9_.-]{3,20}$/;
+
+function canChangeUsername(changedAt: string | null): boolean {
+  if (!changedAt) return true;
+  return (Date.now() - new Date(changedAt).getTime()) >= USERNAME_COOLDOWN_DAYS * 86400_000;
+}
+
+function nextUsernameChangeDate(changedAt: string | null): Date | null {
+  if (!changedAt) return null;
+  const d = new Date(changedAt);
+  d.setDate(d.getDate() + USERNAME_COOLDOWN_DAYS);
+  return d;
+}
 
 type SettingsTab = 'profile' | 'preferences' | 'kitchen';
 
@@ -54,6 +70,10 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
   const [equipmentDraft, setEquipmentDraft] = useState<string[]>([]);
   const [equipmentSaving, setEquipmentSaving] = useState(false);
   const [equipmentSaved, setEquipmentSaved] = useState(false);
+  const [editingUsername, setEditingUsername] = useState(false);
+  const [usernameDraft, setUsernameDraft] = useState('');
+  const [usernameSaving, setUsernameSaving] = useState(false);
+  const [usernameError, setUsernameError] = useState<'taken' | 'invalid' | 'error' | null>(null);
 
   const hasProfileData = (p: UserProfile) => p.country || p.age;
 
@@ -136,6 +156,23 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
     setEquipmentSaving(false);
     setEquipmentSaved(true);
     setTimeout(() => setEquipmentSaved(false), 2000);
+  };
+
+  const handleUsernameSubmit = async () => {
+    if (!USERNAME_REGEX.test(usernameDraft)) { setUsernameError('invalid'); return; }
+    setUsernameSaving(true);
+    setUsernameError(null);
+    const result = await changeUsername(usernameDraft);
+    setUsernameSaving(false);
+    if (result === 'ok') {
+      const now = new Date().toISOString();
+      setProfile(p => ({ ...p, displayName: usernameDraft.toLowerCase(), usernameChangedAt: now }));
+      setDraft(p => ({ ...p, displayName: usernameDraft.toLowerCase(), usernameChangedAt: now }));
+      setEditingUsername(false);
+      setUsernameDraft('');
+    } else {
+      setUsernameError(result);
+    }
   };
 
   const nutritionDirty =
@@ -237,9 +274,44 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
               ) : (
                 <div className="settings-view">
                   {profile.displayName && (
-                    <div className="settings-view-row">
+                    <div className="settings-view-row settings-view-row--username">
                       <span className="settings-view-label">{t('auth.username')}</span>
-                      <span className="settings-view-value">@{profile.displayName}</span>
+                      {editingUsername ? (
+                        <div className="username-edit-inline">
+                          <span className="username-at">@</span>
+                          <input
+                            className="username-input"
+                            value={usernameDraft}
+                            onChange={e => { setUsernameDraft(e.target.value); setUsernameError(null); }}
+                            onKeyDown={e => { if (e.key === 'Enter') handleUsernameSubmit(); if (e.key === 'Escape') { setEditingUsername(false); setUsernameError(null); } }}
+                            placeholder={profile.displayName ?? ''}
+                            maxLength={20}
+                            autoFocus
+                          />
+                          <button className="username-confirm-btn" onClick={handleUsernameSubmit} disabled={usernameSaving || !usernameDraft.trim()}>
+                            {usernameSaving ? '…' : '✓'}
+                          </button>
+                          <button className="username-cancel-btn" onClick={() => { setEditingUsername(false); setUsernameError(null); }}>×</button>
+                          {usernameError && (
+                            <span className="username-error">{t(`settings.usernameError.${usernameError}`)}</span>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="username-view">
+                          <span className="settings-view-value">@{profile.displayName}</span>
+                          {canChangeUsername(profile.usernameChangedAt) ? (
+                            <button className="username-change-btn" onClick={() => { setUsernameDraft(''); setEditingUsername(true); }}>
+                              {t('settings.changeUsername')}
+                            </button>
+                          ) : (
+                            <span className="username-cooldown">
+                              {t('settings.usernameAvailableOn', {
+                                date: nextUsernameChangeDate(profile.usernameChangedAt)?.toLocaleDateString(i18n.language, { day: 'numeric', month: 'short' }),
+                              })}
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </div>
                   )}
                   <div className="settings-view-row">

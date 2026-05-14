@@ -405,6 +405,13 @@
       "kosher": "Kosher",
       "pescatarian": "Pescatarian"
     },
+    "changeUsername": "Edit",
+    "usernameAvailableOn": "Available on {{date}}",
+    "usernameError": {
+      "taken": "This @ is already taken",
+      "invalid": "3 to 20 characters, letters, numbers, _ or -",
+      "error": "An error occurred"
+    },
     "kitchenEquipment": "Kitchen equipment",
     "kitchenEquipmentHint": "The AI will only suggest recipes that can be made with your equipment.",
     "equipment": {
