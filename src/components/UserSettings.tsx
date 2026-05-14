@@ -6,6 +6,7 @@ import './UserSettings.css';
 
 const DIETARY_RESTRICTIONS: DietaryPreference[] = ['gluten_free', 'lactose_free', 'halal', 'kosher'];
 const DIETARY_PREFERENCES: DietaryPreference[] = ['vegetarian', 'vegan', 'pescatarian'];
+const KITCHEN_EQUIPMENT = ['oven', 'microwave', 'stovetop', 'air_fryer', 'blender', 'slow_cooker', 'deep_fryer', 'steamer', 'barbecue'] as const;
 
 const EMPTY_PROFILE: UserProfile = {
   displayName: null,
@@ -17,6 +18,7 @@ const EMPTY_PROFILE: UserProfile = {
   dislikedIngredients: [],
   customPreferences: '',
   pantryStaples: [],
+  kitchenEquipment: [],
 };
 
 type SettingsTab = 'profile' | 'preferences';
@@ -28,9 +30,10 @@ interface Props {
   onDietaryPreferencesChange?: (prefs: DietaryPreference[]) => void;
   onDislikedIngredientsChange?: (items: string[]) => void;
   onCustomPreferencesChange?: (value: string) => void;
+  onKitchenEquipmentChange?: (equipment: string[]) => void;
 }
 
-export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPreferencesChange, onDislikedIngredientsChange, onCustomPreferencesChange }: Props) => {
+export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPreferencesChange, onDislikedIngredientsChange, onCustomPreferencesChange, onKitchenEquipmentChange }: Props) => {
   const { t, i18n } = useTranslation();
 
   const [activeTab, setActiveTab] = useState<SettingsTab>('profile');
@@ -44,7 +47,8 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
     dietaryPreferences: DietaryPreference[];
     dislikedIngredients: string[];
     customPreferences: string;
-  }>({ dietaryPreferences: [], dislikedIngredients: [], customPreferences: '' });
+    kitchenEquipment: string[];
+  }>({ dietaryPreferences: [], dislikedIngredients: [], customPreferences: '', kitchenEquipment: [] });
   const [nutritionSaving, setNutritionSaving] = useState(false);
   const [nutritionSaved, setNutritionSaved] = useState(false);
 
@@ -59,6 +63,7 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
         dietaryPreferences: p.dietaryPreferences,
         dislikedIngredients: p.dislikedIngredients,
         customPreferences: p.customPreferences,
+        kitchenEquipment: p.kitchenEquipment,
       });
       setEditing(!hasProfileData(p));
       setLoading(false);
@@ -98,6 +103,15 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
     setNutritionDraft(prev => ({ ...prev, dislikedIngredients: prev.dislikedIngredients.filter(i => i !== item) }));
   };
 
+  const handleEquipmentToggle = (item: string) => {
+    setNutritionDraft(prev => ({
+      ...prev,
+      kitchenEquipment: prev.kitchenEquipment.includes(item)
+        ? prev.kitchenEquipment.filter(e => e !== item)
+        : [...prev.kitchenEquipment, item],
+    }));
+  };
+
   const handleSaveNutrition = async () => {
     setNutritionSaving(true);
     const updated = { ...profile, ...nutritionDraft };
@@ -107,6 +121,7 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
     onDietaryPreferencesChange?.(nutritionDraft.dietaryPreferences);
     onDislikedIngredientsChange?.(nutritionDraft.dislikedIngredients);
     onCustomPreferencesChange?.(nutritionDraft.customPreferences);
+    onKitchenEquipmentChange?.(nutritionDraft.kitchenEquipment);
     setNutritionSaving(false);
     setNutritionSaved(true);
     setTimeout(() => setNutritionSaved(false), 2000);
@@ -115,7 +130,8 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
   const nutritionDirty =
     JSON.stringify([...nutritionDraft.dietaryPreferences].sort()) !== JSON.stringify([...profile.dietaryPreferences].sort()) ||
     JSON.stringify([...nutritionDraft.dislikedIngredients].sort()) !== JSON.stringify([...profile.dislikedIngredients].sort()) ||
-    nutritionDraft.customPreferences !== profile.customPreferences;
+    nutritionDraft.customPreferences !== profile.customPreferences ||
+    JSON.stringify([...nutritionDraft.kitchenEquipment].sort()) !== JSON.stringify([...profile.kitchenEquipment].sort());
 
   if (loading) return <div className="settings-loading" />;
 
@@ -366,6 +382,23 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
                 onChange={e => setNutritionDraft(prev => ({ ...prev, customPreferences: e.target.value }))}
               />
               <span className="settings-field-hint">{t('settings.customPreferencesHint')}</span>
+            </div>
+
+            <div className="settings-field">
+              <label className="settings-label">{t('settings.kitchenEquipment')}</label>
+              <div className="settings-chips">
+                {KITCHEN_EQUIPMENT.map(item => (
+                  <button
+                    key={item}
+                    type="button"
+                    className={`settings-chip ${nutritionDraft.kitchenEquipment.includes(item) ? 'active' : ''}`}
+                    onClick={(e) => { handleEquipmentToggle(item); (e.currentTarget as HTMLButtonElement).blur(); }}
+                  >
+                    {t(`settings.equipment.${item}`)}
+                  </button>
+                ))}
+              </div>
+              <span className="settings-field-hint">{t('settings.kitchenEquipmentHint')}</span>
             </div>
 
             <div className="settings-save-row">

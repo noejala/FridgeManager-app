@@ -71,6 +71,7 @@ function App() {
   const [dietaryPreferences, setDietaryPreferences] = useState<DietaryPreference[]>([]);
   const [dislikedIngredients, setDislikedIngredients] = useState<string[]>([]);
   const [customPreferences, setCustomPreferences] = useState<string>('');
+  const [kitchenEquipment, setKitchenEquipment] = useState<string[]>([]);
   const [showPantry, setShowPantry] = useState(false);
   const [displayName, setDisplayName] = useState<string | null | undefined>(undefined);
   const [pendingFriendCount, setPendingFriendCount] = useState(0);
@@ -209,6 +210,7 @@ function App() {
       setDietaryPreferences(profile?.dietaryPreferences ?? []);
       setDislikedIngredients(profile?.dislikedIngredients ?? []);
       setCustomPreferences(profile?.customPreferences ?? '');
+      setKitchenEquipment(profile?.kitchenEquipment ?? []);
       if (resolvedId && userId) {
         const activeFridge = fridgeList.find(f => f.id === resolvedId);
         if ((activeFridge?.pantryStaples ?? []).length === 0) {
@@ -616,6 +618,7 @@ function App() {
           onConsumeProducts={(ids) => ids.forEach(id => handleConsumeProduct(id))}
           fridgeEmoji={fridges.find(f => f.id === activeFridgeId)?.emoji}
           fridgeName={fridges.find(f => f.id === activeFridgeId)?.name}
+          kitchenEquipment={kitchenEquipment}
         />
       </div>
       <div hidden={activeTab !== 'seasonal'}>
@@ -643,6 +646,7 @@ function App() {
           onDietaryPreferencesChange={setDietaryPreferences}
           onDislikedIngredientsChange={setDislikedIngredients}
           onCustomPreferencesChange={setCustomPreferences}
+          onKitchenEquipmentChange={setKitchenEquipment}
         />
       </div>
     </>

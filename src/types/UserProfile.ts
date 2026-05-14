@@ -17,4 +17,5 @@ export interface UserProfile {
   dislikedIngredients: string[];
   customPreferences: string;
   pantryStaples: string[];
+  kitchenEquipment: string[];
 }

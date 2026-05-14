@@ -403,6 +403,19 @@
       "halal": "Halal",
       "kosher": "Kosher",
       "pescatarian": "Pescatarian"
+    },
+    "kitchenEquipment": "Kitchen equipment",
+    "kitchenEquipmentHint": "The AI will only suggest recipes that can be made with your equipment.",
+    "equipment": {
+      "oven": "Oven",
+      "microwave": "Microwave",
+      "stovetop": "Stovetop",
+      "air_fryer": "Air fryer",
+      "blender": "Blender",
+      "slow_cooker": "Slow cooker",
+      "deep_fryer": "Deep fryer",
+      "steamer": "Steamer",
+      "barbecue": "Barbecue"
     }
   },
   "voice": {

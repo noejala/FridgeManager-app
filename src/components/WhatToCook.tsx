@@ -37,6 +37,7 @@ interface WhatToCookProps {
   onConsumeProducts?: (ids: string[]) => void;
   fridgeEmoji?: string;
   fridgeName?: string;
+  kitchenEquipment?: string[];
 }
 
 const MAX_MISSING = 4;
@@ -241,7 +242,7 @@ function applySort(recipes: RecipeMatch[], mode: SortMode): RecipeMatch[] {
 
 const aiEnabled = import.meta.env.VITE_AI_ENABLED === 'true';
 
-export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredients = [], customPreferences = '', pantryStaples = [], onConsumeProducts }: WhatToCookProps) => {
+export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredients = [], customPreferences = '', pantryStaples = [], onConsumeProducts, kitchenEquipment = [] }: WhatToCookProps) => {
   const { t, i18n } = useTranslation();
   const [recipes, setRecipes] = useState<RecipeMatch[]>([]);
   const [loading, setLoading] = useState(false);
@@ -324,7 +325,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
 
       if (recipeMode === 'ai') {
         try {
-          const aiResults = await fetchAiRecipes(fridgeNames, dietaryPreferences, i18n.language, selectedCookingMode ?? undefined, urgentFridgeNames, selectedCourse ?? undefined, customPreferences || undefined, selectedCustomModeText ?? undefined, pantryStaples.length > 0 ? pantryStaples : undefined, servings);
+          const aiResults = await fetchAiRecipes(fridgeNames, dietaryPreferences, i18n.language, selectedCookingMode ?? undefined, urgentFridgeNames, selectedCourse ?? undefined, customPreferences || undefined, selectedCustomModeText ?? undefined, pantryStaples.length > 0 ? pantryStaples : undefined, servings, kitchenEquipment.length > 0 ? kitchenEquipment : undefined);
           if (aiResults.length > 0) {
             meals = aiResults;
             isAiMode = true;

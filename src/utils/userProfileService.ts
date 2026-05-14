@@ -19,6 +19,7 @@ export async function fetchUserProfile(): Promise<UserProfile | null> {
     dislikedIngredients: (data.disliked_ingredients ?? []) as string[],
     customPreferences: (data.custom_preferences ?? '') as string,
     pantryStaples: (data.pantry_staples ?? []) as string[],
+    kitchenEquipment: (data.kitchen_equipment ?? []) as string[],
   };
 }
 
@@ -36,6 +37,7 @@ export async function saveUserProfile(profile: UserProfile): Promise<void> {
     disliked_ingredients: profile.dislikedIngredients,
     custom_preferences: profile.customPreferences,
     pantry_staples: profile.pantryStaples,
+    kitchen_equipment: profile.kitchenEquipment,
     updated_at: new Date().toISOString(),
   });
 }

@@ -31,7 +31,8 @@ export async function fetchAiRecipes(
   customPreferences?: string,
   customModeText?: string,
   pantryStaples?: string[],
-  servings?: number
+  servings?: number,
+  kitchenEquipment?: string[]
 ): Promise<MealDetails[]> {
   const rateLimitUntil = localStorage.getItem('mistral-ratelimit-until');
   if (rateLimitUntil && Date.now() < Number(rateLimitUntil)) {
@@ -40,7 +41,7 @@ export async function fetchAiRecipes(
   }
 
   const today = new Date().toISOString().slice(0, 10);
-  const raw = [...productNames].sort().join(',') + '|' + [...dietaryPrefs].sort().join(',') + '|' + language + '|' + today + '|' + (cookingMode ?? 'none') + '|' + (courseSelection ?? 'none') + '|' + (customPreferences ?? '') + '|' + (customModeText ?? '') + '|' + [...(pantryStaples ?? [])].sort().join(',') + '|' + (servings ?? 4) + '|v10';
+  const raw = [...productNames].sort().join(',') + '|' + [...dietaryPrefs].sort().join(',') + '|' + language + '|' + today + '|' + (cookingMode ?? 'none') + '|' + (courseSelection ?? 'none') + '|' + (customPreferences ?? '') + '|' + (customModeText ?? '') + '|' + [...(pantryStaples ?? [])].sort().join(',') + '|' + (servings ?? 4) + '|' + [...(kitchenEquipment ?? [])].sort().join(',') + '|v10';
   const cacheKey = `mistral-recipes-${hashString(raw).toString(36)}`;
 
   const cached = localStorage.getItem(cacheKey);
@@ -57,6 +58,11 @@ export async function fetchAiRecipes(
     : '';
   const customLabel = customPreferences?.trim()
     ? `Also take into account these personal preferences: ${customPreferences.trim()}`
+    : '';
+  const equipmentLabel = kitchenEquipment && kitchenEquipment.length > 0
+    ? (isFrench
+        ? `Équipements disponibles : ${kitchenEquipment.join(', ')}. Propose uniquement des recettes réalisables avec ces équipements. N'impose pas d'équipement non listé.`
+        : `Available kitchen equipment: ${kitchenEquipment.join(', ')}. Only suggest recipes that can be made with this equipment. Do not require equipment not listed.`)
     : '';
 
   let modeInstruction = '';
@@ -122,6 +128,7 @@ export async function fetchAiRecipes(
   const prompt = `You are a creative chef. I have these ingredients available: ${productNames.join(', ')}.
 ${dietLabel}
 ${customLabel}
+${equipmentLabel}
 ${servingsLabel}
 ${modeInstruction}
 ${courseInstruction}

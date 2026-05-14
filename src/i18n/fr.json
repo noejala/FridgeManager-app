@@ -403,6 +403,19 @@
       "halal": "Halal",
       "kosher": "Casher",
       "pescatarian": "Pescétarien"
+    },
+    "kitchenEquipment": "Équipements de cuisine",
+    "kitchenEquipmentHint": "L'IA proposera uniquement des recettes réalisables avec vos équipements.",
+    "equipment": {
+      "oven": "Four",
+      "microwave": "Micro-ondes",
+      "stovetop": "Plaques de cuisson",
+      "air_fryer": "Air fryer",
+      "blender": "Mixeur",
+      "slow_cooker": "Robot cuiseur",
+      "deep_fryer": "Friteuse",
+      "steamer": "Cuiseur vapeur",
+      "barbecue": "Barbecue"
     }
   },
   "voice": {
