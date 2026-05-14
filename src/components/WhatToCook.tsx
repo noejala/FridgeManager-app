@@ -241,7 +241,7 @@ function applySort(recipes: RecipeMatch[], mode: SortMode): RecipeMatch[] {
 
 const aiEnabled = import.meta.env.VITE_AI_ENABLED === 'true';
 
-export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredients = [], customPreferences = '', pantryStaples = [], onConsumeProducts, fridgeEmoji, fridgeName }: WhatToCookProps) => {
+export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredients = [], customPreferences = '', pantryStaples = [], onConsumeProducts }: WhatToCookProps) => {
   const { t, i18n } = useTranslation();
   const [recipes, setRecipes] = useState<RecipeMatch[]>([]);
   const [loading, setLoading] = useState(false);
@@ -620,7 +620,10 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
           <div className="cook-header-top">
             <h2>{t('cook.title')}</h2>
             <button className="saved-toggle-btn" onClick={() => setSavedView(true)}>
-              ♡{savedRecipes.length > 0 && <span className="saved-count">{savedRecipes.length}</span>}
+              <svg className="heart-icon" viewBox="0 0 24 24" width="16" height="16" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 21C12 21 3 14.5 3 8.5C3 5.42 5.42 3 8.5 3C10.24 3 11.91 3.81 13 5.08C14.09 3.81 15.76 3 17.5 3C20.58 3 23 5.42 23 8.5C23 14.5 14 21 12 21Z" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              {savedRecipes.length > 0 && <span className="saved-count">{savedRecipes.length}</span>}
             </button>
           </div>
         </div>
@@ -660,26 +663,26 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
             onPointerDown={(e) => { if (e.pointerType !== 'mouse') { e.preventDefault(); setSavedView(v => !v); } }}
             onClick={() => setSavedView(v => !v)}
           >
-            ♡
-            {savedRecipes.length > 0 && !savedView && <span className="saved-count">{savedRecipes.length}</span>}
+            <svg className="heart-icon" viewBox="0 0 24 24" width="16" height="16" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 21C12 21 3 14.5 3 8.5C3 5.42 5.42 3 8.5 3C10.24 3 11.91 3.81 13 5.08C14.09 3.81 15.76 3 17.5 3C20.58 3 23 5.42 23 8.5C23 14.5 14 21 12 21Z" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            {savedRecipes.length > 0 && <span className="saved-count">{savedRecipes.length}</span>}
           </button>
-          {!savedView && (
-            <div className="servings-stepper">
-              <button
-                className="stepper-btn"
-                onClick={() => setServings(s => Math.max(1, s - 1))}
-                disabled={servings <= 1}
-              >−</button>
-              <span className="servings-value">
-                {servings} <span className="servings-unit">{t('cook.servingsUnit')}</span>
-              </span>
-              <button
-                className="stepper-btn"
-                onClick={() => setServings(s => Math.min(20, s + 1))}
-                disabled={servings >= 20}
-              >+</button>
-            </div>
-          )}
+          <div className="servings-stepper" style={{ visibility: savedView ? 'hidden' : 'visible' }}>
+            <button
+              className="stepper-btn"
+              onClick={() => setServings(s => Math.max(1, s - 1))}
+              disabled={servings <= 1}
+            >−</button>
+            <span className="servings-value">
+              {servings} <span className="servings-unit">{t('cook.servingsUnit')}</span>
+            </span>
+            <button
+              className="stepper-btn"
+              onClick={() => setServings(s => Math.min(20, s + 1))}
+              disabled={servings >= 20}
+            >+</button>
+          </div>
         </div>
         <div className="cook-subtitle-row">
           {!(recipeMode === 'ai' && selectedCookingMode && selectedCourse) && (
