@@ -579,6 +579,7 @@ function App() {
                 <circle cx="9" cy="12" r="1" fill="currentColor" stroke="none"/>
                 <circle cx="15" cy="12" r="1" fill="currentColor" stroke="none"/>
               </svg>
+              Placard
             </button>
           </div>
           {showPantry && activeFridgeId && (
