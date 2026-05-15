@@ -23,6 +23,7 @@ export function FriendsPanel({ displayName }: Props) {
   const [searching, setSearching] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
   const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const allRelatedIds = new Set([...friends.map(f => f.userId), ...pending.map(p => p.userId)]);
@@ -237,14 +238,29 @@ export function FriendsPanel({ displayName }: Props) {
         {friends.length > 0 && (
           <ul className="friends-list">
             {friends.map(f => (
-              <li key={f.friendshipId} className="friends-list-item">
+              <li key={f.friendshipId} className={`friends-list-item${confirmRemove === f.friendshipId ? ' friends-list-item--confirm' : ''}`}>
                 <span className="friends-list-name">{displayLabel(f.displayName, f.firstName)}</span>
-                <button
-                  className="friends-remove-btn"
-                  disabled={actionLoading === f.friendshipId}
-                  onClick={() => handleRemove(f.friendshipId)}
-                  title={t('friends.remove')}
-                >×</button>
+                {confirmRemove === f.friendshipId ? (
+                  <span className="friends-remove-confirm">
+                    <span className="friends-remove-confirm-label">{t('friends.removeConfirm')}</span>
+                    <button
+                      className="friends-remove-confirm-yes"
+                      disabled={actionLoading === f.friendshipId}
+                      onClick={() => { setConfirmRemove(null); handleRemove(f.friendshipId); }}
+                    >{t('friends.remove')}</button>
+                    <button
+                      className="friends-remove-confirm-cancel"
+                      onClick={() => setConfirmRemove(null)}
+                    >{t('friends.cancel')}</button>
+                  </span>
+                ) : (
+                  <button
+                    className="friends-remove-btn"
+                    disabled={actionLoading === f.friendshipId}
+                    onClick={() => setConfirmRemove(f.friendshipId)}
+                    title={t('friends.remove')}
+                  >×</button>
+                )}
               </li>
             ))}
           </ul>

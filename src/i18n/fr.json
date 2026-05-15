@@ -642,6 +642,7 @@
     "friendsList": "Mes amis",
     "noFriends": "Aucun ami pour le moment. Cherche quelqu'un par pseudo ou prénom !",
     "remove": "Retirer",
+    "removeConfirm": "Retirer cet ami ?",
     "addToFridge": "Ajouter un ami au frigo",
     "pickFriend": "Choisir un ami…",
     "noFriendsYet": "Ajoute des amis dans l'onglet Amis pour les inviter ici.",

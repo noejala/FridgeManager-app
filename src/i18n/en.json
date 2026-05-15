@@ -642,6 +642,7 @@
     "friendsList": "My friends",
     "noFriends": "No friends yet. Search by username or first name!",
     "remove": "Remove",
+    "removeConfirm": "Remove this friend?",
     "addToFridge": "Add a friend to fridge",
     "pickFriend": "Pick a friend…",
     "noFriendsYet": "Add friends in the Friends tab to invite them here.",

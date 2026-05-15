@@ -261,6 +261,61 @@
   cursor: not-allowed;
 }
 
+.friends-list-item--confirm {
+  background: var(--bg-surface);
+}
+
+.friends-remove-confirm {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.friends-remove-confirm-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.friends-remove-confirm-yes {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--red);
+  background: var(--red-bg);
+  border: 1px solid var(--red);
+  border-radius: calc(var(--radius) / 2);
+  padding: 0.2rem 0.5rem;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+}
+
+.friends-remove-confirm-yes:hover {
+  opacity: 0.8;
+}
+
+.friends-remove-confirm-yes:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.friends-remove-confirm-cancel {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) / 2);
+  padding: 0.2rem 0.5rem;
+  cursor: pointer;
+  transition: color 0.15s;
+  white-space: nowrap;
+}
+
+.friends-remove-confirm-cancel:hover {
+  color: var(--text);
+}
+
 .friends-remove-btn {
   background: none;
   border: none;
