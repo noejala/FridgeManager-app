@@ -590,7 +590,7 @@ function App() {
                 <circle cx="9" cy="12" r="1" fill="currentColor" stroke="none"/>
                 <circle cx="15" cy="12" r="1" fill="currentColor" stroke="none"/>
               </svg>
-              Placard
+              {t('settings.pantryLabel')}
             </button>
           </div>
           {showPantry && activeFridgeId && (
@@ -608,8 +608,8 @@ function App() {
           <div className="copy-pantry-banner">
             <span className="copy-pantry-text">
               {copyPantryPrompt?.targetFridgeId === activeFridgeId
-                ? `Copier le placard de ${copyPantryPrompt.emoji} ${copyPantryPrompt.name} ?`
-                : 'Pense à remplir le placard de ce frigo'}
+                ? t('settings.pantryCopyFrom', { emoji: copyPantryPrompt.emoji, name: copyPantryPrompt.name })
+                : t('settings.pantryFillReminder')}
             </span>
             {copyPantryPrompt?.targetFridgeId === activeFridgeId && (
               <button
@@ -618,7 +618,7 @@ function App() {
                   await handlePantryChange(activeFridgeId, copyPantryPrompt.staples);
                 }}
               >
-                Copier
+                {t('settings.pantryCopyBtn')}
               </button>
             )}
           </div>

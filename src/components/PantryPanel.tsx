@@ -55,7 +55,7 @@ export function PantryPanel({ fridgeId, staples, onSave, onClose, copySource }: 
           onClick={() => setDraft(copySource.staples)}
           type="button"
         >
-          Copier le placard de {copySource.emoji} {copySource.name}
+          {t('settings.pantryCopySourceBtn', { emoji: copySource.emoji, name: copySource.name })}
         </button>
       )}
       <p className="pantry-panel-hint">{t('settings.pantryStaplesHint')}</p>
