@@ -64,6 +64,7 @@ function App() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [activeTab, setActiveTab] = useState('fridge');
   const [visitedTabs, setVisitedTabs] = useState<Set<string>>(new Set());
+  const [newFridgeId, setNewFridgeId] = useState<string | null>(null);
   const [copyPantryPrompt, setCopyPantryPrompt] = useState<{ targetFridgeId: string; name: string; emoji: string; staples: string[] } | null>(null);
   const [notification, setNotification] = useState<string | null>(null);
   const [pendingProduct, setPendingProduct] = useState<Omit<Product, 'id' | 'addedDate'> | null>(null);
@@ -311,6 +312,7 @@ function App() {
     const updated = await fetchFridges();
     setFridges(updated);
     await handleActiveFridgeChange(newFridge.id);
+    setNewFridgeId(newFridge.id);
     if (sourceFridge && sourceFridge.pantryStaples.length > 0) {
       setCopyPantryPrompt({ targetFridgeId: newFridge.id, name: sourceFridge.name, emoji: sourceFridge.emoji, staples: sourceFridge.pantryStaples });
     }
@@ -498,8 +500,9 @@ function App() {
   const handlePantryChange = async (fridgeId: string, staples: string[]) => {
     await updateFridgePantry(fridgeId, staples);
     setFridges(prev => prev.map(f => f.id === fridgeId ? { ...f, pantryStaples: staples } : f));
-    if (staples.length > 0 && copyPantryPrompt?.targetFridgeId === fridgeId) {
-      setCopyPantryPrompt(null);
+    if (staples.length > 0) {
+      if (copyPantryPrompt?.targetFridgeId === fridgeId) setCopyPantryPrompt(null);
+      if (newFridgeId === fridgeId) setNewFridgeId(null);
     }
   };
 
@@ -600,24 +603,27 @@ function App() {
             />
           )}
         </div>
-        {copyPantryPrompt &&
-         copyPantryPrompt.targetFridgeId === activeFridgeId &&
+        {newFridgeId === activeFridgeId &&
          (fridges.find(f => f.id === activeFridgeId)?.pantryStaples ?? []).length === 0 && (
           <div className="copy-pantry-banner">
             <span className="copy-pantry-text">
-              Copier le placard de {copyPantryPrompt.emoji} {copyPantryPrompt.name} ?
+              {copyPantryPrompt?.targetFridgeId === activeFridgeId
+                ? `Copier le placard de ${copyPantryPrompt.emoji} ${copyPantryPrompt.name} ?`
+                : 'Pense à remplir le placard de ce frigo'}
             </span>
-            <button
-              className="copy-pantry-confirm"
-              onClick={async () => {
-                await handlePantryChange(activeFridgeId, copyPantryPrompt.staples);
-                setCopyPantryPrompt(null);
-              }}
-            >
-              Copier
-            </button>
-            <button className="copy-pantry-dismiss" onClick={() => setCopyPantryPrompt(null)}>
-              Non merci
+            {copyPantryPrompt?.targetFridgeId === activeFridgeId && (
+              <button
+                className="copy-pantry-confirm"
+                onClick={async () => {
+                  await handlePantryChange(activeFridgeId, copyPantryPrompt.staples);
+                  setCopyPantryPrompt(null);
+                }}
+              >
+                Copier
+              </button>
+            )}
+            <button className="copy-pantry-dismiss" onClick={() => { setNewFridgeId(null); setCopyPantryPrompt(null); }}>
+              {copyPantryPrompt?.targetFridgeId === activeFridgeId ? 'Non merci' : 'OK'}
             </button>
           </div>
         )}
