@@ -573,7 +573,7 @@ function App() {
               className={`pantry-toggle-btn${showPantry ? ' active' : ''}`}
               onClick={() => setShowPantry(p => !p)}
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <rect x="2" y="2" width="20" height="20" rx="2"/>
                 <line x1="12" y1="2" x2="12" y2="22"/>
                 <circle cx="9" cy="12" r="1" fill="currentColor" stroke="none"/>
