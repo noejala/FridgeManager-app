@@ -349,9 +349,8 @@ body::after {
 .pantry-toggle-btn {
   display: flex;
   align-items: center;
-  gap: 0.35rem;
   margin-left: auto;
-  padding: 0.35rem 0.75rem;
+  padding: 0.35rem 0.5rem;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 2rem;
