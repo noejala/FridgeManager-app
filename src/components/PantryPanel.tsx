@@ -71,10 +71,17 @@ export function PantryPanel({ fridgeId, staples, onSave, onClose, copySource }: 
   const doSave = async (toSave: string[]) => {
     pendingCopyRef.current = null;
     setSaving(true);
-    await onSave(fridgeId, toSave);
-    setSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    try {
+      await onSave(fridgeId, toSave);
+      draftRef.current = toSave;
+      setDraft(toSave);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (err) {
+      console.error('PantryPanel save failed:', err);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleSave = () => doSave(pendingCopyRef.current ?? draftRef.current);
