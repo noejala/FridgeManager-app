@@ -37,6 +37,27 @@
 
 .pantry-panel-close:hover { color: var(--text); }
 
+.pantry-copy-source-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.75rem;
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-light);
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--accent);
+  cursor: pointer;
+  text-align: left;
+  transition: opacity 0.15s;
+}
+
+.pantry-copy-source-btn:hover { opacity: 0.8; }
+
 .pantry-panel-hint {
   font-size: 0.78rem;
   color: var(--text-muted);

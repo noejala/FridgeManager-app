@@ -64,7 +64,7 @@ function App() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [activeTab, setActiveTab] = useState('fridge');
   const [visitedTabs, setVisitedTabs] = useState<Set<string>>(new Set());
-  const [copyPantryPrompt, setCopyPantryPrompt] = useState<{ name: string; emoji: string; staples: string[] } | null>(null);
+  const [copyPantryPrompt, setCopyPantryPrompt] = useState<{ targetFridgeId: string; name: string; emoji: string; staples: string[] } | null>(null);
   const [notification, setNotification] = useState<string | null>(null);
   const [pendingProduct, setPendingProduct] = useState<Omit<Product, 'id' | 'addedDate'> | null>(null);
   const [darkMode, setDarkMode] = useState<boolean>(() => {
@@ -283,7 +283,6 @@ function App() {
 
   const handleActiveFridgeChange = async (fridgeId: string) => {
     setActiveFridgeId(fridgeId);
-    setCopyPantryPrompt(null);
     localStorage.setItem(ACTIVE_FRIDGE_KEY, fridgeId);
     try {
       const [data, consumed] = await Promise.all([
@@ -313,7 +312,7 @@ function App() {
     setFridges(updated);
     await handleActiveFridgeChange(newFridge.id);
     if (sourceFridge && sourceFridge.pantryStaples.length > 0) {
-      setCopyPantryPrompt({ name: sourceFridge.name, emoji: sourceFridge.emoji, staples: sourceFridge.pantryStaples });
+      setCopyPantryPrompt({ targetFridgeId: newFridge.id, name: sourceFridge.name, emoji: sourceFridge.emoji, staples: sourceFridge.pantryStaples });
     }
     return newFridge;
   };
@@ -499,6 +498,9 @@ function App() {
   const handlePantryChange = async (fridgeId: string, staples: string[]) => {
     await updateFridgePantry(fridgeId, staples);
     setFridges(prev => prev.map(f => f.id === fridgeId ? { ...f, pantryStaples: staples } : f));
+    if (staples.length > 0 && copyPantryPrompt?.targetFridgeId === fridgeId) {
+      setCopyPantryPrompt(null);
+    }
   };
 
   const handlePantryOnboardingSkip = () => {
@@ -594,10 +596,13 @@ function App() {
               staples={fridges.find(f => f.id === activeFridgeId)?.pantryStaples ?? []}
               onSave={handlePantryChange}
               onClose={() => setShowPantry(false)}
+              copySource={copyPantryPrompt?.targetFridgeId === activeFridgeId ? copyPantryPrompt : undefined}
             />
           )}
         </div>
-        {copyPantryPrompt && (
+        {copyPantryPrompt &&
+         copyPantryPrompt.targetFridgeId === activeFridgeId &&
+         (fridges.find(f => f.id === activeFridgeId)?.pantryStaples ?? []).length === 0 && (
           <div className="copy-pantry-banner">
             <span className="copy-pantry-text">
               Copier le placard de {copyPantryPrompt.emoji} {copyPantryPrompt.name} ?

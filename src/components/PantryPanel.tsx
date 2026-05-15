@@ -10,9 +10,10 @@ interface Props {
   staples: string[];
   onSave: (fridgeId: string, staples: string[]) => Promise<void>;
   onClose: () => void;
+  copySource?: { name: string; emoji: string; staples: string[] };
 }
 
-export function PantryPanel({ fridgeId, staples, onSave, onClose }: Props) {
+export function PantryPanel({ fridgeId, staples, onSave, onClose, copySource }: Props) {
   const { t } = useTranslation();
   const [draft, setDraft] = useState<string[]>(staples);
   const [customInput, setCustomInput] = useState('');
@@ -48,6 +49,15 @@ export function PantryPanel({ fridgeId, staples, onSave, onClose }: Props) {
         <h3 className="pantry-panel-title">{t('settings.pantryStaples')}</h3>
         <button className="pantry-panel-close" onClick={onClose} aria-label="Fermer">×</button>
       </div>
+      {copySource && (
+        <button
+          className="pantry-copy-source-btn"
+          onClick={() => setDraft(copySource.staples)}
+          type="button"
+        >
+          Copier le placard de {copySource.emoji} {copySource.name}
+        </button>
+      )}
       <p className="pantry-panel-hint">{t('settings.pantryStaplesHint')}</p>
 
       {PANTRY_GROUP_ORDER.map(group => {
