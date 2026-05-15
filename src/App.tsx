@@ -283,6 +283,7 @@ function App() {
 
   const handleActiveFridgeChange = async (fridgeId: string) => {
     setActiveFridgeId(fridgeId);
+    setCopyPantryPrompt(null);
     localStorage.setItem(ACTIVE_FRIDGE_KEY, fridgeId);
     try {
       const [data, consumed] = await Promise.all([
