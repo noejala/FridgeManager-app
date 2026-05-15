@@ -616,15 +616,11 @@ function App() {
                 className="copy-pantry-confirm"
                 onClick={async () => {
                   await handlePantryChange(activeFridgeId, copyPantryPrompt.staples);
-                  setCopyPantryPrompt(null);
                 }}
               >
                 Copier
               </button>
             )}
-            <button className="copy-pantry-dismiss" onClick={() => { setNewFridgeId(null); setCopyPantryPrompt(null); }}>
-              {copyPantryPrompt?.targetFridgeId === activeFridgeId ? 'Non merci' : 'OK'}
-            </button>
           </div>
         )}
         <AddProductForm
