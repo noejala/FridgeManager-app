@@ -37,26 +37,37 @@
 
 .pantry-panel-close:hover { color: var(--text); }
 
-.pantry-copy-source-btn {
+.pantry-copy-banner {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-  margin-bottom: 0.75rem;
+  gap: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  margin-top: 0.5rem;
   background: var(--accent-bg);
   border: 1px solid var(--accent-light);
   border-radius: var(--radius);
-  font-family: var(--font-body);
+}
+
+.pantry-copy-banner-text {
+  flex: 1;
+  font-size: 0.875rem;
+  color: var(--text);
+}
+
+.pantry-copy-banner-btn {
   font-size: 0.82rem;
-  font-weight: 500;
-  color: var(--accent);
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  border-radius: calc(var(--radius) / 2);
+  padding: 0.3rem 0.85rem;
   cursor: pointer;
-  text-align: left;
+  white-space: nowrap;
   transition: opacity 0.15s;
 }
 
-.pantry-copy-source-btn:hover { opacity: 0.8; }
+.pantry-copy-banner-btn:hover { opacity: 0.85; }
 
 .pantry-panel-hint {
   font-size: 0.78rem;

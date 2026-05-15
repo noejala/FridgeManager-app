@@ -606,21 +606,7 @@ function App() {
         {newFridgeId === activeFridgeId &&
          (fridges.find(f => f.id === activeFridgeId)?.pantryStaples ?? []).length === 0 && (
           <div className="copy-pantry-banner">
-            <span className="copy-pantry-text">
-              {copyPantryPrompt?.targetFridgeId === activeFridgeId
-                ? t('settings.pantryCopyFrom', { emoji: copyPantryPrompt.emoji, name: copyPantryPrompt.name })
-                : t('settings.pantryFillReminder')}
-            </span>
-            {copyPantryPrompt?.targetFridgeId === activeFridgeId && (
-              <button
-                className="copy-pantry-confirm"
-                onClick={async () => {
-                  await handlePantryChange(activeFridgeId, copyPantryPrompt.staples);
-                }}
-              >
-                {t('settings.pantryCopyBtn')}
-              </button>
-            )}
+            <span className="copy-pantry-text">{t('settings.pantryFillReminder')}</span>
           </div>
         )}
         <AddProductForm
