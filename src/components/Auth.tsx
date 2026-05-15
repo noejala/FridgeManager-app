@@ -99,7 +99,7 @@ export function Auth({ darkMode, onToggleDarkMode }: AuthProps) {
               type="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
-              placeholder="••••••••"
+              placeholder={t('auth.passwordPlaceholder')}
               required
               autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
               minLength={6}
@@ -114,7 +114,7 @@ export function Auth({ darkMode, onToggleDarkMode }: AuthProps) {
                 type="password"
                 value={confirmPassword}
                 onChange={e => setConfirmPassword(e.target.value)}
-                placeholder="••••••••"
+                placeholder={t('auth.passwordPlaceholder')}
                 required
                 autoComplete="new-password"
                 minLength={6}

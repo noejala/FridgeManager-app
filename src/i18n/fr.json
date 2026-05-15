@@ -13,6 +13,7 @@
     "createNewAccount": "Créer un nouveau compte",
     "email": "Email",
     "password": "Mot de passe",
+    "passwordPlaceholder": "Votre mot de passe",
     "confirmPassword": "Confirmer le mot de passe",
     "passwordsNoMatch": "Les mots de passe ne correspondent pas",
     "accountCreated": "Compte créé ! Vérifiez votre email pour confirmer, puis connectez-vous.",

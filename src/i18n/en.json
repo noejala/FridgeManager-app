@@ -13,6 +13,7 @@
     "createNewAccount": "Create a new account",
     "email": "Email",
     "password": "Password",
+    "passwordPlaceholder": "Your password",
     "confirmPassword": "Confirm password",
     "passwordsNoMatch": "Passwords do not match",
     "accountCreated": "Account created! Check your email to confirm, then log in.",
