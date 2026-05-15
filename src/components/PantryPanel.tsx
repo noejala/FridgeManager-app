@@ -49,6 +49,23 @@ export function PantryPanel({ fridgeId, staples, onSave, onClose, copySource }: 
         <h3 className="pantry-panel-title">{t('settings.pantryStaples')}</h3>
         <button className="pantry-panel-close" onClick={onClose} aria-label="Fermer">×</button>
       </div>
+      {copySource && (
+        <div className="pantry-copy-banner">
+          <span className="pantry-copy-banner-text">
+            {t('settings.pantryCopyFrom', { emoji: copySource.emoji, name: copySource.name })}
+          </span>
+          <button
+            className="pantry-copy-banner-btn"
+            onClick={async () => {
+              await onSave(fridgeId, copySource.staples);
+              setDraft(copySource.staples);
+            }}
+            type="button"
+          >
+            {t('settings.pantryCopyBtn')}
+          </button>
+        </div>
+      )}
       <p className="pantry-panel-hint">{t('settings.pantryStaplesHint')}</p>
 
       {PANTRY_GROUP_ORDER.map(group => {
@@ -100,20 +117,6 @@ export function PantryPanel({ fridgeId, staples, onSave, onClose, copySource }: 
         >+</button>
       </div>
 
-      {copySource && (
-        <div className="pantry-copy-banner">
-          <span className="pantry-copy-banner-text">
-            {t('settings.pantryCopyFrom', { emoji: copySource.emoji, name: copySource.name })}
-          </span>
-          <button
-            className="pantry-copy-banner-btn"
-            onClick={() => setDraft(copySource.staples)}
-            type="button"
-          >
-            {t('settings.pantryCopyBtn')}
-          </button>
-        </div>
-      )}
       <div className="pantry-save-row">
         <button
           className={`pantry-save-btn${saved ? ' saved' : ''}`}
