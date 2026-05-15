@@ -63,6 +63,7 @@ function App() {
   const [consumedProducts, setConsumedProducts] = useState<Product[]>([]);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [activeTab, setActiveTab] = useState('fridge');
+  const [visitedTabs, setVisitedTabs] = useState<Set<string>>(new Set());
   const [notification, setNotification] = useState<string | null>(null);
   const [pendingProduct, setPendingProduct] = useState<Omit<Product, 'id' | 'addedDate'> | null>(null);
   const [darkMode, setDarkMode] = useState<boolean>(() => {
@@ -262,6 +263,11 @@ function App() {
       localStorage.setItem(TAB_STORAGE_KEY, JSON.stringify({ tab: activeTab, timestamp: Date.now() }));
     }
   }, [activeTab, user]);
+
+  useEffect(() => {
+    const t = setTimeout(() => setVisitedTabs(p => new Set([...p, activeTab])), 500);
+    return () => clearTimeout(t);
+  }, [activeTab]);
 
   useEffect(() => {
     if (!showPantry) return;
@@ -530,7 +536,7 @@ function App() {
 
   const renderTabContent = () => (
     <>
-      <div hidden={activeTab !== 'add-product'}>
+      <div hidden={activeTab !== 'add-product'} data-tab-visited={visitedTabs.has('add-product') || undefined}>
         <AddProductForm
           onAdd={async (data) => { await handleAddProduct(data); setActiveTab('fridge'); }}
           isFormOpen={true}
@@ -552,7 +558,7 @@ function App() {
           </div>
         </div>
       )}
-      <div hidden={activeTab !== 'fridge'}>
+      <div hidden={activeTab !== 'fridge'} data-tab-visited={visitedTabs.has('fridge') || undefined}>
         <div ref={pantryAreaRef}>
           <div className="fridge-top-row">
             <FridgeSwitcher
@@ -599,7 +605,7 @@ function App() {
           onClearAll={handleClearFridge}
         />
       </div>
-      <div hidden={activeTab !== 'cook'}>
+      <div hidden={activeTab !== 'cook'} data-tab-visited={visitedTabs.has('cook') || undefined}>
         <div className="fridge-top-row">
           <FridgeSwitcher
             fridges={fridges}
@@ -621,10 +627,10 @@ function App() {
           kitchenEquipment={kitchenEquipment}
         />
       </div>
-      <div hidden={activeTab !== 'seasonal'}>
+      <div hidden={activeTab !== 'seasonal'} data-tab-visited={visitedTabs.has('seasonal') || undefined}>
         <SeasonalProducts isActive={activeTab === 'seasonal'} />
       </div>
-      <div hidden={activeTab !== 'sharing'}>
+      <div hidden={activeTab !== 'sharing'} data-tab-visited={visitedTabs.has('sharing') || undefined}>
         {displayName && (
           <SharingTab
             displayName={displayName}
@@ -638,7 +644,7 @@ function App() {
           />
         )}
       </div>
-      <div hidden={activeTab !== 'settings'}>
+      <div hidden={activeTab !== 'settings'} data-tab-visited={visitedTabs.has('settings') || undefined}>
         <UserSettings
           darkMode={darkMode}
           onToggleDarkMode={() => setDarkMode(prev => !prev)}
