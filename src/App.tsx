@@ -64,6 +64,7 @@ function App() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [activeTab, setActiveTab] = useState('fridge');
   const [visitedTabs, setVisitedTabs] = useState<Set<string>>(new Set());
+  const [copyPantryPrompt, setCopyPantryPrompt] = useState<{ name: string; emoji: string; staples: string[] } | null>(null);
   const [notification, setNotification] = useState<string | null>(null);
   const [pendingProduct, setPendingProduct] = useState<Omit<Product, 'id' | 'addedDate'> | null>(null);
   const [darkMode, setDarkMode] = useState<boolean>(() => {
@@ -305,10 +306,14 @@ function App() {
   };
 
   const handleCreateFridge = async (name: string, emoji = '🧊'): Promise<Fridge> => {
+    const sourceFridge = fridges.find(f => f.id === activeFridgeId);
     const newFridge = await createFridge(name, emoji);
     const updated = await fetchFridges();
     setFridges(updated);
     await handleActiveFridgeChange(newFridge.id);
+    if (sourceFridge && sourceFridge.pantryStaples.length > 0) {
+      setCopyPantryPrompt({ name: sourceFridge.name, emoji: sourceFridge.emoji, staples: sourceFridge.pantryStaples });
+    }
     return newFridge;
   };
 
@@ -591,6 +596,25 @@ function App() {
             />
           )}
         </div>
+        {copyPantryPrompt && (
+          <div className="copy-pantry-banner">
+            <span className="copy-pantry-text">
+              Copier le placard de {copyPantryPrompt.emoji} {copyPantryPrompt.name} ?
+            </span>
+            <button
+              className="copy-pantry-confirm"
+              onClick={async () => {
+                await handlePantryChange(activeFridgeId, copyPantryPrompt.staples);
+                setCopyPantryPrompt(null);
+              }}
+            >
+              Copier
+            </button>
+            <button className="copy-pantry-dismiss" onClick={() => setCopyPantryPrompt(null)}>
+              Non merci
+            </button>
+          </div>
+        )}
         <AddProductForm
           onAdd={handleAddProduct}
           isFormOpen={false}

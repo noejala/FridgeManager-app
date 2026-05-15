@@ -376,6 +376,55 @@ body::after {
   color: var(--accent);
 }
 
+/* ── Copy pantry banner ───────────────────────────────── */
+.copy-pantry-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  padding: 0.65rem 1rem;
+  margin-bottom: 0.75rem;
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-light);
+  border-radius: var(--radius);
+  animation: fade-in 0.2s ease;
+}
+
+.copy-pantry-text {
+  font-size: 0.875rem;
+  color: var(--text);
+  flex: 1;
+  min-width: 0;
+}
+
+.copy-pantry-confirm {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  border-radius: calc(var(--radius) / 2);
+  padding: 0.3rem 0.75rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+}
+
+.copy-pantry-confirm:hover { opacity: 0.85; }
+
+.copy-pantry-dismiss {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  padding: 0.3rem 0.25rem;
+  transition: color 0.15s;
+}
+
+.copy-pantry-dismiss:hover { color: var(--text); }
+
 /* ── Edit product modal ────────────────────────────────── */
 .edit-modal-backdrop {
   position: fixed;
