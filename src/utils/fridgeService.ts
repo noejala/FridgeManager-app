@@ -54,8 +54,13 @@ export async function createFridge(name: string, emoji = '🧊'): Promise<Fridge
 }
 
 export async function updateFridgePantry(id: string, staples: string[]): Promise<void> {
-  const { error } = await supabase.from('fridges').update({ pantry_staples: staples }).eq('id', id);
+  const { data, error } = await supabase
+    .from('fridges')
+    .update({ pantry_staples: staples })
+    .eq('id', id)
+    .select('id');
   if (error) throw error;
+  if (!data || data.length === 0) throw new Error('pantry update blocked — check RLS policy on fridges');
 }
 
 export async function updateFridge(id: string, updates: { name?: string; emoji?: string }): Promise<void> {
