@@ -47,11 +47,10 @@ export function SharingTab({
         </button>
       </div>
 
-      {section === 'friends' && (
+      <div hidden={section !== 'friends'}>
         <FriendsPanel displayName={displayName} />
-      )}
-
-      {section === 'fridges' && (
+      </div>
+      <div hidden={section !== 'fridges'}>
         <FridgeSettings
           fridges={fridges}
           currentUserId={currentUserId}
@@ -59,7 +58,7 @@ export function SharingTab({
           onActiveFridgeChange={onActiveFridgeChange}
           onCreateFridge={onCreateFridge}
         />
-      )}
+      </div>
     </div>
   );
 }
