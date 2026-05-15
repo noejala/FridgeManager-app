@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PANTRY_PRESET_ITEMS, PRESET_EN_SET } from '../utils/pantryPresets';
 import './PantryPanel.css';
@@ -19,8 +19,12 @@ export function PantryPanel({ fridgeId, staples, onSave, onClose, copySource }: 
   const [customInput, setCustomInput] = useState('');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const draftRef = useRef(draft);
 
   useEffect(() => { setDraft(staples); }, [fridgeId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Keep ref in sync so Save always reads the latest draft even after concurrent re-renders
+  draftRef.current = draft;
 
   const toggle = (en: string) => setDraft(prev => prev.includes(en) ? prev.filter(s => s !== en) : [...prev, en]);
 
@@ -41,12 +45,12 @@ export function PantryPanel({ fridgeId, staples, onSave, onClose, copySource }: 
     setTimeout(() => setSaved(false), 2000);
   };
 
-  const handleSave = () => doSave(draft);
+  const handleSave = () => doSave(draftRef.current);
 
   const dirty = JSON.stringify([...draft].sort()) !== JSON.stringify([...staples].sort());
 
   return (
-    <div className="pantry-panel" onPointerDown={e => e.stopPropagation()}>
+    <div className="pantry-panel" onPointerDown={e => e.stopPropagation()} onClick={e => e.stopPropagation()}>
       <div className="pantry-panel-header">
         <h3 className="pantry-panel-title">{t('settings.pantryStaples')}</h3>
         <button className="pantry-panel-close" onClick={onClose} aria-label="Fermer">×</button>
