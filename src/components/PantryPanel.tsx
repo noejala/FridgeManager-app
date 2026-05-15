@@ -58,10 +58,9 @@ export function PantryPanel({ fridgeId, staples, onSave, onClose, copySource }: 
           </span>
           <button
             className="pantry-copy-banner-btn"
-            onClick={async () => {
+            onClick={(e) => {
+              e.stopPropagation();
               setDraft(copySource.staples);
-              await doSave(copySource.staples);
-              onClose();
             }}
             type="button"
           >
