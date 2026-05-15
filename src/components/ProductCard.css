@@ -136,8 +136,6 @@
   border-top: 1px solid var(--border);
 }
 
-.status-badge { display: none; }
-
 .product-exp {
   display: flex;
   flex-direction: column;
