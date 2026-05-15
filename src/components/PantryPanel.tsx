@@ -33,13 +33,15 @@ export function PantryPanel({ fridgeId, staples, onSave, onClose, copySource }: 
 
   const removeCustom = (item: string) => setDraft(prev => prev.filter(s => s !== item));
 
-  const handleSave = async () => {
+  const doSave = async (staples: string[]) => {
     setSaving(true);
-    await onSave(fridgeId, draft);
+    await onSave(fridgeId, staples);
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
+
+  const handleSave = () => doSave(draft);
 
   const dirty = JSON.stringify([...draft].sort()) !== JSON.stringify([...staples].sort());
 
@@ -57,8 +59,9 @@ export function PantryPanel({ fridgeId, staples, onSave, onClose, copySource }: 
           <button
             className="pantry-copy-banner-btn"
             onClick={async () => {
-              await onSave(fridgeId, copySource.staples);
               setDraft(copySource.staples);
+              await doSave(copySource.staples);
+              onClose();
             }}
             type="button"
           >
