@@ -7,7 +7,7 @@ self.addEventListener('push', (event) => {
   try {
     data = event.data.json();
   } catch {
-    data = { title: 'Fridge Manager', body: event.data.text() };
+    data = { title: 'Freego', body: event.data.text() };
   }
 
   const options = {

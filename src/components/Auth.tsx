@@ -73,7 +73,7 @@ export function Auth({ darkMode, onToggleDarkMode }: AuthProps) {
             {i18n.language === 'en' ? 'FR' : 'EN'}
           </button>
         </div>
-        <h1 className="auth-title">Fridge <span>Manager</span></h1>
+        <h1 className="auth-title">Free<span>go</span></h1>
         <p className="auth-subtitle">
           {mode === 'login' ? t('auth.signInToAccount') : t('auth.createNewAccount')}
         </p>

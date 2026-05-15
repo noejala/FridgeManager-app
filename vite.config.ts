@@ -14,8 +14,8 @@ export default defineConfig({
       injectManifest: { injectionPoint: undefined },
       includeAssets: ['favicon.ico', 'icon.svg', 'apple-touch-icon-180x180.png'],
       manifest: {
-        name: 'Fridge Manager',
-        short_name: 'FridgeManager',
+        name: 'Freego',
+        short_name: 'Freego',
         description: 'Gestionnaire de frigo intelligent',
         theme_color: '#2c6fe0',
         background_color: '#2c6fe0',
