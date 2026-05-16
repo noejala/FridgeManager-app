@@ -54,13 +54,11 @@ export async function createFridge(name: string, emoji = '🧊'): Promise<Fridge
 }
 
 export async function updateFridgePantry(id: string, staples: string[]): Promise<void> {
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('fridges')
     .update({ pantry_staples: staples })
-    .eq('id', id)
-    .select('id');
+    .eq('id', id);
   if (error) throw error;
-  if (!data || data.length === 0) throw new Error('RLS: pantry update returned 0 rows');
 }
 
 export async function updateFridge(id: string, updates: { name?: string; emoji?: string }): Promise<void> {
