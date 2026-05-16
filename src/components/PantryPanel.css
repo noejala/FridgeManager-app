@@ -178,6 +178,12 @@
 
 .pantry-input-add:disabled { opacity: 0.4; cursor: default; }
 
+.pantry-save-error {
+  font-size: 0.78rem;
+  color: var(--red);
+  margin: 0.5rem 0 0;
+}
+
 .pantry-save-row {
   display: flex;
   align-items: center;

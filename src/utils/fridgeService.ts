@@ -60,7 +60,7 @@ export async function updateFridgePantry(id: string, staples: string[]): Promise
     .eq('id', id)
     .select('id');
   if (error) throw error;
-  if (!data || data.length === 0) throw new Error('pantry update blocked — check RLS policy on fridges');
+  if (!data || data.length === 0) throw new Error('RLS: pantry update returned 0 rows');
 }
 
 export async function updateFridge(id: string, updates: { name?: string; emoji?: string }): Promise<void> {

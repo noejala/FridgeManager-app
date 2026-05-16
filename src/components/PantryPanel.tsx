@@ -19,6 +19,7 @@ export function PantryPanel({ fridgeId, staples, onSave, onClose, copySource }: 
   const [customInput, setCustomInput] = useState('');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const draftRef = useRef(draft);
   // Holds a pending copy so Copy → Save survives any intermediate draft state resets
   const pendingCopyRef = useRef<string[] | null>(null);
@@ -71,6 +72,7 @@ export function PantryPanel({ fridgeId, staples, onSave, onClose, copySource }: 
   const doSave = async (toSave: string[]) => {
     pendingCopyRef.current = null;
     setSaving(true);
+    setSaveError(null);
     try {
       await onSave(fridgeId, toSave);
       draftRef.current = toSave;
@@ -79,6 +81,7 @@ export function PantryPanel({ fridgeId, staples, onSave, onClose, copySource }: 
       setTimeout(() => setSaved(false), 2000);
     } catch (err) {
       console.error('PantryPanel save failed:', err);
+      setSaveError(t('settings.pantrySaveError'));
     } finally {
       setSaving(false);
     }
@@ -163,6 +166,7 @@ export function PantryPanel({ fridgeId, staples, onSave, onClose, copySource }: 
         >+</button>
       </div>
 
+      {saveError && <p className="pantry-save-error">{saveError}</p>}
       <div className="pantry-save-row">
         <button
           className={`pantry-save-btn${saved ? ' saved' : ''}`}
