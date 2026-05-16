@@ -500,6 +500,7 @@ function App() {
   const handlePantryChange = async (fridgeId: string, staples: string[]) => {
     await updateFridgePantry(fridgeId, staples);
     setFridges(prev => prev.map(f => f.id === fridgeId ? { ...f, pantryStaples: staples } : f));
+    showNotification(t('settings.pantrySaved'));
     if (staples.length > 0) {
       if (copyPantryPrompt?.targetFridgeId === fridgeId) setCopyPantryPrompt(null);
       if (newFridgeId === fridgeId) setNewFridgeId(null);

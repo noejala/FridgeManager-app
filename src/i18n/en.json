@@ -384,6 +384,8 @@
     "pantryStaples": "Pantry staples",
     "pantryStaplesHint": "These items will be considered always available by the AI when suggesting recipes.",
     "pantryAddPlaceholder": "Add another item…",
+    "pantrySaveError": "Save failed. Check your connection and try again.",
+    "pantrySaved": "Pantry saved",
     "tabs": {
       "profile": "My profile",
       "preferences": "Preferences",

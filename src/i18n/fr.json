@@ -384,6 +384,8 @@
     "pantryStaples": "Placard de base",
     "pantryStaplesHint": "Ces produits seront considérés comme toujours disponibles par l'IA pour les recettes.",
     "pantryAddPlaceholder": "Ajouter un autre produit…",
+    "pantrySaveError": "Erreur lors de l'enregistrement. Vérifie ta connexion et réessaie.",
+    "pantrySaved": "Placard enregistré",
     "tabs": {
       "profile": "Mon profil",
       "preferences": "Préférences",
