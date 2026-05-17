@@ -597,8 +597,7 @@ function App() {
             </button>
           </div>
         </div>
-        {newFridgeId === activeFridgeId &&
-         (fridges.find(f => f.id === activeFridgeId)?.pantryStaples ?? []).length === 0 && (
+        {(fridges.find(f => f.id === activeFridgeId)?.pantryStaples ?? []).length === 0 && (
           <div className="copy-pantry-banner">
             <span className="copy-pantry-text">{t('settings.pantryFillReminder')}</span>
           </div>
