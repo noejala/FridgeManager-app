@@ -1,10 +1,7 @@
 .pantry-panel {
   background: var(--bg-card);
-  border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 1rem 1rem 0.75rem;
-  margin-bottom: 0.75rem;
-  animation: fade-in 0.15s ease;
+  padding: 1.25rem 1.25rem 1rem;
 }
 
 .pantry-panel-header {

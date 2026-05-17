@@ -92,7 +92,7 @@ export function PantryPanel({ fridgeId, staples, onSave, onClose, copySource }: 
   const dirty = JSON.stringify([...effectiveDraft].sort()) !== JSON.stringify([...staples].sort());
 
   return (
-    <div className="pantry-panel" onPointerDown={e => e.stopPropagation()} onClick={e => e.stopPropagation()}>
+    <div className="pantry-panel">
       <div className="pantry-panel-header">
         <h3 className="pantry-panel-title">{t('settings.pantryStaples')}</h3>
         <button className="pantry-panel-close" onClick={onClose} aria-label="Fermer">×</button>

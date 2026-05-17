@@ -86,7 +86,6 @@ function App() {
   const [scrolledDown, setScrolledDown] = useState(false);
   const lastScrollY = useRef(0);
   const scrollAccumulator = useRef(0);
-  const pantryAreaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!authLoading) {
@@ -271,16 +270,6 @@ function App() {
     return () => clearTimeout(t);
   }, [activeTab]);
 
-  useEffect(() => {
-    if (!showPantry) return;
-    const handler = (e: MouseEvent) => {
-      if (pantryAreaRef.current && !pantryAreaRef.current.contains(e.target as Node)) {
-        setShowPantry(false);
-      }
-    };
-    document.addEventListener('pointerdown', handler);
-    return () => document.removeEventListener('pointerdown', handler);
-  }, [showPantry]);
 
   const handleActiveFridgeChange = async (fridgeId: string) => {
     setActiveFridgeId(fridgeId);
@@ -570,8 +559,21 @@ function App() {
           </div>
         </div>
       )}
+      {showPantry && activeFridgeId && (
+        <div className="pantry-overlay-backdrop" onClick={() => setShowPantry(false)}>
+          <div className="pantry-overlay-sheet" onClick={e => e.stopPropagation()}>
+            <PantryPanel
+              fridgeId={activeFridgeId}
+              staples={fridges.find(f => f.id === activeFridgeId)?.pantryStaples ?? []}
+              onSave={handlePantryChange}
+              onClose={() => setShowPantry(false)}
+              copySource={copyPantryPrompt?.targetFridgeId === activeFridgeId ? copyPantryPrompt : undefined}
+            />
+          </div>
+        </div>
+      )}
       <div hidden={activeTab !== 'fridge'} data-tab-visited={visitedTabs.has('fridge') || undefined}>
-        <div ref={pantryAreaRef}>
+        <div>
           <div className="fridge-top-row">
             <FridgeSwitcher
               fridges={fridges}
@@ -594,15 +596,6 @@ function App() {
               {t('settings.pantryLabel')}
             </button>
           </div>
-          {showPantry && activeFridgeId && (
-            <PantryPanel
-              fridgeId={activeFridgeId}
-              staples={fridges.find(f => f.id === activeFridgeId)?.pantryStaples ?? []}
-              onSave={handlePantryChange}
-              onClose={() => setShowPantry(false)}
-              copySource={copyPantryPrompt?.targetFridgeId === activeFridgeId ? copyPantryPrompt : undefined}
-            />
-          )}
         </div>
         {newFridgeId === activeFridgeId &&
          (fridges.find(f => f.id === activeFridgeId)?.pantryStaples ?? []).length === 0 && (
