@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PANTRY_PRESET_ITEMS, PRESET_EN_SET } from '../utils/pantryPresets';
 import './PantryPanel.css';
@@ -20,63 +20,29 @@ export function PantryPanel({ fridgeId, staples, onSave, onClose, copySource }: 
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
-  const draftRef = useRef(draft);
-  // Holds a pending copy so Copy → Save survives any intermediate draft state resets
-  const pendingCopyRef = useRef<string[] | null>(null);
 
   useEffect(() => {
-    pendingCopyRef.current = null;
     setDraft(staples);
   }, [fridgeId]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Keep ref in sync only when no pending copy; pendingCopyRef takes precedence
-  if (pendingCopyRef.current === null) draftRef.current = draft;
-
-  // Single source of truth for display and dirty check
-  const effectiveDraft = pendingCopyRef.current ?? draft;
-
-  const toggle = (en: string) => {
-    if (pendingCopyRef.current !== null) {
-      const base = pendingCopyRef.current;
-      pendingCopyRef.current = null;
-      const next = base.includes(en) ? base.filter(s => s !== en) : [...base, en];
-      draftRef.current = next;
-      setDraft(next);
-    } else {
-      setDraft(prev => prev.includes(en) ? prev.filter(s => s !== en) : [...prev, en]);
-    }
-  };
+  const toggle = (en: string) =>
+    setDraft(prev => prev.includes(en) ? prev.filter(s => s !== en) : [...prev, en]);
 
   const addCustom = (value: string) => {
     const trimmed = value.trim().toLowerCase();
-    const base = pendingCopyRef.current ?? draft;
-    if (!trimmed || base.includes(trimmed)) return;
-    const next = [...base, trimmed];
-    pendingCopyRef.current = null;
-    draftRef.current = next;
-    setDraft(next);
+    if (!trimmed || draft.includes(trimmed)) return;
+    setDraft(prev => [...prev, trimmed]);
     setCustomInput('');
   };
 
-  const removeCustom = (item: string) => {
-    if (pendingCopyRef.current !== null) {
-      const next = pendingCopyRef.current.filter(s => s !== item);
-      pendingCopyRef.current = null;
-      draftRef.current = next;
-      setDraft(next);
-    } else {
-      setDraft(prev => prev.filter(s => s !== item));
-    }
-  };
+  const removeCustom = (item: string) =>
+    setDraft(prev => prev.filter(s => s !== item));
 
-  const doSave = async (toSave: string[]) => {
-    pendingCopyRef.current = null;
+  const handleSave = async () => {
     setSaving(true);
     setSaveError(null);
     try {
-      await onSave(fridgeId, toSave);
-      draftRef.current = toSave;
-      setDraft(toSave);
+      await onSave(fridgeId, draft);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch (err) {
@@ -87,9 +53,7 @@ export function PantryPanel({ fridgeId, staples, onSave, onClose, copySource }: 
     }
   };
 
-  const handleSave = () => doSave(pendingCopyRef.current ?? draftRef.current);
-
-  const dirty = JSON.stringify([...effectiveDraft].sort()) !== JSON.stringify([...staples].sort());
+  const dirty = JSON.stringify([...draft].sort()) !== JSON.stringify([...staples].sort());
 
   return (
     <div className="pantry-panel">
@@ -104,11 +68,7 @@ export function PantryPanel({ fridgeId, staples, onSave, onClose, copySource }: 
           </span>
           <button
             className="pantry-copy-banner-btn"
-            onClick={(e) => {
-              e.stopPropagation();
-              pendingCopyRef.current = copySource.staples;
-              setDraft(copySource.staples);
-            }}
+            onClick={() => setDraft(copySource.staples)}
             type="button"
           >
             {t('settings.pantryCopyBtn')}
@@ -127,7 +87,7 @@ export function PantryPanel({ fridgeId, staples, onSave, onClose, copySource }: 
                 <button
                   key={item.key}
                   type="button"
-                  className={`pantry-chip${effectiveDraft.includes(item.en) ? ' active' : ''}`}
+                  className={`pantry-chip${draft.includes(item.en) ? ' active' : ''}`}
                   onClick={() => toggle(item.en)}
                 >
                   {t(`pantryOnboarding.items.${item.key}`)}
@@ -138,9 +98,9 @@ export function PantryPanel({ fridgeId, staples, onSave, onClose, copySource }: 
         );
       })}
 
-      {effectiveDraft.filter(s => !PRESET_EN_SET.has(s)).length > 0 && (
+      {draft.filter(s => !PRESET_EN_SET.has(s)).length > 0 && (
         <div className="pantry-chips pantry-chips--custom">
-          {effectiveDraft.filter(s => !PRESET_EN_SET.has(s)).map(item => (
+          {draft.filter(s => !PRESET_EN_SET.has(s)).map(item => (
             <span key={item} className="pantry-chip pantry-chip--custom">
               {item}
               <button type="button" className="pantry-chip-remove" onClick={() => removeCustom(item)}>×</button>
