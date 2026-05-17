@@ -65,7 +65,14 @@ function App() {
   const [activeTab, setActiveTab] = useState('fridge');
   const [visitedTabs, setVisitedTabs] = useState<Set<string>>(new Set());
   const [newFridgeId, setNewFridgeId] = useState<string | null>(null);
-  const [copyPantryPrompt, setCopyPantryPrompt] = useState<{ targetFridgeId: string; name: string; emoji: string; staples: string[] } | null>(null);
+  const [copyPantryPrompt, setCopyPantryPromptState] = useState<{ targetFridgeId: string; name: string; emoji: string; staples: string[] } | null>(() => {
+    try { const raw = localStorage.getItem('copy-pantry-prompt'); return raw ? JSON.parse(raw) : null; } catch { return null; }
+  });
+  const setCopyPantryPrompt = (v: { targetFridgeId: string; name: string; emoji: string; staples: string[] } | null) => {
+    if (v) localStorage.setItem('copy-pantry-prompt', JSON.stringify(v));
+    else localStorage.removeItem('copy-pantry-prompt');
+    setCopyPantryPromptState(v);
+  };
   const [notification, setNotification] = useState<string | null>(null);
   const [pendingProduct, setPendingProduct] = useState<Omit<Product, 'id' | 'addedDate'> | null>(null);
   const [darkMode, setDarkMode] = useState<boolean>(() => {
@@ -190,6 +197,17 @@ function App() {
       // If fridgeList is still empty: new user without a username yet — fridge created after UsernameSetup
 
       setFridges(fridgeList);
+      const storedPrompt = localStorage.getItem('copy-pantry-prompt');
+      if (storedPrompt) {
+        try {
+          const prompt = JSON.parse(storedPrompt) as { targetFridgeId: string };
+          const target = fridgeList.find(f => f.id === prompt.targetFridgeId);
+          if (!target || (target.pantryStaples ?? []).length > 0) {
+            localStorage.removeItem('copy-pantry-prompt');
+            setCopyPantryPromptState(null);
+          }
+        } catch { localStorage.removeItem('copy-pantry-prompt'); }
+      }
 
       const savedId = localStorage.getItem(ACTIVE_FRIDGE_KEY);
       const resolvedId = fridgeList.find(f => f.id === savedId)?.id ?? fridgeList[0]?.id ?? '';
