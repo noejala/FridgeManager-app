@@ -7,6 +7,9 @@ import './NewFridgeModal.css';
 
 const FRIDGE_EMOJIS = ['🧊', '❄️', '🍎', '🥦', '🥩', '🍷', '🫙', '🌿', '🍕', '🥗', '⭐'];
 
+let friendsCache: { friends: Friend[]; ts: number } | null = null;
+const CACHE_TTL = 5 * 60 * 1000;
+
 const EMOJI_DATA: { emoji: string; keywords: string[] }[] = [
   { emoji: '🍔', keywords: ['burger', 'hamburger', 'viande'] },
   { emoji: '🌮', keywords: ['taco', 'mexicain'] },
@@ -90,6 +93,10 @@ export function NewFridgeModal({ onClose, onCreate, onDone }: Props) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (friendsCache && Date.now() - friendsCache.ts < CACHE_TTL) {
+      setFriends(friendsCache.friends);
+      return;
+    }
     fetchFriendships().then(async ({ friends: f }) => {
       const counts = await fetchFriendFridgeCounts(f.map(fr => fr.userId)).catch(() => new Map<string, number>());
       const sorted = [...f].sort((a, b) => {
@@ -97,6 +104,7 @@ export function NewFridgeModal({ onClose, onCreate, onDone }: Props) {
         if (diff !== 0) return diff;
         return new Date(b.since).getTime() - new Date(a.since).getTime();
       });
+      friendsCache = { friends: sorted, ts: Date.now() };
       setFriends(sorted);
     }).catch(() => {});
   }, []);
