@@ -86,17 +86,16 @@ export function NewFridgeModal({ onClose, onCreate, onDone }: Props) {
   const [search, setSearch] = useState('');
   const pickerRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
-  const [friends, setFriends] = useState<Friend[]>([]);
+  const [friends, setFriends] = useState<Friend[]>(() =>
+    friendsCache && Date.now() - friendsCache.ts < CACHE_TTL ? friendsCache.friends : []
+  );
   const [friendSearch, setFriendSearch] = useState('');
   const [selected, setSelected] = useState<Record<string, FridgeMemberRole | null>>({});
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (friendsCache && Date.now() - friendsCache.ts < CACHE_TTL) {
-      setFriends(friendsCache.friends);
-      return;
-    }
+    if (friendsCache && Date.now() - friendsCache.ts < CACHE_TTL) return;
     fetchFriendships().then(async ({ friends: f }) => {
       const counts = await fetchFriendFridgeCounts(f.map(fr => fr.userId)).catch(() => new Map<string, number>());
       const sorted = [...f].sort((a, b) => {
