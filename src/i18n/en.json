@@ -992,6 +992,7 @@
     "linkCopied": "Copied!",
     "shareAppText": "Join me on Freego! {{url}}",
     "shareFridgeText": "Join my fridge on Freego!",
-    "noFriendsHint": "Your friend doesn't have Freego yet? Invite them directly to join this fridge via the Share section below."
+    "noFriendsHint": "Your friend doesn't have Freego yet? Invite them directly to join this fridge via the Share section below.",
+    "linkError": "Error, try again"
   }
 }

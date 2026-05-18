@@ -31,6 +31,7 @@ export const FridgeSettings = ({ fridges, currentUserId, onFridgesChange, onActi
   const [inviteSuccess, setInviteSuccess] = useState(false);
   const [linkCopied, setLinkCopied] = useState<'fridge' | null>(null);
   const [generatingInvite, setGeneratingInvite] = useState(false);
+  const [inviteLinkError, setInviteLinkError] = useState(false);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [confirmLeaveId, setConfirmLeaveId] = useState<string | null>(null);
   const [showNewFridgeModal, setShowNewFridgeModal] = useState(false);
@@ -157,18 +158,17 @@ export const FridgeSettings = ({ fridges, currentUserId, onFridgesChange, onActi
   const handleShareFridge = async () => {
     if (!expandedFridgeId) return;
     setGeneratingInvite(true);
+    setInviteLinkError(false);
     try {
       const token = await createFridgeInvite(expandedFridgeId);
       const url = `${APP_URL}?invite=${token}`;
-      if (navigator.share) {
-        try { await navigator.share({ text: t('fridges.shareFridgeText'), url }); } catch { /* dismissed */ }
-      } else {
-        await navigator.clipboard.writeText(url);
-        setLinkCopied('fridge');
-        setTimeout(() => setLinkCopied(null), 2000);
-      }
-    } catch {
-      // ignore
+      await navigator.clipboard.writeText(url);
+      setLinkCopied('fridge');
+      setTimeout(() => setLinkCopied(null), 2500);
+    } catch (err) {
+      console.error('Fridge invite error:', err);
+      setInviteLinkError(true);
+      setTimeout(() => setInviteLinkError(false), 3000);
     } finally {
       setGeneratingInvite(false);
     }
@@ -325,11 +325,11 @@ export const FridgeSettings = ({ fridges, currentUserId, onFridgesChange, onActi
                 <h4 className="fridge-settings-label">{t('fridges.shareSection')}</h4>
                 <div className="fridge-share-row">
                   <button
-                    className="fridge-share-btn fridge-share-btn--primary"
+                    className={`fridge-share-btn fridge-share-btn--primary${inviteLinkError ? ' fridge-share-btn--error' : ''}`}
                     onClick={handleShareFridge}
                     disabled={generatingInvite}
                   >
-                    {generatingInvite ? '…' : linkCopied === 'fridge' ? t('fridges.linkCopied') : t('fridges.shareFridgeLink')}
+                    {generatingInvite ? '…' : linkCopied === 'fridge' ? t('fridges.linkCopied') : inviteLinkError ? t('fridges.linkError') : t('fridges.shareFridgeLink')}
                   </button>
                 </div>
               </div>
