@@ -489,7 +489,6 @@ body::after {
   max-height: 90dvh;
   overflow-y: auto;
   border-radius: var(--radius);
-  animation: modal-in 0.25s ease both;
 }
 
 @media (max-width: 768px) {
