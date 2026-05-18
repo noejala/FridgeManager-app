@@ -129,6 +129,15 @@ export async function leaveFridge(fridgeId: string): Promise<void> {
   if (error) throw error;
 }
 
+export async function createFridgeInvite(fridgeId: string): Promise<string> {
+  const { data, error } = await supabase.rpc('create_fridge_invite', {
+    p_fridge_id: fridgeId,
+    p_role: 'editor',
+  });
+  if (error) throw error;
+  return data as string;
+}
+
 export async function acceptFridgeInvite(token: string): Promise<{ fridgeId: string; fridgeName: string }> {
   const { data, error } = await supabase.rpc('accept_fridge_invite', { token });
   if (error) throw error;

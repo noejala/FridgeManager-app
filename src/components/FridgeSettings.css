@@ -512,3 +512,35 @@
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
 }
+
+.fridge-share-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.fridge-share-btn {
+  flex: 1;
+  padding: 0.45rem 0.75rem;
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) / 2);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.1s, color 0.1s;
+}
+
+.fridge-share-btn:hover { border-color: var(--border-hover); color: var(--text); }
+
+.fridge-share-btn--primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: transparent;
+}
+
+.fridge-share-btn--primary:hover { opacity: 0.88; color: #fff; }
+
+.fridge-share-btn:disabled { opacity: 0.5; cursor: default; }

@@ -551,80 +551,376 @@
       "Pomelo": "Pomelo"
     },
     "funFacts": {
-      "Apples": ["There are over 7,500 varieties of apples cultivated worldwide, but only a handful dominate supermarket shelves.", "An apple floats in water because 25% of its volume is air.", "The science of apple growing is called pomology, from the Latin 'pomum' meaning fruit."],
-      "Apricots": ["Apricots are one of the few fruits that improve in nutritional value when dried — the dried version has 7x more nutrients by weight.", "Apricot kernels contain amygdalin, which the body converts to cyanide — never eat them in large quantities.", "The apricot tree is thought to have originated in China and arrived in Europe via the Silk Road."],
-      "Artichokes": ["The artichoke is a thistle — if left unharvested, it blooms into a spectacular purple flower.", "Artichokes contain cynarin, a compound that makes everything eaten afterward taste sweeter.", "Ancient Romans considered artichokes a luxury food and ate them preserved in cumin and vinegar."],
-      "Asparagus": ["Asparagus can grow up to 10 cm in a single day under ideal conditions.", "White asparagus is simply green asparagus grown without sunlight to prevent chlorophyll from developing.", "Asparagus was considered an aphrodisiac in 17th-century France and was served at wedding banquets."],
-      "Beetroot": ["The Romans used beetroot juice as a hair dye and a remedy for fevers.", "Beetroot contains nitrates that convert to nitric oxide in the body, improving blood flow and athletic performance.", "The deep red colour of beetroot comes from betalains, pigments not found in most other vegetables."],
-      "Beets": ["Sugar beets account for about 20% of the world's sugar production.", "Golden beets and Chioggia (striped) beets exist alongside the classic red variety.", "Beet greens are entirely edible and more nutritious than the root itself, packed with iron and calcium."],
-      "Blackberries": ["Blackberries are a 'bramble fruit' — the plant's thorny canes can live for two years before dying back.", "A blackberry is technically an aggregate fruit, made up of dozens of individual drupelets.", "Blackberries have been found in the stomachs of Iron Age bog bodies in Denmark, suggesting they were a common food."],
-      "Blueberries": ["Blueberries are one of the few foods naturally coloured blue, a colour that rarely occurs in nature.", "Native Americans used blueberries to make pemmican, a dried meat and berry mixture for long journeys.", "Blueberries contain anthocyanins that may help improve memory and delay brain aging."],
-      "Broad beans": ["Broad beans are one of the oldest cultivated plants — they've been found in Egyptian tombs dating to 3000 BC.", "People with the genetic condition G6PD deficiency (favism) can have a severe reaction to eating broad beans.", "In ancient Rome, broad beans were used as voting tokens — white for yes, black for no."],
-      "Broccoli": ["Broccoli was engineered from wild cabbage over 2,000 years ago in the Mediterranean region.", "Broccoli contains sulforaphane, a compound studied for its potential anti-cancer properties.", "The name 'broccoli' comes from the Italian word for 'the flowering crest of a cabbage'."],
-      "Brussels sprouts": ["Brussels sprouts are actually the axillary buds of the plant — each sprout grows in the leaf joint along the stalk.", "Belgium is often credited with developing Brussels sprouts, but they were already grown in Flanders by the 13th century.", "Roasting Brussels sprouts at high heat caramelises their natural sugars and significantly reduces their bitterness."],
-      "Cabbage": ["Cabbage has been cultivated for over 4,000 years and was likely one of the first vegetables grown in Europe.", "Sauerkraut (fermented cabbage) contains natural probiotics that support gut health.", "Captain James Cook brought sauerkraut on his voyages to prevent scurvy among his crew."],
-      "Carrots": ["Carrots were originally white or purple — the orange variety was selectively bred in the Netherlands in the 17th century.", "The beta-carotene in carrots converts to vitamin A in the body, which is essential for night vision.", "Carrots are the second most popular vegetable in the world after potatoes."],
-      "Cauliflower": ["Cauliflower's white 'curd' forms because the plant's leaves shade the developing flower head from sunlight.", "Purple, yellow, and green cauliflower varieties exist, including the fractal-patterned Romanesco.", "Mark Twain described cauliflower as 'nothing but cabbage with a college education'."],
-      "Celeriac": ["Celeriac is the swollen root of a variety of celery specifically bred for its underground bulb.", "Celeriac was mentioned by Homer in the Odyssey under its Greek name 'selinon'.", "Despite its rough, ugly exterior, celeriac is prized in French cuisine, especially as a remoulade."],
-      "Cherries": ["It takes about 250 cherries to make a single jar of cherry jam.", "Cherries are one of the few natural food sources of melatonin, which helps regulate sleep cycles.", "Sweet and sour cherries come from different species — Prunus avium and Prunus cerasus respectively."],
-      "Chestnuts": ["Chestnuts are unusual among nuts in that they contain starch, making them more like a grain than a nut.", "Chestnut flour was a dietary staple in parts of France and Italy before the spread of potatoes.", "A single chestnut tree can produce up to 50 kg of nuts per year and live for over 500 years."],
-      "Citrus fruits": ["Citrus fruits originated in Southeast Asia around 7 to 8 million years ago.", "The white pith beneath citrus peel is bitter but rich in flavonoids and fibre.", "Vitamin C in freshly squeezed citrus juice degrades slowly — a glass retains most of its benefits for several hours."],
-      "Clementines": ["The clementine was discovered around 1902 by Brother Clément Rodier in an Algerian orphanage garden — likely a natural hybrid.", "The Corsican clementine (Clémentine de Corse PGI) is the only French protected clementine, sold with its leaf attached.", "Clementines are seedless because they are parthenocarpic — they develop without pollination."],
-      "Corn": ["Corn is the world's most produced crop, ahead of wheat and rice by volume.", "An ear of corn always has an even number of rows of kernels.", "Popcorn has been eaten for thousands of years — popped corn cobs dating to 3600 BC were found in Peru."],
-      "Cranberries": ["Cranberries float on water thanks to internal air pockets, which makes harvesting them much easier.", "Cranberries contain proanthocyanidins that prevent bacteria from adhering to the urinary tract wall.", "Native Americans used cranberries as a food, a dye, and a medicine long before European settlers arrived."],
-      "Cucumbers": ["Cucumbers are 96% water, making them one of the most hydrating foods you can eat.", "The surface of a cucumber is several degrees cooler than the surrounding air, giving rise to the phrase 'cool as a cucumber'.", "Cucumbers have been cultivated in India for over 3,000 years and spread westward from there."],
-      "Eggplant": ["Eggplant belongs to the nightshade family, alongside tomatoes, potatoes, and chilli peppers.", "The skin of eggplant contains nasunin, an antioxidant that may help protect brain cells.", "In Asia, eggplants can be white, green, striped, or long and thin — the big purple variety is largely a Western preference."],
-      "Endives": ["Endive was discovered by accident around 1830 when a Belgian farmer found chicory roots had sprouted white leaves in his cellar.", "Endive is grown in two stages: roots develop in the field, then the pale chicons form in a dark, temperature-controlled room.", "Belgium produces the most endive in the world, followed closely by France and the Netherlands."],
-      "Fava beans": ["Fava beans are one of the earliest cultivated plants — evidence of their use dates back over 8,000 years in the Middle East.", "Fava beans contain L-DOPA, a precursor to dopamine, and are studied as a dietary support for Parkinson's disease.", "Pythagoras forbade his followers from eating fava beans — the exact reason remains a philosophical mystery."],
-      "Fennel": ["All parts of the fennel plant are edible: the bulb, stalks, fronds, and seeds.", "Fennel's aroma comes from anethole, the same compound that flavours anise, liquorice, and pastis.", "Ancient Greeks called fennel 'marathon' and believed it gave strength and courage to warriors."],
-      "Figs": ["A fig is not technically a fruit — it is an inverted flower cluster called a syconium.", "Figs may be the first plant ever cultivated by humans, with evidence predating wheat and barley by 1,000 years.", "Some fig varieties require pollination by a specific wasp species (Blastophaga psenes) that enters through a tiny opening."],
-      "Grapes": ["Grapes are the most widely cultivated fruit in the world, grown on about 75 million hectares.", "There are over 10,000 varieties of wine grapes, though fewer than 50 account for the vast majority of wine production.", "Resveratrol, found in red grape skins, is studied for its antioxidant and cardioprotective effects."],
-      "Green beans": ["Green beans originated in Central America and didn't reach Europe until after Columbus's voyages in the late 15th century.", "There are over 130 varieties of green beans, including flat Romano beans, round filet beans, and yellow wax beans.", "Green beans are harvested young and immature — if left to fully ripen, the pods become tough and the seeds dry into regular beans."],
-      "Kale": ["Kale is one of the most nutrient-dense foods on Earth, packed with vitamins K, A, and C.", "Kale was one of the most widely eaten vegetables in Europe during the Middle Ages before other cabbages took over.", "Kale contains lutein and zeaxanthin, carotenoids that help protect the macula of the eye from UV damage."],
-      "Leeks": ["The leek is the national symbol of Wales, worn on St David's Day on 1 March.", "Leeks belong to the allium family alongside garlic, onions, shallots, and chives.", "Vichyssoise, the classic cold potato and leek soup, was actually invented in New York by a French chef in 1917."],
-      "Lettuce": ["Lettuce was cultivated in ancient Egypt at least 4,500 years ago, depicted in temple frescoes.", "Lettuce contains lactucarium, a milky latex with mild sedative properties, once called 'lettuce opium'.", "There are over 100 varieties of lettuce, from butterhead to romaine to oak leaf."],
-      "Melons": ["Melons are related to cucumbers and belong to the same family: Cucurbitaceae.", "You can tell if a melon is ripe by smelling the stem end — a sweet, fragrant aroma indicates full ripeness.", "Ancient Egyptians were growing melons as far back as 2400 BC, depicted in tomb paintings."],
-      "Mushrooms": ["Mushrooms are neither plants nor animals — they belong to their own kingdom: Fungi.", "The mycelium network of some fungi can spread over hundreds of acres and live for thousands of years.", "Mushrooms exposed to UV light produce vitamin D, much like human skin does in sunlight."],
-      "New potatoes": ["New potatoes are harvested before they are fully mature, which is why their skin is so thin you can rub it off.", "Because of their lower starch content, new potatoes hold their shape better when boiled than mature potatoes.", "New potatoes have a shorter shelf life than mature potatoes — they should ideally be eaten within a few days of purchase."],
-      "Olives": ["An olive tree can live for over 1,000 years — some trees in Greece and Italy are believed to be over 2,000 years old.", "It takes about 5 kg of olives to produce 1 litre of extra-virgin olive oil.", "Fresh olives straight from the tree are intensely bitter and completely inedible without curing in brine or lye."],
-      "Oranges": ["The sweet orange as we know it was introduced to Europe by Portuguese sailors in the 15th century.", "There are over 600 varieties of orange grown worldwide, from navel to blood to Valencia.", "The bitter orange (Seville orange) is rarely eaten fresh but is the key ingredient in classic English marmalade."],
-      "Parsnips": ["Parsnips were the primary sweetener in Europe before cane sugar became affordable.", "A frost actually improves the flavour of parsnips by converting some of their starch into sugar.", "Parsnips contain furanocoumarins, compounds that can cause skin sensitivity to sunlight when handling the plant."],
-      "Peaches": ["Peaches originated in China and were cultivated there over 4,000 years ago, long before they reached Europe.", "The nectarine is not a separate species — it's simply a smooth-skinned variety of peach.", "Georgia is nicknamed 'The Peach State', though California now produces the most peaches in the US."],
-      "Pears": ["Pears are one of the few fruits that ripen better off the tree — they should be left at room temperature after harvest.", "There are over 3,000 varieties of pears grown worldwide.", "The Conference pear, bred in England in 1884, is the most widely grown variety in Europe."],
-      "Peas": ["Gregor Mendel discovered the laws of genetics by studying the inheritance of traits in thousands of pea plants.", "Peas are one of the oldest cultivated vegetables, eaten for over 10,000 years in the Middle East.", "Frozen peas retain almost as much nutritional value as fresh — they're blanched and frozen within hours of harvest."],
-      "Peppers": ["Bell peppers and chilli peppers are the same species: Capsicum annuum. The difference is just in the genetics.", "Red peppers contain three times more vitamin C than green peppers because they are fully ripened.", "The Scoville scale measures the heat of peppers — bell peppers score 0, while the hottest peppers exceed 3 million units."],
-      "Plums": ["The damson plum gets its name from Damascus — the Romans brought it back from Syria.", "Prunes (dried plums) have been used as a natural laxative for centuries due to their high sorbitol content.", "There are over 2,000 varieties of plums, ranging from deep purple to yellow, red, and green."],
-      "Pomegranates": ["A pomegranate can contain up to 1,000 seeds, each surrounded by a jewel-like, juice-filled aril.", "Pomegranates have one of the highest antioxidant contents of any fruit — higher than red wine or green tea.", "In Greek mythology, Persephone ate pomegranate seeds in the underworld, which bound her to spend part of each year there — explaining the seasons."],
-      "Potatoes": ["The potato was introduced to Europe from the Andes in the 16th century and transformed European diet and population growth.", "A potato is about 80% water and 20% solid matter, mostly starch.", "Green-tinged potatoes contain solanine, a naturally occurring toxin — they should always be avoided."],
-      "Pumpkins": ["Pumpkins are native to Central America and have been cultivated for over 7,500 years.", "The world record pumpkin weighed over 1,200 kg — grown in Belgium in 2016.", "Every part of the pumpkin is edible: the flesh, seeds, skin, and even the flowers."],
-      "Quince": ["Quince is so astringent and acidic when raw that it is almost always cooked before eating.", "The word 'marmalade' comes from the Portuguese 'marmelo', meaning quince — the first marmalades were made from quince.", "When cooked, quince flesh turns from white to a deep rose or red colour due to chemical changes in its tannins."],
-      "Radishes": ["Radishes were one of the first European vegetables to arrive in the Americas after colonisation.", "The daikon radish, common in East Asian cuisine, can grow over 60 cm long and weigh several kilograms.", "Radishes grow very quickly — some varieties are ready to harvest just 25 days after planting."],
-      "Raspberries": ["A raspberry is an aggregate fruit made up of individual drupelets, each containing a seed.", "Raspberries are one of the richest sources of ellagic acid, an antioxidant with anti-inflammatory properties.", "The 'hollow core' of a picked raspberry is why it detaches from the stem so cleanly — unlike strawberries."],
-      "Rhubarb": ["Rhubarb is botanically a vegetable, but it's used culinarily as a fruit due to its sharp, sweet flavour when cooked.", "Rhubarb leaves are toxic — they contain high levels of oxalic acid and should never be eaten.", "Rhubarb was used medicinally in China for over 5,000 years before it was ever eaten as food in the West."],
-      "Runner beans": ["Runner beans are vigorous climbers that can reach 3 to 4 metres tall with the right support.", "Runner beans were originally grown in Britain as ornamental plants for their red flowers before people started eating them.", "Raw runner beans contain lectins that can be toxic — they must always be cooked before eating."],
-      "Spinach": ["Spinach does contain iron, but oxalic acid in spinach significantly reduces absorption to just 2–5%.", "Popeye's love of spinach boosted US spinach consumption by 33% in the 1930s.", "Spinach originated in Persia (modern-day Iran) and was introduced to Europe via Arab traders in the 10th century."],
-      "Squash": ["Squash has been cultivated in the Americas for over 10,000 years and was part of the 'Three Sisters' triad with corn and beans.", "Spaghetti squash gets its name from its flesh, which separates into long noodle-like strands when cooked.", "Pumpkin seeds (pepitas) are rich in zinc, magnesium, and omega-3 fatty acids."],
-      "Strawberries": ["The strawberry is not botanically a true fruit — it's a 'false fruit' or accessory fruit, with the actual seeds on its surface.", "Strawberries are the only fruit with seeds on the outside, with an average of 200 seeds per berry.", "Wild strawberries are much smaller than cultivated ones but can be up to 10 times more flavourful."],
-      "Sweet potatoes": ["Sweet potatoes and regular potatoes are not closely related — sweet potatoes belong to the morning glory family.", "China produces over 60% of the world's sweet potatoes.", "Sweet potatoes can be white, yellow, orange, or purple depending on the variety, each with different nutritional profiles."],
-      "Tomatoes": ["Botanically, the tomato is a fruit (it develops from a flower). In 1893, the US Supreme Court legally declared it a vegetable for tax purposes.", "There are over 10,000 known varieties of tomatoes, from tiny currants to giant beefsteaks.", "Cooking tomatoes significantly increases lycopene bioavailability — tomato paste has far more than raw tomatoes."],
-      "Watermelon": ["Watermelon is 92% water, making it one of the most hydrating foods you can eat.", "Watermelon originated in the Kalahari Desert of Africa, where wild ancestors still grow today.", "Every part of the watermelon is edible, including the rind, which can be pickled or stir-fried."],
-      "Zucchini": ["Zucchini is an immature marrow — if left on the vine, it can grow into a massive vegetable.", "Zucchini was developed in Italy in the late 19th century from squash plants originating in the Americas.", "Zucchini flowers are edible and a delicacy in Mediterranean cooking, often stuffed with cheese and deep-fried."],
-      "Lemons": ["The lemon is not found in the wild — it is a hybrid between a sour orange and a citron.", "Menton on the French Riviera hosts Europe's most famous lemon festival (Fête du Citron), attracting over 200,000 visitors.", "Lemon juice contains 5–8% citric acid, which gives it its sour taste and acts as a natural preservative."],
-      "Mangoes": ["The mango is the world's most consumed tropical fruit and the national fruit of India, Pakistan, and the Philippines.", "India produces over 40% of the world's mangoes, with over 1,000 varieties cultivated across the country.", "The mango tree can live for over 300 years and still produce fruit."],
-      "Avocados": ["The avocado is botanically a large berry with a single seed.", "Avocados do not ripen on the tree — they only begin to ripen after being harvested.", "Avocados contain more potassium than bananas and are rich in heart-healthy monounsaturated fats."],
-      "Pineapples": ["Pineapples are the only edible member of the bromeliad plant family.", "It takes about 18 months for a pineapple plant to produce its first fruit — and each plant produces only one.", "The bromelain enzyme in pineapple breaks down proteins, which is why your tongue can feel raw after eating too much."],
-      "Bananas": ["The Cavendish banana (the variety we eat) is a genetic clone — every plant is virtually identical.", "Bananas are one of the first plants ever cultivated by humans, over 8,000 years ago in Papua New Guinea.", "Bananas contain tryptophan, a precursor to serotonin, and magnesium, both of which support mood regulation."],
-      "Papayas": ["Papayas contain papain, a protein-digesting enzyme used commercially as a meat tenderiser.", "The latex from unripe papaya was used by the Maya to treat wounds and skin conditions.", "A papaya tree can begin producing fruit within its first year of growth, faster than almost any other fruit tree."],
-      "Lychees": ["Lychees originated in southern China and have been cultivated there for over 2,000 years.", "The rough red skin of a lychee is not edible but protects the delicate, translucent white flesh inside.", "Eating large quantities of unripe lychees on an empty stomach can cause severe hypoglycaemia, especially in children."],
-      "Coconuts": ["The coconut is the largest seed in the world and belongs to the palm family.", "During World War II, coconut water was used as an emergency intravenous hydration fluid due to its sterility.", "The coconut palm is called the 'tree of life' in many tropical cultures because every part of it has a use."],
-      "Passion fruit": ["The passion fruit got its name not from romantic passion, but from the Passion of Christ — missionaries saw symbols of the crucifixion in its flowers.", "Passion fruit juice is intensely aromatic — just a few tablespoons can flavour an entire dessert.", "Passion fruit contains passifloric acid and harmane alkaloids, which may have mild calming effects."],
-      "Guava": ["Guava contains up to four times more vitamin C than an orange, gram for gram.", "Guava originated in Central America and spread throughout the tropics via Spanish explorers.", "Guava leaves are used in traditional medicine across Asia and Latin America for their antibacterial and antidiarrhoeal properties."],
-      "Soursop": ["Soursop is the largest fruit in the Annonaceae family and can weigh up to 7 kg.", "The flavour of soursop has been compared to a combination of strawberry, pineapple, and citrus.", "Soursop leaves and seeds contain annonacin, a neurotoxin that is toxic in high doses — only the ripe fruit pulp should be consumed."],
-      "Breadfruit": ["Breadfruit is a carbohydrate-rich staple food across Pacific islands and the Caribbean.", "In 1789, HMS Bounty was on a mission to transport breadfruit plants from Tahiti to the West Indies to feed enslaved people on plantations.", "Breadfruit can be cooked and eaten in many ways: boiled, roasted, fried as chips, or ground into flour."],
-      "Christophine": ["Christophine (chayote) originated in Mexico and was spread worldwide by Spanish colonisers.", "The entire plant is edible: the fruit, leaves, shoots, and the starchy tuberous root.", "Christophine is very low in calories (around 20 kcal per 100 g) and is high in water and fibre."],
-      "Yams": ["Some varieties of wild yam in West Africa can grow to over 3 metres long and weigh up to 70 kg.", "True yams are frequently confused with sweet potatoes in North America — they are completely different plants.", "Fermented and pounded yam is used to make 'fufu', a staple dish across much of sub-Saharan Africa."],
-      "Cassava": ["Cassava is the third-largest source of carbohydrates in the tropics after rice and maize.", "Bitter cassava contains linamarin, which converts to hydrogen cyanide — it must be soaked and cooked thoroughly before eating.", "Tapioca, used in bubble tea and many desserts, is extracted from cassava starch."],
-      "Pomelo": ["The pomelo is the largest citrus fruit in existence, sometimes weighing up to 2 kg.", "The grapefruit is not the same as the pomelo — it is a hybrid between the pomelo and the sweet orange.", "The thick white pith of the pomelo is edible and used in cooking across Southeast Asia, where it is prized for its mild flavour."]
+      "Apples": [
+        "There are over 7,500 varieties of apples cultivated worldwide, but only a handful dominate supermarket shelves.",
+        "An apple floats in water because 25% of its volume is air.",
+        "The science of apple growing is called pomology, from the Latin 'pomum' meaning fruit."
+      ],
+      "Apricots": [
+        "Apricots are one of the few fruits that improve in nutritional value when dried — the dried version has 7x more nutrients by weight.",
+        "Apricot kernels contain amygdalin, which the body converts to cyanide — never eat them in large quantities.",
+        "The apricot tree is thought to have originated in China and arrived in Europe via the Silk Road."
+      ],
+      "Artichokes": [
+        "The artichoke is a thistle — if left unharvested, it blooms into a spectacular purple flower.",
+        "Artichokes contain cynarin, a compound that makes everything eaten afterward taste sweeter.",
+        "Ancient Romans considered artichokes a luxury food and ate them preserved in cumin and vinegar."
+      ],
+      "Asparagus": [
+        "Asparagus can grow up to 10 cm in a single day under ideal conditions.",
+        "White asparagus is simply green asparagus grown without sunlight to prevent chlorophyll from developing.",
+        "Asparagus was considered an aphrodisiac in 17th-century France and was served at wedding banquets."
+      ],
+      "Beetroot": [
+        "The Romans used beetroot juice as a hair dye and a remedy for fevers.",
+        "Beetroot contains nitrates that convert to nitric oxide in the body, improving blood flow and athletic performance.",
+        "The deep red colour of beetroot comes from betalains, pigments not found in most other vegetables."
+      ],
+      "Beets": [
+        "Sugar beets account for about 20% of the world's sugar production.",
+        "Golden beets and Chioggia (striped) beets exist alongside the classic red variety.",
+        "Beet greens are entirely edible and more nutritious than the root itself, packed with iron and calcium."
+      ],
+      "Blackberries": [
+        "Blackberries are a 'bramble fruit' — the plant's thorny canes can live for two years before dying back.",
+        "A blackberry is technically an aggregate fruit, made up of dozens of individual drupelets.",
+        "Blackberries have been found in the stomachs of Iron Age bog bodies in Denmark, suggesting they were a common food."
+      ],
+      "Blueberries": [
+        "Blueberries are one of the few foods naturally coloured blue, a colour that rarely occurs in nature.",
+        "Native Americans used blueberries to make pemmican, a dried meat and berry mixture for long journeys.",
+        "Blueberries contain anthocyanins that may help improve memory and delay brain aging."
+      ],
+      "Broad beans": [
+        "Broad beans are one of the oldest cultivated plants — they've been found in Egyptian tombs dating to 3000 BC.",
+        "People with the genetic condition G6PD deficiency (favism) can have a severe reaction to eating broad beans.",
+        "In ancient Rome, broad beans were used as voting tokens — white for yes, black for no."
+      ],
+      "Broccoli": [
+        "Broccoli was engineered from wild cabbage over 2,000 years ago in the Mediterranean region.",
+        "Broccoli contains sulforaphane, a compound studied for its potential anti-cancer properties.",
+        "The name 'broccoli' comes from the Italian word for 'the flowering crest of a cabbage'."
+      ],
+      "Brussels sprouts": [
+        "Brussels sprouts are actually the axillary buds of the plant — each sprout grows in the leaf joint along the stalk.",
+        "Belgium is often credited with developing Brussels sprouts, but they were already grown in Flanders by the 13th century.",
+        "Roasting Brussels sprouts at high heat caramelises their natural sugars and significantly reduces their bitterness."
+      ],
+      "Cabbage": [
+        "Cabbage has been cultivated for over 4,000 years and was likely one of the first vegetables grown in Europe.",
+        "Sauerkraut (fermented cabbage) contains natural probiotics that support gut health.",
+        "Captain James Cook brought sauerkraut on his voyages to prevent scurvy among his crew."
+      ],
+      "Carrots": [
+        "Carrots were originally white or purple — the orange variety was selectively bred in the Netherlands in the 17th century.",
+        "The beta-carotene in carrots converts to vitamin A in the body, which is essential for night vision.",
+        "Carrots are the second most popular vegetable in the world after potatoes."
+      ],
+      "Cauliflower": [
+        "Cauliflower's white 'curd' forms because the plant's leaves shade the developing flower head from sunlight.",
+        "Purple, yellow, and green cauliflower varieties exist, including the fractal-patterned Romanesco.",
+        "Mark Twain described cauliflower as 'nothing but cabbage with a college education'."
+      ],
+      "Celeriac": [
+        "Celeriac is the swollen root of a variety of celery specifically bred for its underground bulb.",
+        "Celeriac was mentioned by Homer in the Odyssey under its Greek name 'selinon'.",
+        "Despite its rough, ugly exterior, celeriac is prized in French cuisine, especially as a remoulade."
+      ],
+      "Cherries": [
+        "It takes about 250 cherries to make a single jar of cherry jam.",
+        "Cherries are one of the few natural food sources of melatonin, which helps regulate sleep cycles.",
+        "Sweet and sour cherries come from different species — Prunus avium and Prunus cerasus respectively."
+      ],
+      "Chestnuts": [
+        "Chestnuts are unusual among nuts in that they contain starch, making them more like a grain than a nut.",
+        "Chestnut flour was a dietary staple in parts of France and Italy before the spread of potatoes.",
+        "A single chestnut tree can produce up to 50 kg of nuts per year and live for over 500 years."
+      ],
+      "Citrus fruits": [
+        "Citrus fruits originated in Southeast Asia around 7 to 8 million years ago.",
+        "The white pith beneath citrus peel is bitter but rich in flavonoids and fibre.",
+        "Vitamin C in freshly squeezed citrus juice degrades slowly — a glass retains most of its benefits for several hours."
+      ],
+      "Clementines": [
+        "The clementine was discovered around 1902 by Brother Clément Rodier in an Algerian orphanage garden — likely a natural hybrid.",
+        "The Corsican clementine (Clémentine de Corse PGI) is the only French protected clementine, sold with its leaf attached.",
+        "Clementines are seedless because they are parthenocarpic — they develop without pollination."
+      ],
+      "Corn": [
+        "Corn is the world's most produced crop, ahead of wheat and rice by volume.",
+        "An ear of corn always has an even number of rows of kernels.",
+        "Popcorn has been eaten for thousands of years — popped corn cobs dating to 3600 BC were found in Peru."
+      ],
+      "Cranberries": [
+        "Cranberries float on water thanks to internal air pockets, which makes harvesting them much easier.",
+        "Cranberries contain proanthocyanidins that prevent bacteria from adhering to the urinary tract wall.",
+        "Native Americans used cranberries as a food, a dye, and a medicine long before European settlers arrived."
+      ],
+      "Cucumbers": [
+        "Cucumbers are 96% water, making them one of the most hydrating foods you can eat.",
+        "The surface of a cucumber is several degrees cooler than the surrounding air, giving rise to the phrase 'cool as a cucumber'.",
+        "Cucumbers have been cultivated in India for over 3,000 years and spread westward from there."
+      ],
+      "Eggplant": [
+        "Eggplant belongs to the nightshade family, alongside tomatoes, potatoes, and chilli peppers.",
+        "The skin of eggplant contains nasunin, an antioxidant that may help protect brain cells.",
+        "In Asia, eggplants can be white, green, striped, or long and thin — the big purple variety is largely a Western preference."
+      ],
+      "Endives": [
+        "Endive was discovered by accident around 1830 when a Belgian farmer found chicory roots had sprouted white leaves in his cellar.",
+        "Endive is grown in two stages: roots develop in the field, then the pale chicons form in a dark, temperature-controlled room.",
+        "Belgium produces the most endive in the world, followed closely by France and the Netherlands."
+      ],
+      "Fava beans": [
+        "Fava beans are one of the earliest cultivated plants — evidence of their use dates back over 8,000 years in the Middle East.",
+        "Fava beans contain L-DOPA, a precursor to dopamine, and are studied as a dietary support for Parkinson's disease.",
+        "Pythagoras forbade his followers from eating fava beans — the exact reason remains a philosophical mystery."
+      ],
+      "Fennel": [
+        "All parts of the fennel plant are edible: the bulb, stalks, fronds, and seeds.",
+        "Fennel's aroma comes from anethole, the same compound that flavours anise, liquorice, and pastis.",
+        "Ancient Greeks called fennel 'marathon' and believed it gave strength and courage to warriors."
+      ],
+      "Figs": [
+        "A fig is not technically a fruit — it is an inverted flower cluster called a syconium.",
+        "Figs may be the first plant ever cultivated by humans, with evidence predating wheat and barley by 1,000 years.",
+        "Some fig varieties require pollination by a specific wasp species (Blastophaga psenes) that enters through a tiny opening."
+      ],
+      "Grapes": [
+        "Grapes are the most widely cultivated fruit in the world, grown on about 75 million hectares.",
+        "There are over 10,000 varieties of wine grapes, though fewer than 50 account for the vast majority of wine production.",
+        "Resveratrol, found in red grape skins, is studied for its antioxidant and cardioprotective effects."
+      ],
+      "Green beans": [
+        "Green beans originated in Central America and didn't reach Europe until after Columbus's voyages in the late 15th century.",
+        "There are over 130 varieties of green beans, including flat Romano beans, round filet beans, and yellow wax beans.",
+        "Green beans are harvested young and immature — if left to fully ripen, the pods become tough and the seeds dry into regular beans."
+      ],
+      "Kale": [
+        "Kale is one of the most nutrient-dense foods on Earth, packed with vitamins K, A, and C.",
+        "Kale was one of the most widely eaten vegetables in Europe during the Middle Ages before other cabbages took over.",
+        "Kale contains lutein and zeaxanthin, carotenoids that help protect the macula of the eye from UV damage."
+      ],
+      "Leeks": [
+        "The leek is the national symbol of Wales, worn on St David's Day on 1 March.",
+        "Leeks belong to the allium family alongside garlic, onions, shallots, and chives.",
+        "Vichyssoise, the classic cold potato and leek soup, was actually invented in New York by a French chef in 1917."
+      ],
+      "Lettuce": [
+        "Lettuce was cultivated in ancient Egypt at least 4,500 years ago, depicted in temple frescoes.",
+        "Lettuce contains lactucarium, a milky latex with mild sedative properties, once called 'lettuce opium'.",
+        "There are over 100 varieties of lettuce, from butterhead to romaine to oak leaf."
+      ],
+      "Melons": [
+        "Melons are related to cucumbers and belong to the same family: Cucurbitaceae.",
+        "You can tell if a melon is ripe by smelling the stem end — a sweet, fragrant aroma indicates full ripeness.",
+        "Ancient Egyptians were growing melons as far back as 2400 BC, depicted in tomb paintings."
+      ],
+      "Mushrooms": [
+        "Mushrooms are neither plants nor animals — they belong to their own kingdom: Fungi.",
+        "The mycelium network of some fungi can spread over hundreds of acres and live for thousands of years.",
+        "Mushrooms exposed to UV light produce vitamin D, much like human skin does in sunlight."
+      ],
+      "New potatoes": [
+        "New potatoes are harvested before they are fully mature, which is why their skin is so thin you can rub it off.",
+        "Because of their lower starch content, new potatoes hold their shape better when boiled than mature potatoes.",
+        "New potatoes have a shorter shelf life than mature potatoes — they should ideally be eaten within a few days of purchase."
+      ],
+      "Olives": [
+        "An olive tree can live for over 1,000 years — some trees in Greece and Italy are believed to be over 2,000 years old.",
+        "It takes about 5 kg of olives to produce 1 litre of extra-virgin olive oil.",
+        "Fresh olives straight from the tree are intensely bitter and completely inedible without curing in brine or lye."
+      ],
+      "Oranges": [
+        "The sweet orange as we know it was introduced to Europe by Portuguese sailors in the 15th century.",
+        "There are over 600 varieties of orange grown worldwide, from navel to blood to Valencia.",
+        "The bitter orange (Seville orange) is rarely eaten fresh but is the key ingredient in classic English marmalade."
+      ],
+      "Parsnips": [
+        "Parsnips were the primary sweetener in Europe before cane sugar became affordable.",
+        "A frost actually improves the flavour of parsnips by converting some of their starch into sugar.",
+        "Parsnips contain furanocoumarins, compounds that can cause skin sensitivity to sunlight when handling the plant."
+      ],
+      "Peaches": [
+        "Peaches originated in China and were cultivated there over 4,000 years ago, long before they reached Europe.",
+        "The nectarine is not a separate species — it's simply a smooth-skinned variety of peach.",
+        "Georgia is nicknamed 'The Peach State', though California now produces the most peaches in the US."
+      ],
+      "Pears": [
+        "Pears are one of the few fruits that ripen better off the tree — they should be left at room temperature after harvest.",
+        "There are over 3,000 varieties of pears grown worldwide.",
+        "The Conference pear, bred in England in 1884, is the most widely grown variety in Europe."
+      ],
+      "Peas": [
+        "Gregor Mendel discovered the laws of genetics by studying the inheritance of traits in thousands of pea plants.",
+        "Peas are one of the oldest cultivated vegetables, eaten for over 10,000 years in the Middle East.",
+        "Frozen peas retain almost as much nutritional value as fresh — they're blanched and frozen within hours of harvest."
+      ],
+      "Peppers": [
+        "Bell peppers and chilli peppers are the same species: Capsicum annuum. The difference is just in the genetics.",
+        "Red peppers contain three times more vitamin C than green peppers because they are fully ripened.",
+        "The Scoville scale measures the heat of peppers — bell peppers score 0, while the hottest peppers exceed 3 million units."
+      ],
+      "Plums": [
+        "The damson plum gets its name from Damascus — the Romans brought it back from Syria.",
+        "Prunes (dried plums) have been used as a natural laxative for centuries due to their high sorbitol content.",
+        "There are over 2,000 varieties of plums, ranging from deep purple to yellow, red, and green."
+      ],
+      "Pomegranates": [
+        "A pomegranate can contain up to 1,000 seeds, each surrounded by a jewel-like, juice-filled aril.",
+        "Pomegranates have one of the highest antioxidant contents of any fruit — higher than red wine or green tea.",
+        "In Greek mythology, Persephone ate pomegranate seeds in the underworld, which bound her to spend part of each year there — explaining the seasons."
+      ],
+      "Potatoes": [
+        "The potato was introduced to Europe from the Andes in the 16th century and transformed European diet and population growth.",
+        "A potato is about 80% water and 20% solid matter, mostly starch.",
+        "Green-tinged potatoes contain solanine, a naturally occurring toxin — they should always be avoided."
+      ],
+      "Pumpkins": [
+        "Pumpkins are native to Central America and have been cultivated for over 7,500 years.",
+        "The world record pumpkin weighed over 1,200 kg — grown in Belgium in 2016.",
+        "Every part of the pumpkin is edible: the flesh, seeds, skin, and even the flowers."
+      ],
+      "Quince": [
+        "Quince is so astringent and acidic when raw that it is almost always cooked before eating.",
+        "The word 'marmalade' comes from the Portuguese 'marmelo', meaning quince — the first marmalades were made from quince.",
+        "When cooked, quince flesh turns from white to a deep rose or red colour due to chemical changes in its tannins."
+      ],
+      "Radishes": [
+        "Radishes were one of the first European vegetables to arrive in the Americas after colonisation.",
+        "The daikon radish, common in East Asian cuisine, can grow over 60 cm long and weigh several kilograms.",
+        "Radishes grow very quickly — some varieties are ready to harvest just 25 days after planting."
+      ],
+      "Raspberries": [
+        "A raspberry is an aggregate fruit made up of individual drupelets, each containing a seed.",
+        "Raspberries are one of the richest sources of ellagic acid, an antioxidant with anti-inflammatory properties.",
+        "The 'hollow core' of a picked raspberry is why it detaches from the stem so cleanly — unlike strawberries."
+      ],
+      "Rhubarb": [
+        "Rhubarb is botanically a vegetable, but it's used culinarily as a fruit due to its sharp, sweet flavour when cooked.",
+        "Rhubarb leaves are toxic — they contain high levels of oxalic acid and should never be eaten.",
+        "Rhubarb was used medicinally in China for over 5,000 years before it was ever eaten as food in the West."
+      ],
+      "Runner beans": [
+        "Runner beans are vigorous climbers that can reach 3 to 4 metres tall with the right support.",
+        "Runner beans were originally grown in Britain as ornamental plants for their red flowers before people started eating them.",
+        "Raw runner beans contain lectins that can be toxic — they must always be cooked before eating."
+      ],
+      "Spinach": [
+        "Spinach does contain iron, but oxalic acid in spinach significantly reduces absorption to just 2–5%.",
+        "Popeye's love of spinach boosted US spinach consumption by 33% in the 1930s.",
+        "Spinach originated in Persia (modern-day Iran) and was introduced to Europe via Arab traders in the 10th century."
+      ],
+      "Squash": [
+        "Squash has been cultivated in the Americas for over 10,000 years and was part of the 'Three Sisters' triad with corn and beans.",
+        "Spaghetti squash gets its name from its flesh, which separates into long noodle-like strands when cooked.",
+        "Pumpkin seeds (pepitas) are rich in zinc, magnesium, and omega-3 fatty acids."
+      ],
+      "Strawberries": [
+        "The strawberry is not botanically a true fruit — it's a 'false fruit' or accessory fruit, with the actual seeds on its surface.",
+        "Strawberries are the only fruit with seeds on the outside, with an average of 200 seeds per berry.",
+        "Wild strawberries are much smaller than cultivated ones but can be up to 10 times more flavourful."
+      ],
+      "Sweet potatoes": [
+        "Sweet potatoes and regular potatoes are not closely related — sweet potatoes belong to the morning glory family.",
+        "China produces over 60% of the world's sweet potatoes.",
+        "Sweet potatoes can be white, yellow, orange, or purple depending on the variety, each with different nutritional profiles."
+      ],
+      "Tomatoes": [
+        "Botanically, the tomato is a fruit (it develops from a flower). In 1893, the US Supreme Court legally declared it a vegetable for tax purposes.",
+        "There are over 10,000 known varieties of tomatoes, from tiny currants to giant beefsteaks.",
+        "Cooking tomatoes significantly increases lycopene bioavailability — tomato paste has far more than raw tomatoes."
+      ],
+      "Watermelon": [
+        "Watermelon is 92% water, making it one of the most hydrating foods you can eat.",
+        "Watermelon originated in the Kalahari Desert of Africa, where wild ancestors still grow today.",
+        "Every part of the watermelon is edible, including the rind, which can be pickled or stir-fried."
+      ],
+      "Zucchini": [
+        "Zucchini is an immature marrow — if left on the vine, it can grow into a massive vegetable.",
+        "Zucchini was developed in Italy in the late 19th century from squash plants originating in the Americas.",
+        "Zucchini flowers are edible and a delicacy in Mediterranean cooking, often stuffed with cheese and deep-fried."
+      ],
+      "Lemons": [
+        "The lemon is not found in the wild — it is a hybrid between a sour orange and a citron.",
+        "Menton on the French Riviera hosts Europe's most famous lemon festival (Fête du Citron), attracting over 200,000 visitors.",
+        "Lemon juice contains 5–8% citric acid, which gives it its sour taste and acts as a natural preservative."
+      ],
+      "Mangoes": [
+        "The mango is the world's most consumed tropical fruit and the national fruit of India, Pakistan, and the Philippines.",
+        "India produces over 40% of the world's mangoes, with over 1,000 varieties cultivated across the country.",
+        "The mango tree can live for over 300 years and still produce fruit."
+      ],
+      "Avocados": [
+        "The avocado is botanically a large berry with a single seed.",
+        "Avocados do not ripen on the tree — they only begin to ripen after being harvested.",
+        "Avocados contain more potassium than bananas and are rich in heart-healthy monounsaturated fats."
+      ],
+      "Pineapples": [
+        "Pineapples are the only edible member of the bromeliad plant family.",
+        "It takes about 18 months for a pineapple plant to produce its first fruit — and each plant produces only one.",
+        "The bromelain enzyme in pineapple breaks down proteins, which is why your tongue can feel raw after eating too much."
+      ],
+      "Bananas": [
+        "The Cavendish banana (the variety we eat) is a genetic clone — every plant is virtually identical.",
+        "Bananas are one of the first plants ever cultivated by humans, over 8,000 years ago in Papua New Guinea.",
+        "Bananas contain tryptophan, a precursor to serotonin, and magnesium, both of which support mood regulation."
+      ],
+      "Papayas": [
+        "Papayas contain papain, a protein-digesting enzyme used commercially as a meat tenderiser.",
+        "The latex from unripe papaya was used by the Maya to treat wounds and skin conditions.",
+        "A papaya tree can begin producing fruit within its first year of growth, faster than almost any other fruit tree."
+      ],
+      "Lychees": [
+        "Lychees originated in southern China and have been cultivated there for over 2,000 years.",
+        "The rough red skin of a lychee is not edible but protects the delicate, translucent white flesh inside.",
+        "Eating large quantities of unripe lychees on an empty stomach can cause severe hypoglycaemia, especially in children."
+      ],
+      "Coconuts": [
+        "The coconut is the largest seed in the world and belongs to the palm family.",
+        "During World War II, coconut water was used as an emergency intravenous hydration fluid due to its sterility.",
+        "The coconut palm is called the 'tree of life' in many tropical cultures because every part of it has a use."
+      ],
+      "Passion fruit": [
+        "The passion fruit got its name not from romantic passion, but from the Passion of Christ — missionaries saw symbols of the crucifixion in its flowers.",
+        "Passion fruit juice is intensely aromatic — just a few tablespoons can flavour an entire dessert.",
+        "Passion fruit contains passifloric acid and harmane alkaloids, which may have mild calming effects."
+      ],
+      "Guava": [
+        "Guava contains up to four times more vitamin C than an orange, gram for gram.",
+        "Guava originated in Central America and spread throughout the tropics via Spanish explorers.",
+        "Guava leaves are used in traditional medicine across Asia and Latin America for their antibacterial and antidiarrhoeal properties."
+      ],
+      "Soursop": [
+        "Soursop is the largest fruit in the Annonaceae family and can weigh up to 7 kg.",
+        "The flavour of soursop has been compared to a combination of strawberry, pineapple, and citrus.",
+        "Soursop leaves and seeds contain annonacin, a neurotoxin that is toxic in high doses — only the ripe fruit pulp should be consumed."
+      ],
+      "Breadfruit": [
+        "Breadfruit is a carbohydrate-rich staple food across Pacific islands and the Caribbean.",
+        "In 1789, HMS Bounty was on a mission to transport breadfruit plants from Tahiti to the West Indies to feed enslaved people on plantations.",
+        "Breadfruit can be cooked and eaten in many ways: boiled, roasted, fried as chips, or ground into flour."
+      ],
+      "Christophine": [
+        "Christophine (chayote) originated in Mexico and was spread worldwide by Spanish colonisers.",
+        "The entire plant is edible: the fruit, leaves, shoots, and the starchy tuberous root.",
+        "Christophine is very low in calories (around 20 kcal per 100 g) and is high in water and fibre."
+      ],
+      "Yams": [
+        "Some varieties of wild yam in West Africa can grow to over 3 metres long and weigh up to 70 kg.",
+        "True yams are frequently confused with sweet potatoes in North America — they are completely different plants.",
+        "Fermented and pounded yam is used to make 'fufu', a staple dish across much of sub-Saharan Africa."
+      ],
+      "Cassava": [
+        "Cassava is the third-largest source of carbohydrates in the tropics after rice and maize.",
+        "Bitter cassava contains linamarin, which converts to hydrogen cyanide — it must be soaked and cooked thoroughly before eating.",
+        "Tapioca, used in bubble tea and many desserts, is extracted from cassava starch."
+      ],
+      "Pomelo": [
+        "The pomelo is the largest citrus fruit in existence, sometimes weighing up to 2 kg.",
+        "The grapefruit is not the same as the pomelo — it is a hybrid between the pomelo and the sweet orange.",
+        "The thick white pith of the pomelo is edible and used in cooking across Southeast Asia, where it is prized for its mild flavour."
+      ]
     }
   },
   "sharing": {
@@ -689,6 +985,13 @@
     "switchFridge": "Switch fridge",
     "inviteAccepted": "You joined the fridge \"{{name}}\"!",
     "inviteInvalid": "This invite link is invalid or expired.",
-    "tabs": "Fridges"
+    "tabs": "Fridges",
+    "shareSection": "Share",
+    "shareAppLink": "App link",
+    "shareFridgeLink": "Fridge invite link",
+    "linkCopied": "Copied!",
+    "shareAppText": "Join me on Freego! {{url}}",
+    "shareFridgeText": "Join my fridge on Freego!",
+    "noFriendsHint": "Your friend doesn't have Freego yet? Invite them directly to join this fridge via the Share section below."
   }
 }

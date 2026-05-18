@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Fridge, FridgeMember, FridgeMemberRole } from '../types/Fridge';
 import {
   fetchFridgeMembers, updateMemberRole,
-  removeMember, updateFridge, deleteFridge, leaveFridge, addFriendToFridge,
+  removeMember, updateFridge, deleteFridge, leaveFridge, addFriendToFridge, createFridgeInvite,
 } from '../utils/fridgeService';
 import { fetchFriendships, Friend } from '../utils/friendService';
 import { NewFridgeModal } from './NewFridgeModal';
@@ -29,6 +29,8 @@ export const FridgeSettings = ({ fridges, currentUserId, onFridgesChange, onActi
   const [inviteRole, setInviteRole] = useState<FridgeMemberRole>('editor');
   const [inviting, setInviting] = useState(false);
   const [inviteSuccess, setInviteSuccess] = useState(false);
+  const [linkCopied, setLinkCopied] = useState<'fridge' | null>(null);
+  const [generatingInvite, setGeneratingInvite] = useState(false);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [confirmLeaveId, setConfirmLeaveId] = useState<string | null>(null);
   const [showNewFridgeModal, setShowNewFridgeModal] = useState(false);
@@ -150,6 +152,28 @@ export const FridgeSettings = ({ fridges, currentUserId, onFridgesChange, onActi
     onFridgesChange();
   };
 
+  const APP_URL = 'https://fridgemanager.vercel.app';
+
+  const handleShareFridge = async () => {
+    if (!expandedFridgeId) return;
+    setGeneratingInvite(true);
+    try {
+      const token = await createFridgeInvite(expandedFridgeId);
+      const url = `${APP_URL}?invite=${token}`;
+      if (navigator.share) {
+        try { await navigator.share({ text: t('fridges.shareFridgeText'), url }); } catch { /* dismissed */ }
+      } else {
+        await navigator.clipboard.writeText(url);
+        setLinkCopied('fridge');
+        setTimeout(() => setLinkCopied(null), 2000);
+      }
+    } catch {
+      // ignore
+    } finally {
+      setGeneratingInvite(false);
+    }
+  };
+
   const ownedFridges = fridges.filter(f => f.ownerId === currentUserId);
   const sharedFridges = fridges.filter(f => f.ownerId !== currentUserId);
 
@@ -260,7 +284,7 @@ export const FridgeSettings = ({ fridges, currentUserId, onFridgesChange, onActi
               <div className="fridge-settings-section">
                 <h4 className="fridge-settings-label">{t('friends.addToFridge')}</h4>
                 {friends.length === 0 ? (
-                  <p className="fridge-invite-hint">{t('friends.noFriendsYet')}</p>
+                  <p className="fridge-invite-hint">{t('fridges.noFriendsHint')}</p>
                 ) : (
                   <div className="fridge-invite-row">
                     <select
@@ -292,6 +316,22 @@ export const FridgeSettings = ({ fridges, currentUserId, onFridgesChange, onActi
                     </button>
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* Share links */}
+            {isOwner && (
+              <div className="fridge-settings-section">
+                <h4 className="fridge-settings-label">{t('fridges.shareSection')}</h4>
+                <div className="fridge-share-row">
+                  <button
+                    className="fridge-share-btn fridge-share-btn--primary"
+                    onClick={handleShareFridge}
+                    disabled={generatingInvite}
+                  >
+                    {generatingInvite ? '…' : linkCopied === 'fridge' ? t('fridges.linkCopied') : t('fridges.shareFridgeLink')}
+                  </button>
+                </div>
               </div>
             )}
 
