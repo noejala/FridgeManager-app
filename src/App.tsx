@@ -64,7 +64,7 @@ function App() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [activeTab, setActiveTab] = useState('fridge');
   const [visitedTabs, setVisitedTabs] = useState<Set<string>>(new Set());
-  const [newFridgeId, setNewFridgeId] = useState<string | null>(null);
+
   const [copyPantryPrompt, setCopyPantryPromptState] = useState<{ targetFridgeId: string; name: string; emoji: string; staples: string[] } | null>(() => {
     try { const raw = localStorage.getItem('copy-pantry-prompt'); return raw ? JSON.parse(raw) : null; } catch { return null; }
   });
@@ -319,7 +319,6 @@ function App() {
     const updated = await fetchFridges();
     setFridges(updated);
     await handleActiveFridgeChange(newFridge.id);
-    setNewFridgeId(newFridge.id);
     if (sourceFridge && sourceFridge.pantryStaples.length > 0) {
       setCopyPantryPrompt({ targetFridgeId: newFridge.id, name: sourceFridge.name, emoji: sourceFridge.emoji, staples: sourceFridge.pantryStaples });
     }
@@ -510,7 +509,6 @@ function App() {
     showNotification(t('settings.pantrySaved'));
     if (staples.length > 0) {
       if (copyPantryPrompt?.targetFridgeId === fridgeId) setCopyPantryPrompt(null);
-      if (newFridgeId === fridgeId) setNewFridgeId(null);
     }
   };
 

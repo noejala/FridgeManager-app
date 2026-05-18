@@ -987,10 +987,8 @@
     "inviteInvalid": "Ce lien d'invitation est invalide ou expiré.",
     "tabs": "Frigos",
     "shareSection": "Partager",
-    "shareAppLink": "Lien de l'app",
     "shareFridgeLink": "Lien d'invitation au frigo",
     "linkCopied": "Copié !",
-    "shareAppText": "Rejoins-moi sur Freego ! {{url}}",
     "shareFridgeText": "Rejoins mon frigo sur Freego !",
     "noFriendsHint": "Votre ami n'a pas encore Freego ? Invitez-le directement à rejoindre ce frigo via la section Partager ci-dessous.",
     "linkError": "Erreur, réessaie"
