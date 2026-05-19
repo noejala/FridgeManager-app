@@ -4,7 +4,7 @@ import { User } from '@supabase/supabase-js';
 import { Product } from './types/Product';
 import { Fridge } from './types/Fridge';
 import { supabase } from './lib/supabase';
-import { fetchProducts, fetchRecentlyConsumed, insertProduct, updateProduct, deleteProduct, deleteAllProducts, consumeProduct, restoreProduct } from './utils/productService';
+import { fetchProducts, fetchRecentlyConsumed, insertProduct, updateProduct, deleteProduct, deleteAllProducts, deleteExpiredProducts, consumeProduct, restoreProduct } from './utils/productService';
 import { fetchFridges, createFridge, acceptFridgeInvite, updateFridgePantry } from './utils/fridgeService';
 import { fetchPendingIncomingCount } from './utils/friendService';
 import { lookupBarcode, FoodFactsResult } from './utils/foodFactsApi';
@@ -491,6 +491,16 @@ function App() {
     }
   };
 
+  const handleClearExpired = async () => {
+    if (!activeFridgeId) return;
+    try {
+      await deleteExpiredProducts(activeFridgeId);
+      setProducts(prev => prev.filter(p => !isExpired(p.expirationDate)));
+    } catch (err) {
+      console.error('Failed to clear expired products:', err);
+    }
+  };
+
   const dismissPantryOnboarding = (userId: string) => {
     localStorage.setItem(`pantry-onboarding-seen-${userId}`, '1');
     setShowPantryOnboarding(false);
@@ -636,6 +646,7 @@ function App() {
           onEdit={handleEditProduct}
           onOpenSauce={handleOpenSauce}
           onClearAll={handleClearFridge}
+          onClearExpired={handleClearExpired}
         />
       </div>
       <div hidden={activeTab !== 'cook'} data-tab-visited={visitedTabs.has('cook') || undefined}>

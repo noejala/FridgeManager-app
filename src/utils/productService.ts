@@ -152,3 +152,15 @@ export async function deleteAllProducts(fridgeId: string): Promise<void> {
 
   if (error) throw error;
 }
+
+export async function deleteExpiredProducts(fridgeId: string): Promise<void> {
+  const today = new Date().toISOString().split('T')[0];
+  const { error } = await supabase
+    .from('products')
+    .delete()
+    .eq('fridge_id', fridgeId)
+    .lt('expiration_date', today)
+    .is('consumed_at', null);
+
+  if (error) throw error;
+}

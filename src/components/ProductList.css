@@ -317,6 +317,29 @@
   background: var(--red-bg);
 }
 
+/* Clear expired button (in section header) */
+.clear-expired-btn {
+  background: none;
+  border: none;
+  color: var(--red);
+  font-family: var(--font-body);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0.65;
+  transition: opacity 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+
+.clear-expired-btn:hover {
+  opacity: 1;
+  background: var(--red-bg);
+}
+
 /* Clear fridge button */
 .clear-fridge-row {
   display: flex;

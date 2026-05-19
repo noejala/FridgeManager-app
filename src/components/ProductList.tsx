@@ -15,6 +15,7 @@ interface ProductListProps {
   onEdit: (product: Product) => void;
   onOpenSauce: (id: string, openedDate: string) => void;
   onClearAll: () => Promise<void>;
+  onClearExpired: () => Promise<void>;
 }
 
 function getRelativeDay(isoTimestamp: string, t: (key: string, opts?: Record<string, unknown>) => string): string {
@@ -26,10 +27,12 @@ function getRelativeDay(isoTimestamp: string, t: (key: string, opts?: Record<str
   return t('productList.daysAgo', { count: diffDays });
 }
 
-export const ProductList = ({ products, consumedProducts, onDelete, onConsume, onRestore, onDeleteConsumed, onEdit, onOpenSauce, onClearAll }: ProductListProps) => {
+export const ProductList = ({ products, consumedProducts, onDelete, onConsume, onRestore, onDeleteConsumed, onEdit, onOpenSauce, onClearAll, onClearExpired }: ProductListProps) => {
   const { t } = useTranslation();
   const [showClearModal, setShowClearModal] = useState(false);
   const [clearing, setClearing] = useState(false);
+  const [showClearExpiredModal, setShowClearExpiredModal] = useState(false);
+  const [clearingExpired, setClearingExpired] = useState(false);
   const [consumedExpanded, setConsumedExpanded] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -38,6 +41,13 @@ export const ProductList = ({ products, consumedProducts, onDelete, onConsume, o
     await onClearAll();
     setClearing(false);
     setShowClearModal(false);
+  };
+
+  const handleConfirmClearExpired = async () => {
+    setClearingExpired(true);
+    await onClearExpired();
+    setClearingExpired(false);
+    setShowClearExpiredModal(false);
   };
 
   const byDate = (a: Product, b: Product) =>
@@ -113,6 +123,9 @@ export const ProductList = ({ products, consumedProducts, onDelete, onConsume, o
                 <span className="product-section-label">{t('productList.sectionExpired')}</span>
                 <span className="product-section-line" />
                 <span className="product-section-count">{expiredProducts.length}</span>
+                <button className="clear-expired-btn" onClick={() => setShowClearExpiredModal(true)}>
+                  {t('productList.clearExpired')}
+                </button>
               </div>
               {renderGrid(expiredProducts)}
             </div>
@@ -185,6 +198,41 @@ export const ProductList = ({ products, consumedProducts, onDelete, onConsume, o
           <button className="clear-fridge-btn" onClick={() => setShowClearModal(true)}>
             {t('productList.clearFridge')}
           </button>
+        </div>
+      )}
+
+      {showClearExpiredModal && (
+        <div className="clear-modal-overlay" onClick={() => !clearingExpired && setShowClearExpiredModal(false)}>
+          <div className="clear-modal" onClick={e => e.stopPropagation()}>
+            <div className="clear-modal-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                <path d="M10 11v6M14 11v6" />
+                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+              </svg>
+            </div>
+            <h3 className="clear-modal-title">{t('productList.clearExpiredConfirmTitle')}</h3>
+            <p className="clear-modal-message">
+              {t('productList.clearExpiredConfirmMessage', { count: expiredProducts.length })}
+            </p>
+            <div className="clear-modal-actions">
+              <button
+                className="clear-modal-cancel"
+                onClick={() => setShowClearExpiredModal(false)}
+                disabled={clearingExpired}
+              >
+                {t('form.cancel')}
+              </button>
+              <button
+                className="clear-modal-confirm"
+                onClick={handleConfirmClearExpired}
+                disabled={clearingExpired}
+              >
+                {clearingExpired ? '…' : t('productList.clearExpiredConfirm')}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
