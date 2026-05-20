@@ -5,7 +5,7 @@ import { fetchFriendships, fetchFriendFridgeCounts, Friend } from '../utils/frie
 import { addFriendToFridge } from '../utils/fridgeService';
 import './NewFridgeModal.css';
 
-const FRIDGE_EMOJIS = ['🧊', '❄️', '🍎', '🥦', '🥩', '🍷', '🫙', '🌿', '🍕', '🥗', '⭐'];
+const FRIDGE_EMOJIS = ['🧊', '❄️', '🥶', '🏠', '🍱', '🫙', '🐧', '🐟', '🥛', '⭐'];
 
 let friendsCache: { friends: Friend[]; ts: number } | null = null;
 const CACHE_TTL = 5 * 60 * 1000;
