@@ -5,6 +5,14 @@ import './PantryPanel.css';
 
 const PANTRY_GROUP_ORDER = ['starches', 'fats', 'condiments', 'canned', 'spices'] as const;
 
+const GROUP_EMOJI: Record<typeof PANTRY_GROUP_ORDER[number], string> = {
+  starches: '🌾',
+  fats: '🫒',
+  condiments: '🧂',
+  canned: '🥫',
+  spices: '🌿',
+};
+
 interface Props {
   fridgeId: string;
   staples: string[];
@@ -81,7 +89,10 @@ export function PantryPanel({ fridgeId, staples, onSave, onClose, copySource }: 
         const items = PANTRY_PRESET_ITEMS.filter(i => i.group === group);
         return (
           <div key={group} className="pantry-group">
-            <label className="pantry-group-label">{t(`pantryOnboarding.groups.${group}`)}</label>
+            <label className="pantry-group-label">
+              <span className="pantry-group-emoji">{GROUP_EMOJI[group]}</span>
+              {t(`pantryOnboarding.groups.${group}`)}
+            </label>
             <div className="pantry-chips">
               {items.map(item => (
                 <button
