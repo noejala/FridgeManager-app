@@ -4,7 +4,7 @@ import { Product } from '../types/Product';
 import { DietaryPreference } from '../types/UserProfile';
 import { MealDetails, singularize } from '../utils/mealApi';
 import { getAllMeals } from '../utils/mealDbCache';
-import { fetchAiRecipes, CookingMode, CourseSelection } from '../utils/mistralApi';
+import { fetchAiRecipes, AiRecipeError, CookingMode, CourseSelection } from '../utils/aiRecipes';
 import { fetchSavedRecipes, saveRecipe, unsaveRecipe, SavedRecipe } from '../utils/savedRecipeService';
 import { CookingSession } from './CookingSession';
 import { toEnglishIngredient } from '../utils/ingredientTranslation';
@@ -203,28 +203,7 @@ function matchIngredients(
 }
 
 
-const DIFFICULTY_RANK: Record<string, number> = {
-  facile: 1, easy: 1,
-  moyen: 2, medium: 2,
-  difficile: 3, hard: 3,
-};
-
 let _cardPointerStart: { x: number; y: number } | null = null;
-
-function parsePrepMinutes(area: string): number {
-  const h = area.match(/(\d+)\s*h/i);
-  const m = area.match(/(\d+)\s*m/i);
-  return (h ? parseInt(h[1]) * 60 : 0) + (m ? parseInt(m[1]) : 0) || 999;
-}
-
-function sortAiRecipes(recipes: RecipeMatch[]): RecipeMatch[] {
-  return [...recipes].sort((a, b) => {
-    const da = DIFFICULTY_RANK[a.meal.category?.toLowerCase() ?? ''] ?? 2;
-    const db = DIFFICULTY_RANK[b.meal.category?.toLowerCase() ?? ''] ?? 2;
-    if (da !== db) return da - db;
-    return parsePrepMinutes(a.meal.area ?? '') - parsePrepMinutes(b.meal.area ?? '');
-  });
-}
 
 function scoreRecipe(recipe: RecipeMatch): number {
   return recipe.available.length * 10 + recipe.urgentAvailableCount * 15 - recipe.missing.length * 2;
@@ -253,7 +232,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
   const [sortMode, setSortMode] = useState<SortMode>('available');
   const [servings, setServings] = useState(DEFAULT_SERVINGS);
   const [aiFallback, setAiFallback] = useState(false);
-  const [aiOverloaded, setAiOverloaded] = useState(false);
+  const [aiUnavailableReason, setAiUnavailableReason] = useState<AiRecipeError['reason'] | null>(null);
   const fetchingRef = useRef(false);
   const [recipeMode, setRecipeMode] = useState<'api' | 'ai'>(() => {
     if (!aiEnabled) return 'api';
@@ -311,7 +290,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
 
     setLoading(true);
     setError(null);
-    setAiOverloaded(false);
+    setAiUnavailableReason(null);
 
     try {
       const cookableProducts = products.filter(p => p.category !== 'Prepared' && !isExpired(p.expirationDate));
@@ -321,7 +300,6 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
         .map((p) => toEnglishIngredient(p.name));
 
       let meals: (MealDetails | null)[];
-      let isAiMode = false;
 
       if (recipeMode === 'ai') {
         // When the AI fails, fall back to classic recipes of the course the user picked
@@ -331,23 +309,45 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
             ? all.filter(m => m && getCourse(m.category) === selectedCourse)
             : all;
         };
+        // AI designed recipes for these fridge contents — treat all non-pantry ingredients as available
+        const toAiMatch = (meal: MealDetails): RecipeMatch => {
+          const pantry = meal.ingredients.filter(ing =>
+            PANTRY_STAPLES.has(singularize(ing.name.toLowerCase())) ||
+            PANTRY_STAPLES.has(ing.name.toLowerCase())
+          );
+          return { meal, available: meal.ingredients.filter(ing => !pantry.includes(ing)), missing: [], pantry, urgentAvailableCount: 0 };
+        };
+        // Recipes are streamed: each one is shown as soon as it's generated.
+        const streamed: RecipeMatch[] = [];
+        setRecipes([]);
         try {
-          const aiResults = await fetchAiRecipes(fridgeNames, dietaryPreferences, i18n.language, selectedCookingMode ?? undefined, urgentFridgeNames, selectedCourse ?? undefined, customPreferences || undefined, selectedCustomModeText ?? undefined, pantryStaples.length > 0 ? pantryStaples : undefined, servings, kitchenEquipment.length > 0 ? kitchenEquipment : undefined);
-          if (aiResults.length > 0) {
-            meals = aiResults;
-            isAiMode = true;
-            setAiFallback(false);
-          } else {
-            meals = await fallbackMeals();
-            setAiFallback(true);
-          }
+          await fetchAiRecipes({
+            productNames: fridgeNames,
+            expiringNames: urgentFridgeNames,
+            dietaryPrefs: dietaryPreferences,
+            language: i18n.language,
+            cookingMode: selectedCookingMode ?? undefined,
+            courseSelection: selectedCourse ?? undefined,
+            customPreferences: customPreferences || undefined,
+            customModeText: selectedCustomModeText ?? undefined,
+            pantryStaples,
+            servings,
+            kitchenEquipment,
+          }, (meal) => {
+            streamed.push(toAiMatch(meal));
+            setRecipes([...streamed]);
+          });
+          setAiFallback(false);
+          return;
         } catch (e) {
-          const msg = e instanceof Error ? e.message : '';
+          // Keep whatever was already streamed before a mid-stream failure
+          if (streamed.length > 0) {
+            setAiFallback(false);
+            return;
+          }
           meals = await fallbackMeals();
           setAiFallback(true);
-          if (msg === 'ai_unavailable') {
-            setAiOverloaded(true);
-          }
+          setAiUnavailableReason(e instanceof AiRecipeError ? e.reason : 'ai_unavailable');
         }
       } else {
         meals = await getAllMeals();
@@ -363,30 +363,14 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
         if (seenNames.has(key)) continue;
         seenNames.add(key);
 
-        let available: { name: string; measure: string }[];
-        let missing: { name: string; measure: string }[];
-        let pantry: { name: string; measure: string }[];
-        let urgentAvailableCount: number;
-        if (isAiMode) {
-          // AI designed recipes for these fridge contents — treat all non-pantry ingredients as available
-          pantry = meal.ingredients.filter(ing =>
-            PANTRY_STAPLES.has(singularize(ing.name.toLowerCase())) ||
-            PANTRY_STAPLES.has(ing.name.toLowerCase())
-          );
-          available = meal.ingredients.filter(ing => !pantry.includes(ing));
-          missing = [];
-          urgentAvailableCount = 0;
-        } else {
-          ({ available, missing, pantry, urgentAvailableCount } = matchIngredients(meal, fridgeNames, urgentFridgeNames, pantryStaples));
-        }
+        const { available, missing, pantry, urgentAvailableCount } = matchIngredients(meal, fridgeNames, urgentFridgeNames, pantryStaples);
 
         if (missing.length <= MAX_MISSING) {
           matched.push({ meal, available, missing, pantry, urgentAvailableCount });
         }
       }
 
-      const sorted = isAiMode ? sortAiRecipes(matched) : matched.sort((a, b) => scoreRecipe(b) - scoreRecipe(a));
-      setRecipes(sorted);
+      setRecipes(matched.sort((a, b) => scoreRecipe(b) - scoreRecipe(a)));
     } catch {
       setError(t('cook.failedFetch'));
     } finally {
@@ -828,12 +812,12 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       {!savedView && recipeMode === 'ai' && aiFallback && !loading && (
         <div className="ai-fallback-notice">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink: 0}} aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          <span>{aiOverloaded ? t('cook.aiFallbackUnavailable') : t('cook.aiFallback')}</span>
+          <span>{aiUnavailableReason === 'ai_quota' ? t('cook.aiQuota') : t('cook.aiFallbackUnavailable')}</span>
           <button onClick={fetchRecipes}>{t('cook.retry')}</button>
         </div>
       )}
 
-      {!savedView && loading && (
+      {!savedView && loading && recipes.length === 0 && (
         <div className="loading-state">
           <div className="spinner" />
           <p>{recipeMode === 'ai' ? t('cook.searchingAi') : t('cook.searching')}</p>
@@ -861,7 +845,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
         </div>
       )}
 
-      {!savedView && !loading && recipes.length > 0 && (() => {
+      {!savedView && recipes.length > 0 && (() => {
         const dietFiltered = recipes.filter(r =>
           meetsPreferences(r, dietaryPreferences) && meetsDislikedFilter(r, dislikedIngredients)
         );
@@ -982,6 +966,13 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
           </>
         );
       })()}
+
+      {!savedView && loading && recipes.length > 0 && (
+        <div className="generating-more" role="status">
+          <div className="spinner spinner--small" />
+          <span>{t('cook.generatingMore')}</span>
+        </div>
+      )}
 
       {selectedRecipe && (
         <div className="modal-overlay" onClick={closeDetails}>

@@ -43,8 +43,10 @@ No test or lint scripts are configured. `tsc` (run as part of build) is the type
 | `src/utils/fridgeService.ts` | Fridges, members, pantry, invite RPCs |
 | `src/utils/friendService.ts` | Friend search/requests (`search_users`, `get_user_profiles` RPCs) |
 | `src/utils/userProfileService.ts` | Profile, dietary prefs, `setup_user_identity` RPC |
-| `src/utils/mistralApi.ts` | Builds the AI recipe prompt client-side, caches results in localStorage, calls `/api/mistral` with the user's Supabase token |
-| `api/mistral.ts` | Vercel function proxying Mistral (`mistral-small-latest`). Rejects requests without a valid Supabase session |
+| `src/utils/aiRecipes.ts` | Calls `/api/recipes` with structured params + the user's Supabase token, reads the NDJSON stream recipe by recipe, caches same-day results in localStorage |
+| `api/recipes.ts` | Vercel function: auth, daily quota (`consume_ai_quota` RPC), builds the prompt server-side (`api/_lib/recipePrompt.ts`), streams schema-validated recipes from the AI Gateway with model fallbacks |
+| `api/parse-voice.ts` | Vercel function: extracts products from a voice transcript (structured output) for `voiceParser.ts` |
+| `scripts/ai-bench.ts` | `node --env-file=.env.local scripts/ai-bench.ts [models…]` — compares models on the real recipe prompt (speed, cost, output) |
 | `src/utils/mealApi.ts` + `mealDbCache.ts` | TheMealDB (classic recipes, also the fallback when AI fails) |
 | `src/utils/ingredientMatcher.ts` / `ingredientTranslation.ts` | Match fridge products (FR/EN) to recipe ingredients |
 | `src/utils/storage.ts` | Date helpers: `getDaysUntilExpiration`, `isExpired`, `isExpiringSoon` |
@@ -63,13 +65,13 @@ Tables: `products`, `fridges`, `fridge_members`, `friendships`, `user_profiles`,
 - SECURITY DEFINER RPCs are revoked from `anon`/PUBLIC. A new RPC must `REVOKE EXECUTE … FROM PUBLIC, anon; GRANT EXECUTE … TO authenticated`.
 - Run the Supabase security advisor (MCP `get_advisors`) after any DDL change. The remaining "authenticated can execute SECURITY DEFINER" warnings are intentional.
 
-**Env vars** (Vercel, pulled into `.env.local`): `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_VAPID_PUBLIC_KEY`, `VITE_AI_ENABLED`, `MISTRAL_API_KEY` (server only). Edge function secrets (`VAPID_PRIVATE_KEY`…) live in Supabase.
+**Env vars** (Vercel, pulled into `.env.local`): `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_VAPID_PUBLIC_KEY`, `VITE_AI_ENABLED`, `VERCEL_OIDC_TOKEN` (AI Gateway auth, local only). Edge function secrets (`VAPID_PRIVATE_KEY`…) live in Supabase.
 
 **Production:** https://fridgemanager.vercel.app (Vercel project `fridgemanager`, hobby plan — runtime logs are barely retained).
 
 ## External APIs
 
-- **Mistral** via `/api/mistral` — the org is on Mistral's Free plan, where API keys are disabled (every call 429s). AI mode currently always falls back to TheMealDB.
+- **Vercel AI Gateway** via the AI SDK (`ai` v7, model strings like `google/gemma-4-31b-it`). Auth = Vercel OIDC (`VERCEL_OIDC_TOKEN`, refreshed by `vercel dev` / `vercel env pull`), no API key. Primary model + fallbacks in `api/recipes.ts` (override with `AI_RECIPE_MODELS`). Requires a credit card on the Vercel team to unlock the free monthly credits. Read the AI SDK docs in `node_modules/ai/docs` and `node_modules/@ai-sdk/gateway/docs` before changing this code.
 - **TheMealDB** (no auth): `filter.php?i=`, `lookup.php?i=`.
 - **Open Food Facts** for barcode lookups.
 

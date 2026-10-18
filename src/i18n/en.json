@@ -162,8 +162,8 @@
     "modeApi": "🍽️ Recipes",
     "modeAi": "✨ AI",
     "searchingAi": "Generating AI recipes…",
-    "aiFallback": "Mistral unavailable (rate limit reached), showing classic recipes.",
-    "aiFallbackUnavailable": "Mistral is overloaded right now, showing classic recipes. Try again in a moment.",
+    "aiFallback": "AI recipes unavailable, showing classic recipes.",
+    "aiFallbackUnavailable": "AI recipes are unavailable right now, showing classic recipes. Try again in a moment.",
     "changeCookingMode": "Change mode",
     "saveRecipe": "Save recipe",
     "unsaveRecipe": "Remove from saved",
@@ -257,7 +257,9 @@
         "label": "Chef's recipe",
         "description": "An elaborate, technical and refined dish"
       }
-    }
+    },
+    "aiQuota": "You've reached today's AI recipe limit — showing classic recipes. Back tomorrow!",
+    "generatingMore": "Generating more recipes…"
   },
   "categories": {
     "Fruits": "Fruits",

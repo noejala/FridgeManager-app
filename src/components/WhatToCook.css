@@ -1309,3 +1309,21 @@
     max-height: 90vh;
   }
 }
+
+/* Shown under the streamed AI recipes while the next ones are generated */
+.generating-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 0 1.5rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.spinner--small {
+  margin: 0;
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}

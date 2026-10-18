@@ -162,8 +162,8 @@
     "modeApi": "🍽️ Recettes",
     "modeAi": "✨ IA",
     "searchingAi": "Génération de recettes IA…",
-    "aiFallback": "Mistral indisponible (limite atteinte), affichage des recettes classiques.",
-    "aiFallbackUnavailable": "Mistral surchargé en ce moment, affichage des recettes classiques. Réessaie dans quelques instants.",
+    "aiFallback": "Recettes IA indisponibles, voici des recettes classiques.",
+    "aiFallbackUnavailable": "Les recettes IA sont indisponibles pour le moment, voici des recettes classiques. Réessaie dans un instant.",
     "changeCookingMode": "Changer de mode",
     "saveRecipe": "Sauvegarder",
     "unsaveRecipe": "Retirer des favoris",
@@ -257,7 +257,9 @@
         "label": "Recette de chef",
         "description": "Un plat élaboré, technique et raffiné"
       }
-    }
+    },
+    "aiQuota": "Tu as atteint la limite de recettes IA du jour — voici des recettes classiques. À demain !",
+    "generatingMore": "Génération d’autres recettes…"
   },
   "categories": {
     "Fruits": "Fruits",
