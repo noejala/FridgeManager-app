@@ -1,3 +1,5 @@
+import type React from 'react';
+
 type IconProps = { size?: number; className?: string };
 
 const base = {
@@ -120,7 +122,7 @@ export const BarbecueIcon = ({ size = 48, className }: IconProps) => (
   </svg>
 );
 
-export const EQUIPMENT_ICONS: Record<string, (props: IconProps) => JSX.Element> = {
+export const EQUIPMENT_ICONS: Record<string, (props: IconProps) => React.JSX.Element> = {
   oven: OvenIcon,
   microwave: MicrowaveIcon,
   stovetop: StovetopIcon,
