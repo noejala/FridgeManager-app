@@ -1,5 +1,6 @@
 import { MealDetails } from './mealApi';
 import { DietaryPreference } from '../types/UserProfile';
+import { supabase } from '../lib/supabase';
 
 export type CookingMode = 'quick' | 'empty_fridge' | 'expiring' | 'chef' | 'custom';
 export type CourseSelection = 'starter' | 'main' | 'dessert' | 'all';
@@ -139,9 +140,13 @@ ${jsonSchema}
 difficulty must be one of: ${difficultyOptions}`;
 
   try {
+    const { data: { session } } = await supabase.auth.getSession();
     const res = await fetch('/api/mistral', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session?.access_token ?? ''}`,
+      },
       body: JSON.stringify({ prompt }),
     });
 
