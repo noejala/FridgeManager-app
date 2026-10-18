@@ -102,7 +102,7 @@ export const CookingSession = ({ recipes, fridgeProducts, onClose, onFinish, onR
 
         {/* Header */}
         <div className="cooking-session-header">
-          <button className="cooking-session-close" onClick={onClose}>✕</button>
+          <button className="cooking-session-close" onClick={onClose} aria-label={t('common.close')}>✕</button>
           <div className="cooking-session-header-title">
             {phase === 'cooking'
               ? t('cook.session.title', { count: recipes.length })

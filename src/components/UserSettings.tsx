@@ -339,6 +339,7 @@ export const UserSettings = ({ darkMode, onToggleDarkMode, onLogout, onDietaryPr
                   className={`settings-toggle-btn ${darkMode ? 'active' : ''}`}
                   onClick={onToggleDarkMode}
                   aria-pressed={darkMode}
+                  aria-label={t('settings.darkMode')}
                 >
                   <span className="settings-toggle-thumb" />
                 </button>

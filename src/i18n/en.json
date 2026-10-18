@@ -95,7 +95,18 @@
     "adding": "Adding…",
     "saving": "Saving…",
     "quantityError": "Quantity must be a number greater than 0",
-    "productPlaceholder": "Ex: Milk, Apples, Chicken..."
+    "productPlaceholder": "Ex: Milk, Apples, Chicken...",
+    "moreOptions": "More options",
+    "lessOptions": "Fewer options",
+    "datePlaceholder": "DD/MM/YYYY",
+    "scan": "Scan",
+    "scanProduct": "Scan a product",
+    "scanBarcode": "Scan a barcode",
+    "dictate": "Dictate",
+    "searching": "Searching…",
+    "lookingUp": "Looking up…",
+    "productNotFound": "Product not found. Fill in the form manually.",
+    "changeCategory": "· Change"
   },
   "productCard": {
     "expired": "Expired",
@@ -356,7 +367,12 @@
       "paprika": "Paprika",
       "cumin": "Cumin",
       "cinnamon": "Cinnamon"
-    }
+    },
+    "selectedCount_one": "{{count}} selected",
+    "selectedCount_other": "{{count}} selected",
+    "noneSelected": "None selected",
+    "selectAll": "Select all",
+    "deselectAll": "Deselect all"
   },
   "settings": {
     "profile": "My profile",
@@ -997,5 +1013,25 @@
     "shareFridgeText": "Join my fridge on Freego!",
     "noFriendsHint": "Your friend doesn't have Freego yet? Invite them directly to join this fridge via the Share section below.",
     "linkError": "Error, try again"
+  },
+  "common": {
+    "close": "Close",
+    "cancel": "Cancel",
+    "retry": "Try again",
+    "search": "Search",
+    "delete": "Delete",
+    "open": "Open",
+    "addMenu": "Add products",
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month",
+    "add": "Add"
+  },
+  "scanner": {
+    "title": "Scan a product",
+    "requesting": "Accessing the camera…",
+    "denied": "Camera access denied.",
+    "error": "Can't access the camera.",
+    "manualHint": "Or type the barcode manually:",
+    "manualPlaceholder": "e.g. 3017620422003"
   }
 }

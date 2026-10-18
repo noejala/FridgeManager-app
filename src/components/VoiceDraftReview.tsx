@@ -50,7 +50,7 @@ export const VoiceDraftReview = ({ drafts: initialDrafts, onConfirm, onCancel }:
           <h2 className="voice-review-title">
             {t('voice.reviewTitle', { count: drafts.length })}
           </h2>
-          <button className="voice-review-close" onClick={onCancel} disabled={isAdding}>
+          <button className="voice-review-close" onClick={onCancel} disabled={isAdding} aria-label={t('common.close')}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"/>
               <line x1="6" y1="6" x2="18" y2="18"/>
@@ -76,7 +76,7 @@ export const VoiceDraftReview = ({ drafts: initialDrafts, onConfirm, onCancel }:
                   className="voice-draft-delete"
                   onClick={() => remove(draft._draftId)}
                   disabled={isAdding}
-                  aria-label="Supprimer"
+                  aria-label={t('common.delete')}
                 >
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="3 6 5 6 21 6"/>

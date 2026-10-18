@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BrowserMultiFormatReader } from '@zxing/browser';
 import { DecodeHintType, BarcodeFormat } from '@zxing/library';
 import './BarcodeScanner.css';
@@ -21,6 +22,7 @@ const HINTS = new Map<DecodeHintType, unknown>([
 ]);
 
 export const BarcodeScanner = ({ onDetected, onClose }: Props) => {
+  const { t } = useTranslation();
   const [status, setStatus] = useState<Status>('requesting');
   const [manualCode, setManualCode] = useState('');
   const [retryCount, setRetryCount] = useState(0);
@@ -127,8 +129,8 @@ export const BarcodeScanner = ({ onDetected, onClose }: Props) => {
     <div className="scanner-overlay" onClick={onClose}>
       <div className="scanner-modal" onClick={e => e.stopPropagation()}>
         <div className="scanner-header">
-          <h3 className="scanner-title">Scanner un produit</h3>
-          <button className="scanner-close" onClick={onClose} aria-label="Fermer">
+          <h3 className="scanner-title">{t('scanner.title')}</h3>
+          <button className="scanner-close" onClick={onClose} aria-label={t('common.close')}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18" />
               <line x1="6" y1="6" x2="18" y2="18" />
@@ -177,7 +179,7 @@ export const BarcodeScanner = ({ onDetected, onClose }: Props) => {
             {status === 'requesting' && (
               <div className="scanner-placeholder">
                 <div className="scanner-spinner" />
-                <p>Accès à la caméra…</p>
+                <p>{t('scanner.requesting')}</p>
               </div>
             )}
           </div>
@@ -194,19 +196,19 @@ export const BarcodeScanner = ({ onDetected, onClose }: Props) => {
               </svg>
             </div>
             <p className="scanner-fallback-msg">
-              {status === 'denied' && 'Accès à la caméra refusé.'}
-              {status === 'error' && "Impossible d'accéder à la caméra."}
+              {status === 'denied' && t('scanner.denied')}
+              {status === 'error' && t('scanner.error')}
             </p>
             <button className="scanner-retry" onClick={handleRetry}>
-              Réessayer
+              {t('common.retry')}
             </button>
-            <p className="scanner-fallback-sub">Ou saisissez le code-barres manuellement :</p>
+            <p className="scanner-fallback-sub">{t('scanner.manualHint')}</p>
             <form onSubmit={handleManualSubmit} className="scanner-manual-form">
               <input
                 type="text"
                 inputMode="numeric"
                 className="scanner-manual-input"
-                placeholder="ex. 3017620422003"
+                placeholder={t('scanner.manualPlaceholder')}
                 value={manualCode}
                 onChange={e => setManualCode(e.target.value)}
                 autoFocus
@@ -216,13 +218,13 @@ export const BarcodeScanner = ({ onDetected, onClose }: Props) => {
                 className="scanner-manual-submit"
                 disabled={!manualCode.trim()}
               >
-                Rechercher
+                {t('common.search')}
               </button>
             </form>
           </div>
         )}
 
-        <button className="scanner-cancel" onClick={onClose}>Annuler</button>
+        <button className="scanner-cancel" onClick={onClose}>{t('common.cancel')}</button>
       </div>
     </div>
   );

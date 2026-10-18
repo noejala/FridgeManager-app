@@ -138,7 +138,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
       if (result.imageUrl) setImageUrl(result.imageUrl);
       setShowDetails(true);
     } else {
-      setLookupError('Produit non trouvé. Remplissez le formulaire manuellement.');
+      setLookupError(t('form.productNotFound'));
     }
 
     setIsLookingUp(false);
@@ -213,7 +213,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
           <button
             className="scan-product-btn"
             onClick={() => setIsScanning(true)}
-            title="Scanner un code-barres"
+            title={t('form.scanBarcode')}
           >
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="3" width="5" height="5" rx="1"/>
@@ -222,8 +222,8 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
               <path d="M16 16h2v2h-2zM18 18h2v2h-2zM16 20h2"/>
               <path d="M20 16v2"/>
             </svg>
-            <span className="scan-btn-label-short">Scanner</span>
-            <span className="scan-btn-label-long">Scanner un produit</span>
+            <span className="scan-btn-label-short">{t('form.scan')}</span>
+            <span className="scan-btn-label-long">{t('form.scanProduct')}</span>
           </button>
           {onVoiceStart && (
             <button
@@ -253,6 +253,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
                 <span className="fab-action-label">{t('voice.dictate')}</span>
                 <button
                   className="fab-action-btn"
+                  aria-label={t('voice.dictate')}
                   onPointerDown={(e) => { if (e.pointerType !== 'mouse') { e.preventDefault(); setFabOpen(false); onVoiceStart(); } }}
                   onClick={() => { setFabOpen(false); onVoiceStart(); }}
                 >
@@ -266,9 +267,10 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
               </div>
             )}
             <div className="fab-action">
-              <span className="fab-action-label">Scanner</span>
+              <span className="fab-action-label">{t('form.scan')}</span>
               <button
                 className="fab-action-btn"
+                aria-label={t('form.scanBarcode')}
                 onPointerDown={(e) => { if (e.pointerType !== 'mouse') { e.preventDefault(); setFabOpen(false); setIsScanning(true); } }}
                 onClick={() => { setFabOpen(false); setIsScanning(true); }}
               >
@@ -285,6 +287,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
               <span className="fab-action-label">{t('form.addProduct')}</span>
               <button
                 className="fab-action-btn"
+                aria-label={t('form.addProduct')}
                 onPointerDown={(e) => { if (e.pointerType !== 'mouse') { e.preventDefault(); setFabOpen(false); onFormOpenChange(true); } }}
                 onClick={() => { setFabOpen(false); onFormOpenChange(true); }}
               >
@@ -297,6 +300,8 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
           </div>
           <button
             className="fab-main"
+            aria-label={fabOpen ? t('common.close') : t('common.addMenu')}
+            aria-expanded={fabOpen}
             onPointerDown={(e) => { e.preventDefault(); setFabOpen(prev => !prev); }}
           >
             <svg className="fab-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -329,7 +334,8 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
             type="button"
             className="voice-mic-fab"
             onClick={onVoiceStart}
-            title="Dicter"
+            title={t('form.dictate')}
+            aria-label={t('form.dictate')}
           >
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="9" y="2" width="6" height="12" rx="3"/>
@@ -348,7 +354,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
             className="scan-inline-btn"
             onClick={() => setIsScanning(true)}
             disabled={isLookingUp || isLoading}
-            title="Scanner un code-barres"
+            title={t('form.scanBarcode')}
           >
             {isLookingUp ? (
               <span className="scan-inline-spinner" />
@@ -361,7 +367,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
                 <path d="M20 16v2"/>
               </svg>
             )}
-            {isLookingUp ? 'Recherche…' : 'Scanner'}
+            {isLookingUp ? t('form.searching') : t('form.scan')}
           </button>
         </div>
 
@@ -400,17 +406,22 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
             }}
             required
             disabled={isLookingUp}
-            placeholder={isLookingUp ? 'Recherche en cours…' : t('form.productPlaceholder')}
+            placeholder={isLookingUp ? t('form.lookingUp') : t('form.productPlaceholder')}
           />
-          {name && !showDetails && (
-            <button
-              type="button"
-              className="category-badge"
-              onClick={() => setShowDetails(true)}
-            >
-              {t(`categories.${category}`)}
-              <span className="category-badge-edit">· Modifier</span>
-            </button>
+          {/* Slot keeps its height before a name is typed, so the badge doesn't push the form down */}
+          {!showDetails && (
+            <div className="category-badge-slot">
+              {name && (
+                <button
+                  type="button"
+                  className="category-badge"
+                  onClick={() => setShowDetails(true)}
+                >
+                  {t(`categories.${category}`)}
+                  <span className="category-badge-edit">{t('form.changeCategory')}</span>
+                </button>
+              )}
+            </div>
           )}
         </div>
 
@@ -449,18 +460,25 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
               </div>
             )}
           </div>
-        ) : recognized ? (
-          <div className="form-group">
+        ) : (
+          // Always rendered (hidden until the product is recognized) so the date field
+          // below doesn't jump while the user is typing the name.
+          <div
+            className={`form-group${recognized ? '' : ' form-group--reserved'}`}
+            aria-hidden={!recognized}
+          >
             <label className="checkbox-label">
               <input
                 type="checkbox"
                 checked={unknownExpiration}
                 onChange={(e) => setUnknownExpiration(e.target.checked)}
+                disabled={!recognized}
+                tabIndex={recognized ? undefined : -1}
               />
               {t('form.unknownExpiration')}
             </label>
           </div>
-        ) : null}
+        )}
 
         {/* ── Date d'expiration ── */}
         {!(isOpenableCategory(category) && isOpened) && (
@@ -499,7 +517,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
           <p className="date-error-msg">Veuillez ajouter une date d'expiration</p>
         )}
 
-        {/* ── Plus d'options ── */}
+        {/* ── More options ── */}
         <button
           type="button"
           className={`details-toggle${showDetails ? ' details-toggle--open' : ''}`}
@@ -512,7 +530,7 @@ export const AddProductForm = ({ onAdd, isFormOpen, onFormOpenChange, prefill, o
           >
             <polyline points="2,4 6,8 10,4" />
           </svg>
-          {showDetails ? 'Moins d\'options' : 'Plus d\'options'}
+          {showDetails ? t('form.lessOptions') : t('form.moreOptions')}
         </button>
 
         {showDetails && (

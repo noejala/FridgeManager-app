@@ -59,6 +59,8 @@ export const FridgeSwitcher = ({ fridges, activeFridgeId, onSwitch, onCreateFrid
     <div className="fridge-switcher" ref={ref}>
       <button
         className="fridge-switcher-btn"
+        aria-haspopup="true"
+        aria-expanded={open}
         onClick={() => { const next = !open; setOpen(next); if (next) onOpen?.(); }}
       >
         <span className="fridge-switcher-icon">{activeFridge?.emoji ?? '🧊'}</span>

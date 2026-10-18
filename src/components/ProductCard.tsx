@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Product } from '../types/Product';
-import { getDaysUntilExpiration, isExpired, isExpiringSoon } from '../utils/storage';
+import { getDaysUntilExpiration, isExpired, isExpiringSoon, formatDate } from '../utils/storage';
 import { isOpenableProduct } from '../utils/shelfLife';
 import { singularize } from '../utils/mealApi';
 import { toEnglishIngredient } from '../utils/ingredientTranslation';
@@ -28,7 +28,6 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
   const expired = isExpired(product.expirationDate);
   const expiringSoon = isExpiringSoon(product.expirationDate);
   const isDDM = product.expirationDateType === 'ddm';
-  const locale = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
   const englishName = singularize(toEnglishIngredient(product.name));
   const ingredientImg = `https://www.themealdb.com/images/ingredients/${encodeURIComponent(englishName)}-Small.png`;
   const imgSrc = product.imageUrl ?? ingredientImg;
@@ -130,7 +129,14 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
   return (
     <div className={cardClass} style={{ '--index': index } as React.CSSProperties}>
       <span className="status-dot" />
-      <div className="product-card-toggle" onClick={() => setExpanded(p => !p)}>
+      <div
+        className="product-card-toggle"
+        role="button"
+        tabIndex={0}
+        aria-expanded={isExpanded}
+        onClick={() => setExpanded(p => !p)}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpanded(p => !p); } }}
+      >
         {imgHidden ? (
           <span className="product-img-fallback">{fallbackEmoji}</span>
         ) : (
@@ -153,7 +159,7 @@ export const ProductCard = ({ product, onDelete, onConsume, onEdit, onOpenSauce,
             <span className="label">{isDDM ? t('productCard.bestBefore') : t('productCard.expires')}</span>
             <span>
               {product.isEstimatedExpiration ? '~' : ''}
-              {new Date(product.expirationDate).toLocaleDateString(locale)}
+              {formatDate(product.expirationDate, i18n.language)}
             </span>
           </div>
           <div className="product-card-footer">

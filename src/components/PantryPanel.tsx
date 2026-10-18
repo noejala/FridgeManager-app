@@ -67,7 +67,7 @@ export function PantryPanel({ fridgeId, staples, onSave, onClose, copySource }: 
     <div className="pantry-panel">
       <div className="pantry-panel-header">
         <h3 className="pantry-panel-title">{t('settings.pantryStaples')}</h3>
-        <button className="pantry-panel-close" onClick={onClose} aria-label="Fermer">×</button>
+        <button className="pantry-panel-close" onClick={onClose} aria-label={t('common.close')}>×</button>
       </div>
       {copySource && (
         <div className="pantry-copy-banner">

@@ -40,7 +40,8 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
   const [expirationDateType, setExpirationDateType] = useState<'dlc' | 'ddm'>(
     product.expirationDateType ?? getDefaultExpirationDateType(product.category as ProductCategory)
   );
-  const [purchaseDate, setPurchaseDate] = useState('');
+  // The purchase date isn't stored; the day the product was added is the closest proxy.
+  const [purchaseDate, setPurchaseDate] = useState(product.addedDate);
 
   useEffect(() => {
     setName(product.name);
@@ -50,14 +51,19 @@ export const EditProductForm = ({ product, onSave, onCancel }: EditProductFormPr
     setUnit(product.unit);
     setUnknownExpiration(product.isEstimatedExpiration ?? false);
     setExpirationDateType(product.expirationDateType ?? getDefaultExpirationDateType(product.category as ProductCategory));
+    setPurchaseDate(product.addedDate);
   }, [product]);
 
   const recognized = isProductRecognized(name);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Keep an existing estimate unless what it depends on changed — re-estimating from
+    // "today" on every edit would push the expiry date back each time.
+    const estimateUnchanged = product.isEstimatedExpiration
+      && name.trim() === product.name && purchaseDate === product.addedDate;
     const finalExpirationDate = (unknownExpiration && recognized)
-      ? estimateExpirationDate(name, purchaseDate || undefined)
+      ? (estimateUnchanged ? product.expirationDate : estimateExpirationDate(name, purchaseDate || undefined))
       : expirationDate;
     if (!name || !finalExpirationDate) return;
 

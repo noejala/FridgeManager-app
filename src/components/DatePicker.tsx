@@ -1,9 +1,19 @@
 import { useState, useRef, useEffect, CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
+import { useTranslation } from 'react-i18next';
 import './DatePicker.css';
 
-const MONTHS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
-const DAYS_SHORT = ['L','M','M','J','V','S','D'];
+// Month names and Monday-first weekday initials in the UI language.
+function calendarLabels(lang: string) {
+  const month = new Intl.DateTimeFormat(lang, { month: 'long' });
+  const weekday = new Intl.DateTimeFormat(lang, { weekday: 'narrow' });
+  const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+  return {
+    months: Array.from({ length: 12 }, (_, i) => cap(month.format(new Date(2024, i, 1)))),
+    // 2024-01-01 is a Monday
+    days: Array.from({ length: 7 }, (_, i) => weekday.format(new Date(2024, 0, 1 + i)).toUpperCase()),
+  };
+}
 
 interface DatePickerProps {
   value: string;
@@ -32,7 +42,9 @@ function todayStr() {
 
 let _dpId = 0;
 
-export function DatePicker({ value, onChange, min, max, placeholder = 'JJ/MM/AAAA', id, className }: DatePickerProps) {
+export function DatePicker({ value, onChange, min, max, placeholder, id, className }: DatePickerProps) {
+  const { t, i18n } = useTranslation();
+  const { months, days } = calendarLabels(i18n.language);
   const [open, setOpen] = useState(false);
   const [panelStyle, setPanelStyle] = useState<CSSProperties>({});
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -132,7 +144,7 @@ export function DatePicker({ value, onChange, min, max, placeholder = 'JJ/MM/AAA
         onClick={handleOpen}
       >
         <span className={`app-dropdown-value${!value ? ' app-dropdown-value--placeholder' : ''}`}>
-          {value ? formatDisplay(value) : placeholder}
+          {value ? formatDisplay(value) : (placeholder ?? t('form.datePlaceholder'))}
         </span>
         <svg className="dp-cal-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <rect x="3" y="4" width="18" height="18" rx="2"/>
@@ -147,12 +159,12 @@ export function DatePicker({ value, onChange, min, max, placeholder = 'JJ/MM/AAA
           <div className="app-dropdown-backdrop" onClick={() => setOpen(false)} />
           <div className="dp-panel" style={{ position: 'fixed', zIndex: 511, ...panelStyle }}>
             <div className="dp-header">
-              <button type="button" className="dp-nav-btn" onClick={prevMonth}>‹</button>
-              <span className="dp-month-label">{MONTHS_FR[viewMonth - 1]} {viewYear}</span>
-              <button type="button" className="dp-nav-btn" onClick={nextMonth}>›</button>
+              <button type="button" className="dp-nav-btn" onClick={prevMonth} aria-label={t('common.previousMonth')}>‹</button>
+              <span className="dp-month-label">{months[viewMonth - 1]} {viewYear}</span>
+              <button type="button" className="dp-nav-btn" onClick={nextMonth} aria-label={t('common.nextMonth')}>›</button>
             </div>
             <div className="dp-dow-row">
-              {DAYS_SHORT.map((d, i) => <span key={i}>{d}</span>)}
+              {days.map((d, i) => <span key={i}>{d}</span>)}
             </div>
             <div className="dp-grid">
               {cells.map((c, i) => {

@@ -349,6 +349,14 @@
 }
 
 /* ── Category badge (auto-detected, shown below name) ────── */
+.category-badge-slot {
+  min-height: 2.05rem;
+}
+
+.form-group--reserved {
+  visibility: hidden;
+}
+
 .category-badge {
   display: inline-flex;
   align-items: center;

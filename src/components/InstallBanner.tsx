@@ -10,7 +10,7 @@ export function InstallBanner() {
     return (
       <div className="install-overlay" onClick={dismissModal}>
         <div className="install-modal" onClick={e => e.stopPropagation()}>
-          <button className="install-close" onClick={dismissModal} aria-label="Fermer">×</button>
+          <button className="install-close" onClick={dismissModal} aria-label={t('common.close')}>×</button>
           <div className="install-icon">📱</div>
           <h2 className="install-title">{t('install.modalTitle')}</h2>
           <p className="install-desc">{t('install.modalDesc')}</p>
@@ -71,7 +71,7 @@ export function InstallBanner() {
             {t('install.installBtn')}
           </button>
         )}
-        <button className="install-banner-close" onClick={dismissBanner} aria-label="Fermer">×</button>
+        <button className="install-banner-close" onClick={dismissBanner} aria-label={t('common.close')}>×</button>
       </div>
     );
   }

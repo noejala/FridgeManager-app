@@ -324,6 +324,13 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       let isAiMode = false;
 
       if (recipeMode === 'ai') {
+        // When the AI fails, fall back to classic recipes of the course the user picked
+        const fallbackMeals = async () => {
+          const all = await getAllMeals();
+          return selectedCourse && selectedCourse !== 'all'
+            ? all.filter(m => m && getCourse(m.category) === selectedCourse)
+            : all;
+        };
         try {
           const aiResults = await fetchAiRecipes(fridgeNames, dietaryPreferences, i18n.language, selectedCookingMode ?? undefined, urgentFridgeNames, selectedCourse ?? undefined, customPreferences || undefined, selectedCustomModeText ?? undefined, pantryStaples.length > 0 ? pantryStaples : undefined, servings, kitchenEquipment.length > 0 ? kitchenEquipment : undefined);
           if (aiResults.length > 0) {
@@ -331,12 +338,12 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
             isAiMode = true;
             setAiFallback(false);
           } else {
-            meals = await getAllMeals();
+            meals = await fallbackMeals();
             setAiFallback(true);
           }
         } catch (e) {
           const msg = e instanceof Error ? e.message : '';
-          meals = await getAllMeals();
+          meals = await fallbackMeals();
           setAiFallback(true);
           if (msg === 'ai_unavailable') {
             setAiOverloaded(true);
@@ -979,7 +986,7 @@ export const WhatToCook = ({ products, dietaryPreferences = [], dislikedIngredie
       {selectedRecipe && (
         <div className="modal-overlay" onClick={closeDetails}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onPointerDown={(e) => { if (e.pointerType !== 'mouse') { e.preventDefault(); closeDetails(); } }} onClick={closeDetails}>✕</button>
+            <button className="modal-close" onPointerDown={(e) => { if (e.pointerType !== 'mouse') { e.preventDefault(); closeDetails(); } }} onClick={closeDetails} aria-label={t('common.close')}>✕</button>
             {selectedRecipe.meal.thumbnail
               ? <img src={selectedRecipe.meal.thumbnail} alt={selectedRecipe.meal.name} className="modal-image" />
               : <div className="modal-thumbnail-placeholder" aria-hidden="true" />

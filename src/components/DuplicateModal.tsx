@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Product } from '../types/Product';
+import { formatDate as formatStoredDate } from '../utils/storage';
 import './DuplicateModal.css';
 
 interface DuplicateModalProps {
@@ -25,9 +26,7 @@ export const DuplicateModal = ({ existing, incoming, onCancel, onGroup, onReplac
       setLoadingAction(null);
     }
   };
-  const locale = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
-
-  const formatDate = (d: string) => new Date(d).toLocaleDateString(locale);
+  const formatDate = (d: string) => formatStoredDate(d, i18n.language);
   const unitMismatch = existing.unit !== incoming.unit;
   const dateMismatch = existing.expirationDate !== incoming.expirationDate;
   const laterDate = existing.expirationDate >= incoming.expirationDate

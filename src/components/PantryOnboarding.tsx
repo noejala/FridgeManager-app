@@ -87,10 +87,10 @@ export const PantryOnboarding = ({ onConfirm, onSkip }: Props) => {
 
         <div className="pantry-onboarding-select-all-row">
           <span className="pantry-onboarding-count">
-            {totalSelected > 0 ? `${totalSelected} sélectionné${totalSelected > 1 ? 's' : ''}` : 'Aucun sélectionné'}
+            {totalSelected > 0 ? t('pantryOnboarding.selectedCount', { count: totalSelected }) : t('pantryOnboarding.noneSelected')}
           </span>
           <button type="button" className="pantry-onboarding-toggle-all" onClick={toggleAll}>
-            {allSelected ? 'Tout désélectionner' : 'Tout sélectionner'}
+            {allSelected ? t('pantryOnboarding.deselectAll') : t('pantryOnboarding.selectAll')}
           </button>
         </div>
 
@@ -138,6 +138,7 @@ export const PantryOnboarding = ({ onConfirm, onSkip }: Props) => {
             type="button"
             className="pantry-onboarding-add-btn"
             onClick={handleAddCustom}
+            aria-label={t('common.add')}
             disabled={!customInput.trim()}
           >+</button>
         </div>
