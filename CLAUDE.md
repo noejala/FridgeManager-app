@@ -59,7 +59,9 @@ Tables: `products`, `fridges`, `fridge_members`, `friendships`, `user_profiles`,
 
 **Gotchas:**
 - `pgcrypto` functions (`gen_random_bytes`…) live in the `extensions` schema: invisible with `search_path = public`. Use core `gen_random_uuid()` or qualify as `extensions.…`.
-- RLS can't restrict columns: `fridges` has a trigger (`guard_fridge_member_update`) so non-owner members can only change `pantry_staples`.
+- RLS can't restrict columns: `fridges` has a trigger (`guard_fridge_member_update`) so non-owner members can only change `pantry_staples`; `fridge_members` and `friendships` use column grants (`UPDATE (role)` / `UPDATE (status)` only). Updating any other column from the client fails with "permission denied" — go through a SECURITY DEFINER RPC instead.
+- SECURITY DEFINER RPCs are revoked from `anon`/PUBLIC. A new RPC must `REVOKE EXECUTE … FROM PUBLIC, anon; GRANT EXECUTE … TO authenticated`.
+- Run the Supabase security advisor (MCP `get_advisors`) after any DDL change. The remaining "authenticated can execute SECURITY DEFINER" warnings are intentional.
 
 **Env vars** (Vercel, pulled into `.env.local`): `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_VAPID_PUBLIC_KEY`, `VITE_AI_ENABLED`, `MISTRAL_API_KEY` (server only). Edge function secrets (`VAPID_PRIVATE_KEY`…) live in Supabase.
 
