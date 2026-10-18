@@ -1012,7 +1012,11 @@
     "linkCopied": "Copied!",
     "shareFridgeText": "Join my fridge on Freego!",
     "noFriendsHint": "Your friend doesn't have Freego yet? Invite them directly to join this fridge via the Share section below.",
-    "linkError": "Error, try again"
+    "linkError": "Error, try again",
+    "resetLink": "Reset link",
+    "resetLinkHint": "The old link stops working right away",
+    "linkResetDone": "New link copied!",
+    "shareLinkHint": "Anyone with this link can join as an editor. Valid 30 days — reset it if it was shared too widely."
   },
   "common": {
     "close": "Close",

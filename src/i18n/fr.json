@@ -1012,7 +1012,11 @@
     "linkCopied": "Copié !",
     "shareFridgeText": "Rejoins mon frigo sur Freego !",
     "noFriendsHint": "Votre ami n'a pas encore Freego ? Invitez-le directement à rejoindre ce frigo via la section Partager ci-dessous.",
-    "linkError": "Erreur, réessaie"
+    "linkError": "Erreur, réessaie",
+    "resetLink": "Réinitialiser le lien",
+    "resetLinkHint": "L'ancien lien ne fonctionne plus immédiatement",
+    "linkResetDone": "Nouveau lien copié !",
+    "shareLinkHint": "Toute personne qui a ce lien peut rejoindre le frigo en éditeur. Valable 30 jours — réinitialise-le s'il a trop circulé."
   },
   "common": {
     "close": "Fermer",

@@ -29,7 +29,7 @@ export const FridgeSettings = ({ fridges, currentUserId, onFridgesChange, onActi
   const [inviteRole, setInviteRole] = useState<FridgeMemberRole>('editor');
   const [inviting, setInviting] = useState(false);
   const [inviteSuccess, setInviteSuccess] = useState(false);
-  const [linkCopied, setLinkCopied] = useState<'fridge' | null>(null);
+  const [linkCopied, setLinkCopied] = useState<'fridge' | 'fridge-reset' | null>(null);
   const [generatingInvite, setGeneratingInvite] = useState(false);
   const [inviteLinkError, setInviteLinkError] = useState(false);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
@@ -155,15 +155,15 @@ export const FridgeSettings = ({ fridges, currentUserId, onFridgesChange, onActi
 
   const APP_URL = 'https://fridgemanager.vercel.app';
 
-  const handleShareFridge = async () => {
+  const handleShareFridge = async (reset = false) => {
     if (!expandedFridgeId) return;
     setGeneratingInvite(true);
     setInviteLinkError(false);
     try {
-      const token = await createFridgeInvite(expandedFridgeId);
+      const token = await createFridgeInvite(expandedFridgeId, reset);
       const url = `${APP_URL}?invite=${token}`;
       await navigator.clipboard.writeText(url);
-      setLinkCopied('fridge');
+      setLinkCopied(reset ? 'fridge-reset' : 'fridge');
       setTimeout(() => setLinkCopied(null), 2500);
     } catch (err) {
       console.error('Fridge invite error:', err);
@@ -326,12 +326,21 @@ export const FridgeSettings = ({ fridges, currentUserId, onFridgesChange, onActi
                 <div className="fridge-share-row">
                   <button
                     className={`fridge-share-btn fridge-share-btn--primary${inviteLinkError ? ' fridge-share-btn--error' : ''}`}
-                    onClick={handleShareFridge}
+                    onClick={() => handleShareFridge()}
                     disabled={generatingInvite}
                   >
                     {generatingInvite ? '…' : linkCopied === 'fridge' ? t('fridges.linkCopied') : inviteLinkError ? t('fridges.linkError') : t('fridges.shareFridgeLink')}
                   </button>
+                  <button
+                    className="fridge-share-btn"
+                    onClick={() => handleShareFridge(true)}
+                    disabled={generatingInvite}
+                    title={t('fridges.resetLinkHint')}
+                  >
+                    {linkCopied === 'fridge-reset' ? t('fridges.linkResetDone') : t('fridges.resetLink')}
+                  </button>
                 </div>
+                <p className="fridge-invite-hint">{t('fridges.shareLinkHint')}</p>
               </div>
             )}
 

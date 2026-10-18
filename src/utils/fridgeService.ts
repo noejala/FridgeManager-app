@@ -129,10 +129,13 @@ export async function leaveFridge(fridgeId: string): Promise<void> {
   if (error) throw error;
 }
 
-export async function createFridgeInvite(fridgeId: string): Promise<string> {
+// Returns the fridge's reusable invite link token (created on first share, valid 30 days).
+// reset = true invalidates the previous link.
+export async function createFridgeInvite(fridgeId: string, reset = false): Promise<string> {
   const { data, error } = await supabase.rpc('create_fridge_invite', {
     p_fridge_id: fridgeId,
     p_role: 'editor',
+    p_reset: reset,
   });
   if (error) throw error;
   return data as string;
