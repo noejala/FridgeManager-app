@@ -1016,7 +1016,8 @@
     "resetLink": "Reset link",
     "resetLinkHint": "The old link stops working right away",
     "linkResetDone": "New link copied!",
-    "shareLinkHint": "Anyone with this link can join as an editor. Valid 30 days — reset it if it was shared too widely."
+    "shareLinkHint": "Anyone with this link can join as an editor. Valid 30 days — reset it if it was shared too widely.",
+    "shareInviteText": "Join my fridge \"{{name}}\" on Freego"
   },
   "common": {
     "close": "Close",

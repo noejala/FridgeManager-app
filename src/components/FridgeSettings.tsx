@@ -32,6 +32,8 @@ export const FridgeSettings = ({ fridges, currentUserId, onFridgesChange, onActi
   const [linkCopied, setLinkCopied] = useState<'fridge' | 'fridge-reset' | null>(null);
   const [generatingInvite, setGeneratingInvite] = useState(false);
   const [inviteLinkError, setInviteLinkError] = useState(false);
+  // Shown when neither the share sheet nor the clipboard is available, so the link can be copied by hand
+  const [manualInviteUrl, setManualInviteUrl] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [confirmLeaveId, setConfirmLeaveId] = useState<string | null>(null);
   const [showNewFridgeModal, setShowNewFridgeModal] = useState(false);
@@ -162,7 +164,22 @@ export const FridgeSettings = ({ fridges, currentUserId, onFridgesChange, onActi
     try {
       const token = await createFridgeInvite(expandedFridgeId, reset);
       const url = `${APP_URL}?invite=${token}`;
-      await navigator.clipboard.writeText(url);
+      setManualInviteUrl(null);
+      // Phones: native share sheet (WhatsApp, SMS…). Elsewhere: clipboard, then a visible field.
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: 'Freego', text: t('fridges.shareInviteText', { name: expandedFridge?.name ?? '' }), url });
+          return;
+        } catch (err) {
+          if ((err as Error).name === 'AbortError') return;
+        }
+      }
+      try {
+        await navigator.clipboard.writeText(url);
+      } catch {
+        setManualInviteUrl(url);
+        return;
+      }
       setLinkCopied(reset ? 'fridge-reset' : 'fridge');
       setTimeout(() => setLinkCopied(null), 2500);
     } catch (err) {
@@ -340,6 +357,16 @@ export const FridgeSettings = ({ fridges, currentUserId, onFridgesChange, onActi
                     {linkCopied === 'fridge-reset' ? t('fridges.linkResetDone') : t('fridges.resetLink')}
                   </button>
                 </div>
+                {manualInviteUrl && (
+                  <input
+                    className="fridge-invite-input fridge-invite-manual"
+                    readOnly
+                    value={manualInviteUrl}
+                    aria-label={t('fridges.shareFridgeLink')}
+                    onFocus={(e) => e.currentTarget.select()}
+                    autoFocus
+                  />
+                )}
                 <p className="fridge-invite-hint">{t('fridges.shareLinkHint')}</p>
               </div>
             )}
